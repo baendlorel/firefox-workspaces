@@ -1,0 +1,40 @@
+{
+	"name": "firefox-work-group",
+	"version": "0.0.1",
+	"author": {
+		"name": "Kasukabe Tsumugi",
+		"email": "futami16237@gmail.com"
+	},
+	"purpose": "plugin",
+	"description": "firefox-work-group",
+	"description_zh": "firefox-work-group",
+	"type": "module",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		"types": "./dist/index.d.ts",
+		"import": "./dist/index.mjs",
+		"require": "./dist/index.cjs",
+		"default": "./dist/index.mjs"
+	},
+	"files": [
+		"dist"
+	],
+	"homepage": "https://github.com/baendlorel/firefox-work-group#readme",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/baendlorel/firefox-work-group"
+	},
+	"keywords": [
+		"typescript",
+		"javascript"
+	],
+	"scripts": {
+		"test": "clear & vitest",
+		"lint": "oxlint .",
+		"cover": "clear & vitest --coverage",
+		"build": "node ./scripts/rollup.mjs"
+	},
+	"license": "MIT"
+}
