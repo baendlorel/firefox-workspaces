@@ -6,8 +6,8 @@
 		"email": "futami16237@gmail.com"
 	},
 	"purpose": "plugin",
-	"description": "firefox-work-group",
-	"description_zh": "firefox-work-group",
+	"description": "Implement work group feature similar to Edge browser in FireFox",
+	"description_zh": "在FireFox中实现类似Edge浏览器的工作组功能",
 	"type": "module",
 	"main": "./dist/index.cjs",
 	"module": "./dist/index.mjs",
