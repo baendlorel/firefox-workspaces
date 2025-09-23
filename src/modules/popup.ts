@@ -1,7 +1,7 @@
 // Popup JavaScript for Workspaces Manager
 class WorkspacesPopup {
   constructor() {
-    this.workspacess = [];
+    this.workspaceses = [];
     this.currentEditingGroup = null;
     this.selectedColor = '#667eea';
     this.init();
@@ -62,7 +62,7 @@ class WorkspacesPopup {
     try {
       const response = await this.sendMessage({ action: 'getWorkspacess' });
       if (response.success) {
-        this.workspacess = response.data || [];
+        this.workspaceses = response.data || [];
       }
     } catch (error) {
       console.error('Failed to load work groups:', error);
@@ -71,10 +71,10 @@ class WorkspacesPopup {
 
   // Render work groups in the popup
   renderWorkspacess() {
-    const container = document.getElementById('workspacessList');
+    const container = document.getElementById('workspacesesList');
     const emptyState = document.getElementById('emptyState');
 
-    if (this.workspacess.length === 0) {
+    if (this.workspaceses.length === 0) {
       container.style.display = 'none';
       emptyState.style.display = 'block';
       return;
@@ -83,7 +83,7 @@ class WorkspacesPopup {
     container.style.display = 'block';
     emptyState.style.display = 'none';
 
-    container.innerHTML = this.workspacess
+    container.innerHTML = this.workspaceses
       .map((group) => {
         const totalTabs = (group.tabs || []).length + (group.pinnedTabs || []).length;
         const pinnedCount = (group.pinnedTabs || []).length;
@@ -313,7 +313,7 @@ class WorkspacesPopup {
 
   // Edit work group
   editGroup(groupId) {
-    const group = this.workspacess.find((g) => g.id === groupId);
+    const group = this.workspaceses.find((g) => g.id === groupId);
     if (group) {
       this.showModal(group);
     }
@@ -321,7 +321,7 @@ class WorkspacesPopup {
 
   // Delete work group
   async deleteGroup(groupId) {
-    const group = this.workspacess.find((g) => g.id === groupId);
+    const group = this.workspaceses.find((g) => g.id === groupId);
     if (!group) return;
 
     if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
@@ -438,13 +438,13 @@ class WorkspacesPopup {
 
   // Show menu to add current tab to a group
   async showAddTabMenu() {
-    if (this.workspacess.length === 0) {
+    if (this.workspaceses.length === 0) {
       alert('Create a work group first');
       return;
     }
 
     // Simple implementation - show a select dialog
-    const groupOptions = this.workspacess.map(
+    const groupOptions = this.workspaceses.map(
       (group) =>
         `${group.name} (${(group.tabs || []).length + (group.pinnedTabs || []).length} tabs)`
     );
@@ -452,7 +452,7 @@ class WorkspacesPopup {
     const selectedIndex = await this.showSelectDialog('Select a work group:', groupOptions);
 
     if (selectedIndex !== null) {
-      const groupId = this.workspacess[selectedIndex].id;
+      const groupId = this.workspaceses[selectedIndex].id;
       const isPinned = confirm('Pin this tab in the group?');
 
       try {

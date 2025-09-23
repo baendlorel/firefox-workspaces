@@ -1,10 +1,13 @@
+import { Consts } from './consts.js';
+import { $ArrayFrom, $genId } from './lib.js';
+
 // Workspaces Data Model and Storage Manager
 class WorkspacesManager {
-  private readonly workspacess: Map<string, WorkspacesManager>;
+  private readonly map: Map<string, WorkspaceEntry>;
   private readonly currentEditingGroup: null = null;
 
   constructor() {
-    this.workspacess = new Map();
+    this.map = new Map();
     this.currentEditingGroup = null;
     this.init();
   }
@@ -21,37 +24,28 @@ class WorkspacesManager {
 
   // Load work groups from browser storage
   async loadWorkspacess() {
-    return new Promise<void>((resolve) => {
-      browser.storage.local.get(['workspacess'], (result) => {
-        if (result.workspacess) {
-          // Convert stored array back to Map
-          const groups = result.workspacess;
-          this.workspacess.clear();
-          groups.forEach((group) => {
-            this.workspacess.set(group.id, group);
-          });
-        }
-        resolve();
-      });
-    });
+    const workspaces = (await browser.storage.local.get(Consts.StorageKey)) as WorkspaceStoredData;
+    if (!workspaces.list) {
+      return;
+    }
+    this.map.clear();
+    const list = workspaces.list;
+    const len = workspaces.list.length;
+    for (let i = 0; i < len; i++) {
+      this.map.set(list[i].id, list[i].data);
+    }
   }
 
-  // Save work groups to browser storage
   async saveWorkspacess() {
-    return new Promise((resolve) => {
-      // Convert Map to array for storage
-      const groupsArray = Array.from(this.workspacess.values());
-      browser.storage.local.set({ workspacess: groupsArray }, () => {
-        console.log('Work groups saved successfully');
-        resolve();
-      });
-    });
+    const list = $ArrayFrom(this.map.values());
+    const data: WorkspaceStoredData = { list };
+    await browser.storage.local.set(data);
   }
 
-  // Create a new work group
-  createWorkspaces(name, color = '#667eea') {
-    const id = this.generateId();
-    const workspaces = {
+  // todo 由于火狐浏览器的操作是异步的，因此这里需要在前端调用的时候加入防抖或延迟
+  create(name: string, color: HexColor = '#667eea') {
+    const id = $genId();
+    const workspace: WorkspaceEntry = {
       id: id,
       name: name,
       color: color,
@@ -62,14 +56,14 @@ class WorkspacesManager {
       windowId: null, // Track associated window
     };
 
-    this.workspacess.set(id, workspaces);
+    this.map.set(id, workspace);
     this.saveWorkspacess();
-    return workspaces;
+    return workspace;
   }
 
   // Update an existing work group
   updateWorkspaces(id, updates) {
-    const group = this.workspacess.get(id);
+    const group = this.map.get(id);
     if (group) {
       Object.assign(group, updates);
       this.saveWorkspacess();
@@ -80,7 +74,7 @@ class WorkspacesManager {
 
   // Delete a work group
   deleteWorkspaces(id) {
-    const success = this.workspacess.delete(id);
+    const success = this.map.delete(id);
     if (success) {
       this.saveWorkspacess();
     }
@@ -89,17 +83,17 @@ class WorkspacesManager {
 
   // Get a work group by id
   getWorkspaces(id) {
-    return this.workspacess.get(id);
+    return this.map.get(id);
   }
 
   // Get all work groups as array
   getAllWorkspacess() {
-    return Array.from(this.workspacess.values());
+    return Array.from(this.map.values());
   }
 
   // Add tab to work group
   addTabToGroup(groupId, tab, isPinned = false) {
-    const group = this.workspacess.get(groupId);
+    const group = this.map.get(groupId);
     if (group) {
       const tabData = {
         id: tab.id,
@@ -133,7 +127,7 @@ class WorkspacesManager {
 
   // Remove tab from work group
   removeTabFromGroup(groupId, tabId) {
-    const group = this.workspacess.get(groupId);
+    const group = this.map.get(groupId);
     if (group) {
       group.tabs = group.tabs.filter((tab) => tab.id !== tabId);
       group.pinnedTabs = group.pinnedTabs.filter((tab) => tab.id !== tabId);
@@ -145,8 +139,8 @@ class WorkspacesManager {
 
   // Move tab between work groups
   moveTabBetweenGroups(fromGroupId, toGroupId, tabId) {
-    const fromGroup = this.workspacess.get(fromGroupId);
-    const toGroup = this.workspacess.get(toGroupId);
+    const fromGroup = this.map.get(fromGroupId);
+    const toGroup = this.map.get(toGroupId);
 
     if (fromGroup && toGroup) {
       // Find tab in source group
@@ -178,7 +172,7 @@ class WorkspacesManager {
 
   // Toggle tab pinned status within a group
   toggleTabPin(groupId, tabId) {
-    const group = this.workspacess.get(groupId);
+    const group = this.map.get(groupId);
     if (group) {
       // Check if tab is in regular tabs
       const tabIndex = group.tabs.findIndex((t) => t.id === tabId);
@@ -205,7 +199,7 @@ class WorkspacesManager {
 
   // Open work group in new window
   async openWorkspacesInWindow(groupId) {
-    const group = this.workspacess.get(groupId);
+    const group = this.map.get(groupId);
     if (!group) return null;
 
     try {
@@ -298,7 +292,7 @@ class WorkspacesManager {
 
   // Update work group tabs from window state
   async updateGroupFromWindow(groupId, windowId) {
-    const group = this.workspacess.get(groupId);
+    const group = this.map.get(groupId);
     if (!group || group.windowId !== windowId) return false;
 
     try {
@@ -335,7 +329,7 @@ class WorkspacesManager {
 
   // Find work group by window ID
   getGroupByWindowId(windowId) {
-    for (const group of this.workspacess.values()) {
+    for (const group of this.map.values()) {
       if (group.windowId === windowId) {
         return group;
       }
@@ -343,14 +337,9 @@ class WorkspacesManager {
     return null;
   }
 
-  // Generate unique ID
-  generateId() {
-    return 'wg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-  }
-
   // Get work group statistics
   getGroupStats(groupId) {
-    const group = this.workspacess.get(groupId);
+    const group = this.map.get(groupId);
     if (!group) return null;
 
     return {
@@ -403,22 +392,22 @@ class WorkspacesManager {
     return {
       version: '1.0',
       exportDate: Date.now(),
-      workspacess: this.getAllWorkspacess(),
+      workspaceses: this.getAllWorkspacess(),
     };
   }
 
   // Import work groups data
   async importData(data) {
     try {
-      if (!data.workspacess || !Array.isArray(data.workspacess)) {
+      if (!data.workspaceses || !Array.isArray(data.workspaceses)) {
         throw new Error('Invalid data format');
       }
 
       // Clear existing groups (with confirmation in UI)
-      this.workspacess.clear();
+      this.map.clear();
 
       // Import groups
-      data.workspacess.forEach((group) => {
+      data.workspaceses.forEach((group) => {
         // Generate new IDs to avoid conflicts
         const newGroup = {
           ...group,
@@ -426,7 +415,7 @@ class WorkspacesManager {
           windowId: null, // Reset window associations
           lastOpened: null,
         };
-        this.workspacess.set(newGroup.id, newGroup);
+        this.map.set(newGroup.id, newGroup);
       });
 
       await this.saveWorkspacess();
