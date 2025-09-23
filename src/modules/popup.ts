@@ -1,9 +1,13 @@
+import { Action } from './consts.js';
+import { $getElementById, $query, $queryAll } from './lib.js';
+
 // Popup JavaScript for Workspaces Manager
-class WorkspacesPopup {
+class WorkspacePopup {
+  private readonly workspaceses: Workspace[] = [];
+  private currentEditingGroup: Workspace | null = null;
+  private selectedColor: HexColor = '#667eea';
+
   constructor() {
-    this.workspaceses = [];
-    this.currentEditingGroup = null;
-    this.selectedColor = '#667eea';
     this.init();
   }
 
@@ -16,41 +20,42 @@ class WorkspacesPopup {
 
   // Setup event listeners
   setupEventListeners() {
+    // todo 加入断言来判定是否能找到
     // Create group button
-    document.getElementById('createGroupBtn').addEventListener('click', () => {
+    $getElementById('createGroupBtn').addEventListener('click', () => {
       this.showModal();
     });
 
     // Add current tab button
-    document.getElementById('addCurrentTabBtn').addEventListener('click', () => {
+    $getElementById('addCurrentTabBtn').addEventListener('click', () => {
       this.showAddTabMenu();
     });
 
     // Modal controls
-    document.getElementById('cancelBtn').addEventListener('click', () => {
+    $getElementById('cancelBtn').addEventListener('click', () => {
       this.hideModal();
     });
 
-    document.getElementById('saveBtn').addEventListener('click', () => {
+    $getElementById('saveBtn').addEventListener('click', () => {
       this.saveWorkspaces();
     });
 
     // Color picker
-    document.querySelectorAll('.color-option').forEach((option) => {
+    $queryAll('.color-option').forEach((option) => {
       option.addEventListener('click', (e) => {
         this.selectColor(e.target.dataset.color);
       });
     });
 
     // Close modal when clicking outside
-    document.getElementById('workspacesModal').addEventListener('click', (e) => {
+    $getElementById('workspacesModal').addEventListener('click', (e) => {
       if (e.target.id === 'workspacesModal') {
         this.hideModal();
       }
     });
 
     // Enter key to save
-    document.getElementById('groupName').addEventListener('keypress', (e) => {
+    $getElementById('groupName').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         this.saveWorkspaces();
       }
@@ -60,7 +65,7 @@ class WorkspacesPopup {
   // Load work groups from background
   async loadWorkspacess() {
     try {
-      const response = await this.sendMessage({ action: 'getWorkspacess' });
+      const response = await this.sendMessage({ action: Action.GetWorkspacess });
       if (response.success) {
         this.workspaceses = response.data || [];
       }
@@ -71,8 +76,8 @@ class WorkspacesPopup {
 
   // Render work groups in the popup
   renderWorkspacess() {
-    const container = document.getElementById('workspacesesList');
-    const emptyState = document.getElementById('emptyState');
+    const container = $getElementById('workspacesesList');
+    const emptyState = $getElementById('emptyState');
 
     if (this.workspaceses.length === 0) {
       container.style.display = 'none';
@@ -142,7 +147,7 @@ class WorkspacesPopup {
              onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\"><rect width=\"16\" height=\"16\" fill=\"%23f0f0f0\"/><text x=\"8\" y=\"12\" text-anchor=\"middle\" font-size=\"12\" fill=\"%23666\">?</text></svg>'">
         <div class="tab-info">
           <div class="tab-title">${this.escapeHtml(tab.title || 'Untitled')}</div>
-          <div class="tab-url">${this.escapeHtml(this.truncateUrl(tab.url))}</div>
+          <div class="tab-url">${this.escapeHtml(this.truncate(tab.url))}</div>
         </div>
         ${isPinned ? '<div class="pinned-indicator" title="Pinned tab">📌</div>' : ''}
         <div class="tab-actions">
@@ -191,7 +196,7 @@ class WorkspacesPopup {
           'text/plain',
           JSON.stringify({
             tabId: tab.dataset.tabId,
-            groupId: tab.closest('.work-group').dataset.groupId,
+            workspaceId: tab.closest('.work-group').dataset.workspaceId,
             tabUrl: tab.dataset.tabUrl,
           })
         );
@@ -222,10 +227,10 @@ class WorkspacesPopup {
 
         try {
           const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-          const targetGroupId = group.dataset.groupId;
+          const targetGroupId = group.dataset.workspaceId;
 
-          if (data.groupId !== targetGroupId) {
-            await this.moveTab(data.groupId, targetGroupId, data.tabId);
+          if (data.workspaceId !== targetGroupId) {
+            await this.moveTab(data.workspaceId, targetGroupId, data.tabId);
           }
         } catch (error) {
           console.error('__NAME__: Error handling drop:', error);
@@ -237,9 +242,9 @@ class WorkspacesPopup {
   // Show modal for creating/editing groups
   showModal(group = null) {
     this.currentEditingGroup = group;
-    const modal = document.getElementById('workspacesModal');
-    const title = document.getElementById('modalTitle');
-    const nameInput = document.getElementById('groupName');
+    const modal = $getElementById('workspacesModal');
+    const title = $getElementById('modalTitle');
+    const nameInput = $getElementById('groupName');
 
     if (group) {
       title.textContent = 'Edit Workspaces';
@@ -257,7 +262,7 @@ class WorkspacesPopup {
 
   // Hide modal
   hideModal() {
-    const modal = document.getElementById('workspacesModal');
+    const modal = $getElementById('workspacesModal');
     modal.classList.remove('show');
     this.currentEditingGroup = null;
   }
@@ -272,7 +277,7 @@ class WorkspacesPopup {
 
   // Save work group (create or update)
   async saveWorkspaces() {
-    const nameInput = document.getElementById('groupName');
+    const nameInput = $getElementById('groupName');
     const name = nameInput.value.trim();
 
     if (!name) {
@@ -312,23 +317,23 @@ class WorkspacesPopup {
   }
 
   // Edit work group
-  editGroup(groupId) {
-    const group = this.workspaceses.find((g) => g.id === groupId);
+  editGroup(workspaceId) {
+    const group = this.workspaceses.find((g) => g.id === workspaceId);
     if (group) {
       this.showModal(group);
     }
   }
 
   // Delete work group
-  async deleteGroup(groupId) {
-    const group = this.workspaceses.find((g) => g.id === groupId);
+  async deleteGroup(workspaceId) {
+    const group = this.workspaceses.find((g) => g.id === workspaceId);
     if (!group) return;
 
     if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
       try {
         const response = await this.sendMessage({
           action: 'deleteWorkspaces',
-          id: groupId,
+          id: workspaceId,
         });
 
         if (response.success) {
@@ -345,19 +350,19 @@ class WorkspacesPopup {
   }
 
   // Toggle group expansion
-  toggleGroup(groupId) {
-    const groupElement = document.querySelector(`[data-group-id="${groupId}"]`);
-    if (groupElement) {
-      groupElement.classList.toggle('expanded');
+  toggleWorkspace(id: string) {
+    const element = $query(`[data-group-id="${id}"]`);
+    if (element) {
+      element.classList.toggle('expanded');
     }
   }
 
   // Open work group in new window
-  async openWorkspaces(groupId) {
+  async openWorkspaces(id: string) {
     try {
       const response = await this.sendMessage({
-        action: 'openWorkspaces',
-        groupId,
+        action: Action.OpenWorkspaces,
+        workspaceId: id,
       });
 
       if (response.success) {
@@ -373,11 +378,11 @@ class WorkspacesPopup {
   }
 
   // Remove tab from group
-  async removeTab(groupId, tabId) {
+  async removeTab(workspaceId, tabId) {
     try {
       const response = await this.sendMessage({
         action: 'removeTab',
-        groupId,
+        workspaceId,
         tabId,
       });
 
@@ -394,11 +399,11 @@ class WorkspacesPopup {
   }
 
   // Toggle tab pin status
-  async toggleTabPin(groupId, tabId) {
+  async toggleTabPin(workspaceId, tabId) {
     try {
       const response = await this.sendMessage({
         action: 'togglePin',
-        groupId,
+        workspaceId,
         tabId,
       });
 
@@ -452,13 +457,14 @@ class WorkspacesPopup {
     const selectedIndex = await this.showSelectDialog('Select a work group:', groupOptions);
 
     if (selectedIndex !== null) {
-      const groupId = this.workspaceses[selectedIndex].id;
+      const workspaceId = this.workspaceses[selectedIndex].id;
       const isPinned = confirm('Pin this tab in the group?');
 
       try {
+        // todo sendmessage到底入参是string还是可以是object，要明确后再写
         const response = await this.sendMessage({
           action: 'addCurrentTab',
-          groupId,
+          workspaceId,
           isPinned,
         });
 
@@ -476,7 +482,7 @@ class WorkspacesPopup {
   }
 
   // Show a simple select dialog (simplified version)
-  async showSelectDialog(title, options) {
+  async showSelectDialog(title: string, options: string[]): Promise<number | null> {
     const choice = prompt(
       title +
         '\n\n' +
@@ -494,23 +500,10 @@ class WorkspacesPopup {
   }
 
   // Send message to background script
-  sendMessage(message) {
+  sendMessage(message: string) {
     return new Promise((resolve) => {
       browser.runtime.sendMessage(message, resolve);
     });
-  }
-
-  // Utility functions
-  escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  truncateUrl(url) {
-    if (!url) return '';
-    if (url.length <= 50) return url;
-    return url.substring(0, 47) + '...';
   }
 }
 
@@ -518,5 +511,5 @@ class WorkspacesPopup {
 let workspacesPopup;
 
 document.addEventListener('DOMContentLoaded', () => {
-  workspacesPopup = new WorkspacesPopup();
+  workspacesPopup = new WorkspacePopup();
 });

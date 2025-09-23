@@ -216,7 +216,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
         if (currentTab[0]) {
           const added = workspacesManager.addTabToGroup(
-            message.groupId,
+            message.workspaceId,
             currentTab[0],
             message.isPinned
           );
@@ -232,21 +232,21 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         break;
 
       case 'removeTab':
-        const removed = workspacesManager.removeTabFromGroup(message.groupId, message.tabId);
+        const removed = workspacesManager.removeTabFromGroup(message.workspaceId, message.tabId);
         sendResponse({
           success: removed,
         });
         break;
 
       case 'togglePin':
-        const pinToggled = workspacesManager.toggleTabPin(message.groupId, message.tabId);
+        const pinToggled = workspacesManager.toggleTabPin(message.workspaceId, message.tabId);
         sendResponse({
           success: pinToggled,
         });
         break;
 
       case 'openWorkspaces':
-        const window = await workspacesManager.openWorkspacesInWindow(message.groupId);
+        const window = await workspacesManager.openWorkspacesInWindow(message.workspaceId);
         sendResponse({
           success: !!window,
           data: window,
@@ -265,7 +265,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         break;
 
       case 'getGroupStats':
-        const stats = workspacesManager.getGroupStats(message.groupId);
+        const stats = workspacesManager.getGroupStats(message.workspaceId);
         sendResponse({
           success: !!stats,
           data: stats,

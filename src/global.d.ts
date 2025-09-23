@@ -1,3 +1,5 @@
+type HTMLTag = keyof HTMLElementTagNameMap;
+
 type HexColor = `#${string}`;
 
 interface Workspace {

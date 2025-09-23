@@ -1,4 +1,5 @@
 export const $NumberToString = Number.prototype.toString;
+export const $SubString = String.prototype.substring;
 
 export const $assign = Object.assign;
 
@@ -26,6 +27,7 @@ export const $setTimeout = setTimeout;
 
 const alphabets = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
 
+// # custom utils
 export const $genId = () => {
   const digits: string[] = ['kskb_', $NumberToString.call($now())];
   for (let i = 0; i < 16; i++) {
@@ -35,3 +37,29 @@ export const $genId = () => {
 };
 
 export const $sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+export const $truncate = (s: string, maxLen = 50) => {
+  if (!s) {
+    return '';
+  }
+  if (s.length <= maxLen) {
+    return s;
+  }
+  return $SubString.call(s, 0, maxLen - 3) + '...';
+};
+
+export const $escapeHtml = (text: string) => {
+  const div = $createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+};
+
+// # DOM
+const createElement = document.createElement;
+const getElementById = document.getElementById;
+const querySelector = document.querySelector;
+const querySelectorAll = document.querySelectorAll;
+
+export const $createElement = (tag: HTMLTag) => createElement.call(document, tag);
+export const $getElementById = (id: string) => getElementById.call(document, id);
+export const $query = (selector: string) => querySelector.call(document, selector);
+export const $queryAll = (selector: string) => querySelectorAll.call(document, selector);
