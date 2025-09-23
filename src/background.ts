@@ -142,7 +142,7 @@ browser.tabs.onCreated.addListener(async (tab) => {
   }
 });
 
-browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
   if (!manager) {
     return;
   }
@@ -188,7 +188,7 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
 });
 
 // Handle messages from popup and content scripts
-browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+browser.runtime.onMessage.addListener(async (message, _sender, respond) => {
   if (!manager) {
     await init();
   }
@@ -196,69 +196,66 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
   try {
     switch (message.action) {
       case Action.GetWorkspaces:
-        sendResponse({
-          success: true,
-          data: manager.workspaces,
-        });
+        respond({ success: true, data: manager.workspaces });
         break;
 
-      case 'createWorkspaces':
-        const w = manager.create(message.name, message.color);
-        sendResponse({ success: true, data: w });
+      case Action.CreateWorkspaces:
+        const newWorkspace = await manager.create(message.name, message.color);
+        respond({ success: true, data: newWorkspace });
         break;
 
-      case 'updateWorkspaces':
-        const updated = manager.update(message.id, message.updates);
-        sendResponse({ success: updated !== null, data: updated });
+      case Action.UpdateWorkspaces:
+        const updated = await manager.update(message.id, message.updates);
+        respond({ success: updated !== null, data: updated });
         break;
 
-      case 'deleteWorkspaces':
-        const deleted = manager.delete(message.id);
-        sendResponse({ success: deleted });
+      case Action.DeleteWorkspaces:
+        const deleted = await manager.delete(message.id);
+        respond({ success: deleted });
         break;
 
-      case 'addCurrentTab':
+      case Action.AddCurrentTab:
         const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
 
         if (currentTab[0]) {
-          const added = manager.addTab(message.workspaceId, currentTab[0], message.isPinned);
-          sendResponse({ success: added });
+          const added = await manager.addTab(message.workspaceId, currentTab[0], message.isPinned);
+          respond({ success: added });
         } else {
-          sendResponse({ success: false, error: 'No active tab found' });
+          respond({ success: false, error: 'No active tab found' });
         }
         break;
 
-      case 'removeTab':
-        const removed = manager.removeTab(message.workspaceId, message.tabId);
-        sendResponse({ success: removed });
+      case Action.RemoveTab:
+        const removed = await manager.removeTab(message.workspaceId, message.tabId);
+        respond({ success: removed });
         break;
 
-      case 'togglePin':
-        const pinToggled = manager.toggleTabPin(message.workspaceId, message.tabId);
-        sendResponse({ success: pinToggled });
+      case Action.TogglePin:
+        const pinToggled = await manager.toggleTabPin(message.workspaceId, message.tabId);
+        respond({ success: pinToggled });
         break;
 
-      case 'openWorkspaces':
+      case Action.OpenWorkspaces:
         const window = await manager.open(message.workspaceId);
-        sendResponse({ success: window !== null, data: window });
+        respond({ success: window !== null, data: window });
         break;
 
-      case 'moveTab':
-        const moved = manager.moveTabBetweenWorkspaces(
+      case Action.MoveTab:
+        const moved = await manager.moveTabBetweenWorkspaces(
           message.fromWorkspaceId,
           message.toWorkspaceId,
           message.tabId
         );
-        sendResponse({ success: moved });
+        respond({ success: moved });
         break;
 
-      case 'getGroupStats':
+      case Action.GetGroupStats:
         const stats = manager.getStats(message.workspaceId);
-        sendResponse({ success: stats !== null, data: stats });
+        respond({ success: stats !== null, data: stats });
         break;
 
-      case 'checkPageInGroups':
-        const matchingGroups = manager.workspaces.filter((workspace) => {
+      case Action.CheckPageInGroups:
+        const matched = manager.workspaces.filter((workspace) => {
           for (let i = 0; i < workspace.pinnedTabs.length; i++) {
             if (workspace.pinnedTabs[i].url === message.url) {
               return true;
@@ -271,15 +268,15 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
           }
           return false;
         });
-        sendResponse({ success: true, groups: matchingGroups });
+        respond({ success: true, groups: matched });
         break;
 
       default:
-        sendResponse({ success: false, error: 'Unknown action' });
+        respond({ success: false, error: 'Unknown action' });
     }
   } catch (error) {
     console.error('__NAME__: Error handling message:', error);
-    sendResponse({ success: false });
+    respond({ success: false });
   }
 
   return true; // Keep message channel open for async response

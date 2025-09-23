@@ -58,9 +58,7 @@ export class WorkspaceManager {
     return true;
   }
 
-  // todo 由于火狐浏览器的操作是异步的，因此这里需要在前端调用的时候加入防抖或延迟
-  // 要不然全都改成异步函数吧
-  create(name: string, color: HexColor = '#667eea'): IndexedWorkspace {
+  async create(name: string, color: HexColor = '#667eea'): Promise<IndexedWorkspace> {
     const id = $genId();
     const workspace: IndexedWorkspace = {
       index: this._arr.length,
@@ -77,22 +75,22 @@ export class WorkspaceManager {
     this._map.set(id, workspace);
     this._arr.push(workspace);
 
-    this.save();
+    await this.save();
     return workspace;
   }
 
-  update(id: string, updates: Partial<Workspace>) {
+  async update(id: string, updates: Partial<Workspace>) {
     const workspace = this._map.get(id);
     if (!workspace) {
       return null;
     }
     $assign(workspace, updates);
-    this.save();
+    await this.save();
     return workspace;
   }
 
   // Delete a work group
-  delete(id: string): boolean {
+  async delete(id: string): Promise<boolean> {
     const target = this._map.get(id);
     if (!target) {
       return false;
@@ -104,7 +102,7 @@ export class WorkspaceManager {
       this._arr[i].index = i;
     }
 
-    this.save();
+    await this.save();
     return true;
   }
 
@@ -113,10 +111,11 @@ export class WorkspaceManager {
   }
 
   // Add tab to work group
-  addTab(id: string, browserTab: browser.tabs.Tab, pinned: boolean = false) {
+  async addTab(id: string, browserTab: browser.tabs.Tab, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
       // ? 找不到不用报错的？？
+      console.error(`__NAME__:addTab Workspace with id ${id} not found`);
       return false;
     }
 
@@ -142,11 +141,11 @@ export class WorkspaceManager {
       }
     }
 
-    this.save();
+    await this.save();
     return true;
   }
 
-  removeTab(id: string, tabId: number) {
+  async removeTab(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
       return false;
@@ -154,13 +153,13 @@ export class WorkspaceManager {
     const filter = (tab: TabInfo) => tab.id !== tabId;
     workspace.tabs = $ArrayFilter.call(workspace.tabs, filter);
     workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, filter);
-    this.save();
+    await this.save();
     return true;
   }
 
   // fixme 从这里往下暂时先不用缓存的方法来写，最后让ai来做
   // Move tab between work groups
-  moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number) {
+  async moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number) {
     const from = this._map.get(fromId);
     const to = this._map.get(toId);
 
@@ -183,7 +182,7 @@ export class WorkspaceManager {
           to.tabs.push(tab);
         }
 
-        this.save();
+        await this.save();
         return true;
       }
     }
@@ -191,7 +190,7 @@ export class WorkspaceManager {
   }
 
   // Toggle tab pinned status within a group
-  toggleTabPin(id: string, tabId: number) {
+  async toggleTabPin(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
       // ? 找不到不用报错的？？
@@ -204,7 +203,7 @@ export class WorkspaceManager {
       // Move to pinned
       const tab = workspace.tabs.splice(tabIndex, 1)[0];
       workspace.pinnedTabs.push(tab);
-      this.save();
+      await this.save();
       return true;
     }
 
@@ -214,7 +213,7 @@ export class WorkspaceManager {
       // Move to regular
       const tab = workspace.pinnedTabs.splice(pinnedIndex, 1)[0];
       workspace.tabs.push(tab);
-      this.save();
+      await this.save();
       return true;
     }
   }
