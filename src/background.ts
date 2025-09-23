@@ -219,7 +219,7 @@ browser.runtime.onMessage.addListener(async (message: Message, _sender, respond:
         const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
 
         if (currentTab[0]) {
-          const added = await manager.addTab(message.workspaceId, currentTab[0], message.isPinned);
+          const added = await manager.addTab(message.workspaceId, currentTab[0], message.pinned);
           respond<AddCurrentTabResponse>({ success: added });
         } else {
           respond<AddCurrentTabResponse>({ success: false, error: 'No active tab found' });

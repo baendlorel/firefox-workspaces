@@ -17,9 +17,6 @@ import { $send } from './lib/ext-apis.js';
 
   // Content script for handling page-specific features
   class WorkspacesContent {
-    private lastContextElement: EventTarget | null = null;
-    private lastContextPosition: { x: number; y: number } = { x: 0, y: 0 };
-
     constructor() {
       this.init();
     }
@@ -27,7 +24,6 @@ import { $send } from './lib/ext-apis.js';
     init() {
       this.setupMessageListener();
       this.injectStyles();
-      this.setupContextMenu();
     }
 
     // Listen for messages from popup or background
@@ -94,17 +90,6 @@ import { $send } from './lib/ext-apis.js';
         }
       `;
       document.head.appendChild(style);
-    }
-
-    // Setup context menu enhancements
-    setupContextMenu() {
-      const handler = ((event: PointerEvent) => {
-        this.lastContextElement = event.target;
-        this.lastContextPosition = { x: event.clientX, y: event.clientY };
-      }) as EventListener;
-
-      // Add context menu listener for better integration
-      $on.call(document, 'contextmenu', handler);
     }
 
     // Get page favicon

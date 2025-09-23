@@ -484,13 +484,13 @@ class WorkspacePopup {
 
     if (selectedIndex !== null) {
       const workspaceId = this.workspaceses[selectedIndex].id;
-      const isPinned = confirm('Pin this tab in the group?');
+      const pinned = confirm('Pin this tab in the group?');
 
       try {
         const response = await $send<AddCurrentTabRequest>({
           action: Action.AddCurrentTab,
           workspaceId,
-          isPinned,
+          pinned,
         });
 
         if (response.success) {

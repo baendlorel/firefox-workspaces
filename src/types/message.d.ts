@@ -26,7 +26,7 @@ declare global {
   interface AddCurrentTabRequest {
     action: Action.AddCurrentTab;
     workspaceId: string;
-    isPinned: boolean;
+    pinned: boolean;
   }
 
   interface RemoveTabRequest {

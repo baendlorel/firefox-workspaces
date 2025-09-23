@@ -150,43 +150,45 @@ export class WorkspaceManager {
     if (!workspace) {
       return false;
     }
-    const filter = (tab: TabInfo) => tab.id !== tabId;
-    workspace.tabs = $ArrayFilter.call(workspace.tabs, filter);
-    workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, filter);
+    const predicate = (t: TabInfo) => t.id !== tabId;
+    workspace.tabs = $ArrayFilter.call(workspace.tabs, predicate);
+    workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, predicate);
     await this.save();
     return true;
   }
 
   // fixme 从这里往下暂时先不用缓存的方法来写，最后让ai来做
   // Move tab between work groups
-  async moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number) {
+  async moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number): Promise<boolean> {
     const from = this._map.get(fromId);
     const to = this._map.get(toId);
+    const predicate = (t: TabInfo) => t.id === tabId;
 
-    if (from && to) {
-      // Find tab in source group
-      let tab = from.tabs.find((t) => t.id === tabId);
-      let isPinned = false;
-
-      if (!tab) {
-        tab = from.pinnedTabs.find((t) => t.id === tabId);
-        isPinned = true;
-      } else {
-        // Remove from source group
-        this.removeTab(fromId, tabId);
-
-        // Add to destination group with same pinned status
-        if (isPinned) {
-          to.pinnedTabs.push(tab);
-        } else {
-          to.tabs.push(tab);
-        }
-
-        await this.save();
-        return true;
-      }
+    if (!from || !to) {
+      return false;
     }
-    return false;
+
+    let pinned = false;
+    // Find tab in source group
+    const tab = from.tabs.find(predicate) ?? ((pinned = true), from.pinnedTabs.find(predicate));
+
+    if (!tab) {
+      return false;
+    }
+
+    // Remove from source group
+    await this.removeTab(fromId, tabId);
+
+    // Add to destination group with same pinned status
+    // Here `tab` is found, so `maybePinned` is accurate `pinned`
+    if (pinned) {
+      to.pinnedTabs.push(tab);
+    } else {
+      to.tabs.push(tab);
+    }
+
+    await this.save();
+    return true;
   }
 
   // Toggle tab pinned status within a group
@@ -197,8 +199,10 @@ export class WorkspaceManager {
       return false;
     }
 
+    const predicate = (t: TabInfo) => t.id === tabId;
+
     // Check if tab is in regular tabs
-    const tabIndex = workspace.tabs.findIndex((t) => t.id === tabId);
+    const tabIndex = workspace.tabs.findIndex(predicate);
     if (tabIndex !== -1) {
       // Move to pinned
       const tab = workspace.tabs.splice(tabIndex, 1)[0];
@@ -208,7 +212,7 @@ export class WorkspaceManager {
     }
 
     // Check if tab is in pinned tabs
-    const pinnedIndex = workspace.pinnedTabs.findIndex((t) => t.id === tabId);
+    const pinnedIndex = workspace.pinnedTabs.findIndex(predicate);
     if (pinnedIndex !== -1) {
       // Move to regular
       const tab = workspace.pinnedTabs.splice(pinnedIndex, 1)[0];
