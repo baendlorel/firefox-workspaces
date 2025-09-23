@@ -1,16 +1,33 @@
 // @ts-check
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
+
+import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import { replaceOpts, replaceLiteralOpts } from './scripts/replace.mjs';
-import { resolve } from 'path';
+
+const tsconfig = './tsconfig.build.json';
 
 export default defineConfig({
   plugins: [
     replace(replaceOpts),
     replace({
+      preventAssignment: true,
       delimiters: ['', ''],
       values: replaceLiteralOpts,
     }),
+    typescript({ tsconfig }),
+    {
+      name: 'serve-popup-as-index',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          if (req.url === '/' || req.url === '/index.html') {
+            req.url = '/popup.html';
+          }
+          next();
+        });
+      },
+    },
   ],
   build: {
     outDir: 'dist',

@@ -82,7 +82,7 @@ class WorkspacePopup {
 
   // Render work groups in the popup
   renderWorkspacess() {
-    const container = $getElementByIdOrThrow('workspacesesList');
+    const container = $getElementByIdOrThrow('workspacesList');
     const emptyState = $getElementByIdOrThrow('emptyState');
 
     if (this.workspaceses.length === 0) {
