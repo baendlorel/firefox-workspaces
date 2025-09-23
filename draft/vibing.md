@@ -68,3 +68,11 @@ class WorkspacesContent {
 2. 如果有的话，src下哪些ts文件属于有必要的文件，哪些文件是没有必要的；
 3. 如果完全没有必要，那么你可以帮我全都改回普通的写法来；
 4. 如果有必要，那请你根据实际代码内容，按需要缓存更多原生方法并应用它们
+
+---
+
+帮我写vite打包配置：
+
+1. 只看src/文件夹下的ts文件
+2. src打包后的代码直接放入dist而不是dist/src
+3. 帮我利用`@types/firefox-webext-browser`写一些测试命令，放在package.json里
