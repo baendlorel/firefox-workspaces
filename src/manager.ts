@@ -232,7 +232,7 @@ export class WorkspaceManager {
         try {
           await browser.windows.update(workspace.windowId, { focused: true });
           return { id: workspace.windowId };
-        } catch (error) {
+        } catch {
           // Window doesn't exist anymore, clear the reference
           workspace.windowId = undefined;
         }

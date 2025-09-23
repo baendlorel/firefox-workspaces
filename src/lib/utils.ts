@@ -34,7 +34,7 @@ export const $escapeHtml = (text: string) => {
 //   favIconUrl: browserTab.favIconUrl ?? '',
 //   addedAt: $now(),
 //};
-export const $createTabInfo = (tab: browser.tabs.Tab, addedAt?: number): TabInfo => ({
+export const $createTabInfo = (tab: browser.tabs.Tab): TabInfo => ({
   id: tab.id ?? NaN,
   url: tab.url ?? '[No URL]',
   title: tab.title ?? '[No Title]',

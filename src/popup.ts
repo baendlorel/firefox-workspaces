@@ -48,13 +48,13 @@ class WorkspacePopup {
     });
 
     for (let i = colorOptions.length - 1; i >= 0; i--) {
-      colorOptions[i].addEventListener('click', (e) => {
+      colorOptions[i].addEventListener('click', () => {
         const color = (colorOptions[i].dataset.color ?? Consts.DefaultColor) as HexColor;
         this.selectColor(color);
       });
     }
 
-    workspacesModal.addEventListener('click', (e) => {
+    workspacesModal.addEventListener('click', () => {
       if (workspacesModal.id === 'workspacesModal') {
         this.hideModal();
       }
@@ -151,7 +151,7 @@ class WorkspacePopup {
     const renderTab = (tab: TabInfo, pinned: boolean) => `
       <div class="tab-item" data-tab-id="${tab.id}" data-tab-url="${tab.url}">
         <img class="tab-favicon" src="${tab.favIconUrl || 'icons/default-favicon.png'}" 
-             onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\"><rect width=\"16\" height=\"16\" fill=\"%23f0f0f0\"/><text x=\"8\" y=\"12\" text-anchor=\"middle\" font-size=\"12\" fill=\"%23666\">?</text></svg>'">
+             onerror="this.src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" fill="%23f0f0f0"/><text x="8" y="12" text-anchor="middle" font-size="12" fill="%23666">?</text></svg>'">
         <div class="tab-info">
           <div class="tab-title">${$escapeHtml(tab.title || 'Untitled')}</div>
           <div class="tab-url">${$escapeHtml($truncate(tab.url))}</div>

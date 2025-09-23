@@ -293,7 +293,7 @@ browser.runtime.onInstalled.addListener(() => {
   });
 });
 
-browser.contextMenus.onClicked.addListener(async (info, tab) => {
+browser.contextMenus.onClicked.addListener(async (info, _tab) => {
   if (info.menuItemId === 'addToWorkspaces') {
     // Open popup to select workspace
     // This could be enhanced with a submenu showing available groups
