@@ -20,7 +20,7 @@ async function initializeWorkspacesManager() {
 
     console.log('Workspaces Manager initialized in background');
   } catch (error) {
-    console.error('Failed to initialize Workspaces Manager:', error);
+    console.error('__NAME__: Failed to initialize Workspaces Manager:', error);
   }
 }
 
@@ -74,7 +74,7 @@ setInterval(async () => {
         await workspacesManager.saveWorkspacess();
       }
     } catch (error) {
-      console.error('Error during periodic save:', error);
+      console.error('__NAME__: Error during periodic save:', error);
     }
   }
 }, 30000); // Save every 30 seconds
@@ -291,7 +291,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         });
     }
   } catch (error) {
-    console.error('Error handling message:', error);
+    console.error('__NAME__: Error handling message:', error);
     sendResponse({
       success: false,
       error: error.message,

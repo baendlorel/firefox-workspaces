@@ -1,14 +1,21 @@
 import { Consts } from './consts.js';
-import { $ArrayFilter, $ArrayFind, $ArrayFrom, $ArrayPush, $assign, $genId, $now } from './lib.js';
+import {
+  $ArrayFilter,
+  $ArrayFind,
+  $ArrayPush,
+  $assign,
+  $genId,
+  $isArray,
+  $now,
+  $sleep,
+} from './lib.js';
 
 // Workspace Data Model and Storage Manager
 class WorkspaceManager {
-  private readonly _map: Map<string, Workspace>;
-  private readonly currentEditingGroup: null = null;
+  private readonly _map = new Map<string, IndexedWorkspace>();
+  private readonly _arr: IndexedWorkspace[] = [];
 
   constructor() {
-    this._map = new Map();
-    this.currentEditingGroup = null;
     this.init();
   }
 
@@ -18,7 +25,7 @@ class WorkspaceManager {
       await this.loadWorkspacess();
       console.log('Workspaces Manager initialized');
     } catch (error) {
-      console.error('Failed to initialize Workspaces Manager:', error);
+      console.error('__NAME__: Failed to initialize Workspaces Manager:', error);
     }
   }
 
@@ -28,21 +35,28 @@ class WorkspaceManager {
     if (!workspaces.list) {
       return;
     }
-    this._map.clear();
+
     const list = workspaces.list;
     const len = workspaces.list.length;
+
+    // prepare the containers
+    this._map.clear();
+    this._arr.length = len;
+
+    // initialize 2 containers
     for (let i = 0; i < len; i++) {
-      this._map.set(list[i].id, list[i]);
+      const indexed = $assign({ index: i }, list[i]);
+      this._map.set(list[i].id, $assign(indexed));
+      this._arr[i] = indexed;
     }
   }
 
   async save() {
-    const list = $ArrayFrom(this._map.values());
-    const data: WorkspaceStoredData = { list };
+    const data: WorkspaceStoredData = { list: this._arr };
     try {
       await browser.storage.local.set(data);
     } catch (error) {
-      console.error('Failed to save workspaces:', error);
+      console.error('__NAME__: Failed to save workspaces:', error);
       return false;
     }
     return true;
@@ -50,62 +64,67 @@ class WorkspaceManager {
 
   // todo 由于火狐浏览器的操作是异步的，因此这里需要在前端调用的时候加入防抖或延迟
   // 要不然全都改成异步函数吧
-  create(name: string, color: HexColor = '#667eea') {
+  create(name: string, color: HexColor = '#667eea'): IndexedWorkspace {
     const id = $genId();
-    const workspace: Workspace = {
+    const workspace: IndexedWorkspace = {
+      index: this._arr.length,
       id: id,
       name: name,
       color: color,
       tabs: [],
       pinnedTabs: [],
       createdAt: Date.now(),
-      lastOpened: null,
-      windowId: null, // Track associated window
+      lastOpened: NaN,
+      windowId: undefined, // Track associated window
     };
 
     this._map.set(id, workspace);
+    this._arr.push(workspace);
+
     this.save();
     return workspace;
   }
 
   update(id: string, updates: Partial<Workspace>) {
-    const group = this._map.get(id);
-    if (!group) {
+    const workspace = this._map.get(id);
+    if (!workspace) {
       return null;
     }
-    $assign(group, updates);
+    $assign(workspace, updates);
     this.save();
-    return group;
+    return workspace;
   }
 
   // Delete a work group
-  delete(id: string) {
-    const success = this._map.delete(id);
-    if (success) {
-      this.save();
+  delete(id: string): boolean {
+    const target = this._map.get(id);
+    if (!target) {
+      return false;
     }
-    return success;
+
+    this._map.delete(id);
+    this._arr.splice(target.index, 1);
+    for (let i = target.index; i < this._arr.length; i++) {
+      this._arr[i].index = i;
+    }
+
+    this.save();
+    return true;
   }
 
-  // Get a work group by id
   get(id: string) {
     return this._map.get(id);
   }
 
-  // Get all work groups as array
-  getAllWorkspacess() {
-    return $ArrayFrom(this._map.values());
-  }
-
   // Add tab to work group
-  // todo 找不到不用报错的？？
-  addTabToGroup(id: string, tab: Tab, pinned: boolean = false) {
+  addTab(id: string, tab: TabInfo, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
+      // ? 找不到不用报错的？？
       return false;
     }
 
-    const tabData: Tab = {
+    const tabData: TabInfo = {
       id: tab.id,
       url: tab.url,
       title: tab.title,
@@ -113,8 +132,8 @@ class WorkspaceManager {
       addedAt: $now(),
     };
 
-    const except = (t: Tab) => t.id !== tab.id;
-    const find = (t: Tab) => t.id === tab.id;
+    const except = (t: TabInfo) => t.id !== tab.id;
+    const find = (t: TabInfo) => t.id === tab.id;
 
     if (pinned) {
       // Remove from regular tabs if exists
@@ -142,7 +161,7 @@ class WorkspaceManager {
     if (!workspace) {
       return false;
     }
-    const filter = (tab: Tab) => tab.id !== tabId;
+    const filter = (tab: TabInfo) => tab.id !== tabId;
     workspace.tabs = $ArrayFilter.call(workspace.tabs, filter);
     workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, filter);
     this.save();
@@ -185,6 +204,7 @@ class WorkspaceManager {
   toggleTabPin(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
+      // ? 找不到不用报错的？？
       return false;
     }
 
@@ -209,27 +229,42 @@ class WorkspaceManager {
     }
   }
 
+  // ? 这个函数没人用？
   // Open work group in new window
-  async openWorkspacesInWindow(id: string) {
-    const group = this._map.get(id);
-    if (!group) return null;
+  async openWorkspaceInWindow(id: string) {
+    const workspace = this._map.get(id);
+    if (!workspace) {
+      return null;
+    }
 
     try {
       // If group already has an active window, focus it
-      if (group.windowId) {
+      if (workspace.windowId) {
         try {
-          await browser.windows.update(group.windowId, { focused: true });
-          return { id: group.windowId };
+          await browser.windows.update(workspace.windowId, { focused: true });
+          return { id: workspace.windowId };
         } catch (error) {
           // Window doesn't exist anymore, clear the reference
-          group.windowId = null;
+          workspace.windowId = undefined;
         }
       }
 
       // Collect all URLs (pinned first, then regular)
-      const pinnedUrls = group.pinnedTabs.map((tab) => tab.url).filter((url) => url);
-      const regularUrls = group.tabs.map((tab) => tab.url).filter((url) => url);
-      const allUrls = [...pinnedUrls, ...regularUrls];
+      const allUrls: string[] = [];
+      const pinnedUrls: string[] = [];
+      for (let i = 0; i < workspace.pinnedTabs.length; i++) {
+        const url = workspace.pinnedTabs[i].url;
+        if (url) {
+          allUrls.push(url);
+          pinnedUrls.push(url);
+        }
+      }
+      for (let i = 0; i < workspace.tabs.length; i++) {
+        const url = workspace.tabs[i].url;
+        if (url) {
+          allUrls.push(url);
+        }
+      }
 
       if (allUrls.length === 0) {
         // Create window with new tab page if no URLs
@@ -237,9 +272,9 @@ class WorkspaceManager {
           url: 'about:newtab',
           type: 'normal',
         });
-        group.windowId = window.id;
-        group.lastOpened = Date.now();
-        this.save();
+        workspace.windowId = window.id;
+        workspace.lastOpened = $now();
+        await this.save();
         return window;
       }
 
@@ -250,10 +285,10 @@ class WorkspaceManager {
       });
 
       // Wait a moment for window to be ready
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await $sleep(500);
 
       // Open remaining URLs as tabs
-      const createdTabs = [];
+      const createdTabs: { tab: browser.tabs.Tab; pinned: boolean }[] = [];
       for (let i = 1; i < allUrls.length; i++) {
         try {
           const tab = await browser.tabs.create({
@@ -261,179 +296,200 @@ class WorkspaceManager {
             url: allUrls[i],
             active: false,
           });
-          createdTabs.push({ tab, isPinned: i <= pinnedUrls.length });
+          createdTabs.push({ tab, pinned: i <= pinnedUrls.length });
         } catch (error) {
           console.error(`Failed to create tab for URL: ${allUrls[i]}`, error);
         }
       }
 
       // Pin tabs that should be pinned
-      for (const { tab, isPinned } of createdTabs) {
-        if (isPinned) {
-          try {
-            await browser.tabs.update(tab.id, { pinned: true });
-          } catch (error) {
-            console.error('Failed to pin tab:', error);
-          }
+      for (let i = 0; i < createdTabs.length; i++) {
+        const tab = createdTabs[i].tab;
+        if (!createdTabs[i].pinned || !tab.id) {
+          continue;
+        }
+        try {
+          await browser.tabs.update(tab.id, { pinned: true });
+        } catch (error) {
+          console.error('__NAME__: Failed to pin tab:', error);
         }
       }
 
       // Pin the first tab if it should be pinned
+      // ? 难道不需要都pin上？
       if (pinnedUrls.length > 0) {
         try {
           const tabs = await browser.tabs.query({ windowId: window.id });
-          if (tabs.length > 0) {
+          if (tabs.length > 0 && tabs[0].id) {
             await browser.tabs.update(tabs[0].id, { pinned: true });
           }
         } catch (error) {
-          console.error('Failed to pin first tab:', error);
+          console.error('__NAME__: Failed to pin first tab:', error);
         }
       }
 
       // Update group with window association and last opened time
-      group.windowId = window.id;
-      group.lastOpened = Date.now();
+      workspace.windowId = window.id;
+      workspace.lastOpened = Date.now();
       this.save();
 
       return window;
     } catch (error) {
-      console.error('Failed to open work group in window:', error);
+      console.error('__NAME__: Failed to open work group in window:', error);
       return null;
     }
   }
 
   // Update work group tabs from window state
-  async updateGroupFromWindow(groupId, windowId) {
-    const group = this._map.get(groupId);
-    if (!group || group.windowId !== windowId) return false;
-
+  async updateWorkspaceFromWindow(id: string, windowId: number | undefined) {
+    const workspace = this._map.get(id);
+    if (!workspace || workspace.windowId !== windowId) {
+      return false;
+    }
     try {
-      const tabs = await browser.tabs.query({ windowId: windowId });
+      const tabs = await browser.tabs.query({ windowId });
 
       // Clear existing tabs
-      group.tabs = [];
-      group.pinnedTabs = [];
+      workspace.tabs = [];
+      workspace.pinnedTabs = [];
 
       // Categorize tabs
-      tabs.forEach((tab) => {
-        const tabData = {
-          id: tab.id,
-          url: tab.url,
-          title: tab.title,
-          favIconUrl: tab.favIconUrl,
-          addedAt: Date.now(),
+      for (let i = 0; i < tabs.length; i++) {
+        const tab = tabs[i];
+        const tabData: TabInfo = {
+          id: tab.id ?? NaN,
+          url: tab.url ?? '',
+          title: tab.title ?? '',
+          favIconUrl: tab.favIconUrl ?? '',
+          addedAt: $now(),
         };
 
         if (tab.pinned) {
-          group.pinnedTabs.push(tabData);
+          workspace.pinnedTabs.push(tabData);
         } else {
-          group.tabs.push(tabData);
+          workspace.tabs.push(tabData);
         }
-      });
+      }
 
-      this.save();
+      await this.save();
       return true;
     } catch (error) {
-      console.error('Failed to update group from window:', error);
+      console.error('__NAME__: Failed to update group from window:', error);
       return false;
     }
   }
 
-  // Find work group by window ID
-  getGroupByWindowId(windowId) {
-    for (const group of this._map.values()) {
-      if (group.windowId === windowId) {
-        return group;
+  /**
+   * Find work group by window ID
+   *
+   * ## Trivia
+   *
+   * [INFO] map.values is the fastest way to iterate Map values.
+   * Tested for map.size = 1e7
+   * - for...of map.values()    : 70.80 ms  (x1.00)
+   * - for...of map.entries()   : 86.40 ms  (x1.22)
+   * - for...of map             : 87.80 ms  (x1.24)
+   * - map.forEach              : 133.20 ms  (x1.88)
+   * - Array.from(map) + for i  : 643.30 ms  (x9.09)
+   *
+   * 🤣 But we finally decided to keep an array for indexed access and ordering.
+   */
+  getWorkspaceByWindowId(windowId: number): Workspace | null {
+    for (let i = 0; i < this._arr.length; i++) {
+      if (this._arr[i].windowId === windowId) {
+        return this._arr[i];
       }
     }
     return null;
   }
 
-  // Get work group statistics
-  getGroupStats(groupId) {
-    const group = this._map.get(groupId);
-    if (!group) return null;
+  getWorkspaceStats(id: string): WorkspaceStats | null {
+    const workspace = this._map.get(id);
+    if (!workspace) {
+      return null;
+    }
 
     return {
-      totalTabs: group.tabs.length + group.pinnedTabs.length,
-      pinnedTabs: group.pinnedTabs.length,
-      regularTabs: group.tabs.length,
-      lastOpened: group.lastOpened,
-      createdAt: group.createdAt,
-      isActive: !!group.windowId,
+      totalTabs: workspace.tabs.length + workspace.pinnedTabs.length,
+      pinnedTabs: workspace.pinnedTabs.length,
+      regularTabs: workspace.tabs.length,
+      lastOpened: workspace.lastOpened,
+      createdAt: workspace.createdAt,
+      isActive: Boolean(workspace.windowId),
     };
   }
 
   // Save current session for all active work groups
-  async saveActiveGroupSessions() {
-    const groups = this.getAllWorkspacess();
-    const activeGroups = groups.filter((g) => g.windowId);
-
-    for (const group of activeGroups) {
+  async saveActiveWorkspaceSessions() {
+    for (let i = 0; i < this._arr.length; i++) {
+      const workspace = this._arr[i];
+      if (workspace.windowId === undefined) {
+        continue;
+      }
       try {
-        await this.updateGroupFromWindow(group.id, group.windowId);
+        await this.updateWorkspaceFromWindow(workspace.id, workspace.windowId);
       } catch (error) {
-        console.error(`Failed to save session for group ${group.name}:`, error);
+        console.error(`Failed to save session for group ${workspace.name}:`, error);
       }
     }
   }
 
   // Restore all work group sessions on startup
   async restoreGroupSessions() {
-    const groups = this.getAllWorkspacess();
-
-    // Clear any stale window associations
-    groups.forEach((group) => {
-      group.windowId = null;
-    });
-
+    for (let i = 0; i < this._arr.length; i++) {
+      this._arr[i].windowId = undefined;
+    }
     await this.save();
     console.log('Cleared stale window associations on startup');
   }
 
   // Get recently closed work groups
-  getRecentlyClosedGroups(limit = 5) {
-    return this.getAllWorkspacess()
-      .filter((group) => group.lastOpened && !group.windowId)
+  getRecentlyClosedWorkspaces(limit: number = 5) {
+    return this._arr
+      .filter((workspace) => workspace.lastOpened && !workspace.windowId)
       .sort((a, b) => b.lastOpened - a.lastOpened)
       .slice(0, limit);
   }
 
-  // Export work groups data
-  exportData() {
+  exportData(): ExportData {
     return {
-      version: '1.0',
-      exportDate: Date.now(),
-      workspaceses: this.getAllWorkspacess(),
+      version: '__VERSION__',
+      exportDate: $now(),
+      workspaceses: this._arr,
     };
   }
 
-  // Import work groups data
-  async importData(data) {
+  async importData(data: ExportData): Promise<boolean> {
     try {
-      if (!data.workspaceses || !Array.isArray(data.workspaceses)) {
-        throw new Error('Invalid data format');
+      if (!$isArray(data.workspaceses)) {
+        console.error(
+          `__NAME__: Invalid data format, data.workspaceses must be an array of Workspace Data`
+        );
+        return false;
       }
 
       // Clear existing groups (with confirmation in UI)
       this._map.clear();
+      this._arr.length = 0;
 
       // Import groups
-      data.workspaceses.forEach((group) => {
-        // Generate new IDs to avoid conflicts
-        const newGroup = {
-          ...group,
-          id: this.generateId(),
-          windowId: null, // Reset window associations
-          lastOpened: null,
+      for (let i = 0; i < data.workspaceses.length; i++) {
+        const workspace = data.workspaceses[i];
+        const newWorkspace: IndexedWorkspace = {
+          ...workspace,
+          index: i,
+          id: $genId(),
+          windowId: undefined,
+          lastOpened: NaN,
         };
-        this._map.set(newGroup.id, newGroup);
-      });
+        this._map.set(newWorkspace.id, newWorkspace);
+        this._arr.push(newWorkspace);
+      }
 
       await this.save();
       return true;
     } catch (error) {
-      console.error('Failed to import data:', error);
+      console.error('__NAME__: Failed to import data:', error);
       return false;
     }
   }

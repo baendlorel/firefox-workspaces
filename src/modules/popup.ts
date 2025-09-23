@@ -65,7 +65,7 @@ class WorkspacesPopup {
         this.workspaceses = response.data || [];
       }
     } catch (error) {
-      console.error('Failed to load work groups:', error);
+      console.error('__NAME__: Failed to load work groups:', error);
     }
   }
 
@@ -228,7 +228,7 @@ class WorkspacesPopup {
             await this.moveTab(data.groupId, targetGroupId, data.tabId);
           }
         } catch (error) {
-          console.error('Error handling drop:', error);
+          console.error('__NAME__: Error handling drop:', error);
         }
       });
     });
@@ -306,7 +306,7 @@ class WorkspacesPopup {
         alert('Failed to save work group');
       }
     } catch (error) {
-      console.error('Error saving work group:', error);
+      console.error('__NAME__: Error saving work group:', error);
       alert('Error saving work group');
     }
   }
@@ -338,7 +338,7 @@ class WorkspacesPopup {
           alert('Failed to delete work group');
         }
       } catch (error) {
-        console.error('Error deleting work group:', error);
+        console.error('__NAME__: Error deleting work group:', error);
         alert('Error deleting work group');
       }
     }
@@ -367,7 +367,7 @@ class WorkspacesPopup {
         alert('Failed to open work group');
       }
     } catch (error) {
-      console.error('Error opening work group:', error);
+      console.error('__NAME__: Error opening work group:', error);
       alert('Error opening work group');
     }
   }
@@ -388,7 +388,7 @@ class WorkspacesPopup {
         alert('Failed to remove tab');
       }
     } catch (error) {
-      console.error('Error removing tab:', error);
+      console.error('__NAME__: Error removing tab:', error);
       alert('Error removing tab');
     }
   }
@@ -409,7 +409,7 @@ class WorkspacesPopup {
         alert('Failed to toggle pin');
       }
     } catch (error) {
-      console.error('Error toggling pin:', error);
+      console.error('__NAME__: Error toggling pin:', error);
       alert('Error toggling pin');
     }
   }
@@ -431,7 +431,7 @@ class WorkspacesPopup {
         alert('Failed to move tab');
       }
     } catch (error) {
-      console.error('Error moving tab:', error);
+      console.error('__NAME__: Error moving tab:', error);
       alert('Error moving tab');
     }
   }
@@ -469,7 +469,7 @@ class WorkspacesPopup {
           alert('Failed to add tab to group');
         }
       } catch (error) {
-        console.error('Error adding tab to group:', error);
+        console.error('__NAME__: Error adding tab to group:', error);
         alert('Error adding tab to group');
       }
     }

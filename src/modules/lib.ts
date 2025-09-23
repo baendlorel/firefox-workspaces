@@ -22,6 +22,8 @@ export const $rand = Math.random;
 export const $floor = Math.floor;
 export const $randInt = (max: number) => $floor($rand() * max);
 
+export const $setTimeout = setTimeout;
+
 const alphabets = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
 
 export const $genId = () => {
@@ -31,3 +33,5 @@ export const $genId = () => {
   }
   return $ArrayJoin.call(digits, '');
 };
+
+export const $sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

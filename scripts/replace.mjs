@@ -35,6 +35,7 @@ export const replaceOpts = {
     __NAME__,
     __KEBAB_NAME__,
     __PKG_INFO__,
+    __VERSION__: pkg.version,
     // __OPTS__: `Rollup${__NAME__}Options`,
     // __STRICT_OPTS__: `Rollup${__NAME__}StrictOptions`,
   },
