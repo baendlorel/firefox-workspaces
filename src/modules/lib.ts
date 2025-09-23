@@ -7,7 +7,9 @@ export const $ArrayFrom = Array.from;
 export const $ArrayPush = Array.prototype.push;
 export const $ArrayJoin = Array.prototype.join;
 export const $ArrayFind = Array.prototype.find;
+export const $ArrayFindIndex = Array.prototype.findIndex;
 export const $ArrayFilter = Array.prototype.filter;
+export const $ArraySplice = Array.prototype.splice;
 
 export const $MapSet = Map.prototype.set;
 export const $MapGet = Map.prototype.get;

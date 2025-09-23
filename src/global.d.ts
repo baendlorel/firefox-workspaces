@@ -7,7 +7,7 @@ interface Workspace {
   tabs: Tab[];
   pinnedTabs: Tab[];
   createdAt: number;
-  lastOpened: Tab;
+  lastOpened: Tab | null;
   windowId: null; // Track associated window
 }
 

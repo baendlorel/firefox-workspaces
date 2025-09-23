@@ -113,20 +113,22 @@ class WorkspaceManager {
       addedAt: $now(),
     };
 
+    const except = (t: Tab) => t.id !== tab.id;
+    const find = (t: Tab) => t.id === tab.id;
+
     if (pinned) {
       // Remove from regular tabs if exists
-      workspace.tabs = $ArrayFilter.call(workspace.tabs, (t) => t.id !== tab.id);
+      workspace.tabs = $ArrayFilter.call(workspace.tabs, except);
 
       // Add to pinned tabs if not already there
-      // if (!workspace.pinnedTabs.find((t) => t.id === tab.id)) {
-      if (!$ArrayFind.call(workspace.pinnedTabs, (t) => t.id === tab.id)) {
+      if (!$ArrayFind.call(workspace.pinnedTabs, find)) {
         $ArrayPush.call(workspace.pinnedTabs, tabData);
       }
     } else {
       // Remove from pinned tabs if exists
-      workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, (t) => t.id !== tab.id);
+      workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, except);
       // Add to regular tabs if not already there
-      if (!$ArrayFind.call(workspace.tabs, (t) => t.id === tab.id)) {
+      if (!$ArrayFind.call(workspace.tabs, find)) {
         $ArrayPush.call(workspace.tabs, tabData);
       }
     }
@@ -136,12 +138,13 @@ class WorkspaceManager {
   }
 
   removeTab(id: string, tabId: number) {
-    const group = this._map.get(id);
-    if (!group) {
+    const workspace = this._map.get(id);
+    if (!workspace) {
       return false;
     }
-    group.tabs = $ArrayFilter.call(group.tabs.filter, (tab) => tab.id !== tabId);
-    group.pinnedTabs = $ArrayFilter.call(group.pinnedTabs, (tab) => tab.id !== tabId);
+    const filter = (tab: Tab) => tab.id !== tabId;
+    workspace.tabs = $ArrayFilter.call(workspace.tabs, filter);
+    workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, filter);
     this.save();
     return true;
   }
@@ -179,35 +182,36 @@ class WorkspaceManager {
   }
 
   // Toggle tab pinned status within a group
-  toggleTabPin(groupId, tabId) {
-    const group = this._map.get(groupId);
-    if (group) {
-      // Check if tab is in regular tabs
-      const tabIndex = group.tabs.findIndex((t) => t.id === tabId);
-      if (tabIndex !== -1) {
-        // Move to pinned
-        const tab = group.tabs.splice(tabIndex, 1)[0];
-        group.pinnedTabs.push(tab);
-        this.save();
-        return true;
-      }
-
-      // Check if tab is in pinned tabs
-      const pinnedIndex = group.pinnedTabs.findIndex((t) => t.id === tabId);
-      if (pinnedIndex !== -1) {
-        // Move to regular
-        const tab = group.pinnedTabs.splice(pinnedIndex, 1)[0];
-        group.tabs.push(tab);
-        this.save();
-        return true;
-      }
+  toggleTabPin(id: string, tabId: number) {
+    const workspace = this._map.get(id);
+    if (!workspace) {
+      return false;
     }
-    return false;
+
+    // Check if tab is in regular tabs
+    const tabIndex = workspace.tabs.findIndex((t) => t.id === tabId);
+    if (tabIndex !== -1) {
+      // Move to pinned
+      const tab = workspace.tabs.splice(tabIndex, 1)[0];
+      workspace.pinnedTabs.push(tab);
+      this.save();
+      return true;
+    }
+
+    // Check if tab is in pinned tabs
+    const pinnedIndex = workspace.pinnedTabs.findIndex((t) => t.id === tabId);
+    if (pinnedIndex !== -1) {
+      // Move to regular
+      const tab = workspace.pinnedTabs.splice(pinnedIndex, 1)[0];
+      workspace.tabs.push(tab);
+      this.save();
+      return true;
+    }
   }
 
   // Open work group in new window
-  async openWorkspacesInWindow(groupId) {
-    const group = this._map.get(groupId);
+  async openWorkspacesInWindow(id: string) {
+    const group = this._map.get(id);
     if (!group) return null;
 
     try {
