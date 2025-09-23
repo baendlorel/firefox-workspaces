@@ -216,6 +216,7 @@ export class WorkspaceManager {
       await this.save();
       return true;
     }
+    return false;
   }
 
   // Open work group in new window
@@ -396,7 +397,7 @@ export class WorkspaceManager {
       regularTabs: workspace.tabs.length,
       lastOpened: workspace.lastOpened,
       createdAt: workspace.createdAt,
-      isActive: Boolean(workspace.windowId),
+      isActive: workspace.windowId !== undefined,
     };
   }
 

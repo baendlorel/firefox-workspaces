@@ -188,7 +188,7 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
 });
 
 // Handle messages from popup and content scripts
-browser.runtime.onMessage.addListener(async (message, _sender, respond) => {
+browser.runtime.onMessage.addListener(async (message, _sender, respond: <T>(o: T) => void) => {
   if (!manager) {
     await init();
   }
@@ -196,22 +196,22 @@ browser.runtime.onMessage.addListener(async (message, _sender, respond) => {
   try {
     switch (message.action) {
       case Action.GetWorkspaces:
-        respond({ success: true, data: manager.workspaces });
+        respond<GetWorkspacesResponse>({ success: true, data: manager.workspaces });
         break;
 
       case Action.CreateWorkspaces:
         const newWorkspace = await manager.create(message.name, message.color);
-        respond({ success: true, data: newWorkspace });
+        respond<CreateWorkspacesResponse>({ success: true, data: newWorkspace });
         break;
 
       case Action.UpdateWorkspaces:
         const updated = await manager.update(message.id, message.updates);
-        respond({ success: updated !== null, data: updated });
+        respond<UpdateWorkspacesResponse>({ success: updated !== null, data: updated });
         break;
 
       case Action.DeleteWorkspaces:
         const deleted = await manager.delete(message.id);
-        respond({ success: deleted });
+        respond<DeleteWorkspacesResponse>({ success: deleted });
         break;
 
       case Action.AddCurrentTab:
@@ -219,25 +219,25 @@ browser.runtime.onMessage.addListener(async (message, _sender, respond) => {
 
         if (currentTab[0]) {
           const added = await manager.addTab(message.workspaceId, currentTab[0], message.isPinned);
-          respond({ success: added });
+          respond<AddCurrentTabResponse>({ success: added });
         } else {
-          respond({ success: false, error: 'No active tab found' });
+          respond<AddCurrentTabResponse>({ success: false, error: 'No active tab found' });
         }
         break;
 
       case Action.RemoveTab:
         const removed = await manager.removeTab(message.workspaceId, message.tabId);
-        respond({ success: removed });
+        respond<RemoveTabResponse>({ success: removed });
         break;
 
       case Action.TogglePin:
         const pinToggled = await manager.toggleTabPin(message.workspaceId, message.tabId);
-        respond({ success: pinToggled });
+        respond<TogglePinResponse>({ success: pinToggled });
         break;
 
       case Action.OpenWorkspaces:
         const window = await manager.open(message.workspaceId);
-        respond({ success: window !== null, data: window });
+        respond<OpenWorkspacesResponse>({ success: window !== null, data: window });
         break;
 
       case Action.MoveTab:
@@ -246,12 +246,12 @@ browser.runtime.onMessage.addListener(async (message, _sender, respond) => {
           message.toWorkspaceId,
           message.tabId
         );
-        respond({ success: moved });
+        respond<MoveTabResponse>({ success: moved });
         break;
 
       case Action.GetGroupStats:
         const stats = manager.getStats(message.workspaceId);
-        respond({ success: stats !== null, data: stats });
+        respond<GetGroupStatsResponse>({ success: stats !== null, data: stats });
         break;
 
       case Action.CheckPageInGroups:
@@ -268,11 +268,11 @@ browser.runtime.onMessage.addListener(async (message, _sender, respond) => {
           }
           return false;
         });
-        respond({ success: true, groups: matched });
+        respond<CheckPageInGroupsResponse>({ success: true, groups: matched });
         break;
 
       default:
-        respond({ success: false, error: 'Unknown action' });
+        respond<UnknownActionResponse>({ success: false, error: 'Unknown action' });
     }
   } catch (error) {
     console.error('__NAME__: Error handling message:', error);
