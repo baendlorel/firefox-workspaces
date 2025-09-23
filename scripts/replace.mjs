@@ -1,5 +1,9 @@
 // @ts-check
-import pkg from '../package.json' with { type: 'json' };
+import { readFileSync } from 'node:fs';
+/**
+ * @type {import('../package.json')}
+ */
+const pkg = JSON.parse(readFileSync('../package.json', 'utf-8'));
 
 function formatDateFull(dt = new Date()) {
   const y = dt.getFullYear();

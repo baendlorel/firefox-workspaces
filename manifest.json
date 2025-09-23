@@ -1,7 +1,9 @@
 {
-  "manifest_version": 2,
+  "manifest_version": 3,
   "name": "Workspaces",
   "version": "0.0.1",
+  "author": "Kasukabe Tsumugi",
+  "homepage_url": "https://github.com/baendlorel/firefox-workspaces",
   "description": "Manage tabs in workspaces similar to Microsoft Edge's Collections feature",
   "permissions": [
     "tabs",
@@ -12,26 +14,16 @@
   ],
   "background": {
     "scripts": [
-      "dist/manager.js",
-      "dist/background.js"
+      "dist/manager.js"
     ],
-    "persistent": false
+    "type": "module"
   },
-  "browser_action": {
+  "action": {
     "default_popup": "dist/popup.html",
-    "default_title": "Workspaces Manager",
-    "default_icon": {
-      "16": "src/icons/icon-16.png",
-      "32": "src/icons/icon-32.png",
-      "48": "src/icons/icon-48.png",
-      "128": "src/icons/icon-128.png"
-    }
+    "default_title": "Workspaces Manager"
   },
   "icons": {
-    "16": "src/icons/icon-16.png",
-    "32": "src/icons/icon-32.png",
-    "48": "src/icons/icon-48.png",
-    "128": "src/icons/icon-128.png"
+    "128": "assets/icons/icon-128.png"
   },
   "content_scripts": [
     {
@@ -44,9 +36,19 @@
       "run_at": "document_end"
     }
   ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
   "web_accessible_resources": [
-    "dist/*",
-    "assets/*"
+    {
+      "resources": [
+        "dist/*",
+        "assets/*"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
+    }
   ],
   "browser_specific_settings": {
     "gecko": {
