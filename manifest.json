@@ -2,10 +2,9 @@
   "manifest_version": 2,
   "name": "Workspaces",
   "version": "0.0.1",
-  "description": "Manage tabs in work groups similar to Microsoft Edge's Collections feature",
+  "description": "Manage tabs in workspaces similar to Microsoft Edge's Collections feature",
   "permissions": [
     "tabs",
-    "windows",
     "storage",
     "sessions",
     "activeTab",
@@ -13,26 +12,26 @@
   ],
   "background": {
     "scripts": [
-      "js/workspaces-manager.js",
-      "js/background.js"
+      "dist/manager.js",
+      "dist/background.js"
     ],
     "persistent": false
   },
   "browser_action": {
-    "default_popup": "popup/popup.html",
+    "default_popup": "dist/popup.html",
     "default_title": "Workspaces Manager",
     "default_icon": {
-      "16": "icons/icon-16.png",
-      "32": "icons/icon-32.png",
-      "48": "icons/icon-48.png",
-      "128": "icons/icon-128.png"
+      "16": "src/icons/icon-16.png",
+      "32": "src/icons/icon-32.png",
+      "48": "src/icons/icon-48.png",
+      "128": "src/icons/icon-128.png"
     }
   },
   "icons": {
-    "16": "icons/icon-16.png",
-    "32": "icons/icon-32.png",
-    "48": "icons/icon-48.png",
-    "128": "icons/icon-128.png"
+    "16": "src/icons/icon-16.png",
+    "32": "src/icons/icon-32.png",
+    "48": "src/icons/icon-48.png",
+    "128": "src/icons/icon-128.png"
   },
   "content_scripts": [
     {
@@ -40,21 +39,19 @@
         "<all_urls>"
       ],
       "js": [
-        "js/content.js"
+        "dist/content.js"
       ],
       "run_at": "document_end"
     }
   ],
   "web_accessible_resources": [
-    "popup/*",
-    "js/*",
-    "css/*",
-    "icons/*"
+    "dist/*",
+    "assets/*"
   ],
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
-      "id": "work-group@example.com",
-      "strict_min_version": "78.0"
+      "id": "workspaces@example.com",
+      "strict_min_version": "100.0"
     }
   }
 }

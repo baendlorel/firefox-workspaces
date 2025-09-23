@@ -56,7 +56,7 @@ import { $send } from './lib/ext-apis.js';
       const style = document.createElement('style');
       style.textContent = `
         /* Workspaces page highlighting */
-        .work-group-highlight {
+        .wb-highlight {
           position: fixed !important;
           top: 0 !important;
           left: 0 !important;
@@ -68,7 +68,7 @@ import { $send } from './lib/ext-apis.js';
           transition: opacity 0.3s ease !important;
         }
         
-        .work-group-indicator {
+        .wb-indicator {
           position: fixed !important;
           top: 8px !important;
           right: 8px !important;
@@ -84,7 +84,7 @@ import { $send } from './lib/ext-apis.js';
           transition: opacity 0.3s ease !important;
         }
         
-        .work-group-indicator:hover {
+        .wb-indicator:hover {
           opacity: 1 !important;
         }
       `;
@@ -112,13 +112,13 @@ import { $send } from './lib/ext-apis.js';
 
       // Create highlight bar
       const highlight = document.createElement('div');
-      highlight.className = 'work-group-highlight';
+      highlight.className = 'wb-highlight';
       highlight.style.setProperty('--wg-color', color);
       document.body.appendChild(highlight);
 
       // Create indicator
       const indicator = document.createElement('div');
-      indicator.className = 'work-group-indicator';
+      indicator.className = 'wb-indicator';
       indicator.style.setProperty('--wg-color', color);
       indicator.textContent = 'Workspaces';
       document.body.appendChild(indicator);
@@ -131,7 +131,7 @@ import { $send } from './lib/ext-apis.js';
 
     // Remove page highlighting
     removeHighlight() {
-      const existing = document.querySelectorAll('.work-group-highlight, .work-group-indicator');
+      const existing = document.querySelectorAll('.wb-highlight, .wb-indicator');
       existing.forEach((el) => el.remove());
     }
 
@@ -163,7 +163,7 @@ import { $send } from './lib/ext-apis.js';
 
       // Update indicator text with group info
       setTimeout(() => {
-        const indicator = $query('.work-group-indicator');
+        const indicator = $query('.wb-indicator');
         if (indicator) {
           indicator.textContent =
             workspaces.length === 1 ? primary.name : `${workspaces.length} Workspacess`;

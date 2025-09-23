@@ -57,7 +57,7 @@ body {
   padding: 10px;
 }
 
-.work-group {
+.wb {
   background: white;
   border-radius: 8px;
   margin-bottom: 10px;
@@ -65,7 +65,7 @@ body {
   overflow: hidden;
 }
 
-.work-group-header {
+.wb-header {
   padding: 12px 15px;
   border-left: 4px solid #667eea;
   background: #f8f9fa;
@@ -75,12 +75,12 @@ body {
   cursor: pointer;
 }
 
-.work-group-title {
+.wb-title {
   font-weight: 600;
   color: #333;
 }
 
-.work-group-count {
+.wb-count {
   font-size: 12px;
   color: #666;
   background: #e9ecef;
@@ -88,7 +88,7 @@ body {
   border-radius: 10px;
 }
 
-.work-group-actions {
+.wb-actions {
   display: flex;
   gap: 5px;
 }
@@ -107,13 +107,13 @@ body {
   background: #e9ecef;
 }
 
-.work-group-tabs {
+.wb-tabs {
   display: none;
   padding: 10px 15px;
   border-top: 1px solid #e9ecef;
 }
 
-.work-group.expanded .work-group-tabs {
+.wb.expanded .wb-tabs {
   display: block;
 }
 

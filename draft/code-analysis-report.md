@@ -62,10 +62,10 @@ private lastContextPosition: { x: number; y: number } = { x: 0, y: 0 };
 
 ```ts
 // 修复前
-const workspaceId = (tab.closest('.work-group') as HTMLDivElement).dataset.workspaceId;
+const workspaceId = (tab.closest('.wb') as HTMLDivElement).dataset.workspaceId;
 
 // 修复后
-const workspaceId = (tab.closest('.work-group') as HTMLDivElement).dataset.groupId;
+const workspaceId = (tab.closest('.wb') as HTMLDivElement).dataset.groupId;
 ```
 
 ### 3. moveTabBetweenWorkspaces 方法逻辑错误

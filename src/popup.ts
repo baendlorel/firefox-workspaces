@@ -1,7 +1,7 @@
 import { $send } from './lib/ext-apis.js';
 import { Action, Consts } from './lib/consts.js';
 import { $escapeHtml, $truncate } from './lib/utils.js';
-import { $getElementByIdOrThrow, $queryAll, $query } from './lib/dom.js';
+import { $getElementByIdOrThrow, $queryAll, $query, h } from './lib/dom.js';
 
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
@@ -94,50 +94,81 @@ class WorkspacePopup {
     container.style.display = 'block';
     emptyState.style.display = 'none';
 
-    container.innerHTML = this.workspaceses
-      .map((group) => {
-        const totalTabs = (group.tabs || []).length + (group.pinnedTabs || []).length;
-        const pinnedCount = (group.pinnedTabs || []).length;
+    for (let i = 0; i < this.workspaceses.length; i++) {
+      const workspace = this.workspaceses[i];
 
-        return `
-        <div class="work-group" data-group-id="${group.id}">
-          <div class="work-group-header" style="border-left-color: ${group.color}">
-            <div>
-              <div class="work-group-title">${$escapeHtml(group.name)}</div>
-              <div class="work-group-count">
-                ${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}
-              </div>
-            </div>
-            <div class="work-group-actions">
-              <button class="btn-small" onclick="workspacesPopup.openWorkspaces('${
-                group.id
-              }')" title="Open in new window">
-                🗖
-              </button>
-              <button class="btn-small" onclick="workspacesPopup.editGroup('${
-                group.id
-              }')" title="Edit group">
-                ✏️
-              </button>
-              <button class="btn-small" onclick="workspacesPopup.deleteGroup('${
-                group.id
-              }')" title="Delete group">
-                🗑️
-              </button>
-              <button class="btn-small" onclick="workspacesPopup.toggleGroup('${
-                group.id
-              }')" title="Show/Hide tabs">
-                ▼
-              </button>
-            </div>
-          </div>
-          <div class="work-group-tabs">
-            ${this.renderWorkspaceTabs(group)}
-          </div>
-        </div>
-      `;
-      })
-      .join('');
+      const totalTabs = workspace.tabs.length + workspace.pinnedTabs.length;
+      const pinnedCount = workspace.pinnedTabs.length;
+      const countText = `${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}`;
+
+      let btnOpen: HTMLButtonElement;
+      let btnEdit: HTMLButtonElement;
+      let btnDelete: HTMLButtonElement;
+      let btnToggle: HTMLButtonElement;
+      // & wb means workspace-block
+      const block = h('div', { class: 'wb', 'data-group-id': workspace.id }, [
+        h('div', { class: 'wb-header', style: `border-left-color:${workspace.color}` }, [
+          h('div', 'wb-title', $escapeHtml(workspace.name)),
+          h('div', 'wb-count', countText),
+        ]),
+        h('div', 'wb-actions', [
+          (btnOpen = h('button', 'btn-small', '🗖')),
+          (btnEdit = h('button', 'btn-small', '✏️')),
+          (btnDelete = h('button', 'btn-small', '🗑️')),
+          (btnToggle = h('button', 'btn-small', '🖲️')),
+        ]),
+        h('div', 'workspace-tabs', this.renderWorkspaceTabs(workspace)),
+      ]);
+
+      btnOpen.title = 'Open in new window';
+      btnEdit.title = 'Edit group';
+      btnDelete.title = 'Delete group';
+      btnToggle.title = 'Show/Hide tabs';
+
+      btnOpen.addEventListener('click', () => this.open(workspace.id));
+      btnEdit.addEventListener('click', () => this.edit(workspace.id));
+      btnDelete.addEventListener('click', () => this.delete(workspace.id));
+      btnToggle.addEventListener('click', () => this.toggle(workspace.id));
+
+      // return `
+      //   <div class="wb" data-group-id="${group.id}">
+      //     <div class="wb-header" style="border-left-color: ${group.color}">
+      //       <div>
+      //         <div class="wb-title">${$escapeHtml(group.name)}</div>
+      //         <div class="wb-count">
+      //           ${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}
+      //         </div>
+      //       </div>
+      //       <div class="wb-actions">
+      //         <button class="btn-small" onclick="workspacesPopup.openWorkspaces('${
+      //           group.id
+      //         }')" title="Open in new window">
+      //           🗖
+      //         </button>
+      //         <button class="btn-small" onclick="workspacesPopup.editGroup('${
+      //           group.id
+      //         }')" title="Edit group">
+      //           ✏️
+      //         </button>
+      //         <button class="btn-small" onclick="workspacesPopup.deleteGroup('${
+      //           group.id
+      //         }')" title="Delete group">
+      //           🗑️
+      //         </button>
+      //         <button class="btn-small" onclick="workspacesPopup.toggleGroup('${
+      //           group.id
+      //         }')" title="Show/Hide tabs">
+      //           ▼
+      //         </button>
+      //       </div>
+      //     </div>
+      //     <div class="wb-tabs">
+      //       ${this.renderWorkspaceTabs(group)}
+      //     </div>
+      //   </div>
+      // `;
+      container.appendChild(block);
+    }
 
     this.setupDragAndDrop();
   }
@@ -206,11 +237,11 @@ class WorkspacePopup {
         }
 
         const tabId = tab.dataset.tabId;
-        const workspaceId = (tab.closest('.work-group') as HTMLDivElement)?.dataset.workspaceId;
+        const workspaceId = (tab.closest('.wb') as HTMLDivElement)?.dataset.workspaceId;
         const tabUrl = tab.dataset.tabUrl;
 
         if (workspaceId === undefined) {
-          throw new Error(`__NAME__:setupDragAndDrop tab.closest('.work-group') is undefined.`);
+          throw new Error(`__NAME__:setupDragAndDrop tab.closest('.wb') is undefined.`);
         }
 
         e.dataTransfer.setData(
@@ -226,7 +257,7 @@ class WorkspacePopup {
     }
 
     // Make work groups drop targets
-    const workspaceDivs = $queryAll<HTMLDivElement>('.work-group');
+    const workspaceDivs = $queryAll<HTMLDivElement>('.wb');
     for (let i = 0; i < workspaceDivs.length; i++) {
       const workspaceDiv = workspaceDivs[i];
       workspaceDiv.addEventListener('dragover', (e) => {
