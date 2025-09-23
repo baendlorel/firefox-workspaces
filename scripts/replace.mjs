@@ -1,5 +1,5 @@
 // @ts-check
-import pkg from '../../package.json' with { type: 'json' };
+import pkg from '../package.json' with { type: 'json' };
 
 function formatDateFull(dt = new Date()) {
   const y = dt.getFullYear();
