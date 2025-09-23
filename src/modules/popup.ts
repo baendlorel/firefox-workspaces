@@ -1,10 +1,18 @@
 import { Action } from './consts.js';
-import { $getElementById, $query, $queryAll } from './lib.js';
+import {
+  $escapeHtml,
+  $getElementByIdOrThrow,
+  $JSONParse,
+  $on,
+  $query,
+  $queryAll,
+  $truncate,
+} from './lib.js';
 
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
   private readonly workspaceses: Workspace[] = [];
-  private currentEditingGroup: Workspace | null = null;
+  private edited: Workspace | null = null;
   private selectedColor: HexColor = '#667eea';
 
   constructor() {
@@ -20,35 +28,13 @@ class WorkspacePopup {
 
   // Setup event listeners
   setupEventListeners() {
-    const createGroupBtn = $getElementById('createGroupBtn');
-    const addCurrentTabBtn = $getElementById('addCurrentTabBtn');
-    const cancelBtn = $getElementById('cancelBtn');
-    const saveBtn = $getElementById('saveBtn');
-    const workspacesModal = $getElementById('workspacesModal');
-    const workspaceName = $getElementById('workspaceName');
+    const createGroupBtn = $getElementByIdOrThrow('createGroupBtn');
+    const addCurrentTabBtn = $getElementByIdOrThrow('addCurrentTabBtn');
+    const cancelBtn = $getElementByIdOrThrow('cancelBtn');
+    const saveBtn = $getElementByIdOrThrow('saveBtn');
+    const workspacesModal = $getElementByIdOrThrow('workspacesModal');
+    const workspaceName = $getElementByIdOrThrow('workspaceName');
     const colorOptions = $queryAll<HTMLElement>('.color-option');
-
-    if (!createGroupBtn) {
-      throw new Error('__NAME__: Failed to get element: createGroupBtn');
-    }
-    if (!addCurrentTabBtn) {
-      throw new Error('__NAME__: Failed to get element: addCurrentTabBtn');
-    }
-    if (!cancelBtn) {
-      throw new Error('__NAME__: Failed to get element: cancelBtn');
-    }
-    if (!saveBtn) {
-      throw new Error('__NAME__: Failed to get element: saveBtn');
-    }
-    if (!workspacesModal) {
-      throw new Error('__NAME__: Failed to get element: workspacesModal');
-    }
-    if (!workspaceName) {
-      throw new Error('__NAME__: Failed to get element: workspaceName');
-    }
-    if (!colorOptions || colorOptions.length === 0) {
-      throw new Error('__NAME__: Failed to get element: color-option');
-    }
 
     createGroupBtn.addEventListener('click', () => {
       this.showModal();
@@ -68,7 +54,8 @@ class WorkspacePopup {
 
     for (let i = colorOptions.length - 1; i >= 0; i--) {
       colorOptions[i].addEventListener('click', (e) => {
-        this.selectColor(colorOptions[i].dataset.color);
+        const color = (colorOptions[i].dataset.color ?? '#667eea') as HexColor;
+        this.selectColor(color);
       });
     }
 
@@ -99,8 +86,8 @@ class WorkspacePopup {
 
   // Render work groups in the popup
   renderWorkspacess() {
-    const container = $getElementById('workspacesesList');
-    const emptyState = $getElementById('emptyState');
+    const container = $getElementByIdOrThrow('workspacesesList');
+    const emptyState = $getElementByIdOrThrow('emptyState');
 
     if (this.workspaceses.length === 0) {
       container.style.display = 'none';
@@ -120,7 +107,7 @@ class WorkspacePopup {
         <div class="work-group" data-group-id="${group.id}">
           <div class="work-group-header" style="border-left-color: ${group.color}">
             <div>
-              <div class="work-group-title">${this.escapeHtml(group.name)}</div>
+              <div class="work-group-title">${$escapeHtml(group.name)}</div>
               <div class="work-group-count">
                 ${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}
               </div>
@@ -149,7 +136,7 @@ class WorkspacePopup {
             </div>
           </div>
           <div class="work-group-tabs">
-            ${this.renderGroupTabs(group)}
+            ${this.renderWorkspaceTabs(group)}
           </div>
         </div>
       `;
@@ -160,27 +147,27 @@ class WorkspacePopup {
   }
 
   // Render tabs within a group
-  renderGroupTabs(group) {
-    const pinnedTabs = group.pinnedTabs || [];
-    const regularTabs = group.tabs || [];
+  renderWorkspaceTabs(workspace: Workspace) {
+    const pinnedTabs = workspace.pinnedTabs;
+    const regularTabs = workspace.tabs;
 
-    const renderTab = (tab, isPinned) => `
+    const renderTab = (tab: TabInfo, pinned: boolean) => `
       <div class="tab-item" data-tab-id="${tab.id}" data-tab-url="${tab.url}">
         <img class="tab-favicon" src="${tab.favIconUrl || 'icons/default-favicon.png'}" 
              onerror="this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\"><rect width=\"16\" height=\"16\" fill=\"%23f0f0f0\"/><text x=\"8\" y=\"12\" text-anchor=\"middle\" font-size=\"12\" fill=\"%23666\">?</text></svg>'">
         <div class="tab-info">
-          <div class="tab-title">${this.escapeHtml(tab.title || 'Untitled')}</div>
-          <div class="tab-url">${this.escapeHtml(this.truncate(tab.url))}</div>
+          <div class="tab-title">${$escapeHtml(tab.title || 'Untitled')}</div>
+          <div class="tab-url">${$escapeHtml($truncate(tab.url))}</div>
         </div>
-        ${isPinned ? '<div class="pinned-indicator" title="Pinned tab">📌</div>' : ''}
+        ${pinned ? '<div class="pinned-indicator" title="Pinned tab">📌</div>' : ''}
         <div class="tab-actions">
-          <button class="btn-small" onclick="workspacesPopup.toggleTabPin('${group.id}', '${
+          <button class="btn-small" onclick="workspacesPopup.toggleTabPin('${workspace.id}', '${
             tab.id
           }')" 
-                  title="${isPinned ? 'Unpin tab' : 'Pin tab'}">
-            ${isPinned ? '📌' : '📍'}
+                  title="${pinned ? 'Unpin tab' : 'Pin tab'}">
+            ${pinned ? '📌' : '📍'}
           </button>
-          <button class="btn-small" onclick="workspacesPopup.removeTab('${group.id}', '${tab.id}')" 
+          <button class="btn-small" onclick="workspacesPopup.removeTab('${workspace.id}', '${tab.id}')" 
                   title="Remove from group">
             ✕
           </button>
@@ -210,18 +197,25 @@ class WorkspacePopup {
 
   // Setup drag and drop functionality
   setupDragAndDrop() {
+    const tabItems = $queryAll<HTMLDivElement>('.tab-item');
+
     // Make tab items draggable
-    document.querySelectorAll('.tab-item').forEach((tab) => {
+    for (let i = 0; i < tabItems.length; i++) {
+      const tab = tabItems[i];
       tab.draggable = true;
 
       tab.addEventListener('dragstart', (e) => {
+        if (!e.dataTransfer) {
+          throw new Error('__NAME__:setupDragAndDrop e.dataTransfer is null');
+        }
+
+        const tabId = tab.dataset.tabId;
+        const workspaceId = (tab.closest('.work-group') as HTMLDivElement).dataset.workspaceId;
+        const tabUrl = tab.dataset.tabUrl;
+
         e.dataTransfer.setData(
           'text/plain',
-          JSON.stringify({
-            tabId: tab.dataset.tabId,
-            workspaceId: tab.closest('.work-group').dataset.workspaceId,
-            tabUrl: tab.dataset.tabUrl,
-          })
+          `{"tabId":"${tabId}","workspaceId":"${workspaceId}","tabUrl":"${tabUrl}"}`
         );
         tab.classList.add('dragging');
       });
@@ -229,50 +223,54 @@ class WorkspacePopup {
       tab.addEventListener('dragend', () => {
         tab.classList.remove('dragging');
       });
-    });
+    }
 
     // Make work groups drop targets
-    document.querySelectorAll('.work-group').forEach((group) => {
-      group.addEventListener('dragover', (e) => {
+    const workspaceDivs = $queryAll<HTMLDivElement>('.work-group');
+    for (let i = 0; i < workspaceDivs.length; i++) {
+      const workspaceDiv = workspaceDivs[i];
+      workspaceDiv.addEventListener('dragover', (e) => {
         e.preventDefault();
-        group.classList.add('drag-over');
+        workspaceDiv.classList.add('drag-over');
       });
 
-      group.addEventListener('dragleave', (e) => {
-        if (!group.contains(e.relatedTarget)) {
-          group.classList.remove('drag-over');
+      workspaceDiv.addEventListener('dragleave', (e) => {
+        if (!workspaceDiv.contains(e.relatedTarget as Node)) {
+          workspaceDiv.classList.remove('drag-over');
         }
       });
 
-      group.addEventListener('drop', async (e) => {
+      workspaceDiv.addEventListener('drop', async (e) => {
         e.preventDefault();
-        group.classList.remove('drag-over');
+        workspaceDiv.classList.remove('drag-over');
+        if (!e.dataTransfer) {
+          throw new Error('__NAME__:setupDragAndDrop e.dataTransfer is null');
+        }
 
-        try {
-          const data = JSON.parse(e.dataTransfer.getData('text/plain'));
-          const targetGroupId = group.dataset.workspaceId;
+        const data = $JSONParse(e.dataTransfer.getData('text/plain'));
+        const workspaceId = workspaceDiv.dataset.workspaceId;
 
-          if (data.workspaceId !== targetGroupId) {
-            await this.moveTab(data.workspaceId, targetGroupId, data.tabId);
+        if (data.workspaceId !== workspaceId) {
+          if (workspaceId === undefined) {
+            throw new Error('__NAME__:setupDragAndDrop workspaceId is undefined.');
           }
-        } catch (error) {
-          console.error('__NAME__: Error handling drop:', error);
+          await this.moveTab(data.workspaceId, workspaceId, data.tabId);
         }
       });
-    });
+    }
   }
 
   // Show modal for creating/editing groups
-  showModal(group = null) {
-    this.currentEditingGroup = group;
-    const modal = $getElementById('workspacesModal');
-    const title = $getElementById('modalTitle');
-    const nameInput = $getElementById('workspaceName');
+  showModal(workspace: Workspace | null = null) {
+    this.edited = workspace;
+    const modal = $getElementByIdOrThrow('workspacesModal');
+    const title = $getElementByIdOrThrow('modalTitle');
+    const nameInput = $getElementByIdOrThrow<HTMLInputElement>('workspaceName');
 
-    if (group) {
+    if (workspace) {
       title.textContent = 'Edit Workspaces';
-      nameInput.value = group.name;
-      this.selectColor(group.color);
+      nameInput.value = workspace.name;
+      this.selectColor(workspace.color);
     } else {
       title.textContent = 'Create New Workspaces';
       nameInput.value = '';
@@ -285,22 +283,29 @@ class WorkspacePopup {
 
   // Hide modal
   hideModal() {
-    const modal = $getElementById('workspacesModal');
+    const modal = $getElementByIdOrThrow('workspacesModal');
     modal.classList.remove('show');
-    this.currentEditingGroup = null;
+    this.edited = null;
   }
 
   // Select color in color picker
-  selectColor(color) {
+  selectColor(color: HexColor) {
+    if (!/^#([0-9a-fA-F]{6})$/.test(color) && /^#([0-9a-fA-F]{8})$/.test(color)) {
+      alert('Please select a valid 6/8-digit hex color code (e.g., #RRGGBB, #RRGGBBAA)');
+      return;
+    }
+
     this.selectedColor = color;
-    document.querySelectorAll('.color-option').forEach((option) => {
+    const colorOptions = $queryAll<HTMLElement>('.color-option');
+    for (let i = 0; i < colorOptions.length; i++) {
+      const option = colorOptions[i];
       option.classList.toggle('selected', option.dataset.color === color);
-    });
+    }
   }
 
   // Save work group (create or update)
   async saveWorkspaces() {
-    const nameInput = $getElementById('workspaceName');
+    const nameInput = $getElementByIdOrThrow<HTMLInputElement>('workspaceName');
     const name = nameInput.value.trim();
 
     if (!name) {
@@ -310,17 +315,17 @@ class WorkspacePopup {
 
     try {
       let response;
-      if (this.currentEditingGroup) {
+      if (this.edited) {
         // Update existing group
         response = await this.sendMessage({
-          action: 'updateWorkspaces',
-          id: this.currentEditingGroup.id,
+          action: Action.UpdateWorkspaces,
+          id: this.edited.id,
           updates: { name, color: this.selectedColor },
         });
       } else {
         // Create new group
         response = await this.sendMessage({
-          action: 'createWorkspaces',
+          action: Action.CreateWorkspaces,
           name,
           color: this.selectedColor,
         });
@@ -340,23 +345,25 @@ class WorkspacePopup {
   }
 
   // Edit work group
-  editGroup(workspaceId) {
-    const group = this.workspaceses.find((g) => g.id === workspaceId);
+  edit(id: string) {
+    const group = this.workspaceses.find((g) => g.id === id);
     if (group) {
       this.showModal(group);
     }
   }
 
   // Delete work group
-  async deleteGroup(workspaceId) {
-    const group = this.workspaceses.find((g) => g.id === workspaceId);
-    if (!group) return;
+  async delete(id: string) {
+    const group = this.workspaceses.find((g) => g.id === id);
+    if (!group) {
+      return;
+    }
 
     if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
       try {
         const response = await this.sendMessage({
-          action: 'deleteWorkspaces',
-          id: workspaceId,
+          action: Action.DeleteWorkspaces,
+          id: id,
         });
 
         if (response.success) {
@@ -373,7 +380,7 @@ class WorkspacePopup {
   }
 
   // Toggle group expansion
-  toggleWorkspace(id: string) {
+  toggle(id: string) {
     const element = $query(`[data-group-id="${id}"]`);
     if (element) {
       element.classList.toggle('expanded');
@@ -381,7 +388,7 @@ class WorkspacePopup {
   }
 
   // Open work group in new window
-  async openWorkspaces(id: string) {
+  async open(id: string) {
     try {
       const response = await this.sendMessage({
         action: Action.OpenWorkspaces,
@@ -404,7 +411,7 @@ class WorkspacePopup {
   async removeTab(workspaceId, tabId) {
     try {
       const response = await this.sendMessage({
-        action: 'removeTab',
+        action: Action.RemoveTab,
         workspaceId,
         tabId,
       });
@@ -422,10 +429,10 @@ class WorkspacePopup {
   }
 
   // Toggle tab pin status
-  async toggleTabPin(workspaceId, tabId) {
+  async toggleTabPin(workspaceId: string, tabId: number) {
     try {
       const response = await this.sendMessage({
-        action: 'togglePin',
+        action: Action.TogglePin,
         workspaceId,
         tabId,
       });
@@ -443,12 +450,12 @@ class WorkspacePopup {
   }
 
   // Move tab between groups
-  async moveTab(fromGroupId, toGroupId, tabId) {
+  async moveTab(fromId: string, toId: string, tabId: number) {
     try {
       const response = await this.sendMessage({
-        action: 'moveTab',
-        fromGroupId,
-        toGroupId,
+        action: Action.MoveTab,
+        fromWorkspaceId: fromId,
+        toWorkspaceId: toId,
         tabId,
       });
 
@@ -486,7 +493,7 @@ class WorkspacePopup {
       try {
         // todo sendmessage到底入参是string还是可以是object，要明确后再写
         const response = await this.sendMessage({
-          action: 'addCurrentTab',
+          action: Action.AddCurrentTab,
           workspaceId,
           isPinned,
         });
@@ -531,8 +538,12 @@ class WorkspacePopup {
 }
 
 // Initialize popup when DOM is loaded
-let workspacesPopup;
-
-document.addEventListener('DOMContentLoaded', () => {
-  workspacesPopup = new WorkspacePopup();
+$on.call(document, 'DOMContentLoaded', () => {
+  window.workspacesPopup = new WorkspacePopup();
 });
+
+declare global {
+  interface Window {
+    workspacesPopup: WorkspacePopup;
+  }
+}

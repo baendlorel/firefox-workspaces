@@ -255,8 +255,8 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
       case 'moveTab':
         const moved = workspacesManager.moveTabBetweenGroups(
-          message.fromGroupId,
-          message.toGroupId,
+          message.fromWorkspaceId,
+          message.toWorkspaceId,
           message.tabId
         );
         sendResponse({
