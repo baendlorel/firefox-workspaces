@@ -52,3 +52,8 @@ export const h = <T extends HTMLTag>(
 
   return el;
 };
+
+export const div = (
+  className: string | Record<string, string>,
+  children: (HTMLElement | string)[] | string = ''
+): HTMLDivElement => h('div', className, children);

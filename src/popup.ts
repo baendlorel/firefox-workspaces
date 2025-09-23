@@ -1,7 +1,7 @@
 import { $send } from './lib/ext-apis.js';
 import { Action, Consts } from './lib/consts.js';
 import { $escapeHtml, $truncate } from './lib/utils.js';
-import { $getElementByIdOrThrow, $queryAll, $query, h } from './lib/dom.js';
+import { $getElementByIdOrThrow, $queryAll, $query, h, div } from './lib/dom.js';
 
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
@@ -106,18 +106,18 @@ class WorkspacePopup {
       let btnDelete: HTMLButtonElement;
       let btnToggle: HTMLButtonElement;
       // & wb means workspace-block
-      const block = h('div', { class: 'wb', 'data-group-id': workspace.id }, [
-        h('div', { class: 'wb-header', style: `border-left-color:${workspace.color}` }, [
-          h('div', 'wb-title', $escapeHtml(workspace.name)),
-          h('div', 'wb-count', countText),
+      const block = div({ class: 'wb', 'data-group-id': workspace.id }, [
+        div({ class: 'wb-header', style: `border-left-color:${workspace.color}` }, [
+          div('wb-title', $escapeHtml(workspace.name)),
+          div('wb-count', countText),
         ]),
-        h('div', 'wb-actions', [
+        div('wb-actions', [
           (btnOpen = h('button', 'btn-small', '🗖')),
           (btnEdit = h('button', 'btn-small', '✏️')),
           (btnDelete = h('button', 'btn-small', '🗑️')),
           (btnToggle = h('button', 'btn-small', '🖲️')),
         ]),
-        h('div', 'workspace-tabs', this.renderWorkspaceTabs(workspace)),
+        div('workspace-tabs', this.renderWorkspaceTabs(workspace)),
       ]);
 
       btnOpen.title = 'Open in new window';
@@ -178,7 +178,39 @@ class WorkspacePopup {
     const pinnedTabs = workspace.pinnedTabs;
     const regularTabs = workspace.tabs;
 
-    const renderTab = (tab: TabInfo, pinned: boolean) => `
+    const renderTab = (tab: TabInfo, pinned: boolean) => {
+      const img = h('img', {
+        src: tab.favIconUrl || 'icons/default-favicon.png',
+        class: 'tab-favicon',
+        onerror:
+          'this.src=\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" fill="%23f0f0f0"/><text x="8" y="12" text-anchor="middle" font-size="12" fill="%23666">?</text></svg>\'',
+      });
+
+      let btnPin: HTMLButtonElement;
+      let btnRemove: HTMLButtonElement;
+
+      const tabItem = div(
+        { class: 'tab-item', 'data-tab-id': String(tab.id), 'data-tab-url': tab.url },
+        [
+          img,
+          div('tab-info', [
+            div('tab-title', $escapeHtml(tab.title)),
+            div('tab-url', $escapeHtml($truncate(tab.url))),
+          ]),
+          pinned ? div('pinned-indicator', '📌') : '',
+          div('tab-actions', [
+            (btnPin = h('button', 'btn-small')),
+            (btnRemove = h('button', 'btn-small')),
+          ]),
+        ]
+      );
+
+      btnPin.title = pinned ? 'Unpin tab' : 'Pin tab';
+      btnRemove.title = 'Remove from workspace';
+      btnPin.addEventListener('click', () => this.toggleTabPin(workspace.id, tab.id));
+      btnRemove.addEventListener('click', () => this.removeTab(workspace.id, tab.id));
+
+      const _ = `
       <div class="tab-item" data-tab-id="${tab.id}" data-tab-url="${tab.url}">
         <img class="tab-favicon" src="${tab.favIconUrl || 'icons/default-favicon.png'}" 
              onerror="this.src='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" fill="%23f0f0f0"/><text x="8" y="12" text-anchor="middle" font-size="12" fill="%23666">?</text></svg>'">
@@ -202,24 +234,26 @@ class WorkspacePopup {
       </div>
     `;
 
-    let html = '';
+      return tabItem;
+    };
 
-    // Render pinned tabs first
-    if (pinnedTabs.length > 0) {
-      html += pinnedTabs.map((tab) => renderTab(tab, true)).join('');
+    const elements: HTMLDivElement[] = [];
+
+    for (let i = 0; i < pinnedTabs.length; i++) {
+      elements.push(renderTab(pinnedTabs[i], true));
     }
 
-    // Then render regular tabs
-    if (regularTabs.length > 0) {
-      html += regularTabs.map((tab) => renderTab(tab, false)).join('');
+    for (let i = 0; i < regularTabs.length; i++) {
+      elements.push(renderTab(regularTabs[i], false));
     }
 
-    if (html === '') {
-      html =
-        '<div style="text-align: center; color: #666; padding: 20px;">No tabs in this group</div>';
+    if (elements.length === 0) {
+      elements.push(
+        div({ style: 'text-align: center; color: #666; padding: 20px;' }, 'No tabs in this group')
+      );
     }
 
-    return html;
+    return elements;
   }
 
   // Setup drag and drop functionality
