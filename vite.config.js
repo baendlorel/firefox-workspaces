@@ -12,6 +12,7 @@ export default defineConfig({
     }),
   ],
   build: {
+    terserOptions: {},
     rollupOptions: {
       input: {},
       output: {

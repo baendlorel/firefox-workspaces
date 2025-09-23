@@ -1,16 +1,24 @@
 type HexColor = `#${string}`;
 
-interface WorkspaceEntry {
+interface Workspace {
   id: string;
   name: string;
   color: HexColor;
-  tabs: unknown[];
-  pinnedTabs: unknown[];
+  tabs: Tab[];
+  pinnedTabs: Tab[];
   createdAt: number;
-  lastOpened: unknown;
+  lastOpened: Tab;
   windowId: null; // Track associated window
 }
 
 interface WorkspaceStoredData {
-  list: WorkspaceEntry[];
+  list: Workspace[];
+}
+
+interface Tab {
+  id: number;
+  title: string;
+  url: string;
+  favIconUrl: string;
+  addedAt: number;
 }

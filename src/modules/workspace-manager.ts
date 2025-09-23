@@ -1,13 +1,13 @@
 import { Consts } from './consts.js';
-import { $ArrayFrom, $genId } from './lib.js';
+import { $ArrayFilter, $ArrayFind, $ArrayFrom, $ArrayPush, $assign, $genId, $now } from './lib.js';
 
-// Workspaces Data Model and Storage Manager
-class WorkspacesManager {
-  private readonly map: Map<string, WorkspaceEntry>;
+// Workspace Data Model and Storage Manager
+class WorkspaceManager {
+  private readonly _map: Map<string, Workspace>;
   private readonly currentEditingGroup: null = null;
 
   constructor() {
-    this.map = new Map();
+    this._map = new Map();
     this.currentEditingGroup = null;
     this.init();
   }
@@ -28,24 +28,31 @@ class WorkspacesManager {
     if (!workspaces.list) {
       return;
     }
-    this.map.clear();
+    this._map.clear();
     const list = workspaces.list;
     const len = workspaces.list.length;
     for (let i = 0; i < len; i++) {
-      this.map.set(list[i].id, list[i].data);
+      this._map.set(list[i].id, list[i]);
     }
   }
 
-  async saveWorkspacess() {
-    const list = $ArrayFrom(this.map.values());
+  async save() {
+    const list = $ArrayFrom(this._map.values());
     const data: WorkspaceStoredData = { list };
-    await browser.storage.local.set(data);
+    try {
+      await browser.storage.local.set(data);
+    } catch (error) {
+      console.error('Failed to save workspaces:', error);
+      return false;
+    }
+    return true;
   }
 
   // todo 由于火狐浏览器的操作是异步的，因此这里需要在前端调用的时候加入防抖或延迟
+  // 要不然全都改成异步函数吧
   create(name: string, color: HexColor = '#667eea') {
     const id = $genId();
-    const workspace: WorkspaceEntry = {
+    const workspace: Workspace = {
       id: id,
       name: name,
       color: color,
@@ -56,114 +63,115 @@ class WorkspacesManager {
       windowId: null, // Track associated window
     };
 
-    this.map.set(id, workspace);
-    this.saveWorkspacess();
+    this._map.set(id, workspace);
+    this.save();
     return workspace;
   }
 
-  // Update an existing work group
-  updateWorkspaces(id, updates) {
-    const group = this.map.get(id);
-    if (group) {
-      Object.assign(group, updates);
-      this.saveWorkspacess();
-      return group;
+  update(id: string, updates: Partial<Workspace>) {
+    const group = this._map.get(id);
+    if (!group) {
+      return null;
     }
-    return null;
+    $assign(group, updates);
+    this.save();
+    return group;
   }
 
   // Delete a work group
-  deleteWorkspaces(id) {
-    const success = this.map.delete(id);
+  delete(id: string) {
+    const success = this._map.delete(id);
     if (success) {
-      this.saveWorkspacess();
+      this.save();
     }
     return success;
   }
 
   // Get a work group by id
-  getWorkspaces(id) {
-    return this.map.get(id);
+  get(id: string) {
+    return this._map.get(id);
   }
 
   // Get all work groups as array
   getAllWorkspacess() {
-    return Array.from(this.map.values());
+    return $ArrayFrom(this._map.values());
   }
 
   // Add tab to work group
-  addTabToGroup(groupId, tab, isPinned = false) {
-    const group = this.map.get(groupId);
-    if (group) {
-      const tabData = {
-        id: tab.id,
-        url: tab.url,
-        title: tab.title,
-        favIconUrl: tab.favIconUrl,
-        addedAt: Date.now(),
-      };
+  // todo 找不到不用报错的？？
+  addTabToGroup(id: string, tab: Tab, pinned: boolean = false) {
+    const workspace = this._map.get(id);
+    if (!workspace) {
+      return false;
+    }
 
-      if (isPinned) {
-        // Remove from regular tabs if exists
-        group.tabs = group.tabs.filter((t) => t.id !== tab.id);
-        // Add to pinned tabs if not already there
-        if (!group.pinnedTabs.find((t) => t.id === tab.id)) {
-          group.pinnedTabs.push(tabData);
-        }
-      } else {
-        // Remove from pinned tabs if exists
-        group.pinnedTabs = group.pinnedTabs.filter((t) => t.id !== tab.id);
-        // Add to regular tabs if not already there
-        if (!group.tabs.find((t) => t.id === tab.id)) {
-          group.tabs.push(tabData);
-        }
+    const tabData: Tab = {
+      id: tab.id,
+      url: tab.url,
+      title: tab.title,
+      favIconUrl: tab.favIconUrl,
+      addedAt: $now(),
+    };
+
+    if (pinned) {
+      // Remove from regular tabs if exists
+      workspace.tabs = $ArrayFilter.call(workspace.tabs, (t) => t.id !== tab.id);
+
+      // Add to pinned tabs if not already there
+      // if (!workspace.pinnedTabs.find((t) => t.id === tab.id)) {
+      if (!$ArrayFind.call(workspace.pinnedTabs, (t) => t.id === tab.id)) {
+        $ArrayPush.call(workspace.pinnedTabs, tabData);
       }
-
-      this.saveWorkspacess();
-      return true;
+    } else {
+      // Remove from pinned tabs if exists
+      workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, (t) => t.id !== tab.id);
+      // Add to regular tabs if not already there
+      if (!$ArrayFind.call(workspace.tabs, (t) => t.id === tab.id)) {
+        $ArrayPush.call(workspace.tabs, tabData);
+      }
     }
-    return false;
+
+    this.save();
+    return true;
   }
 
-  // Remove tab from work group
-  removeTabFromGroup(groupId, tabId) {
-    const group = this.map.get(groupId);
-    if (group) {
-      group.tabs = group.tabs.filter((tab) => tab.id !== tabId);
-      group.pinnedTabs = group.pinnedTabs.filter((tab) => tab.id !== tabId);
-      this.saveWorkspacess();
-      return true;
+  removeTab(id: string, tabId: number) {
+    const group = this._map.get(id);
+    if (!group) {
+      return false;
     }
-    return false;
+    group.tabs = $ArrayFilter.call(group.tabs.filter, (tab) => tab.id !== tabId);
+    group.pinnedTabs = $ArrayFilter.call(group.pinnedTabs, (tab) => tab.id !== tabId);
+    this.save();
+    return true;
   }
 
+  // fixme 从这里往下暂时先不用缓存的方法来写，最后让ai来做
   // Move tab between work groups
-  moveTabBetweenGroups(fromGroupId, toGroupId, tabId) {
-    const fromGroup = this.map.get(fromGroupId);
-    const toGroup = this.map.get(toGroupId);
+  moveTabBetweenGroups(fromId: string, toId: string, tabId: number) {
+    const from = this._map.get(fromId);
+    const to = this._map.get(toId);
 
-    if (fromGroup && toGroup) {
+    if (from && to) {
       // Find tab in source group
-      let tab = fromGroup.tabs.find((t) => t.id === tabId);
+      let tab = from.tabs.find((t) => t.id === tabId);
       let isPinned = false;
 
       if (!tab) {
-        tab = fromGroup.pinnedTabs.find((t) => t.id === tabId);
+        tab = from.pinnedTabs.find((t) => t.id === tabId);
         isPinned = true;
-      }
-
-      if (tab) {
+      } else {
         // Remove from source group
-        this.removeTabFromGroup(fromGroupId, tabId);
+        this.removeTab(fromId, tabId);
 
         // Add to destination group with same pinned status
         if (isPinned) {
-          toGroup.pinnedTabs.push(tab);
+          to.pinnedTabs.push(tab);
         } else {
-          toGroup.tabs.push(tab);
+          to.tabs.push(tab);
         }
 
-        this.saveWorkspacess();
+        this.save();
         return true;
       }
     }
@@ -172,7 +180,7 @@ class WorkspacesManager {
 
   // Toggle tab pinned status within a group
   toggleTabPin(groupId, tabId) {
-    const group = this.map.get(groupId);
+    const group = this._map.get(groupId);
     if (group) {
       // Check if tab is in regular tabs
       const tabIndex = group.tabs.findIndex((t) => t.id === tabId);
@@ -180,7 +188,7 @@ class WorkspacesManager {
         // Move to pinned
         const tab = group.tabs.splice(tabIndex, 1)[0];
         group.pinnedTabs.push(tab);
-        this.saveWorkspacess();
+        this.save();
         return true;
       }
 
@@ -190,7 +198,7 @@ class WorkspacesManager {
         // Move to regular
         const tab = group.pinnedTabs.splice(pinnedIndex, 1)[0];
         group.tabs.push(tab);
-        this.saveWorkspacess();
+        this.save();
         return true;
       }
     }
@@ -199,7 +207,7 @@ class WorkspacesManager {
 
   // Open work group in new window
   async openWorkspacesInWindow(groupId) {
-    const group = this.map.get(groupId);
+    const group = this._map.get(groupId);
     if (!group) return null;
 
     try {
@@ -227,7 +235,7 @@ class WorkspacesManager {
         });
         group.windowId = window.id;
         group.lastOpened = Date.now();
-        this.saveWorkspacess();
+        this.save();
         return window;
       }
 
@@ -281,7 +289,7 @@ class WorkspacesManager {
       // Update group with window association and last opened time
       group.windowId = window.id;
       group.lastOpened = Date.now();
-      this.saveWorkspacess();
+      this.save();
 
       return window;
     } catch (error) {
@@ -292,7 +300,7 @@ class WorkspacesManager {
 
   // Update work group tabs from window state
   async updateGroupFromWindow(groupId, windowId) {
-    const group = this.map.get(groupId);
+    const group = this._map.get(groupId);
     if (!group || group.windowId !== windowId) return false;
 
     try {
@@ -319,7 +327,7 @@ class WorkspacesManager {
         }
       });
 
-      this.saveWorkspacess();
+      this.save();
       return true;
     } catch (error) {
       console.error('Failed to update group from window:', error);
@@ -329,7 +337,7 @@ class WorkspacesManager {
 
   // Find work group by window ID
   getGroupByWindowId(windowId) {
-    for (const group of this.map.values()) {
+    for (const group of this._map.values()) {
       if (group.windowId === windowId) {
         return group;
       }
@@ -339,7 +347,7 @@ class WorkspacesManager {
 
   // Get work group statistics
   getGroupStats(groupId) {
-    const group = this.map.get(groupId);
+    const group = this._map.get(groupId);
     if (!group) return null;
 
     return {
@@ -375,7 +383,7 @@ class WorkspacesManager {
       group.windowId = null;
     });
 
-    await this.saveWorkspacess();
+    await this.save();
     console.log('Cleared stale window associations on startup');
   }
 
@@ -404,7 +412,7 @@ class WorkspacesManager {
       }
 
       // Clear existing groups (with confirmation in UI)
-      this.map.clear();
+      this._map.clear();
 
       // Import groups
       data.workspaceses.forEach((group) => {
@@ -415,10 +423,10 @@ class WorkspacesManager {
           windowId: null, // Reset window associations
           lastOpened: null,
         };
-        this.map.set(newGroup.id, newGroup);
+        this._map.set(newGroup.id, newGroup);
       });
 
-      await this.saveWorkspacess();
+      await this.save();
       return true;
     } catch (error) {
       console.error('Failed to import data:', error);
@@ -429,5 +437,5 @@ class WorkspacesManager {
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = WorkspacesManager;
+  module.exports = WorkspaceManager;
 }
