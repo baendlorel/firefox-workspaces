@@ -1,6 +1,7 @@
-// Type definitions for message responses in background.ts
-// Each Action's respond type
+// #region Request
+// #endregion
 
+// #region Response
 interface GetWorkspacesResponse {
   success: boolean;
   data: Workspace[];
@@ -74,3 +75,5 @@ type BackgroundResponse =
   | GetGroupStatsResponse
   | CheckPageInGroupsResponse
   | UnknownActionResponse;
+
+// #endregion

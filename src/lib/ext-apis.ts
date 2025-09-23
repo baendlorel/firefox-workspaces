@@ -1,2 +1,2 @@
 // # Extension APIs
-export const $send = browser.runtime.sendMessage;
+export const $send: <T>(message: T) => Promise<any> = browser.runtime.sendMessage;

@@ -476,19 +476,17 @@ class WorkspacePopup {
     }
 
     // Simple implementation - show a select dialog
-    const groupOptions = this.workspaceses.map(
-      (group) =>
-        `${group.name} (${(group.tabs || []).length + (group.pinnedTabs || []).length} tabs)`
+    const options = this.workspaceses.map(
+      (w) => `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`
     );
 
-    const selectedIndex = await this.showSelectDialog('Select a work group:', groupOptions);
+    const selectedIndex = await this.showSelectDialog('Select a work group:', options);
 
     if (selectedIndex !== null) {
       const workspaceId = this.workspaceses[selectedIndex].id;
       const isPinned = confirm('Pin this tab in the group?');
 
       try {
-        // todo sendmessage到底入参是string还是可以是object，要明确后再写
         const response = await $send({
           action: Action.AddCurrentTab,
           workspaceId,

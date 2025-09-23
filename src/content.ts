@@ -1,8 +1,9 @@
 // Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
 import { Consts } from './lib/consts.js';
-import { $on, $query } from './lib/dom.js';
 import { $get, $set } from './lib/native.js';
+import { $on, $query } from './lib/dom.js';
+import { $send } from './lib/ext-apis.js';
 
 (function () {
   'use strict';
@@ -153,7 +154,7 @@ import { $get, $set } from './lib/native.js';
     // Check if page belongs to a work group
     async checkWorkspacesMembership() {
       try {
-        const response = await browser.runtime.sendMessage({
+        const response = await $send({
           action: 'checkPageInGroups',
           url: window.location.href,
         });
