@@ -1,9 +1,10 @@
 // @ts-check
 import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 /**
  * @type {import('../package.json')}
  */
-const pkg = JSON.parse(readFileSync('../package.json', 'utf-8'));
+const pkg = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'package.json'), 'utf-8'));
 
 function formatDateFull(dt = new Date()) {
   const y = dt.getFullYear();
