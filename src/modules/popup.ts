@@ -20,42 +20,65 @@ class WorkspacePopup {
 
   // Setup event listeners
   setupEventListeners() {
-    // todo 加入断言来判定是否能找到
-    // Create group button
-    $getElementById('createGroupBtn').addEventListener('click', () => {
+    const createGroupBtn = $getElementById('createGroupBtn');
+    const addCurrentTabBtn = $getElementById('addCurrentTabBtn');
+    const cancelBtn = $getElementById('cancelBtn');
+    const saveBtn = $getElementById('saveBtn');
+    const workspacesModal = $getElementById('workspacesModal');
+    const workspaceName = $getElementById('workspaceName');
+    const colorOptions = $queryAll<HTMLElement>('.color-option');
+
+    if (!createGroupBtn) {
+      throw new Error('__NAME__: Failed to get element: createGroupBtn');
+    }
+    if (!addCurrentTabBtn) {
+      throw new Error('__NAME__: Failed to get element: addCurrentTabBtn');
+    }
+    if (!cancelBtn) {
+      throw new Error('__NAME__: Failed to get element: cancelBtn');
+    }
+    if (!saveBtn) {
+      throw new Error('__NAME__: Failed to get element: saveBtn');
+    }
+    if (!workspacesModal) {
+      throw new Error('__NAME__: Failed to get element: workspacesModal');
+    }
+    if (!workspaceName) {
+      throw new Error('__NAME__: Failed to get element: workspaceName');
+    }
+    if (!colorOptions || colorOptions.length === 0) {
+      throw new Error('__NAME__: Failed to get element: color-option');
+    }
+
+    createGroupBtn.addEventListener('click', () => {
       this.showModal();
     });
 
-    // Add current tab button
-    $getElementById('addCurrentTabBtn').addEventListener('click', () => {
+    addCurrentTabBtn.addEventListener('click', () => {
       this.showAddTabMenu();
     });
 
-    // Modal controls
-    $getElementById('cancelBtn').addEventListener('click', () => {
+    cancelBtn.addEventListener('click', () => {
       this.hideModal();
     });
 
-    $getElementById('saveBtn').addEventListener('click', () => {
+    saveBtn.addEventListener('click', () => {
       this.saveWorkspaces();
     });
 
-    // Color picker
-    $queryAll('.color-option').forEach((option) => {
-      option.addEventListener('click', (e) => {
-        this.selectColor(e.target.dataset.color);
+    for (let i = colorOptions.length - 1; i >= 0; i--) {
+      colorOptions[i].addEventListener('click', (e) => {
+        this.selectColor(colorOptions[i].dataset.color);
       });
-    });
+    }
 
-    // Close modal when clicking outside
-    $getElementById('workspacesModal').addEventListener('click', (e) => {
-      if (e.target.id === 'workspacesModal') {
+    workspacesModal.addEventListener('click', (e) => {
+      if (workspacesModal.id === 'workspacesModal') {
         this.hideModal();
       }
     });
 
-    // Enter key to save
-    $getElementById('groupName').addEventListener('keypress', (e) => {
+    workspaceName.addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
         this.saveWorkspaces();
       }
@@ -244,7 +267,7 @@ class WorkspacePopup {
     this.currentEditingGroup = group;
     const modal = $getElementById('workspacesModal');
     const title = $getElementById('modalTitle');
-    const nameInput = $getElementById('groupName');
+    const nameInput = $getElementById('workspaceName');
 
     if (group) {
       title.textContent = 'Edit Workspaces';
@@ -277,7 +300,7 @@ class WorkspacePopup {
 
   // Save work group (create or update)
   async saveWorkspaces() {
-    const nameInput = $getElementById('groupName');
+    const nameInput = $getElementById('workspaceName');
     const name = nameInput.value.trim();
 
     if (!name) {

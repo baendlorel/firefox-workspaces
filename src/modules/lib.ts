@@ -61,5 +61,7 @@ const querySelectorAll = document.querySelectorAll;
 
 export const $createElement = (tag: HTMLTag) => createElement.call(document, tag);
 export const $getElementById = (id: string) => getElementById.call(document, id);
-export const $query = (selector: string) => querySelector.call(document, selector);
-export const $queryAll = (selector: string) => querySelectorAll.call(document, selector);
+export const $query = <E extends Element = Element>(selector: string) =>
+  querySelector.call(document, selector) as E | null;
+export const $queryAll = <E extends Element = Element>(selector: string): NodeListOf<E> =>
+  querySelectorAll.call(document, selector) as NodeListOf<E>;
