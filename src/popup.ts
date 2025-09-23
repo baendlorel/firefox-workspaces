@@ -70,7 +70,7 @@ class WorkspacePopup {
   // Load work groups from background
   async loadWorkspacess() {
     try {
-      const response = await $send({ action: Action.GetWorkspaces });
+      const response = await $send<GetWorkspacesRequest>({ action: Action.GetWorkspaces });
       if (response.success) {
         const loaded = response.data ?? [];
         this.workspaceses.length = 0;
@@ -314,14 +314,14 @@ class WorkspacePopup {
       let response;
       if (this.edited) {
         // Update existing group
-        response = await $send({
+        response = await $send<UpdateWorkspacesRequest>({
           action: Action.UpdateWorkspaces,
           id: this.edited.id,
           updates: { name, color: this.selectedColor },
         });
       } else {
         // Create new group
-        response = await $send({
+        response = await $send<CreateWorkspacesRequest>({
           action: Action.CreateWorkspaces,
           name,
           color: this.selectedColor,
@@ -358,7 +358,7 @@ class WorkspacePopup {
 
     if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
       try {
-        const response = await $send({
+        const response = await $send<DeleteWorkspacesRequest>({
           action: Action.DeleteWorkspaces,
           id: id,
         });
@@ -387,7 +387,7 @@ class WorkspacePopup {
   // Open work group in new window
   async open(id: string) {
     try {
-      const response = await $send({
+      const response = await $send<OpenWorkspacesRequest>({
         action: Action.OpenWorkspaces,
         workspaceId: id,
       });
@@ -407,7 +407,7 @@ class WorkspacePopup {
   // Remove tab from group
   async removeTab(workspaceId: string, tabId: number) {
     try {
-      const response = await $send({
+      const response = await $send<RemoveTabRequest>({
         action: Action.RemoveTab,
         workspaceId,
         tabId,
@@ -428,7 +428,7 @@ class WorkspacePopup {
   // Toggle tab pin status
   async toggleTabPin(workspaceId: string, tabId: number) {
     try {
-      const response = await $send({
+      const response = await $send<TogglePinRequest>({
         action: Action.TogglePin,
         workspaceId,
         tabId,
@@ -449,7 +449,7 @@ class WorkspacePopup {
   // Move tab between groups
   async moveTab(fromId: string, toId: string, tabId: number) {
     try {
-      const response = await $send({
+      const response = await $send<MoveTabRequest>({
         action: Action.MoveTab,
         fromWorkspaceId: fromId,
         toWorkspaceId: toId,
@@ -487,7 +487,7 @@ class WorkspacePopup {
       const isPinned = confirm('Pin this tab in the group?');
 
       try {
-        const response = await $send({
+        const response = await $send<AddCurrentTabRequest>({
           action: Action.AddCurrentTab,
           workspaceId,
           isPinned,

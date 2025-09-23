@@ -5,7 +5,7 @@ export const enum Consts {
 }
 
 export const enum Action {
-  GetWorkspaces = 'GetWorkspacess',
+  GetWorkspaces = 'GetWorkspaces',
   CreateWorkspaces = 'CreateWorkspaces',
   UpdateWorkspaces = 'UpdateWorkspaces',
   DeleteWorkspaces = 'DeleteWorkspaces',

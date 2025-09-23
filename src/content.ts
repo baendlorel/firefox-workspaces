@@ -1,6 +1,6 @@
 // Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
-import { Consts } from './lib/consts.js';
+import { Action, Consts } from './lib/consts.js';
 import { $get, $set } from './lib/native.js';
 import { $on, $query } from './lib/dom.js';
 import { $send } from './lib/ext-apis.js';
@@ -32,7 +32,7 @@ import { $send } from './lib/ext-apis.js';
 
     // Listen for messages from popup or background
     setupMessageListener() {
-      browser.runtime.onMessage.addListener((message, sender, respond) => {
+      browser.runtime.onMessage.addListener((message, _sender, respond) => {
         switch (message.action) {
           case 'getPageInfo':
             respond({
@@ -154,8 +154,8 @@ import { $send } from './lib/ext-apis.js';
     // Check if page belongs to a work group
     async checkWorkspacesMembership() {
       try {
-        const response = await $send({
-          action: 'checkPageInGroups',
+        const response = await $send<CheckPageInGroupsRequest>({
+          action: Action.CheckPageInGroups,
           url: window.location.href,
         });
 

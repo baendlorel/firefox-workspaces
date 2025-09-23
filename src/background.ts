@@ -187,8 +187,9 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
   }
 });
 
+type Respond = <T>(o: T) => void;
 // Handle messages from popup and content scripts
-browser.runtime.onMessage.addListener(async (message, _sender, respond: <T>(o: T) => void) => {
+browser.runtime.onMessage.addListener(async (message: Message, _sender, respond: Respond) => {
   if (!manager) {
     await init();
   }
