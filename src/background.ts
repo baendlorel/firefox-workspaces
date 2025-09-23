@@ -1,22 +1,22 @@
+import { Action } from './lib/consts.js';
+import { $mergeTabInfo } from './lib/utils.js';
+import { WorkspaceManager } from './manager.js';
+
 // Background script for Workspaces extension
-let workspacesManager;
+let manager: WorkspaceManager;
 
 // Initialize when extension starts
-browser.runtime.onStartup.addListener(async () => {
-  await initializeWorkspacesManager();
-});
+browser.runtime.onStartup.addListener(init);
 
-browser.runtime.onInstalled.addListener(async () => {
-  await initializeWorkspacesManager();
-});
+browser.runtime.onInstalled.addListener(init);
 
-async function initializeWorkspacesManager() {
-  // WorkspacesManager is already loaded via manifest scripts
+async function init() {
+  // WorkspaceManager is already loaded via manifest scripts
   try {
-    workspacesManager = new WorkspacesManager();
+    manager = new WorkspaceManager();
 
     // Restore sessions on startup
-    await workspacesManager.restoreGroupSessions();
+    await manager.restoreSessions();
 
     console.log('Workspaces Manager initialized in background');
   } catch (error) {
@@ -26,145 +26,165 @@ async function initializeWorkspacesManager() {
 
 // Handle window events for session management
 browser.windows.onRemoved.addListener(async (windowId) => {
-  if (!workspacesManager) return;
+  if (!manager) {
+    return;
+  }
 
-  // Check if this window belongs to a work group
-  const group = workspacesManager.getGroupByWindowId(windowId);
-  if (group) {
-    console.log(`Work group window closed: ${group.name}`);
+  // Check if this window belongs to a workspace
+  const workspace = manager.getByWindowId(windowId);
+  if (workspace) {
+    console.log(`workspace window closed: ${workspace.name}`);
 
     // The tabs were already saved during the session, just clear window association
-    group.windowId = null;
-    await workspacesManager.saveWorkspacess();
+    workspace.windowId = undefined;
+    await manager.save();
 
-    console.log(`Saved work group session for: ${group.name}`);
+    console.log(`Saved workspace session for: ${workspace.name}`);
   }
 });
 
-// Track window focus changes to update group states
+// Track window focus changes to update workspace states
 browser.windows.onFocusChanged.addListener(async (windowId) => {
-  if (!workspacesManager || windowId === browser.windows.WINDOW_ID_NONE) return;
+  if (!manager || windowId === browser.windows.WINDOW_ID_NONE) return;
 
-  const group = workspacesManager.getGroupByWindowId(windowId);
-  if (group) {
-    // Update group's last accessed time
-    group.lastAccessed = Date.now();
-    await workspacesManager.saveWorkspacess();
+  const workspace = manager.getByWindowId(windowId);
+  if (workspace) {
+    // Update workspace's last accessed time
+    workspace.lastOpened = Date.now();
+    await manager.save();
   }
 });
 
-// Periodically save work group states for active windows
+// Periodically save workspace states for active windows
 setInterval(async () => {
-  if (!workspacesManager) return;
+  if (!manager) return;
 
-  const groups = workspacesManager.getAllWorkspacess();
-  const activeGroups = groups.filter((g) => g.windowId);
+  const workspaces = manager.getWorkspaces();
+  const activated = workspaces.filter((g) => g.windowId);
 
-  for (const group of activeGroups) {
+  for (let i = 0; i < workspaces.length; i++) {
+    const workspace = workspaces[i];
+    if (workspace.windowId === undefined) {
+      continue;
+    }
     try {
       // Verify window still exists
       const windows = await browser.windows.getAll();
-      const windowExists = windows.some((w) => w.id === group.windowId);
+      const windowExists = windows.some((w) => w.id === workspace.windowId);
 
       if (windowExists) {
-        await workspacesManager.updateGroupFromWindow(group.id, group.windowId);
+        await manager.updateByWindowId(workspace.id, workspace.windowId);
       } else {
         // Window was closed but event wasn't caught
-        group.windowId = null;
-        await workspacesManager.saveWorkspacess();
+        workspace.windowId = undefined;
+        await manager.save();
       }
     } catch (error) {
       console.error('__NAME__: Error during periodic save:', error);
     }
   }
+
+  for (const workspace of activated) {
+  }
 }, 30000); // Save every 30 seconds
 
 // Save sessions before browser shuts down
 browser.runtime.onSuspend.addListener(async () => {
-  if (workspacesManager) {
-    console.log('Saving work group sessions before browser shutdown');
-    await workspacesManager.saveActiveGroupSessions();
+  if (manager) {
+    console.log('Saving workspace sessions before browser shutdown');
+    await manager.saveActiveSessions();
   }
 });
 
 // Handle browser startup
 browser.runtime.onStartup.addListener(async () => {
-  await initializeWorkspacesManager();
+  await init();
 });
 
-// Save work group sessions periodically and on important events
+// Save workspace sessions periodically and on important events
 browser.tabs.onAttached.addListener(async (tabId, attachInfo) => {
-  if (!workspacesManager) return;
+  if (!manager) return;
 
-  const group = workspacesManager.getGroupByWindowId(attachInfo.newWindowId);
-  if (group) {
-    // Tab was moved to a work group window
+  const workspace = manager.getByWindowId(attachInfo.newWindowId);
+  if (workspace) {
+    // Tab was moved to a workspace window
     setTimeout(() => {
-      workspacesManager.updateGroupFromWindow(group.id, attachInfo.newWindowId);
+      manager.updateByWindowId(workspace.id, attachInfo.newWindowId);
     }, 1000);
   }
 });
 
 browser.tabs.onDetached.addListener(async (tabId, detachInfo) => {
-  if (!workspacesManager) return;
+  if (!manager) return;
 
-  const group = workspacesManager.getGroupByWindowId(detachInfo.oldWindowId);
-  if (group) {
-    // Tab was moved from a work group window
+  const workspace = manager.getByWindowId(detachInfo.oldWindowId);
+  if (workspace) {
+    // Tab was moved from a workspace window
     setTimeout(() => {
-      workspacesManager.updateGroupFromWindow(group.id, detachInfo.oldWindowId);
+      manager.updateByWindowId(workspace.id, detachInfo.oldWindowId);
     }, 1000);
   }
 });
 
 // Handle tab events
 browser.tabs.onCreated.addListener(async (tab) => {
-  if (!workspacesManager) return;
+  if (!manager) {
+    return;
+  }
 
-  // Check if tab was created in a work group window
-  const group = workspacesManager.getGroupByWindowId(tab.windowId);
-  if (group) {
-    console.log(`New tab created in work group: ${group.name}`);
+  if (tab.windowId === undefined) {
+    alert('__NAME__: Tab created without windowId. ' + JSON.stringify(tab));
+    return;
+  }
+
+  // Check if tab was created in a workspace window
+  const workspace = manager.getByWindowId(tab.windowId);
+  if (workspace) {
+    console.log(`New tab created in workspace: ${workspace.name}`);
     // The tab will be saved when the window is closed or manually updated
   }
 });
 
 browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
-  if (!workspacesManager) return;
+  if (!manager) {
+    return;
+  }
 
-  // Update work groups if tab was removed from a work group window
-  const group = workspacesManager.getGroupByWindowId(removeInfo.windowId);
-  if (group && !removeInfo.isWindowClosing) {
-    // Update group state immediately when individual tab is closed
-    await workspacesManager.updateGroupFromWindow(group.id, removeInfo.windowId);
+  // Update work groups if tab was removed from a workspace window
+  const workspace = manager.getByWindowId(removeInfo.windowId);
+  if (workspace && !removeInfo.isWindowClosing) {
+    // Update workspace state immediately when individual tab is closed
+    await manager.updateByWindowId(workspace.id, removeInfo.windowId);
   }
 });
 
-browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (!workspacesManager) return;
+browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
+  if (!manager) {
+    return;
+  }
 
-  // Update work group if tab URL or title changed in a work group window
+  if (browserTab.windowId === undefined) {
+    alert('__NAME__: Tab created without windowId. ' + JSON.stringify(browserTab));
+    return;
+  }
+
+  // Update workspace if tab URL or title changed in a workspace window
   if (changeInfo.url || changeInfo.title) {
-    const group = workspacesManager.getGroupByWindowId(tab.windowId);
-    if (group) {
-      // Update the specific tab in the group
-      const updateTab = (tabArray) => {
-        const index = tabArray.findIndex((t) => t.id === tabId);
+    const workspace = manager.getByWindowId(browserTab.windowId);
+    if (workspace) {
+      // Update the specific tab in the workspace
+      const updateTab = (tabs: TabInfo[]) => {
+        const index = tabs.findIndex((t) => t.id === tabId);
         if (index !== -1) {
-          tabArray[index] = {
-            ...tabArray[index],
-            url: tab.url,
-            title: tab.title,
-            favIconUrl: tab.favIconUrl,
-          };
+          $mergeTabInfo(tabs[index], browserTab);
           return true;
         }
         return false;
       };
 
-      const updated = updateTab(group.tabs) || updateTab(group.pinnedTabs);
+      const updated = updateTab(workspace.tabs) || updateTab(workspace.pinnedTabs);
       if (updated) {
-        await workspacesManager.saveWorkspacess();
+        await manager.save();
       }
     }
   }
@@ -172,130 +192,97 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 // Handle messages from popup and content scripts
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (!workspacesManager) {
-    await initializeWorkspacesManager();
+  if (!manager) {
+    await init();
   }
 
   try {
     switch (message.action) {
-      case 'getWorkspacess':
+      case Action.GetWorkspaces:
         sendResponse({
           success: true,
-          data: workspacesManager.getAllWorkspacess(),
+          data: manager.workspaces,
         });
         break;
 
       case 'createWorkspaces':
-        const newGroup = workspacesManager.createWorkspaces(message.name, message.color);
-        sendResponse({
-          success: true,
-          data: newGroup,
-        });
+        const w = manager.create(message.name, message.color);
+        sendResponse({ success: true, data: w });
         break;
 
       case 'updateWorkspaces':
-        const updatedGroup = workspacesManager.updateWorkspaces(message.id, message.updates);
-        sendResponse({
-          success: !!updatedGroup,
-          data: updatedGroup,
-        });
+        const updated = manager.update(message.id, message.updates);
+        sendResponse({ success: updated !== null, data: updated });
         break;
 
       case 'deleteWorkspaces':
-        const deleted = workspacesManager.deleteWorkspaces(message.id);
-        sendResponse({
-          success: deleted,
-        });
+        const deleted = manager.delete(message.id);
+        sendResponse({ success: deleted });
         break;
 
       case 'addCurrentTab':
-        const currentTab = await browser.tabs.query({
-          active: true,
-          currentWindow: true,
-        });
+        const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
 
         if (currentTab[0]) {
-          const added = workspacesManager.addTabToGroup(
-            message.workspaceId,
-            currentTab[0],
-            message.isPinned
-          );
-          sendResponse({
-            success: added,
-          });
+          const added = manager.addTab(message.workspaceId, currentTab[0], message.isPinned);
+          sendResponse({ success: added });
         } else {
-          sendResponse({
-            success: false,
-            error: 'No active tab found',
-          });
+          sendResponse({ success: false, error: 'No active tab found' });
         }
         break;
 
       case 'removeTab':
-        const removed = workspacesManager.removeTabFromGroup(message.workspaceId, message.tabId);
-        sendResponse({
-          success: removed,
-        });
+        const removed = manager.removeTab(message.workspaceId, message.tabId);
+        sendResponse({ success: removed });
         break;
 
       case 'togglePin':
-        const pinToggled = workspacesManager.toggleTabPin(message.workspaceId, message.tabId);
-        sendResponse({
-          success: pinToggled,
-        });
+        const pinToggled = manager.toggleTabPin(message.workspaceId, message.tabId);
+        sendResponse({ success: pinToggled });
         break;
 
       case 'openWorkspaces':
-        const window = await workspacesManager.openWorkspacesInWindow(message.workspaceId);
-        sendResponse({
-          success: !!window,
-          data: window,
-        });
+        const window = await manager.open(message.workspaceId);
+        sendResponse({ success: window !== null, data: window });
         break;
 
       case 'moveTab':
-        const moved = workspacesManager.moveTabBetweenGroups(
+        const moved = manager.moveTabBetweenWorkspaces(
           message.fromWorkspaceId,
           message.toWorkspaceId,
           message.tabId
         );
-        sendResponse({
-          success: moved,
-        });
+        sendResponse({ success: moved });
         break;
 
       case 'getGroupStats':
-        const stats = workspacesManager.getGroupStats(message.workspaceId);
-        sendResponse({
-          success: !!stats,
-          data: stats,
-        });
+        const stats = manager.getStats(message.workspaceId);
+        sendResponse({ success: stats !== null, data: stats });
         break;
 
       case 'checkPageInGroups':
-        const groups = workspacesManager.getAllWorkspacess();
-        const matchingGroups = groups.filter((group) => {
-          const allTabs = [...(group.tabs || []), ...(group.pinnedTabs || [])];
-          return allTabs.some((tab) => tab.url === message.url);
+        const matchingGroups = manager.workspaces.filter((workspace) => {
+          for (let i = 0; i < workspace.pinnedTabs.length; i++) {
+            if (workspace.pinnedTabs[i].url === message.url) {
+              return true;
+            }
+          }
+          for (let i = 0; i < workspace.tabs.length; i++) {
+            if (workspace.tabs[i].url === message.url) {
+              return true;
+            }
+          }
+          return false;
         });
-        sendResponse({
-          success: true,
-          groups: matchingGroups,
-        });
+        sendResponse({ success: true, groups: matchingGroups });
         break;
 
       default:
-        sendResponse({
-          success: false,
-          error: 'Unknown action',
-        });
+        sendResponse({ success: false, error: 'Unknown action' });
     }
   } catch (error) {
     console.error('__NAME__: Error handling message:', error);
-    sendResponse({
-      success: false,
-      error: error.message,
-    });
+    sendResponse({ success: false });
   }
 
   return true; // Keep message channel open for async response
@@ -303,7 +290,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 
 // Context menu setup
 browser.runtime.onInstalled.addListener(() => {
-  // Create context menu item for adding current tab to work group
+  // Create context menu item for adding current tab to workspace
   browser.contextMenus.create({
     id: 'addToWorkspaces',
     title: 'Add to Workspaces',
@@ -313,11 +300,11 @@ browser.runtime.onInstalled.addListener(() => {
 
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === 'addToWorkspaces') {
-    // Open popup to select work group
+    // Open popup to select workspace
     // This could be enhanced with a submenu showing available groups
     browser.browserAction.openPopup();
   }
 });
 
 // Initialize immediately
-initializeWorkspacesManager();
+init();

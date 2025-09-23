@@ -70,7 +70,7 @@ class WorkspacePopup {
   // Load work groups from background
   async loadWorkspacess() {
     try {
-      const response = await $send({ action: Action.GetWorkspacess });
+      const response = await $send({ action: Action.GetWorkspaces });
       if (response.success) {
         const loaded = response.data ?? [];
         this.workspaceses.length = 0;

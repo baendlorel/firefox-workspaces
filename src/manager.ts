@@ -3,7 +3,7 @@ import { $assign, $now, $ArrayFilter, $ArrayFind, $ArrayPush, $isArray } from '.
 import { $genId, $sleep } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
-class WorkspaceManager {
+export class WorkspaceManager {
   private readonly _map = new Map<string, IndexedWorkspace>();
   private readonly _arr: IndexedWorkspace[] = [];
 
@@ -14,15 +14,19 @@ class WorkspaceManager {
   // Initialize the manager and load saved data
   async init() {
     try {
-      await this.loadWorkspacess();
+      await this.load();
       console.log('Workspaces Manager initialized');
     } catch (error) {
       console.error('__NAME__: Failed to initialize Workspaces Manager:', error);
     }
   }
 
+  get workspaces() {
+    return this._arr;
+  }
+
   // Load work groups from browser storage
-  async loadWorkspacess() {
+  async load() {
     const workspaces = (await browser.storage.local.get(Consts.StorageKey)) as WorkspaceStoredData;
     if (!workspaces.list) {
       return;
@@ -109,7 +113,7 @@ class WorkspaceManager {
   }
 
   // Add tab to work group
-  addTab(id: string, tab: TabInfo, pinned: boolean = false) {
+  addTab(id: string, tab: browser.tabs.Tab, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
       // ? 找不到不用报错的？？
@@ -117,10 +121,10 @@ class WorkspaceManager {
     }
 
     const tabData: TabInfo = {
-      id: tab.id,
-      url: tab.url,
-      title: tab.title,
-      favIconUrl: tab.favIconUrl,
+      id: tab.id ?? NaN,
+      url: tab.url ?? '',
+      title: tab.title ?? '',
+      favIconUrl: tab.favIconUrl ?? '',
       addedAt: $now(),
     };
 
@@ -162,7 +166,7 @@ class WorkspaceManager {
 
   // fixme 从这里往下暂时先不用缓存的方法来写，最后让ai来做
   // Move tab between work groups
-  moveTabBetweenGroups(fromId: string, toId: string, tabId: number) {
+  moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number) {
     const from = this._map.get(fromId);
     const to = this._map.get(toId);
 
@@ -221,9 +225,8 @@ class WorkspaceManager {
     }
   }
 
-  // ? 这个函数没人用？
   // Open work group in new window
-  async openWorkspaceInWindow(id: string) {
+  async open(id: string): Promise<{ id?: number } | null> {
     const workspace = this._map.get(id);
     if (!workspace) {
       return null;
@@ -333,7 +336,7 @@ class WorkspaceManager {
   }
 
   // Update work group tabs from window state
-  async updateWorkspaceFromWindow(id: string, windowId: number | undefined) {
+  async updateByWindowId(id: string, windowId: number | undefined) {
     const workspace = this._map.get(id);
     if (!workspace || workspace.windowId !== windowId) {
       return false;
@@ -386,7 +389,7 @@ class WorkspaceManager {
    *
    * 🤣 But we finally decided to keep an array for indexed access and ordering.
    */
-  getWorkspaceByWindowId(windowId: number): Workspace | null {
+  getByWindowId(windowId: number): Workspace | null {
     for (let i = 0; i < this._arr.length; i++) {
       if (this._arr[i].windowId === windowId) {
         return this._arr[i];
@@ -395,7 +398,7 @@ class WorkspaceManager {
     return null;
   }
 
-  getWorkspaceStats(id: string): WorkspaceStats | null {
+  getStats(id: string): WorkspaceStats | null {
     const workspace = this._map.get(id);
     if (!workspace) {
       return null;
@@ -412,14 +415,14 @@ class WorkspaceManager {
   }
 
   // Save current session for all active work groups
-  async saveActiveWorkspaceSessions() {
+  async saveActiveSessions() {
     for (let i = 0; i < this._arr.length; i++) {
       const workspace = this._arr[i];
       if (workspace.windowId === undefined) {
         continue;
       }
       try {
-        await this.updateWorkspaceFromWindow(workspace.id, workspace.windowId);
+        await this.updateByWindowId(workspace.id, workspace.windowId);
       } catch (error) {
         console.error(`Failed to save session for group ${workspace.name}:`, error);
       }
@@ -427,7 +430,7 @@ class WorkspaceManager {
   }
 
   // Restore all work group sessions on startup
-  async restoreGroupSessions() {
+  async restoreSessions() {
     for (let i = 0; i < this._arr.length; i++) {
       this._arr[i].windowId = undefined;
     }
@@ -436,7 +439,7 @@ class WorkspaceManager {
   }
 
   // Get recently closed work groups
-  getRecentlyClosedWorkspaces(limit: number = 5) {
+  getRecentlyClosed(limit: number = 5) {
     return this._arr
       .filter((workspace) => workspace.lastOpened && !workspace.windowId)
       .sort((a, b) => b.lastOpened - a.lastOpened)
@@ -487,7 +490,7 @@ class WorkspaceManager {
   }
 }
 
-// Export for use in other scripts
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = WorkspaceManager;
-}
+// // Export for use in other scripts
+// if (typeof module !== 'undefined' && module.exports) {
+//   module.exports = WorkspaceManager;
+// }
