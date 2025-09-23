@@ -1,14 +1,6 @@
 import { Consts } from './lib/consts.js';
-import {
-  $ArrayFilter,
-  $ArrayFind,
-  $ArrayPush,
-  $assign,
-  $genId,
-  $isArray,
-  $now,
-  $sleep,
-} from './lib/lib.js';
+import { $assign, $now, $ArrayFilter, $ArrayFind, $ArrayPush, $isArray } from './lib/native.js';
+import { $genId, $sleep } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
 class WorkspaceManager {

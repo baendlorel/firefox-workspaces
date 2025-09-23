@@ -1,17 +1,24 @@
 // Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
+import { Consts } from './lib/consts.js';
+import { $on, $query } from './lib/dom.js';
+import { $get, $set } from './lib/native.js';
 
 (function () {
   'use strict';
 
   // Prevent multiple injections
-  if (window.workspacesContentLoaded) {
+  if ($get(window, Consts.InjectionFlag)) {
     return;
   }
-  window.workspacesContentLoaded = true;
+
+  $set(window, Consts.InjectionFlag, true);
 
   // Content script for handling page-specific features
   class WorkspacesContent {
+    private lastContextElement: EventTarget | null = null;
+    private lastContextPosition: { x: number; y: number } = { x: 0, y: 0 };
+
     constructor() {
       this.init();
     }
@@ -24,10 +31,10 @@
 
     // Listen for messages from popup or background
     setupMessageListener() {
-      browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      browser.runtime.onMessage.addListener((message, sender, respond) => {
         switch (message.action) {
           case 'getPageInfo':
-            sendResponse({
+            respond({
               title: document.title,
               url: window.location.href,
               favicon: this.getFavicon(),
@@ -90,20 +97,21 @@
 
     // Setup context menu enhancements
     setupContextMenu() {
-      // Add context menu listener for better integration
-      document.addEventListener('contextmenu', (event) => {
-        // Store the context for potential use by extension
+      const handler = ((event: PointerEvent) => {
         this.lastContextElement = event.target;
         this.lastContextPosition = { x: event.clientX, y: event.clientY };
-      });
+      }) as EventListener;
+
+      // Add context menu listener for better integration
+      $on.call(document, 'contextmenu', handler);
     }
 
     // Get page favicon
     getFavicon() {
       const favicon =
-        document.querySelector('link[rel="icon"]') ||
-        document.querySelector('link[rel="shortcut icon"]') ||
-        document.querySelector('link[rel="apple-touch-icon"]');
+        $query<HTMLLinkElement>('link[rel="icon"]') ||
+        $query<HTMLLinkElement>('link[rel="shortcut icon"]') ||
+        $query<HTMLLinkElement>('link[rel="apple-touch-icon"]');
 
       if (favicon) {
         return favicon.href;
@@ -152,7 +160,7 @@
 
         if (response.success && response.groups.length > 0) {
           // Page belongs to work groups, show indicator
-          this.showGroupIndicator(response.groups);
+          this.showWorkspaceIndicator(response.groups);
         }
       } catch (error) {
         console.log('Could not check work group membership:', error);
@@ -160,24 +168,26 @@
     }
 
     // Show indicator for work group membership
-    showGroupIndicator(groups) {
-      if (groups.length === 0) return;
+    showWorkspaceIndicator(workspaces: Workspace[]): void {
+      if (workspaces.length === 0) {
+        return;
+      }
 
-      const primaryGroup = groups[0]; // Use first group's color
-      this.highlightPage(primaryGroup.color);
+      const primary = workspaces[0]; // Use first group's color
+      this.highlightPage(primary.color);
 
       // Update indicator text with group info
       setTimeout(() => {
-        const indicator = document.querySelector('.work-group-indicator');
+        const indicator = $query('.work-group-indicator');
         if (indicator) {
           indicator.textContent =
-            groups.length === 1 ? primaryGroup.name : `${groups.length} Workspacess`;
+            workspaces.length === 1 ? primary.name : `${workspaces.length} Workspacess`;
         }
       }, 100);
     }
 
     // Utility to create notification
-    showNotification(message, type = 'info') {
+    showNotification(message: string, type: string = 'info') {
       const notification = document.createElement('div');
       notification.style.cssText = `
         position: fixed;
@@ -209,7 +219,7 @@
 
   // Check work group membership on page load
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
+    $on.call(document, 'DOMContentLoaded', () => {
       setTimeout(() => workspacesContent.checkWorkspacesMembership(), 1000);
     });
   } else {

@@ -1,3 +1,6 @@
+export const $set = Reflect.set;
+export const $get = Reflect.get;
+
 export const $NumberToString = Number.prototype.toString;
 export const $SubString = String.prototype.substring;
 
