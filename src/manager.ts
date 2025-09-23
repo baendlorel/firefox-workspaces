@@ -1,4 +1,4 @@
-import { Consts } from './consts.js';
+import { Consts } from './lib/consts.js';
 import {
   $ArrayFilter,
   $ArrayFind,
@@ -8,7 +8,7 @@ import {
   $isArray,
   $now,
   $sleep,
-} from './lib.js';
+} from './lib/lib.js';
 
 // Workspace Data Model and Storage Manager
 class WorkspaceManager {
