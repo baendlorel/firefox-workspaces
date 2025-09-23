@@ -57,11 +57,11 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
 
 // Periodically save workspace states for active windows
 setInterval(async () => {
-  if (!manager) return;
+  if (!manager) {
+    return;
+  }
 
-  const workspaces = manager.getWorkspaces();
-  const activated = workspaces.filter((g) => g.windowId);
-
+  const workspaces = manager.workspaces;
   for (let i = 0; i < workspaces.length; i++) {
     const workspace = workspaces[i];
     if (workspace.windowId === undefined) {
@@ -82,9 +82,6 @@ setInterval(async () => {
     } catch (error) {
       console.error('__NAME__: Error during periodic save:', error);
     }
-  }
-
-  for (const workspace of activated) {
   }
 }, 30000); // Save every 30 seconds
 

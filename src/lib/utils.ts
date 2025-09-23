@@ -27,6 +27,13 @@ export const $escapeHtml = (text: string) => {
   return div.innerHTML;
 };
 
+//{
+//   id: tab.id ?? NaN,
+//   url: browserTab.url ?? '',
+//   title: browserTab.title ?? '',
+//   favIconUrl: browserTab.favIconUrl ?? '',
+//   addedAt: $now(),
+//};
 export const $createTabInfo = (tab: browser.tabs.Tab, addedAt?: number): TabInfo => ({
   id: tab.id ?? NaN,
   url: tab.url ?? '[No URL]',

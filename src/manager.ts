@@ -1,6 +1,6 @@
 import { Consts } from './lib/consts.js';
 import { $assign, $now, $ArrayFilter, $ArrayFind, $ArrayPush, $isArray } from './lib/native.js';
-import { $genId, $sleep } from './lib/utils.js';
+import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -113,23 +113,17 @@ export class WorkspaceManager {
   }
 
   // Add tab to work group
-  addTab(id: string, tab: browser.tabs.Tab, pinned: boolean = false) {
+  addTab(id: string, browserTab: browser.tabs.Tab, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
       // ? 找不到不用报错的？？
       return false;
     }
 
-    const tabData: TabInfo = {
-      id: tab.id ?? NaN,
-      url: tab.url ?? '',
-      title: tab.title ?? '',
-      favIconUrl: tab.favIconUrl ?? '',
-      addedAt: $now(),
-    };
+    const tab: TabInfo = $createTabInfo(browserTab);
 
-    const except = (t: TabInfo) => t.id !== tab.id;
-    const find = (t: TabInfo) => t.id === tab.id;
+    const except = (t: TabInfo) => t.id !== browserTab.id;
+    const find = (t: TabInfo) => t.id === browserTab.id;
 
     if (pinned) {
       // Remove from regular tabs if exists
@@ -137,14 +131,14 @@ export class WorkspaceManager {
 
       // Add to pinned tabs if not already there
       if (!$ArrayFind.call(workspace.pinnedTabs, find)) {
-        $ArrayPush.call(workspace.pinnedTabs, tabData);
+        $ArrayPush.call(workspace.pinnedTabs, tab);
       }
     } else {
       // Remove from pinned tabs if exists
       workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, except);
       // Add to regular tabs if not already there
       if (!$ArrayFind.call(workspace.tabs, find)) {
-        $ArrayPush.call(workspace.tabs, tabData);
+        $ArrayPush.call(workspace.tabs, tab);
       }
     }
 
@@ -342,27 +336,20 @@ export class WorkspaceManager {
       return false;
     }
     try {
-      const tabs = await browser.tabs.query({ windowId });
+      const browserTabs = await browser.tabs.query({ windowId });
 
       // Clear existing tabs
       workspace.tabs = [];
       workspace.pinnedTabs = [];
 
       // Categorize tabs
-      for (let i = 0; i < tabs.length; i++) {
-        const tab = tabs[i];
-        const tabData: TabInfo = {
-          id: tab.id ?? NaN,
-          url: tab.url ?? '',
-          title: tab.title ?? '',
-          favIconUrl: tab.favIconUrl ?? '',
-          addedAt: $now(),
-        };
-
-        if (tab.pinned) {
-          workspace.pinnedTabs.push(tabData);
+      for (let i = 0; i < browserTabs.length; i++) {
+        const browserTab = browserTabs[i];
+        const tab: TabInfo = $createTabInfo(browserTab);
+        if (browserTab.pinned) {
+          workspace.pinnedTabs.push(tab);
         } else {
-          workspace.tabs.push(tabData);
+          workspace.tabs.push(tab);
         }
       }
 

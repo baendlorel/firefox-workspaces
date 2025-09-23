@@ -1,5 +1,5 @@
 import { $send } from './lib/ext-apis.js';
-import { Action } from './lib/consts.js';
+import { Action, Consts } from './lib/consts.js';
 import { $JSONParse } from './lib/native.js';
 import { $escapeHtml, $truncate } from './lib/utils.js';
 import { $getElementByIdOrThrow, $queryAll, $query, $on } from './lib/dom.js';
@@ -49,7 +49,7 @@ class WorkspacePopup {
 
     for (let i = colorOptions.length - 1; i >= 0; i--) {
       colorOptions[i].addEventListener('click', (e) => {
-        const color = (colorOptions[i].dataset.color ?? '#667eea') as HexColor;
+        const color = (colorOptions[i].dataset.color ?? Consts.DefaultColor) as HexColor;
         this.selectColor(color);
       });
     }
