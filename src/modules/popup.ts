@@ -6,6 +6,7 @@ import {
   $on,
   $query,
   $queryAll,
+  $send,
   $truncate,
 } from './lib.js';
 
@@ -75,9 +76,11 @@ class WorkspacePopup {
   // Load work groups from background
   async loadWorkspacess() {
     try {
-      const response = await this.sendMessage({ action: Action.GetWorkspacess });
+      const response = await $send({ action: Action.GetWorkspacess });
       if (response.success) {
-        this.workspaceses = response.data || [];
+        const loaded = response.data ?? [];
+        this.workspaceses.length = 0;
+        this.workspaceses.push(...loaded);
       }
     } catch (error) {
       console.error('__NAME__: Failed to load work groups:', error);
@@ -317,14 +320,14 @@ class WorkspacePopup {
       let response;
       if (this.edited) {
         // Update existing group
-        response = await this.sendMessage({
+        response = await $send({
           action: Action.UpdateWorkspaces,
           id: this.edited.id,
           updates: { name, color: this.selectedColor },
         });
       } else {
         // Create new group
-        response = await this.sendMessage({
+        response = await $send({
           action: Action.CreateWorkspaces,
           name,
           color: this.selectedColor,
@@ -361,7 +364,7 @@ class WorkspacePopup {
 
     if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
       try {
-        const response = await this.sendMessage({
+        const response = await $send({
           action: Action.DeleteWorkspaces,
           id: id,
         });
@@ -390,7 +393,7 @@ class WorkspacePopup {
   // Open work group in new window
   async open(id: string) {
     try {
-      const response = await this.sendMessage({
+      const response = await $send({
         action: Action.OpenWorkspaces,
         workspaceId: id,
       });
@@ -408,9 +411,9 @@ class WorkspacePopup {
   }
 
   // Remove tab from group
-  async removeTab(workspaceId, tabId) {
+  async removeTab(workspaceId: string, tabId: number) {
     try {
-      const response = await this.sendMessage({
+      const response = await $send({
         action: Action.RemoveTab,
         workspaceId,
         tabId,
@@ -431,7 +434,7 @@ class WorkspacePopup {
   // Toggle tab pin status
   async toggleTabPin(workspaceId: string, tabId: number) {
     try {
-      const response = await this.sendMessage({
+      const response = await $send({
         action: Action.TogglePin,
         workspaceId,
         tabId,
@@ -452,7 +455,7 @@ class WorkspacePopup {
   // Move tab between groups
   async moveTab(fromId: string, toId: string, tabId: number) {
     try {
-      const response = await this.sendMessage({
+      const response = await $send({
         action: Action.MoveTab,
         fromWorkspaceId: fromId,
         toWorkspaceId: toId,
@@ -492,7 +495,7 @@ class WorkspacePopup {
 
       try {
         // todo sendmessage到底入参是string还是可以是object，要明确后再写
-        const response = await this.sendMessage({
+        const response = await $send({
           action: Action.AddCurrentTab,
           workspaceId,
           isPinned,
@@ -527,13 +530,6 @@ class WorkspacePopup {
       }
     }
     return null;
-  }
-
-  // Send message to background script
-  sendMessage(message: string) {
-    return new Promise((resolve) => {
-      browser.runtime.sendMessage(message, resolve);
-    });
   }
 }
 

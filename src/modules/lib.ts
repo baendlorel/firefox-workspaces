@@ -79,3 +79,6 @@ export const $queryAll = <E extends Element = Element>(selector: string): NodeLi
   querySelectorAll.call(document, selector) as NodeListOf<E>;
 
 export const $on = HTMLElement.prototype.addEventListener;
+
+// # Extension APIs
+export const $send = browser.runtime.sendMessage;
