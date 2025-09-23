@@ -114,7 +114,6 @@ export class WorkspaceManager {
   async addTab(id: string, browserTab: browser.tabs.Tab, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      // ? 找不到不用报错的？？
       console.error(`__NAME__:addTab Workspace with id ${id} not found`);
       return false;
     }
@@ -157,7 +156,6 @@ export class WorkspaceManager {
     return true;
   }
 
-  // fixme 从这里往下暂时先不用缓存的方法来写，最后让ai来做
   // Move tab between work groups
   async moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number): Promise<boolean> {
     const from = this._map.get(fromId);
@@ -195,7 +193,7 @@ export class WorkspaceManager {
   async toggleTabPin(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      // ? 找不到不用报错的？？
+      console.error(`__NAME__:toggleTabPin Workspace with id ${id} not found`);
       return false;
     }
 
