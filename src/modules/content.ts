@@ -5,13 +5,13 @@
   'use strict';
 
   // Prevent multiple injections
-  if (window.workGroupContentLoaded) {
+  if (window.workspacesContentLoaded) {
     return;
   }
-  window.workGroupContentLoaded = true;
+  window.workspacesContentLoaded = true;
 
   // Content script for handling page-specific features
-  class WorkGroupContent {
+  class WorkspacesContent {
     constructor() {
       this.init();
     }
@@ -143,7 +143,7 @@
     }
 
     // Check if page belongs to a work group
-    async checkWorkGroupMembership() {
+    async checkWorkspacesMembership() {
       try {
         const response = await browser.runtime.sendMessage({
           action: 'checkPageInGroups',
@@ -205,15 +205,15 @@
   }
 
   // Initialize content script
-  const workGroupContent = new WorkGroupContent();
+  const workspacesContent = new WorkspacesContent();
 
   // Check work group membership on page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => workGroupContent.checkWorkGroupMembership(), 1000);
+      setTimeout(() => workspacesContent.checkWorkspacesMembership(), 1000);
     });
   } else {
-    setTimeout(() => workGroupContent.checkWorkGroupMembership(), 1000);
+    setTimeout(() => workspacesContent.checkWorkspacesMembership(), 1000);
   }
 
   // Re-check on navigation (for SPAs)
@@ -221,7 +221,7 @@
   const observer = new MutationObserver(() => {
     if (window.location.href !== lastUrl) {
       lastUrl = window.location.href;
-      setTimeout(() => workGroupContent.checkWorkGroupMembership(), 1000);
+      setTimeout(() => workspacesContent.checkWorkspacesMembership(), 1000);
     }
   });
 

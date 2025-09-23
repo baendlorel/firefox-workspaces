@@ -1,7 +1,10 @@
 // Workspaces Data Model and Storage Manager
-class WorkGroupManager {
+class WorkspacesManager {
+  private readonly workspacess: Map<string, WorkspacesManager>;
+  private readonly currentEditingGroup: null = null;
+
   constructor() {
-    this.workGroups = new Map();
+    this.workspacess = new Map();
     this.currentEditingGroup = null;
     this.init();
   }
@@ -9,7 +12,7 @@ class WorkGroupManager {
   // Initialize the manager and load saved data
   async init() {
     try {
-      await this.loadWorkGroups();
+      await this.loadWorkspacess();
       console.log('Workspaces Manager initialized');
     } catch (error) {
       console.error('Failed to initialize Workspaces Manager:', error);
@@ -17,15 +20,15 @@ class WorkGroupManager {
   }
 
   // Load work groups from browser storage
-  async loadWorkGroups() {
-    return new Promise((resolve) => {
-      browser.storage.local.get(['workGroups'], (result) => {
-        if (result.workGroups) {
+  async loadWorkspacess() {
+    return new Promise<void>((resolve) => {
+      browser.storage.local.get(['workspacess'], (result) => {
+        if (result.workspacess) {
           // Convert stored array back to Map
-          const groups = result.workGroups;
-          this.workGroups.clear();
+          const groups = result.workspacess;
+          this.workspacess.clear();
           groups.forEach((group) => {
-            this.workGroups.set(group.id, group);
+            this.workspacess.set(group.id, group);
           });
         }
         resolve();
@@ -34,11 +37,11 @@ class WorkGroupManager {
   }
 
   // Save work groups to browser storage
-  async saveWorkGroups() {
+  async saveWorkspacess() {
     return new Promise((resolve) => {
       // Convert Map to array for storage
-      const groupsArray = Array.from(this.workGroups.values());
-      browser.storage.local.set({ workGroups: groupsArray }, () => {
+      const groupsArray = Array.from(this.workspacess.values());
+      browser.storage.local.set({ workspacess: groupsArray }, () => {
         console.log('Work groups saved successfully');
         resolve();
       });
@@ -46,9 +49,9 @@ class WorkGroupManager {
   }
 
   // Create a new work group
-  createWorkGroup(name, color = '#667eea') {
+  createWorkspaces(name, color = '#667eea') {
     const id = this.generateId();
-    const workGroup = {
+    const workspaces = {
       id: id,
       name: name,
       color: color,
@@ -59,44 +62,44 @@ class WorkGroupManager {
       windowId: null, // Track associated window
     };
 
-    this.workGroups.set(id, workGroup);
-    this.saveWorkGroups();
-    return workGroup;
+    this.workspacess.set(id, workspaces);
+    this.saveWorkspacess();
+    return workspaces;
   }
 
   // Update an existing work group
-  updateWorkGroup(id, updates) {
-    const group = this.workGroups.get(id);
+  updateWorkspaces(id, updates) {
+    const group = this.workspacess.get(id);
     if (group) {
       Object.assign(group, updates);
-      this.saveWorkGroups();
+      this.saveWorkspacess();
       return group;
     }
     return null;
   }
 
   // Delete a work group
-  deleteWorkGroup(id) {
-    const success = this.workGroups.delete(id);
+  deleteWorkspaces(id) {
+    const success = this.workspacess.delete(id);
     if (success) {
-      this.saveWorkGroups();
+      this.saveWorkspacess();
     }
     return success;
   }
 
   // Get a work group by id
-  getWorkGroup(id) {
-    return this.workGroups.get(id);
+  getWorkspaces(id) {
+    return this.workspacess.get(id);
   }
 
   // Get all work groups as array
-  getAllWorkGroups() {
-    return Array.from(this.workGroups.values());
+  getAllWorkspacess() {
+    return Array.from(this.workspacess.values());
   }
 
   // Add tab to work group
   addTabToGroup(groupId, tab, isPinned = false) {
-    const group = this.workGroups.get(groupId);
+    const group = this.workspacess.get(groupId);
     if (group) {
       const tabData = {
         id: tab.id,
@@ -122,7 +125,7 @@ class WorkGroupManager {
         }
       }
 
-      this.saveWorkGroups();
+      this.saveWorkspacess();
       return true;
     }
     return false;
@@ -130,11 +133,11 @@ class WorkGroupManager {
 
   // Remove tab from work group
   removeTabFromGroup(groupId, tabId) {
-    const group = this.workGroups.get(groupId);
+    const group = this.workspacess.get(groupId);
     if (group) {
       group.tabs = group.tabs.filter((tab) => tab.id !== tabId);
       group.pinnedTabs = group.pinnedTabs.filter((tab) => tab.id !== tabId);
-      this.saveWorkGroups();
+      this.saveWorkspacess();
       return true;
     }
     return false;
@@ -142,8 +145,8 @@ class WorkGroupManager {
 
   // Move tab between work groups
   moveTabBetweenGroups(fromGroupId, toGroupId, tabId) {
-    const fromGroup = this.workGroups.get(fromGroupId);
-    const toGroup = this.workGroups.get(toGroupId);
+    const fromGroup = this.workspacess.get(fromGroupId);
+    const toGroup = this.workspacess.get(toGroupId);
 
     if (fromGroup && toGroup) {
       // Find tab in source group
@@ -166,7 +169,7 @@ class WorkGroupManager {
           toGroup.tabs.push(tab);
         }
 
-        this.saveWorkGroups();
+        this.saveWorkspacess();
         return true;
       }
     }
@@ -175,7 +178,7 @@ class WorkGroupManager {
 
   // Toggle tab pinned status within a group
   toggleTabPin(groupId, tabId) {
-    const group = this.workGroups.get(groupId);
+    const group = this.workspacess.get(groupId);
     if (group) {
       // Check if tab is in regular tabs
       const tabIndex = group.tabs.findIndex((t) => t.id === tabId);
@@ -183,7 +186,7 @@ class WorkGroupManager {
         // Move to pinned
         const tab = group.tabs.splice(tabIndex, 1)[0];
         group.pinnedTabs.push(tab);
-        this.saveWorkGroups();
+        this.saveWorkspacess();
         return true;
       }
 
@@ -193,7 +196,7 @@ class WorkGroupManager {
         // Move to regular
         const tab = group.pinnedTabs.splice(pinnedIndex, 1)[0];
         group.tabs.push(tab);
-        this.saveWorkGroups();
+        this.saveWorkspacess();
         return true;
       }
     }
@@ -201,8 +204,8 @@ class WorkGroupManager {
   }
 
   // Open work group in new window
-  async openWorkGroupInWindow(groupId) {
-    const group = this.workGroups.get(groupId);
+  async openWorkspacesInWindow(groupId) {
+    const group = this.workspacess.get(groupId);
     if (!group) return null;
 
     try {
@@ -230,7 +233,7 @@ class WorkGroupManager {
         });
         group.windowId = window.id;
         group.lastOpened = Date.now();
-        this.saveWorkGroups();
+        this.saveWorkspacess();
         return window;
       }
 
@@ -284,7 +287,7 @@ class WorkGroupManager {
       // Update group with window association and last opened time
       group.windowId = window.id;
       group.lastOpened = Date.now();
-      this.saveWorkGroups();
+      this.saveWorkspacess();
 
       return window;
     } catch (error) {
@@ -295,7 +298,7 @@ class WorkGroupManager {
 
   // Update work group tabs from window state
   async updateGroupFromWindow(groupId, windowId) {
-    const group = this.workGroups.get(groupId);
+    const group = this.workspacess.get(groupId);
     if (!group || group.windowId !== windowId) return false;
 
     try {
@@ -322,7 +325,7 @@ class WorkGroupManager {
         }
       });
 
-      this.saveWorkGroups();
+      this.saveWorkspacess();
       return true;
     } catch (error) {
       console.error('Failed to update group from window:', error);
@@ -332,7 +335,7 @@ class WorkGroupManager {
 
   // Find work group by window ID
   getGroupByWindowId(windowId) {
-    for (const group of this.workGroups.values()) {
+    for (const group of this.workspacess.values()) {
       if (group.windowId === windowId) {
         return group;
       }
@@ -347,7 +350,7 @@ class WorkGroupManager {
 
   // Get work group statistics
   getGroupStats(groupId) {
-    const group = this.workGroups.get(groupId);
+    const group = this.workspacess.get(groupId);
     if (!group) return null;
 
     return {
@@ -362,7 +365,7 @@ class WorkGroupManager {
 
   // Save current session for all active work groups
   async saveActiveGroupSessions() {
-    const groups = this.getAllWorkGroups();
+    const groups = this.getAllWorkspacess();
     const activeGroups = groups.filter((g) => g.windowId);
 
     for (const group of activeGroups) {
@@ -376,20 +379,20 @@ class WorkGroupManager {
 
   // Restore all work group sessions on startup
   async restoreGroupSessions() {
-    const groups = this.getAllWorkGroups();
+    const groups = this.getAllWorkspacess();
 
     // Clear any stale window associations
     groups.forEach((group) => {
       group.windowId = null;
     });
 
-    await this.saveWorkGroups();
+    await this.saveWorkspacess();
     console.log('Cleared stale window associations on startup');
   }
 
   // Get recently closed work groups
   getRecentlyClosedGroups(limit = 5) {
-    return this.getAllWorkGroups()
+    return this.getAllWorkspacess()
       .filter((group) => group.lastOpened && !group.windowId)
       .sort((a, b) => b.lastOpened - a.lastOpened)
       .slice(0, limit);
@@ -400,22 +403,22 @@ class WorkGroupManager {
     return {
       version: '1.0',
       exportDate: Date.now(),
-      workGroups: this.getAllWorkGroups(),
+      workspacess: this.getAllWorkspacess(),
     };
   }
 
   // Import work groups data
   async importData(data) {
     try {
-      if (!data.workGroups || !Array.isArray(data.workGroups)) {
+      if (!data.workspacess || !Array.isArray(data.workspacess)) {
         throw new Error('Invalid data format');
       }
 
       // Clear existing groups (with confirmation in UI)
-      this.workGroups.clear();
+      this.workspacess.clear();
 
       // Import groups
-      data.workGroups.forEach((group) => {
+      data.workspacess.forEach((group) => {
         // Generate new IDs to avoid conflicts
         const newGroup = {
           ...group,
@@ -423,10 +426,10 @@ class WorkGroupManager {
           windowId: null, // Reset window associations
           lastOpened: null,
         };
-        this.workGroups.set(newGroup.id, newGroup);
+        this.workspacess.set(newGroup.id, newGroup);
       });
 
-      await this.saveWorkGroups();
+      await this.saveWorkspacess();
       return true;
     } catch (error) {
       console.error('Failed to import data:', error);
@@ -437,5 +440,5 @@ class WorkGroupManager {
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = WorkGroupManager;
+  module.exports = WorkspacesManager;
 }

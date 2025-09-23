@@ -1,7 +1,7 @@
 // Popup JavaScript for Workspaces Manager
-class WorkGroupPopup {
+class WorkspacesPopup {
   constructor() {
-    this.workGroups = [];
+    this.workspacess = [];
     this.currentEditingGroup = null;
     this.selectedColor = '#667eea';
     this.init();
@@ -10,8 +10,8 @@ class WorkGroupPopup {
   // Initialize popup
   async init() {
     this.setupEventListeners();
-    await this.loadWorkGroups();
-    this.renderWorkGroups();
+    await this.loadWorkspacess();
+    this.renderWorkspacess();
   }
 
   // Setup event listeners
@@ -32,7 +32,7 @@ class WorkGroupPopup {
     });
 
     document.getElementById('saveBtn').addEventListener('click', () => {
-      this.saveWorkGroup();
+      this.saveWorkspaces();
     });
 
     // Color picker
@@ -43,8 +43,8 @@ class WorkGroupPopup {
     });
 
     // Close modal when clicking outside
-    document.getElementById('workGroupModal').addEventListener('click', (e) => {
-      if (e.target.id === 'workGroupModal') {
+    document.getElementById('workspacesModal').addEventListener('click', (e) => {
+      if (e.target.id === 'workspacesModal') {
         this.hideModal();
       }
     });
@@ -52,17 +52,17 @@ class WorkGroupPopup {
     // Enter key to save
     document.getElementById('groupName').addEventListener('keypress', (e) => {
       if (e.key === 'Enter') {
-        this.saveWorkGroup();
+        this.saveWorkspaces();
       }
     });
   }
 
   // Load work groups from background
-  async loadWorkGroups() {
+  async loadWorkspacess() {
     try {
-      const response = await this.sendMessage({ action: 'getWorkGroups' });
+      const response = await this.sendMessage({ action: 'getWorkspacess' });
       if (response.success) {
-        this.workGroups = response.data || [];
+        this.workspacess = response.data || [];
       }
     } catch (error) {
       console.error('Failed to load work groups:', error);
@@ -70,11 +70,11 @@ class WorkGroupPopup {
   }
 
   // Render work groups in the popup
-  renderWorkGroups() {
-    const container = document.getElementById('workGroupsList');
+  renderWorkspacess() {
+    const container = document.getElementById('workspacessList');
     const emptyState = document.getElementById('emptyState');
 
-    if (this.workGroups.length === 0) {
+    if (this.workspacess.length === 0) {
       container.style.display = 'none';
       emptyState.style.display = 'block';
       return;
@@ -83,7 +83,7 @@ class WorkGroupPopup {
     container.style.display = 'block';
     emptyState.style.display = 'none';
 
-    container.innerHTML = this.workGroups
+    container.innerHTML = this.workspacess
       .map((group) => {
         const totalTabs = (group.tabs || []).length + (group.pinnedTabs || []).length;
         const pinnedCount = (group.pinnedTabs || []).length;
@@ -98,22 +98,22 @@ class WorkGroupPopup {
               </div>
             </div>
             <div class="work-group-actions">
-              <button class="btn-small" onclick="workGroupPopup.openWorkGroup('${
+              <button class="btn-small" onclick="workspacesPopup.openWorkspaces('${
                 group.id
               }')" title="Open in new window">
                 🗖
               </button>
-              <button class="btn-small" onclick="workGroupPopup.editGroup('${
+              <button class="btn-small" onclick="workspacesPopup.editGroup('${
                 group.id
               }')" title="Edit group">
                 ✏️
               </button>
-              <button class="btn-small" onclick="workGroupPopup.deleteGroup('${
+              <button class="btn-small" onclick="workspacesPopup.deleteGroup('${
                 group.id
               }')" title="Delete group">
                 🗑️
               </button>
-              <button class="btn-small" onclick="workGroupPopup.toggleGroup('${
+              <button class="btn-small" onclick="workspacesPopup.toggleGroup('${
                 group.id
               }')" title="Show/Hide tabs">
                 ▼
@@ -146,13 +146,13 @@ class WorkGroupPopup {
         </div>
         ${isPinned ? '<div class="pinned-indicator" title="Pinned tab">📌</div>' : ''}
         <div class="tab-actions">
-          <button class="btn-small" onclick="workGroupPopup.toggleTabPin('${group.id}', '${
+          <button class="btn-small" onclick="workspacesPopup.toggleTabPin('${group.id}', '${
             tab.id
           }')" 
                   title="${isPinned ? 'Unpin tab' : 'Pin tab'}">
             ${isPinned ? '📌' : '📍'}
           </button>
-          <button class="btn-small" onclick="workGroupPopup.removeTab('${group.id}', '${tab.id}')" 
+          <button class="btn-small" onclick="workspacesPopup.removeTab('${group.id}', '${tab.id}')" 
                   title="Remove from group">
             ✕
           </button>
@@ -237,7 +237,7 @@ class WorkGroupPopup {
   // Show modal for creating/editing groups
   showModal(group = null) {
     this.currentEditingGroup = group;
-    const modal = document.getElementById('workGroupModal');
+    const modal = document.getElementById('workspacesModal');
     const title = document.getElementById('modalTitle');
     const nameInput = document.getElementById('groupName');
 
@@ -257,7 +257,7 @@ class WorkGroupPopup {
 
   // Hide modal
   hideModal() {
-    const modal = document.getElementById('workGroupModal');
+    const modal = document.getElementById('workspacesModal');
     modal.classList.remove('show');
     this.currentEditingGroup = null;
   }
@@ -271,7 +271,7 @@ class WorkGroupPopup {
   }
 
   // Save work group (create or update)
-  async saveWorkGroup() {
+  async saveWorkspaces() {
     const nameInput = document.getElementById('groupName');
     const name = nameInput.value.trim();
 
@@ -285,22 +285,22 @@ class WorkGroupPopup {
       if (this.currentEditingGroup) {
         // Update existing group
         response = await this.sendMessage({
-          action: 'updateWorkGroup',
+          action: 'updateWorkspaces',
           id: this.currentEditingGroup.id,
           updates: { name, color: this.selectedColor },
         });
       } else {
         // Create new group
         response = await this.sendMessage({
-          action: 'createWorkGroup',
+          action: 'createWorkspaces',
           name,
           color: this.selectedColor,
         });
       }
 
       if (response.success) {
-        await this.loadWorkGroups();
-        this.renderWorkGroups();
+        await this.loadWorkspacess();
+        this.renderWorkspacess();
         this.hideModal();
       } else {
         alert('Failed to save work group');
@@ -313,7 +313,7 @@ class WorkGroupPopup {
 
   // Edit work group
   editGroup(groupId) {
-    const group = this.workGroups.find((g) => g.id === groupId);
+    const group = this.workspacess.find((g) => g.id === groupId);
     if (group) {
       this.showModal(group);
     }
@@ -321,19 +321,19 @@ class WorkGroupPopup {
 
   // Delete work group
   async deleteGroup(groupId) {
-    const group = this.workGroups.find((g) => g.id === groupId);
+    const group = this.workspacess.find((g) => g.id === groupId);
     if (!group) return;
 
     if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
       try {
         const response = await this.sendMessage({
-          action: 'deleteWorkGroup',
+          action: 'deleteWorkspaces',
           id: groupId,
         });
 
         if (response.success) {
-          await this.loadWorkGroups();
-          this.renderWorkGroups();
+          await this.loadWorkspacess();
+          this.renderWorkspacess();
         } else {
           alert('Failed to delete work group');
         }
@@ -353,10 +353,10 @@ class WorkGroupPopup {
   }
 
   // Open work group in new window
-  async openWorkGroup(groupId) {
+  async openWorkspaces(groupId) {
     try {
       const response = await this.sendMessage({
-        action: 'openWorkGroup',
+        action: 'openWorkspaces',
         groupId,
       });
 
@@ -382,8 +382,8 @@ class WorkGroupPopup {
       });
 
       if (response.success) {
-        await this.loadWorkGroups();
-        this.renderWorkGroups();
+        await this.loadWorkspacess();
+        this.renderWorkspacess();
       } else {
         alert('Failed to remove tab');
       }
@@ -403,8 +403,8 @@ class WorkGroupPopup {
       });
 
       if (response.success) {
-        await this.loadWorkGroups();
-        this.renderWorkGroups();
+        await this.loadWorkspacess();
+        this.renderWorkspacess();
       } else {
         alert('Failed to toggle pin');
       }
@@ -425,8 +425,8 @@ class WorkGroupPopup {
       });
 
       if (response.success) {
-        await this.loadWorkGroups();
-        this.renderWorkGroups();
+        await this.loadWorkspacess();
+        this.renderWorkspacess();
       } else {
         alert('Failed to move tab');
       }
@@ -438,13 +438,13 @@ class WorkGroupPopup {
 
   // Show menu to add current tab to a group
   async showAddTabMenu() {
-    if (this.workGroups.length === 0) {
+    if (this.workspacess.length === 0) {
       alert('Create a work group first');
       return;
     }
 
     // Simple implementation - show a select dialog
-    const groupOptions = this.workGroups.map(
+    const groupOptions = this.workspacess.map(
       (group) =>
         `${group.name} (${(group.tabs || []).length + (group.pinnedTabs || []).length} tabs)`
     );
@@ -452,7 +452,7 @@ class WorkGroupPopup {
     const selectedIndex = await this.showSelectDialog('Select a work group:', groupOptions);
 
     if (selectedIndex !== null) {
-      const groupId = this.workGroups[selectedIndex].id;
+      const groupId = this.workspacess[selectedIndex].id;
       const isPinned = confirm('Pin this tab in the group?');
 
       try {
@@ -463,8 +463,8 @@ class WorkGroupPopup {
         });
 
         if (response.success) {
-          await this.loadWorkGroups();
-          this.renderWorkGroups();
+          await this.loadWorkspacess();
+          this.renderWorkspacess();
         } else {
           alert('Failed to add tab to group');
         }
@@ -515,8 +515,8 @@ class WorkGroupPopup {
 }
 
 // Initialize popup when DOM is loaded
-let workGroupPopup;
+let workspacesPopup;
 
 document.addEventListener('DOMContentLoaded', () => {
-  workGroupPopup = new WorkGroupPopup();
+  workspacesPopup = new WorkspacesPopup();
 });

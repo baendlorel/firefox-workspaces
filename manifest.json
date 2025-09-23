@@ -13,7 +13,7 @@
   ],
   "background": {
     "scripts": [
-      "js/workgroup-manager.js",
+      "js/workspaces-manager.js",
       "js/background.js"
     ],
     "persistent": false

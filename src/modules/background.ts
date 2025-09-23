@@ -1,22 +1,22 @@
 // Background script for Workspaces extension
-let workGroupManager;
+let workspacesManager;
 
 // Initialize when extension starts
 browser.runtime.onStartup.addListener(async () => {
-  await initializeWorkGroupManager();
+  await initializeWorkspacesManager();
 });
 
 browser.runtime.onInstalled.addListener(async () => {
-  await initializeWorkGroupManager();
+  await initializeWorkspacesManager();
 });
 
-async function initializeWorkGroupManager() {
-  // WorkGroupManager is already loaded via manifest scripts
+async function initializeWorkspacesManager() {
+  // WorkspacesManager is already loaded via manifest scripts
   try {
-    workGroupManager = new WorkGroupManager();
+    workspacesManager = new WorkspacesManager();
 
     // Restore sessions on startup
-    await workGroupManager.restoreGroupSessions();
+    await workspacesManager.restoreGroupSessions();
 
     console.log('Workspaces Manager initialized in background');
   } catch (error) {
@@ -26,16 +26,16 @@ async function initializeWorkGroupManager() {
 
 // Handle window events for session management
 browser.windows.onRemoved.addListener(async (windowId) => {
-  if (!workGroupManager) return;
+  if (!workspacesManager) return;
 
   // Check if this window belongs to a work group
-  const group = workGroupManager.getGroupByWindowId(windowId);
+  const group = workspacesManager.getGroupByWindowId(windowId);
   if (group) {
     console.log(`Work group window closed: ${group.name}`);
 
     // The tabs were already saved during the session, just clear window association
     group.windowId = null;
-    await workGroupManager.saveWorkGroups();
+    await workspacesManager.saveWorkspacess();
 
     console.log(`Saved work group session for: ${group.name}`);
   }
@@ -43,21 +43,21 @@ browser.windows.onRemoved.addListener(async (windowId) => {
 
 // Track window focus changes to update group states
 browser.windows.onFocusChanged.addListener(async (windowId) => {
-  if (!workGroupManager || windowId === browser.windows.WINDOW_ID_NONE) return;
+  if (!workspacesManager || windowId === browser.windows.WINDOW_ID_NONE) return;
 
-  const group = workGroupManager.getGroupByWindowId(windowId);
+  const group = workspacesManager.getGroupByWindowId(windowId);
   if (group) {
     // Update group's last accessed time
     group.lastAccessed = Date.now();
-    await workGroupManager.saveWorkGroups();
+    await workspacesManager.saveWorkspacess();
   }
 });
 
 // Periodically save work group states for active windows
 setInterval(async () => {
-  if (!workGroupManager) return;
+  if (!workspacesManager) return;
 
-  const groups = workGroupManager.getAllWorkGroups();
+  const groups = workspacesManager.getAllWorkspacess();
   const activeGroups = groups.filter((g) => g.windowId);
 
   for (const group of activeGroups) {
@@ -67,11 +67,11 @@ setInterval(async () => {
       const windowExists = windows.some((w) => w.id === group.windowId);
 
       if (windowExists) {
-        await workGroupManager.updateGroupFromWindow(group.id, group.windowId);
+        await workspacesManager.updateGroupFromWindow(group.id, group.windowId);
       } else {
         // Window was closed but event wasn't caught
         group.windowId = null;
-        await workGroupManager.saveWorkGroups();
+        await workspacesManager.saveWorkspacess();
       }
     } catch (error) {
       console.error('Error during periodic save:', error);
@@ -81,48 +81,48 @@ setInterval(async () => {
 
 // Save sessions before browser shuts down
 browser.runtime.onSuspend.addListener(async () => {
-  if (workGroupManager) {
+  if (workspacesManager) {
     console.log('Saving work group sessions before browser shutdown');
-    await workGroupManager.saveActiveGroupSessions();
+    await workspacesManager.saveActiveGroupSessions();
   }
 });
 
 // Handle browser startup
 browser.runtime.onStartup.addListener(async () => {
-  await initializeWorkGroupManager();
+  await initializeWorkspacesManager();
 });
 
 // Save work group sessions periodically and on important events
 browser.tabs.onAttached.addListener(async (tabId, attachInfo) => {
-  if (!workGroupManager) return;
+  if (!workspacesManager) return;
 
-  const group = workGroupManager.getGroupByWindowId(attachInfo.newWindowId);
+  const group = workspacesManager.getGroupByWindowId(attachInfo.newWindowId);
   if (group) {
     // Tab was moved to a work group window
     setTimeout(() => {
-      workGroupManager.updateGroupFromWindow(group.id, attachInfo.newWindowId);
+      workspacesManager.updateGroupFromWindow(group.id, attachInfo.newWindowId);
     }, 1000);
   }
 });
 
 browser.tabs.onDetached.addListener(async (tabId, detachInfo) => {
-  if (!workGroupManager) return;
+  if (!workspacesManager) return;
 
-  const group = workGroupManager.getGroupByWindowId(detachInfo.oldWindowId);
+  const group = workspacesManager.getGroupByWindowId(detachInfo.oldWindowId);
   if (group) {
     // Tab was moved from a work group window
     setTimeout(() => {
-      workGroupManager.updateGroupFromWindow(group.id, detachInfo.oldWindowId);
+      workspacesManager.updateGroupFromWindow(group.id, detachInfo.oldWindowId);
     }, 1000);
   }
 });
 
 // Handle tab events
 browser.tabs.onCreated.addListener(async (tab) => {
-  if (!workGroupManager) return;
+  if (!workspacesManager) return;
 
   // Check if tab was created in a work group window
-  const group = workGroupManager.getGroupByWindowId(tab.windowId);
+  const group = workspacesManager.getGroupByWindowId(tab.windowId);
   if (group) {
     console.log(`New tab created in work group: ${group.name}`);
     // The tab will be saved when the window is closed or manually updated
@@ -130,22 +130,22 @@ browser.tabs.onCreated.addListener(async (tab) => {
 });
 
 browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
-  if (!workGroupManager) return;
+  if (!workspacesManager) return;
 
   // Update work groups if tab was removed from a work group window
-  const group = workGroupManager.getGroupByWindowId(removeInfo.windowId);
+  const group = workspacesManager.getGroupByWindowId(removeInfo.windowId);
   if (group && !removeInfo.isWindowClosing) {
     // Update group state immediately when individual tab is closed
-    await workGroupManager.updateGroupFromWindow(group.id, removeInfo.windowId);
+    await workspacesManager.updateGroupFromWindow(group.id, removeInfo.windowId);
   }
 });
 
 browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (!workGroupManager) return;
+  if (!workspacesManager) return;
 
   // Update work group if tab URL or title changed in a work group window
   if (changeInfo.url || changeInfo.title) {
-    const group = workGroupManager.getGroupByWindowId(tab.windowId);
+    const group = workspacesManager.getGroupByWindowId(tab.windowId);
     if (group) {
       // Update the specific tab in the group
       const updateTab = (tabArray) => {
@@ -164,7 +164,7 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
       const updated = updateTab(group.tabs) || updateTab(group.pinnedTabs);
       if (updated) {
-        await workGroupManager.saveWorkGroups();
+        await workspacesManager.saveWorkspacess();
       }
     }
   }
@@ -172,37 +172,37 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
 
 // Handle messages from popup and content scripts
 browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
-  if (!workGroupManager) {
-    await initializeWorkGroupManager();
+  if (!workspacesManager) {
+    await initializeWorkspacesManager();
   }
 
   try {
     switch (message.action) {
-      case 'getWorkGroups':
+      case 'getWorkspacess':
         sendResponse({
           success: true,
-          data: workGroupManager.getAllWorkGroups(),
+          data: workspacesManager.getAllWorkspacess(),
         });
         break;
 
-      case 'createWorkGroup':
-        const newGroup = workGroupManager.createWorkGroup(message.name, message.color);
+      case 'createWorkspaces':
+        const newGroup = workspacesManager.createWorkspaces(message.name, message.color);
         sendResponse({
           success: true,
           data: newGroup,
         });
         break;
 
-      case 'updateWorkGroup':
-        const updatedGroup = workGroupManager.updateWorkGroup(message.id, message.updates);
+      case 'updateWorkspaces':
+        const updatedGroup = workspacesManager.updateWorkspaces(message.id, message.updates);
         sendResponse({
           success: !!updatedGroup,
           data: updatedGroup,
         });
         break;
 
-      case 'deleteWorkGroup':
-        const deleted = workGroupManager.deleteWorkGroup(message.id);
+      case 'deleteWorkspaces':
+        const deleted = workspacesManager.deleteWorkspaces(message.id);
         sendResponse({
           success: deleted,
         });
@@ -215,7 +215,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         });
 
         if (currentTab[0]) {
-          const added = workGroupManager.addTabToGroup(
+          const added = workspacesManager.addTabToGroup(
             message.groupId,
             currentTab[0],
             message.isPinned
@@ -232,21 +232,21 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         break;
 
       case 'removeTab':
-        const removed = workGroupManager.removeTabFromGroup(message.groupId, message.tabId);
+        const removed = workspacesManager.removeTabFromGroup(message.groupId, message.tabId);
         sendResponse({
           success: removed,
         });
         break;
 
       case 'togglePin':
-        const pinToggled = workGroupManager.toggleTabPin(message.groupId, message.tabId);
+        const pinToggled = workspacesManager.toggleTabPin(message.groupId, message.tabId);
         sendResponse({
           success: pinToggled,
         });
         break;
 
-      case 'openWorkGroup':
-        const window = await workGroupManager.openWorkGroupInWindow(message.groupId);
+      case 'openWorkspaces':
+        const window = await workspacesManager.openWorkspacesInWindow(message.groupId);
         sendResponse({
           success: !!window,
           data: window,
@@ -254,7 +254,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         break;
 
       case 'moveTab':
-        const moved = workGroupManager.moveTabBetweenGroups(
+        const moved = workspacesManager.moveTabBetweenGroups(
           message.fromGroupId,
           message.toGroupId,
           message.tabId
@@ -265,7 +265,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         break;
 
       case 'getGroupStats':
-        const stats = workGroupManager.getGroupStats(message.groupId);
+        const stats = workspacesManager.getGroupStats(message.groupId);
         sendResponse({
           success: !!stats,
           data: stats,
@@ -273,7 +273,7 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
         break;
 
       case 'checkPageInGroups':
-        const groups = workGroupManager.getAllWorkGroups();
+        const groups = workspacesManager.getAllWorkspacess();
         const matchingGroups = groups.filter((group) => {
           const allTabs = [...(group.tabs || []), ...(group.pinnedTabs || [])];
           return allTabs.some((tab) => tab.url === message.url);
@@ -305,14 +305,14 @@ browser.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
 browser.runtime.onInstalled.addListener(() => {
   // Create context menu item for adding current tab to work group
   browser.contextMenus.create({
-    id: 'addToWorkGroup',
+    id: 'addToWorkspaces',
     title: 'Add to Workspaces',
     contexts: ['page'],
   });
 });
 
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
-  if (info.menuItemId === 'addToWorkGroup') {
+  if (info.menuItemId === 'addToWorkspaces') {
     // Open popup to select work group
     // This could be enhanced with a submenu showing available groups
     browser.browserAction.openPopup();
@@ -320,4 +320,4 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
 });
 
 // Initialize immediately
-initializeWorkGroupManager();
+initializeWorkspacesManager();
