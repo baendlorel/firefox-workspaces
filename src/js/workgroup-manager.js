@@ -1,4 +1,4 @@
-// Work Group Data Model and Storage Manager
+// Workspaces Data Model and Storage Manager
 class WorkGroupManager {
   constructor() {
     this.workGroups = new Map();
@@ -10,9 +10,9 @@ class WorkGroupManager {
   async init() {
     try {
       await this.loadWorkGroups();
-      console.log('Work Group Manager initialized');
+      console.log('Workspaces Manager initialized');
     } catch (error) {
-      console.error('Failed to initialize Work Group Manager:', error);
+      console.error('Failed to initialize Workspaces Manager:', error);
     }
   }
 

@@ -1,6 +1,6 @@
-# Work Group Firefox Extension
+# Workspaces Firefox Extension
 
-A Firefox extension that provides tab grouping functionality similar to Microsoft Edge's Work Groups feature.
+A Firefox extension that provides tab grouping functionality similar to Microsoft Edge's Workspacess feature.
 
 ## Installation
 
@@ -23,26 +23,6 @@ The extension will be available on Firefox Add-ons store once approved.
 - Open work groups in dedicated windows
 - Automatic session saving and restoration
 - Visual indicators for work group membership
-
-## File Structure
-
-```
-firefox-work-group/
-├── manifest.json           # Extension manifest
-├── css/
-│   └── popup.css          # Popup styling
-├── js/
-│   ├── background.js      # Background script
-│   ├── popup.js          # Popup interface logic
-│   ├── content.js        # Content script
-│   └── workgroup-manager.js # Core data management
-├── popup/
-│   └── popup.html        # Popup interface
-├── icons/
-│   └── icon.svg          # Extension icon
-└── draft/
-    └── instruction.md    # User manual (Chinese)
-```
 
 ## Development
 

@@ -1,8 +1,8 @@
-# Work Group - Firefox 工作组插件使用说明
+# Workspaces - Firefox 工作组插件使用说明
 
 ## 概述
 
-Work Group 是一个模仿 Microsoft Edge 工作组功能的 Firefox 浏览器插件。它允许您将相关的标签页组织到不同的工作组中，提高浏览效率和工作流管理。
+Workspaces 是一个模仿 Microsoft Edge 工作组功能的 Firefox 浏览器插件。它允许您将相关的标签页组织到不同的工作组中，提高浏览效率和工作流管理。
 
 ## 主要功能
 
@@ -38,9 +38,8 @@ Work Group 是一个模仿 Microsoft Edge 工作组功能的 Firefox 浏览器�
 
 ### 快速开始
 
-1. **安装插件**后，点击浏览器工具栏中的 Work Group 图标
+1. **安装插件**后，点击浏览器工具栏中的 Workspaces 图标
 2. **创建第一个工作组**：
-
    - 点击"New Group"按钮
    - 输入工作组名称（如"工作项目"、"学习资料"等）
    - 选择一个颜色标识
@@ -48,7 +47,7 @@ Work Group 是一个模仿 Microsoft Edge 工作组功能的 Firefox 浏览器�
 
 3. **添加标签页**：
    - 打开要添加的网页
-   - 点击 Work Group 图标打开管理界面
+   - 点击 Workspaces 图标打开管理界面
    - 点击"Add Current Tab"按钮
    - 选择目标工作组
    - 选择是否固定该标签页
@@ -174,4 +173,4 @@ A: 当前版本不支持跨设备同步，这是未来版本的计划功能。
 
 ---
 
-_Work Group 插件致力于提升您的浏览体验，让标签页管理更加高效有序。_
+_Workspaces 插件致力于提升您的浏览体验，让标签页管理更加高效有序。_

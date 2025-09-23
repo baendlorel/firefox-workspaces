@@ -1,4 +1,4 @@
-// Popup JavaScript for Work Group Manager
+// Popup JavaScript for Workspaces Manager
 class WorkGroupPopup {
   constructor() {
     this.workGroups = [];
@@ -147,8 +147,8 @@ class WorkGroupPopup {
         ${isPinned ? '<div class="pinned-indicator" title="Pinned tab">📌</div>' : ''}
         <div class="tab-actions">
           <button class="btn-small" onclick="workGroupPopup.toggleTabPin('${group.id}', '${
-      tab.id
-    }')" 
+            tab.id
+          }')" 
                   title="${isPinned ? 'Unpin tab' : 'Pin tab'}">
             ${isPinned ? '📌' : '📍'}
           </button>
@@ -242,11 +242,11 @@ class WorkGroupPopup {
     const nameInput = document.getElementById('groupName');
 
     if (group) {
-      title.textContent = 'Edit Work Group';
+      title.textContent = 'Edit Workspaces';
       nameInput.value = group.name;
       this.selectColor(group.color);
     } else {
-      title.textContent = 'Create New Work Group';
+      title.textContent = 'Create New Workspaces';
       nameInput.value = '';
       this.selectColor('#667eea');
     }

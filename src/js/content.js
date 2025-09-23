@@ -1,4 +1,4 @@
-// Content script for Work Group extension
+// Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
 
 (function () {
@@ -52,7 +52,7 @@
     injectStyles() {
       const style = document.createElement('style');
       style.textContent = `
-        /* Work Group page highlighting */
+        /* Workspaces page highlighting */
         .work-group-highlight {
           position: fixed !important;
           top: 0 !important;
@@ -127,7 +127,7 @@
       const indicator = document.createElement('div');
       indicator.className = 'work-group-indicator';
       indicator.style.setProperty('--wg-color', color);
-      indicator.textContent = 'Work Group';
+      indicator.textContent = 'Workspaces';
       document.body.appendChild(indicator);
 
       // Auto-remove after delay
@@ -171,7 +171,7 @@
         const indicator = document.querySelector('.work-group-indicator');
         if (indicator) {
           indicator.textContent =
-            groups.length === 1 ? primaryGroup.name : `${groups.length} Work Groups`;
+            groups.length === 1 ? primaryGroup.name : `${groups.length} Workspacess`;
         }
       }, 100);
     }

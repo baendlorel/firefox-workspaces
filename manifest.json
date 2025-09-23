@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
-  "name": "Work Group",
-  "version": "1.0.0",
+  "name": "Workspaces",
+  "version": "0.0.1",
   "description": "Manage tabs in work groups similar to Microsoft Edge's Collections feature",
   "permissions": [
     "tabs",
@@ -20,7 +20,7 @@
   },
   "browser_action": {
     "default_popup": "popup/popup.html",
-    "default_title": "Work Group Manager",
+    "default_title": "Workspaces Manager",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png",

@@ -1,4 +1,4 @@
-// Background script for Work Group extension
+// Background script for Workspaces extension
 let workGroupManager;
 
 // Initialize when extension starts
@@ -18,9 +18,9 @@ async function initializeWorkGroupManager() {
     // Restore sessions on startup
     await workGroupManager.restoreGroupSessions();
 
-    console.log('Work Group Manager initialized in background');
+    console.log('Workspaces Manager initialized in background');
   } catch (error) {
-    console.error('Failed to initialize Work Group Manager:', error);
+    console.error('Failed to initialize Workspaces Manager:', error);
   }
 }
 
@@ -306,7 +306,7 @@ browser.runtime.onInstalled.addListener(() => {
   // Create context menu item for adding current tab to work group
   browser.contextMenus.create({
     id: 'addToWorkGroup',
-    title: 'Add to Work Group',
+    title: 'Add to Workspaces',
     contexts: ['page'],
   });
 });
