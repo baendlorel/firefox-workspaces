@@ -1,19 +1,18 @@
 // Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
 import { Action, Consts } from './lib/consts.js';
-import { $get, $set } from './lib/native.js';
-import { $on, $query } from './lib/dom.js';
+import { $query } from './lib/dom.js';
 import { $send } from './lib/ext-apis.js';
 
 (function () {
   'use strict';
 
   // Prevent multiple injections
-  if ($get(window, Consts.InjectionFlag)) {
+  if (Reflect.get(window, Consts.InjectionFlag)) {
     return;
   }
 
-  $set(window, Consts.InjectionFlag, true);
+  Reflect.set(window, Consts.InjectionFlag, true);
 
   // Content script for handling page-specific features
   class WorkspacesContent {
@@ -205,7 +204,7 @@ import { $send } from './lib/ext-apis.js';
 
   // Check work group membership on page load
   if (document.readyState === 'loading') {
-    $on.call(document, 'DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => workspacesContent.checkWorkspacesMembership(), 1000);
     });
   } else {

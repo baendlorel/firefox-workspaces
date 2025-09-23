@@ -1,5 +1,4 @@
 import { Consts } from './lib/consts.js';
-import { $assign, $now, $ArrayFilter, $ArrayFind, $ArrayPush, $isArray } from './lib/native.js';
 import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
@@ -41,8 +40,8 @@ export class WorkspaceManager {
 
     // initialize 2 containers
     for (let i = 0; i < len; i++) {
-      const indexed = $assign({ index: i }, list[i]);
-      this._map.set(list[i].id, $assign(indexed));
+      const indexed = { ...list[i], index: i };
+      this._map.set(list[i].id, indexed);
       this._arr[i] = indexed;
     }
   }
@@ -84,7 +83,7 @@ export class WorkspaceManager {
     if (!workspace) {
       return null;
     }
-    $assign(workspace, updates);
+    Object.assign(workspace, updates);
     await this.save();
     return workspace;
   }
@@ -121,22 +120,22 @@ export class WorkspaceManager {
     const tab: TabInfo = $createTabInfo(browserTab);
 
     const except = (t: TabInfo) => t.id !== browserTab.id;
-    const find = (t: TabInfo) => t.id === browserTab.id;
+    const match = (t: TabInfo) => t.id === browserTab.id;
 
     if (pinned) {
       // Remove from regular tabs if exists
-      workspace.tabs = $ArrayFilter.call(workspace.tabs, except);
+      workspace.tabs = workspace.tabs.filter(except);
 
       // Add to pinned tabs if not already there
-      if (!$ArrayFind.call(workspace.pinnedTabs, find)) {
-        $ArrayPush.call(workspace.pinnedTabs, tab);
+      if (!workspace.pinnedTabs.find(match)) {
+        workspace.pinnedTabs.push(tab);
       }
     } else {
       // Remove from pinned tabs if exists
-      workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, except);
+      workspace.pinnedTabs = workspace.pinnedTabs.filter(except);
       // Add to regular tabs if not already there
-      if (!$ArrayFind.call(workspace.tabs, find)) {
-        $ArrayPush.call(workspace.tabs, tab);
+      if (!workspace.tabs.find(match)) {
+        workspace.tabs.push(tab);
       }
     }
 
@@ -150,8 +149,8 @@ export class WorkspaceManager {
       return false;
     }
     const predicate = (t: TabInfo) => t.id !== tabId;
-    workspace.tabs = $ArrayFilter.call(workspace.tabs, predicate);
-    workspace.pinnedTabs = $ArrayFilter.call(workspace.pinnedTabs, predicate);
+    workspace.tabs = workspace.tabs.filter(predicate);
+    workspace.pinnedTabs = workspace.pinnedTabs.filter(predicate);
     await this.save();
     return true;
   }
@@ -264,7 +263,7 @@ export class WorkspaceManager {
           type: 'normal',
         });
         workspace.windowId = window.id;
-        workspace.lastOpened = $now();
+        workspace.lastOpened = Date.now();
         await this.save();
         return window;
       }
@@ -438,14 +437,14 @@ export class WorkspaceManager {
   exportData(): ExportData {
     return {
       version: '__VERSION__',
-      exportDate: $now(),
+      exportDate: Date.now(),
       workspaceses: this._arr,
     };
   }
 
   async importData(data: ExportData): Promise<boolean> {
     try {
-      if (!$isArray(data.workspaceses)) {
+      if (!Array.isArray(data.workspaceses)) {
         console.error(
           `__NAME__: Invalid data format, data.workspaceses must be an array of Workspace Data`
         );

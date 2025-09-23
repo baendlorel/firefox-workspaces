@@ -44,3 +44,9 @@ interface ExportData {
   exportDate: number;
   workspaceses: Workspace[];
 }
+
+interface DraggingData {
+  tabId: number;
+  workspaceId: string;
+  tabUrl: string;
+}

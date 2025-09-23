@@ -1,8 +1,7 @@
 import { $send } from './lib/ext-apis.js';
 import { Action, Consts } from './lib/consts.js';
-import { $JSONParse } from './lib/native.js';
 import { $escapeHtml, $truncate } from './lib/utils.js';
-import { $getElementByIdOrThrow, $queryAll, $query, $on } from './lib/dom.js';
+import { $getElementByIdOrThrow, $queryAll, $query } from './lib/dom.js';
 
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
@@ -207,12 +206,16 @@ class WorkspacePopup {
         }
 
         const tabId = tab.dataset.tabId;
-        const workspaceId = (tab.closest('.work-group') as HTMLDivElement).dataset.workspaceId;
+        const workspaceId = (tab.closest('.work-group') as HTMLDivElement)?.dataset.workspaceId;
         const tabUrl = tab.dataset.tabUrl;
+
+        if (workspaceId === undefined) {
+          throw new Error(`__NAME__:setupDragAndDrop tab.closest('.work-group') is undefined.`);
+        }
 
         e.dataTransfer.setData(
           'text/plain',
-          `{"tabId":"${tabId}","workspaceId":"${workspaceId}","tabUrl":"${tabUrl}"}`
+          `{"tabId":${tabId},"workspaceId":"${workspaceId}","tabUrl":"${tabUrl}"}`
         );
         tab.classList.add('dragging');
       });
@@ -244,7 +247,7 @@ class WorkspacePopup {
           throw new Error('__NAME__:setupDragAndDrop e.dataTransfer is null');
         }
 
-        const data = $JSONParse(e.dataTransfer.getData('text/plain'));
+        const data = JSON.parse(e.dataTransfer.getData('text/plain')) as DraggingData;
         const workspaceId = workspaceDiv.dataset.workspaceId;
 
         if (data.workspaceId !== workspaceId) {
@@ -526,7 +529,7 @@ class WorkspacePopup {
 }
 
 // Initialize popup when DOM is loaded
-$on.call(document, 'DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
   window.workspacesPopup = new WorkspacePopup();
 });
 
