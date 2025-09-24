@@ -5,6 +5,7 @@ import { resolve } from 'path';
 import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import { replaceOpts, replaceLiteralOpts } from './scripts/replace.mjs';
+import staticCopy from './scripts/static-copy.mjs';
 
 const tsconfig = './tsconfig.build.json';
 
@@ -17,17 +18,11 @@ export default defineConfig({
       values: replaceLiteralOpts,
     }),
     typescript({ tsconfig }),
-    {
-      name: 'serve-popup-as-index',
-      configureServer(server) {
-        server.middlewares.use((req, res, next) => {
-          if (req.url === '/' || req.url === '/index.html') {
-            req.url = '/popup.html';
-          }
-          next();
-        });
+    staticCopy({
+      map: {
+        'assets/css': 'dist/assets',
       },
-    },
+    }),
   ],
   build: {
     outDir: 'dist',
