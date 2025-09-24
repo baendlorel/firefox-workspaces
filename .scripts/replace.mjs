@@ -17,7 +17,7 @@ function formatDateFull(dt = new Date()) {
   return `${y}.${m}.${d} ${hh}:${mm}:${ss}.${ms}`;
 }
 
-const __KEBAB_NAME__ = (process.env.KSKB_TSUMUGI_REAL_NAME ?? '').replace('rollup-plugin-', '');
+const __KEBAB_NAME__ = pkg.name.replace('rollup-plugin-', '');
 const __NAME__ = __KEBAB_NAME__.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
 
 const __PKG_INFO__ = `## About

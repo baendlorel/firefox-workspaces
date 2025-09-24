@@ -13,7 +13,7 @@ browser.runtime.onInstalled.addListener(init);
 async function init() {
   // WorkspaceManager is already loaded via manifest scripts
   try {
-    manager = new WorkspaceManager();
+    manager = WorkspaceManager.getInstance();
 
     // Restore sessions on startup
     await manager.restoreSessions();
@@ -308,6 +308,7 @@ browser.contextMenus.onClicked.addListener(async (info, _tab) => {
     }
   }
 });
+console.error('原神，启动！');
 
 // Initialize immediately
 init();

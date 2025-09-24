@@ -4,8 +4,8 @@ import { resolve } from 'path';
 
 import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
-import { replaceOpts, replaceLiteralOpts } from './scripts/replace.mjs';
-import staticCopy from './scripts/static-copy.mjs';
+import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
+import staticCopy from './.scripts/static-copy.mjs';
 
 const tsconfig = './tsconfig.build.json';
 

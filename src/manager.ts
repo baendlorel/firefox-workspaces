@@ -3,6 +3,14 @@ import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
+  static getInstance() {
+    if (!this._instance) {
+      this._instance = new WorkspaceManager();
+    }
+    return this._instance;
+  }
+
+  private static _instance: WorkspaceManager;
   private readonly _map = new Map<string, IndexedWorkspace>();
   private readonly _arr: IndexedWorkspace[] = [];
 
