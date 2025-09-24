@@ -166,7 +166,7 @@ import { $send } from './lib/ext-apis.js';
         const indicator = $query('.wb-indicator');
         if (indicator) {
           indicator.textContent =
-            workspaces.length === 1 ? primary.name : `${workspaces.length} Workspacess`;
+            workspaces.length === 1 ? primary.name : `${workspaces.length} Workspaces`;
         }
       }, 100);
     }

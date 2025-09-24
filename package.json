@@ -31,11 +31,12 @@
 		"javascript"
 	],
 	"scripts": {
-		"dev": "vite",
+		"dev": "web-ext run",
 		"build": "tsc && vite build",
 		"preview": "vite preview",
 		"test": "clear & vitest",
 		"lint": "oxlint .",
+		"exlint": "web-ext lint",
 		"cover": "clear & vitest --coverage"
 	},
 	"license": "MIT",

@@ -297,7 +297,15 @@ browser.contextMenus.onClicked.addListener(async (info, _tab) => {
   if (info.menuItemId === 'addToWorkspaces') {
     // Open popup to select workspace
     // This could be enhanced with a submenu showing available groups
-    browser.browserAction.openPopup();
+    // browser.browserAction.openPopup() is not implemented in Firefox (and
+    // can be disallowed in Manifest V3). To keep compatibility, open the
+    // extension popup page in a small popup window instead.
+    try {
+      const popupUrl = browser.runtime.getURL('popup.html');
+      await browser.windows.create({ url: popupUrl, type: 'popup', width: 400, height: 600 });
+    } catch (error) {
+      console.error('__NAME__: Failed to open popup window:', error);
+    }
   }
 });
 

@@ -31,6 +31,7 @@ export default defineConfig({
   ],
   build: {
     outDir: 'dist',
+    minify: false,
     rollupOptions: {
       input: {
         background: resolve('src/background.ts'),

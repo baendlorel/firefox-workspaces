@@ -16,8 +16,8 @@ class WorkspacePopup {
   // Initialize popup
   async init() {
     this.setupEventListeners();
-    await this.loadWorkspacess();
-    this.renderWorkspacess();
+    await this.load();
+    this.render();
   }
 
   // Setup event listeners
@@ -67,7 +67,7 @@ class WorkspacePopup {
   }
 
   // Load work groups from background
-  async loadWorkspacess() {
+  async load() {
     try {
       const response = await $send<GetWorkspacesRequest>({ action: Action.GetWorkspaces });
       if (response.success) {
@@ -81,7 +81,7 @@ class WorkspacePopup {
   }
 
   // Render work groups in the popup
-  renderWorkspacess() {
+  render() {
     const container = $getElementByIdOrThrow('workspacesList');
     const emptyState = $getElementByIdOrThrow('emptyState');
 
@@ -397,8 +397,8 @@ class WorkspacePopup {
       }
 
       if (response.success) {
-        await this.loadWorkspacess();
-        this.renderWorkspacess();
+        await this.load();
+        this.render();
         this.hideModal();
       } else {
         alert('Failed to save work group');
@@ -432,8 +432,8 @@ class WorkspacePopup {
         });
 
         if (response.success) {
-          await this.loadWorkspacess();
-          this.renderWorkspacess();
+          await this.load();
+          this.render();
         } else {
           alert('Failed to delete work group');
         }
@@ -482,8 +482,8 @@ class WorkspacePopup {
       });
 
       if (response.success) {
-        await this.loadWorkspacess();
-        this.renderWorkspacess();
+        await this.load();
+        this.render();
       } else {
         alert('Failed to remove tab');
       }
@@ -503,8 +503,8 @@ class WorkspacePopup {
       });
 
       if (response.success) {
-        await this.loadWorkspacess();
-        this.renderWorkspacess();
+        await this.load();
+        this.render();
       } else {
         alert('Failed to toggle pin');
       }
@@ -525,8 +525,8 @@ class WorkspacePopup {
       });
 
       if (response.success) {
-        await this.loadWorkspacess();
-        this.renderWorkspacess();
+        await this.load();
+        this.render();
       } else {
         alert('Failed to move tab');
       }
@@ -562,8 +562,8 @@ class WorkspacePopup {
         });
 
         if (response.success) {
-          await this.loadWorkspacess();
-          this.renderWorkspacess();
+          await this.load();
+          this.render();
         } else {
           alert('Failed to add tab to group');
         }

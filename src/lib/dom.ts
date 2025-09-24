@@ -8,9 +8,12 @@ export const $getElementByIdOrThrow = <E extends HTMLElement = HTMLElement>(id: 
   return element as E;
 };
 
-export const $query = document.querySelector;
+const qs = document.querySelector;
+const qsa = document.querySelectorAll;
 
-export const $queryAll = document.querySelectorAll;
+export const $query: typeof qs = (s: string) => qs.call(document, s);
+
+export const $queryAll: typeof qsa = (s: string) => qsa.call(document, s);
 
 export const h = <T extends HTMLTag>(
   tag: T,
