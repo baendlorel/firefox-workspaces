@@ -293,7 +293,7 @@ browser.runtime.onInstalled.addListener(() => {
   });
 });
 
-browser.contextMenus.onClicked.addListener(async (info, _tab) => {
+async function backgroundOnClickListener(info: browser.contextMenus.OnClickData) {
   if (info.menuItemId === 'addToWorkspaces') {
     // Open popup to select workspace
     // This could be enhanced with a submenu showing available groups
@@ -304,10 +304,12 @@ browser.contextMenus.onClicked.addListener(async (info, _tab) => {
       const popupUrl = browser.runtime.getURL('popup.html');
       await browser.windows.create({ url: popupUrl, type: 'popup', width: 400, height: 600 });
     } catch (error) {
-      console.error('__NAME__: Failed to open popup window:', error);
+      console.error(`[__NAME__: __func__] Failed to open popup window:`, error);
     }
   }
-});
+}
+
+browser.contextMenus.onClicked.addListener(backgroundOnClickListener);
 console.error('原神，启动！');
 
 // Initialize immediately

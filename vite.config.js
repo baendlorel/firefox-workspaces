@@ -4,6 +4,8 @@ import { resolve } from 'path';
 
 import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
+import funcMacro from 'rollup-plugin-func-macro';
+
 import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
 import staticCopy from './.scripts/static-copy.mjs';
 
@@ -11,18 +13,19 @@ const tsconfig = './tsconfig.build.json';
 
 export default defineConfig({
   plugins: [
+    typescript({ tsconfig }),
     replace(replaceOpts),
     replace({
       preventAssignment: true,
       delimiters: ['', ''],
       values: replaceLiteralOpts,
     }),
-    typescript({ tsconfig }),
     staticCopy({
       map: {
         'assets/css': 'dist/assets',
       },
     }),
+    funcMacro(),
   ],
   build: {
     outDir: 'dist',
@@ -44,7 +47,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      '@': resolve('src'),
+      '@/': resolve('src') + '/',
     },
   },
 });

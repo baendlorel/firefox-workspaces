@@ -1,52 +1,56 @@
-type HTMLTag = keyof HTMLElementTagNameMap;
+import 'rollup-plugin-func-macro';
 
-type HexColor = `#${string}`;
+declare global {
+  type HTMLTag = keyof HTMLElementTagNameMap;
 
-interface Workspace {
-  id: string;
-  name: string;
-  color: HexColor;
-  tabs: TabInfo[];
-  pinnedTabs: TabInfo[];
-  createdAt: number;
-  lastOpened: number;
-  windowId?: number; // Track associated window
-}
+  type HexColor = `#${string}`;
 
-/**
- * For quicker access to the workspace data with `_map` and `_arr` in `WorkspaceManager`
- */
-type IndexedWorkspace = Workspace & { index: number };
+  interface Workspace {
+    id: string;
+    name: string;
+    color: HexColor;
+    tabs: TabInfo[];
+    pinnedTabs: TabInfo[];
+    createdAt: number;
+    lastOpened: number;
+    windowId?: number; // Track associated window
+  }
 
-interface WorkspaceStoredData {
-  list: Workspace[];
-}
+  /**
+   * For quicker access to the workspace data with `_map` and `_arr` in `WorkspaceManager`
+   */
+  type IndexedWorkspace = Workspace & { index: number };
 
-interface TabInfo {
-  id: number;
-  title: string;
-  url: string;
-  favIconUrl: string;
-  addedAt: number;
-}
+  interface WorkspaceStoredData {
+    list: Workspace[];
+  }
 
-interface WorkspaceStats {
-  totalTabs: number;
-  pinnedTabs: number;
-  regularTabs: number;
-  lastOpened: number;
-  createdAt: number;
-  isActive: boolean;
-}
+  interface TabInfo {
+    id: number;
+    title: string;
+    url: string;
+    favIconUrl: string;
+    addedAt: number;
+  }
 
-interface ExportData {
-  version: string;
-  exportDate: number;
-  workspaceses: Workspace[];
-}
+  interface WorkspaceStats {
+    totalTabs: number;
+    pinnedTabs: number;
+    regularTabs: number;
+    lastOpened: number;
+    createdAt: number;
+    isActive: boolean;
+  }
 
-interface DraggingData {
-  tabId: number;
-  workspaceId: string;
-  tabUrl: string;
+  interface ExportData {
+    version: string;
+    exportDate: number;
+    workspaceses: Workspace[];
+  }
+
+  interface DraggingData {
+    tabId: number;
+    workspaceId: string;
+    tabUrl: string;
+  }
 }

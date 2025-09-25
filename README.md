@@ -2,6 +2,8 @@
 
 A Firefox extension that provides tab grouping functionality similar to Microsoft Edge's Workspaces feature.
 
+For more awesome packages, check out [my homepage💛](https://baendlorel.github.io/?repoType=npm)
+
 ## Installation
 
 ### Development Installation
