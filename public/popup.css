@@ -1,4 +1,10 @@
 /* Workspaces Popup Styles */
+* {
+  --primary-color: #2da191;
+  --primary-highlight: #3dc7a5;
+  --secondary-color: #0d546a;
+  --secondary-highlight: #267e99;
+}
 body {
   margin: 0;
   padding: 0;
@@ -14,7 +20,7 @@ body {
 }
 
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #3dc7a5 0%, #0d546a 100%);
   color: white;
   padding: 15px 20px;
   text-align: center;
@@ -22,7 +28,7 @@ body {
 
 .header h1 {
   margin: 0;
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 600;
 }
 
@@ -33,27 +39,27 @@ body {
 }
 
 .btn {
-  background: #667eea;
+  background: var(--primary-color);
   color: white;
   border: none;
   padding: 8px 16px;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   margin-right: 10px;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s;
 }
 
 .btn:hover {
-  background: #5a6fd8;
+  background: var(--primary-highlight);
 }
 
 .btn-secondary {
-  background: #6c757d;
+  background: var(--secondary-color);
 }
 
 .btn-secondary:hover {
-  background: #5a6268;
+  background: var(--secondary-highlight);
 }
 
 .workspaces {
@@ -86,7 +92,7 @@ body {
 }
 
 .wb-count {
-  font-size: 12px;
+  font-size: 14px;
   color: #666;
   background: #e9ecef;
   padding: 2px 6px;
@@ -105,7 +111,7 @@ body {
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 12px;
+  font-size: 14px;
 }
 
 .btn-small:hover {
@@ -152,12 +158,12 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .tab-url {
   color: #666;
-  font-size: 12px;
+  font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -176,7 +182,7 @@ body {
 
 .pinned-indicator {
   color: #ffc107;
-  font-size: 12px;
+  font-size: 14px;
   margin-left: 5px;
 }
 
@@ -206,7 +212,7 @@ body {
 }
 
 .modal-header {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 600;
   margin-bottom: 15px;
 }
@@ -226,7 +232,7 @@ body {
   padding: 8px 12px;
   border: 1px solid #ddd;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .color-picker {
@@ -263,7 +269,7 @@ body {
 
 .empty-state-icon {
   margin: 20px 80px;
-  opacity: 0.5;
+  opacity: 0.7;
 }
 
 .drag-over {
