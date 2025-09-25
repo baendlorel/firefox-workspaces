@@ -1,7 +1,7 @@
-import { $send } from './lib/ext-apis.js';
-import { Action, Consts, WORKSPACE_COLORS } from './lib/consts.js';
-import { $escapeHtml, $truncate } from './lib/utils.js';
-import { $id, $queryAll, $query, h, div } from './lib/dom.js';
+import { $send } from '../lib/ext-apis.js';
+import { Action, Consts, WORKSPACE_COLORS } from '../lib/consts.js';
+import { $escapeHtml, $truncate } from '../lib/utils.js';
+import { $id, $queryAll, $query, h, div } from '../lib/dom.js';
 
 // import './assets/css/popup.css';
 
