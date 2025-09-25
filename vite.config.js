@@ -27,6 +27,9 @@ export default defineConfig({
       },
     }),
   ],
+  server: {
+    open: '/web/popup.html',
+  },
   build: {
     outDir: 'dist',
     minify: false,

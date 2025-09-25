@@ -3,6 +3,8 @@ import { Action, Consts } from './lib/consts.js';
 import { $escapeHtml, $truncate } from './lib/utils.js';
 import { $getElementByIdOrThrow, $queryAll, $query, h, div } from './lib/dom.js';
 
+// import './assets/css/popup.css';
+
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
   private readonly workspaceses: Workspace[] = [];
@@ -596,6 +598,8 @@ class WorkspacePopup {
 // Initialize popup when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   window.workspacesPopup = new WorkspacePopup();
+
+  // load css
 });
 
 declare global {

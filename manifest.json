@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "author": "Kasukabe Tsumugi",
   "homepage_url": "https://github.com/baendlorel/firefox-workspaces",
-  "description": "Manage tabs in workspaces similar to Microsoft Edge's Collections feature",
+  "description": "Manage tabs in workspaces similar to Microsoft Edge's Workspace feature",
   "permissions": [
     "tabs",
     "storage",
@@ -24,7 +24,7 @@
     "default_title": "Workspaces Manager"
   },
   "icons": {
-    "128": "assets/icons/icon-128.png"
+    "128": "src/icons/icon-128.png"
   },
   "content_scripts": [
     {
@@ -43,8 +43,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "dist/*",
-        "assets/*"
+        "dist/*"
       ],
       "matches": [
         "<all_urls>"
