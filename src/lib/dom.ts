@@ -60,3 +60,8 @@ export const div = (
   className: string | Record<string, string>,
   children: (HTMLElement | string)[] | string = ''
 ): HTMLDivElement => h('div', className, children);
+
+export const btn = (
+  className: string | Record<string, string>,
+  children: (HTMLElement | string)[] | string = ''
+): HTMLButtonElement => h('button', className, children);
