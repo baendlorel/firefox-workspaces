@@ -1,0 +1,184 @@
+.dialog-header {
+  background: var(--primary-gradient);
+  color: var(--light);
+  padding: var(--header-padding);
+  text-align: center;
+}
+
+.dialog-content {
+  padding: 0;
+  background: white;
+  border-radius: 12px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.dialog-actions .btn {
+  min-width: 80px;
+  padding: 10px 20px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.dialog-actions .btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* Modern Dialog Styles with Enhanced Animations */
+.dialog-container {
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  background: white;
+  box-shadow:
+    0 32px 64px -12px rgba(0, 0, 0, 0.25),
+    0 25px 35px -8px rgba(0, 0, 0, 0.15),
+    0 10px 15px -5px rgba(0, 0, 0, 0.1);
+  width: min(420px, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+
+  /* Enhanced animation setup */
+  opacity: 0;
+  transform: scale(0.8) translateY(-30px) rotateX(10deg);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: blur(8px);
+}
+
+.dialog-container[open] {
+  opacity: 1;
+  transform: scale(1) translateY(0) rotateX(0deg);
+  filter: blur(0);
+}
+
+.dialog-container::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px) saturate(1.2);
+  opacity: 0;
+  transition: all 0.35s ease-out;
+}
+
+.dialog-container[open]::backdrop {
+  opacity: 1;
+}
+
+/* Enhanced animation keyframes */
+@keyframes dialogPopIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) translateY(-30px) rotateX(10deg);
+    filter: blur(8px);
+  }
+  60% {
+    opacity: 0.8;
+    transform: scale(1.05) translateY(-5px) rotateX(-2deg);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotateX(0deg);
+    filter: blur(0);
+  }
+}
+
+@keyframes dialogPopOut {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotateX(0deg);
+    filter: blur(0);
+  }
+  30% {
+    opacity: 0.8;
+    transform: scale(1.02) translateY(-2px) rotateX(1deg);
+    filter: blur(1px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.85) translateY(-20px) rotateX(8deg);
+    filter: blur(6px);
+  }
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(8px) saturate(1.2);
+  }
+}
+
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+    backdrop-filter: blur(8px) saturate(1.2);
+  }
+  to {
+    opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
+  }
+}
+
+/* Animation classes for manual control */
+.dialog-container.animate-in {
+  animation: dialogPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.dialog-container.animate-out {
+  animation: dialogPopOut 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+.dialog-container.animate-in::backdrop {
+  animation: backdropFadeIn 0.35s ease-out forwards;
+}
+
+.dialog-container.animate-out::backdrop {
+  animation: backdropFadeOut 0.25s ease-in forwards;
+}
+
+.dialog-close-btn {
+  background: url(/assets/close.svg) no-repeat center;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.dialog-close-btn:hover {
+  color: var(--primary-highlight);
+}
+
+.dialog-close-btn:focus {
+  outline: 0;
+  outline-offset: 0px;
+}
