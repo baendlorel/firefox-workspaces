@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Workspaces Manager</title>
+  <link rel="stylesheet" href="/popup.css">
+</head>
+
+<body>
+  <div id="app">
+    <div class="header">
+      <h1>Workspaces</h1>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="createGroupBtn">New Group</button>
+      <button class="btn btn-secondary" id="addCurrentTabBtn">Add Current Tab</button>
+    </div>
+
+    <div class="workspaces" id="workspacesList">
+    </div>
+
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-state-icon">
+        <svg t="1758808246143" class="icon" viewBox="0 0 1254 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11565">
+          <path d="M1128.228571 248.685714c-5.485714-5.485714-16.457143-10.971429-25.6-10.971428H671.085714l-71.314285-64c-7.314286-5.485714-14.628571-9.142857-23.771429-9.142857H224.914286c-10.971429 0-20.114286 3.657143-27.428572 10.971428l-67.657143 73.142857c-5.485714 7.314286-9.142857 16.457143-9.142857 25.6v586.971429c0 20.114286 16.457143 36.571429 36.571429 36.571428H1102.628571c20.114286 0 36.571429-16.457143 36.571429-36.571428V274.285714c0-9.142857-3.657143-18.285714-10.971429-25.6z" fill="#F9D482" p-id="11566"></path>
+          <path d="M120.685714 367.542857v495.542857c0 20.114286 16.457143 36.571429 36.571429 36.571429H1102.628571c20.114286 0 36.571429-16.457143 36.571429-36.571429V365.714286l-1018.514286 1.828571z" fill="#FFC543" p-id="11567"></path>
+        </svg>
+      </div>
+      <p>No work groups yet</p>
+      <p>Create your first group to get started!</p>
+    </div>
+
+    <div class="modal" id="workspacesModal">
+      <div class="modal-content">
+        <div class="modal-header" id="modalTitle">Create New Workspaces</div>
+
+        <div class="form-group">
+          <label for="workspaceName">Workspace Name</label>
+          <input type="text" id="workspaceName" placeholder="Enter Workspace Name" maxlength="50">
+        </div>
+
+        <div class="form-group">
+          <label>Workspace Color</label>
+          <div class="color-picker">
+            <div class="color-option selected" data-color="#667eea" style="background-color: #667eea;"></div>
+            <div class="color-option" data-color="#f093fb" style="background-color: #f093fb;"></div>
+            <div class="color-option" data-color="#4facfe" style="background-color: #4facfe;"></div>
+            <div class="color-option" data-color="#43e97b" style="background-color: #43e97b;"></div>
+            <div class="color-option" data-color="#fa709a" style="background-color: #fa709a;"></div>
+            <div class="color-option" data-color="#ffecd2" style="background-color: #ffecd2;"></div>
+            <div class="color-option" data-color="#a8edea" style="background-color: #a8edea;"></div>
+            <div class="color-option" data-color="#d299c2" style="background-color: #d299c2;"></div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
+          <button class="btn" id="saveBtn">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="/src/popup.ts"></script>
+</body>
+
+</html>
