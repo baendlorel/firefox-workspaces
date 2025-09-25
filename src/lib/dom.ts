@@ -1,6 +1,6 @@
 // # DOM
 
-export const $getElementByIdOrThrow = <E extends HTMLElement = HTMLElement>(id: string): E => {
+export const $id = <E extends HTMLElement = HTMLElement>(id: string): E => {
   const element = document.getElementById(id);
   if (!element) {
     throw new Error(`__NAME__: Element with id "${id}" not found`);

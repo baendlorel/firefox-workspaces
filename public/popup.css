@@ -4,7 +4,10 @@
   --primary-highlight: #3dc7a5;
   --secondary: #0d546a;
   --secondary-highlight: #267e99;
-  --danger: #e32649;
+  --danger: #dc3435;
+  --dark: #212529;
+  --warning: #ffc107;
+  --light: #f8f9fa;
 }
 body {
   margin: 0;
@@ -187,81 +190,119 @@ body {
   margin-left: 5px;
 }
 
-/* Modern Dialog Styles */
+/* Modern Dialog Styles with Enhanced Animations */
 .workspace-dialog {
   margin: auto;
   padding: 0;
   border: none;
-  border-radius: 12px;
+  border-radius: 16px;
   background: white;
   box-shadow:
-    0 20px 25px -5px rgba(0, 0, 0, 0.1),
-    0 10px 10px -5px rgba(0, 0, 0, 0.04);
-  width: min(400px, calc(100vw - 2rem));
+    0 32px 64px -12px rgba(0, 0, 0, 0.25),
+    0 25px 35px -8px rgba(0, 0, 0, 0.15),
+    0 10px 15px -5px rgba(0, 0, 0, 0.1);
+  width: min(420px, calc(100vw - 2rem));
   max-height: calc(100vh - 2rem);
   overflow: hidden;
 
-  /* Animation setup */
+  /* Enhanced animation setup */
   opacity: 0;
-  transform: scale(0.95) translateY(-10px);
-  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform: scale(0.8) translateY(-30px) rotateX(10deg);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  filter: blur(8px);
 }
 
 .workspace-dialog[open] {
   opacity: 1;
-  transform: scale(1) translateY(0);
+  transform: scale(1) translateY(0) rotateX(0deg);
+  filter: blur(0);
 }
 
 .workspace-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px) saturate(1.2);
   opacity: 0;
-  transition: opacity 0.25s ease-out;
+  transition: all 0.35s ease-out;
 }
 
 .workspace-dialog[open]::backdrop {
   opacity: 1;
 }
 
-/* Animation keyframes for older browsers */
-@keyframes dialogFadeIn {
-  from {
+/* Enhanced animation keyframes */
+@keyframes dialogPopIn {
+  0% {
     opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+    transform: scale(0.8) translateY(-30px) rotateX(10deg);
+    filter: blur(8px);
   }
-  to {
+  60% {
+    opacity: 0.8;
+    transform: scale(1.05) translateY(-5px) rotateX(-2deg);
+    filter: blur(2px);
+  }
+  100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0) rotateX(0deg);
+    filter: blur(0);
   }
 }
 
-@keyframes dialogFadeOut {
-  from {
+@keyframes dialogPopOut {
+  0% {
     opacity: 1;
-    transform: scale(1) translateY(0);
+    transform: scale(1) translateY(0) rotateX(0deg);
+    filter: blur(0);
   }
-  to {
+  30% {
+    opacity: 0.8;
+    transform: scale(1.02) translateY(-2px) rotateX(1deg);
+    filter: blur(1px);
+  }
+  100% {
     opacity: 0;
-    transform: scale(0.95) translateY(-10px);
+    transform: scale(0.85) translateY(-20px) rotateX(8deg);
+    filter: blur(6px);
   }
 }
 
 @keyframes backdropFadeIn {
   from {
     opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
   }
   to {
     opacity: 1;
+    backdrop-filter: blur(8px) saturate(1.2);
   }
 }
 
 @keyframes backdropFadeOut {
   from {
     opacity: 1;
+    backdrop-filter: blur(8px) saturate(1.2);
   }
   to {
     opacity: 0;
+    backdrop-filter: blur(0) saturate(1);
   }
+}
+
+/* Animation classes for manual control */
+.workspace-dialog.animate-in {
+  animation: dialogPopIn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.workspace-dialog.animate-out {
+  animation: dialogPopOut 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53) forwards;
+}
+
+.workspace-dialog.animate-in::backdrop {
+  animation: backdropFadeIn 0.35s ease-out forwards;
+}
+
+.workspace-dialog.animate-out::backdrop {
+  animation: backdropFadeOut 0.25s ease-in forwards;
 }
 
 .dialog-content {
@@ -346,50 +387,56 @@ body {
 }
 
 .color-picker {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 8px;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 10px;
+  margin-top: 12px;
+  padding: 4px;
 }
 
 .color-option {
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   cursor: pointer;
   border: 3px solid transparent;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  justify-self: center;
+  opacity: 1;
+  transition: all 0.3s;
 }
 
 .color-option:hover {
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.color-option:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-  transform: scale(1.05);
+  opacity: 0.9;
 }
 
 .color-option.selected {
-  border-color: #1f2937;
+  border-color: var(--primary-highlight);
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  opacity: 1;
 }
 
 .color-option.selected::after {
-  content: '✓';
+  content: ''; /* ✓ */
   position: absolute;
   top: 50%;
   left: 50%;
+  width: 36%;
+  height: 36%;
+  border-radius: 50%;
   transform: translate(-50%, -50%);
-  color: white;
+  background-color: var(--light);
   font-weight: bold;
-  font-size: 16px;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  font-size: 14px;
+  /* todo 添加颜色加深样式 */
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8));
+  z-index: 10;
 }
 
 .dialog-actions {

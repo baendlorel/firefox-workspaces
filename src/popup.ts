@@ -1,7 +1,7 @@
 import { $send } from './lib/ext-apis.js';
-import { Action, Consts } from './lib/consts.js';
+import { Action, Consts, WORKSPACE_COLORS } from './lib/consts.js';
 import { $escapeHtml, $truncate } from './lib/utils.js';
-import { $getElementByIdOrThrow, $queryAll, $query, h, div } from './lib/dom.js';
+import { $id, $queryAll, $query, h, div } from './lib/dom.js';
 
 // import './assets/css/popup.css';
 
@@ -9,7 +9,7 @@ import { $getElementByIdOrThrow, $queryAll, $query, h, div } from './lib/dom.js'
 class WorkspacePopup {
   private readonly workspaceses: Workspace[] = [];
   private edited: Workspace | null = null;
-  private selectedColor: HexColor = '#667eea';
+  private selectedColor: HexColor = Consts.DefaultColor;
 
   constructor() {
     this.init();
@@ -17,83 +17,33 @@ class WorkspacePopup {
 
   // Initialize popup
   async init() {
-    this.setupEventListeners();
+    this.setup();
     await this.load();
     this.render();
   }
 
-  // Setup event listeners
-  setupEventListeners() {
-    const createGroupBtn = $getElementByIdOrThrow('createGroupBtn');
-    const addCurrentTabBtn = $getElementByIdOrThrow('addCurrentTabBtn');
-    const cancelBtn = $getElementByIdOrThrow('cancelBtn');
-    const saveBtn = $getElementByIdOrThrow('saveBtn');
-    const closeBtn = $getElementByIdOrThrow('closeBtn');
-    const workspacesModal = $getElementByIdOrThrow<HTMLDialogElement>('workspacesModal');
-    const workspaceName = $getElementByIdOrThrow('workspaceName');
-    const workspaceForm = $getElementByIdOrThrow<HTMLFormElement>('workspaceForm');
-    const colorOptions = $queryAll<HTMLElement>('.color-option');
-
-    createGroupBtn.addEventListener('click', () => {
-      this.showModal();
-    });
-
-    addCurrentTabBtn.addEventListener('click', () => {
-      this.showAddTabMenu();
-    });
-
-    cancelBtn.addEventListener('click', () => {
-      this.hideModal();
-    });
-
-    closeBtn.addEventListener('click', () => {
-      this.hideModal();
-    });
-
-    // Handle form submission
-    workspaceForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      this.saveWorkspaces();
-    });
-
-    saveBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      this.saveWorkspaces();
-    });
-
-    // Close dialog when clicking outside
-    workspacesModal.addEventListener('click', (e) => {
-      if (e.target === workspacesModal) {
-        this.hideModal();
+  // Setup elements and events
+  setup() {
+    // # setup events
+    $id('createGroupBtn').addEventListener('click', () => this.showModal());
+    $id('addCurrentTabBtn').addEventListener('click', () => this.showAddTabMenu());
+    $id('cancelBtn').addEventListener('click', () => this.hideModal());
+    $id('saveBtn').addEventListener('click', () => this.saveWorkspaces());
+    $id('closeBtn').addEventListener('click', () => this.hideModal());
+    $id('workspaceName').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        this.saveWorkspaces();
       }
     });
 
+    // # Modal
+    const workspacesModal = $id<HTMLDialogElement>('workspacesModal');
     // Handle ESC key
     workspacesModal.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         this.hideModal();
       }
     });
-
-    // Color selection handlers with accessibility support
-    for (let i = colorOptions.length - 1; i >= 0; i--) {
-      const option = colorOptions[i];
-
-      // Click handler
-      option.addEventListener('click', () => {
-        const color = (option.dataset.color ?? Consts.DefaultColor) as HexColor;
-        this.selectColor(color);
-      });
-
-      // Keyboard handler for accessibility
-      option.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          const color = (option.dataset.color ?? Consts.DefaultColor) as HexColor;
-          this.selectColor(color);
-        }
-      });
-    }
 
     // Close dialog when clicking on backdrop (outside the dialog content)
     workspacesModal.addEventListener('click', (e) => {
@@ -102,11 +52,15 @@ class WorkspacePopup {
       }
     });
 
-    workspaceName.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        this.saveWorkspaces();
-      }
+    // # Workspace color picker
+    const colorPickerOptions = WORKSPACE_COLORS.map((color) => {
+      const el = div('color-option');
+      el.style.backgroundColor = color;
+      el.dataset.color = color;
+      el.addEventListener('click', () => this.selectColor(color));
+      return el;
     });
+    $id('workspaceColorPicker').append(...colorPickerOptions);
   }
 
   // Load work groups from background
@@ -125,8 +79,8 @@ class WorkspacePopup {
 
   // Render work groups in the popup
   render() {
-    const container = $getElementByIdOrThrow('workspacesList');
-    const emptyState = $getElementByIdOrThrow('emptyState');
+    const container = $id('workspacesList');
+    const emptyState = $id('emptyState');
 
     if (this.workspaceses.length === 0) {
       container.style.display = 'none';
@@ -368,12 +322,12 @@ class WorkspacePopup {
     }
   }
 
-  // Show modal for creating/editing groups
+  // Show modal for creating/editing groups with enhanced animation
   showModal(workspace: Workspace | null = null) {
     this.edited = workspace;
-    const modal = $getElementByIdOrThrow<HTMLDialogElement>('workspacesModal');
-    const title = $getElementByIdOrThrow('modalTitle');
-    const nameInput = $getElementByIdOrThrow<HTMLInputElement>('workspaceName');
+    const modal = $id<HTMLDialogElement>('workspacesModal');
+    const title = $id('modalTitle');
+    const nameInput = $id<HTMLInputElement>('workspaceName');
 
     if (workspace) {
       title.textContent = 'Edit Workspaces';
@@ -382,38 +336,57 @@ class WorkspacePopup {
     } else {
       title.textContent = 'Create New Workspaces';
       nameInput.value = '';
-      this.selectColor('#667eea');
+      this.selectColor(Consts.DefaultColor);
     }
 
+    // Remove any existing animation classes
+    modal.classList.remove('animate-in', 'animate-out');
+
     modal.showModal();
+
+    // Add entrance animation
+    requestAnimationFrame(() => {
+      modal.classList.add('animate-in');
+    });
+
     nameInput.focus();
   }
 
-  // Hide modal
+  // Hide modal with enhanced animation
   hideModal() {
-    const modal = $getElementByIdOrThrow<HTMLDialogElement>('workspacesModal');
-    modal.close();
-    this.edited = null;
+    const modal = $id<HTMLDialogElement>('workspacesModal');
+
+    // Add exit animation
+    modal.classList.remove('animate-in');
+    modal.classList.add('animate-out');
+
+    // Close after animation completes
+    setTimeout(() => {
+      modal.close();
+      modal.classList.remove('animate-out');
+      this.edited = null;
+    }, 250); // Match the animation duration
   }
 
   // Select color in color picker
   selectColor(color: HexColor) {
-    if (!/^#([0-9a-fA-F]{6})$/.test(color) && /^#([0-9a-fA-F]{8})$/.test(color)) {
-      alert('Please select a valid 6/8-digit hex color code (e.g., #RRGGBB, #RRGGBBAA)');
-      return;
-    }
+    // if (!/^#([0-9a-fA-F]{6})$/.test(color) && /^#([0-9a-fA-F]{8})$/.test(color)) {
+    //   alert('Please select a valid 6/8-digit hex color code (e.g., #RRGGBB, #RRGGBBAA)');
+    //   return;
+    // }
 
     this.selectedColor = color;
-    const colorOptions = $queryAll<HTMLElement>('.color-option');
-    for (let i = 0; i < colorOptions.length; i++) {
-      const option = colorOptions[i];
+    const options = $queryAll<HTMLElement>('#workspaceColorPicker .color-option');
+
+    for (let i = 0; i < options.length; i++) {
+      const option = options[i];
       option.classList.toggle('selected', option.dataset.color === color);
     }
   }
 
   // Save work group (create or update)
   async saveWorkspaces() {
-    const nameInput = $getElementByIdOrThrow<HTMLInputElement>('workspaceName');
+    const nameInput = $id<HTMLInputElement>('workspaceName');
     const name = nameInput.value.trim();
 
     if (!name) {
