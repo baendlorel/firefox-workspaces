@@ -76,7 +76,7 @@ class WorkspacePopup {
         this.workspaceses.push(...loaded);
       }
     } catch (error) {
-      console.error('__NAME__: Failed to load work groups:', error);
+      console.error('[__NAME__: __func__] Failed to load work groups:', error);
     }
   }
 

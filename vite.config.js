@@ -14,6 +14,7 @@ const tsconfig = './tsconfig.build.json';
 export default defineConfig({
   plugins: [
     typescript({ tsconfig }),
+    funcMacro(),
     replace(replaceOpts),
     replace({
       preventAssignment: true,
@@ -25,7 +26,6 @@ export default defineConfig({
         'assets/css': 'dist/assets',
       },
     }),
-    funcMacro(),
   ],
   build: {
     outDir: 'dist',

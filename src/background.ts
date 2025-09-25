@@ -304,13 +304,12 @@ async function backgroundOnClickListener(info: browser.contextMenus.OnClickData)
       const popupUrl = browser.runtime.getURL('popup.html');
       await browser.windows.create({ url: popupUrl, type: 'popup', width: 400, height: 600 });
     } catch (error) {
-      console.error(`[__NAME__: __func__] Failed to open popup window:`, error);
+      console.error(`[__NAME__: __func__] `, error);
     }
   }
 }
 
 browser.contextMenus.onClicked.addListener(backgroundOnClickListener);
-console.error('原神，启动！');
 
 // Initialize immediately
 init();
