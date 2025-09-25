@@ -23,7 +23,8 @@ body {
   overflow: hidden;
 }
 
-.header {
+.header,
+.dialog-header {
   background: linear-gradient(135deg, #3dc7a5 0%, #0d546a 100%);
   color: white;
   padding: 15px 20px;
@@ -315,16 +316,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px 16px;
   border-bottom: 1px solid #f1f1f1;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
 }
 
 .dialog-header h2 {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1e293b;
 }
 
 .close-btn {
