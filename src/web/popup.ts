@@ -1,9 +1,11 @@
-import { $send } from '../lib/ext-apis.js';
-import { Action, Consts, WORKSPACE_COLORS } from '../lib/consts.js';
-import { $escapeHtml, $truncate } from '../lib/utils.js';
-import { $id, $queryAll, $query, h, div } from '../lib/dom.js';
+import './main.css';
+import './form.css';
+import './dialog.css';
 
-// import './assets/css/popup.css';
+import { $send } from '@/lib/ext-apis.js';
+import { Action, Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
+import { $escapeHtml, $truncate } from '@/lib/utils.js';
+import { $id, $queryAll, $query, h, div } from '@/lib/dom.js';
 
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
@@ -28,13 +30,9 @@ class WorkspacePopup {
     $id('createGroupBtn').addEventListener('click', () => this.showModal());
     $id('addCurrentTabBtn').addEventListener('click', () => this.showAddTabMenu());
     $id('cancelBtn').addEventListener('click', () => this.hideModal());
-    $id('saveBtn').addEventListener('click', () => this.saveWorkspaces());
+    $id('saveBtn').addEventListener('click', () => this.save());
     $id('closeBtn').addEventListener('click', () => this.hideModal());
-    $id('workspaceName').addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        this.saveWorkspaces();
-      }
-    });
+    $id('workspaceName').addEventListener('keypress', (e) => e.key === 'Enter' && this.save());
 
     // # Modal
     const workspacesModal = $id<HTMLDialogElement>('workspacesModal');
@@ -385,7 +383,7 @@ class WorkspacePopup {
   }
 
   // Save work group (create or update)
-  async saveWorkspaces() {
+  async save() {
     const nameInput = $id<HTMLInputElement>('workspaceName');
     const name = nameInput.value.trim();
 
