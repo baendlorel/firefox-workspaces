@@ -28,8 +28,10 @@ class WorkspacePopup {
     const addCurrentTabBtn = $getElementByIdOrThrow('addCurrentTabBtn');
     const cancelBtn = $getElementByIdOrThrow('cancelBtn');
     const saveBtn = $getElementByIdOrThrow('saveBtn');
-    const workspacesModal = $getElementByIdOrThrow('workspacesModal');
+    const closeBtn = $getElementByIdOrThrow('closeBtn');
+    const workspacesModal = $getElementByIdOrThrow<HTMLDialogElement>('workspacesModal');
     const workspaceName = $getElementByIdOrThrow('workspaceName');
+    const workspaceForm = $getElementByIdOrThrow<HTMLFormElement>('workspaceForm');
     const colorOptions = $queryAll<HTMLElement>('.color-option');
 
     createGroupBtn.addEventListener('click', () => {
@@ -44,19 +46,58 @@ class WorkspacePopup {
       this.hideModal();
     });
 
-    saveBtn.addEventListener('click', () => {
+    closeBtn.addEventListener('click', () => {
+      this.hideModal();
+    });
+
+    // Handle form submission
+    workspaceForm.addEventListener('submit', (e) => {
+      e.preventDefault();
       this.saveWorkspaces();
     });
 
+    saveBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.saveWorkspaces();
+    });
+
+    // Close dialog when clicking outside
+    workspacesModal.addEventListener('click', (e) => {
+      if (e.target === workspacesModal) {
+        this.hideModal();
+      }
+    });
+
+    // Handle ESC key
+    workspacesModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.hideModal();
+      }
+    });
+
+    // Color selection handlers with accessibility support
     for (let i = colorOptions.length - 1; i >= 0; i--) {
-      colorOptions[i].addEventListener('click', () => {
-        const color = (colorOptions[i].dataset.color ?? Consts.DefaultColor) as HexColor;
+      const option = colorOptions[i];
+
+      // Click handler
+      option.addEventListener('click', () => {
+        const color = (option.dataset.color ?? Consts.DefaultColor) as HexColor;
         this.selectColor(color);
+      });
+
+      // Keyboard handler for accessibility
+      option.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const color = (option.dataset.color ?? Consts.DefaultColor) as HexColor;
+          this.selectColor(color);
+        }
       });
     }
 
-    workspacesModal.addEventListener('click', () => {
-      if (workspacesModal.id === 'workspacesModal') {
+    // Close dialog when clicking on backdrop (outside the dialog content)
+    workspacesModal.addEventListener('click', (e) => {
+      if (e.target === workspacesModal) {
         this.hideModal();
       }
     });
@@ -330,7 +371,7 @@ class WorkspacePopup {
   // Show modal for creating/editing groups
   showModal(workspace: Workspace | null = null) {
     this.edited = workspace;
-    const modal = $getElementByIdOrThrow('workspacesModal');
+    const modal = $getElementByIdOrThrow<HTMLDialogElement>('workspacesModal');
     const title = $getElementByIdOrThrow('modalTitle');
     const nameInput = $getElementByIdOrThrow<HTMLInputElement>('workspaceName');
 
@@ -344,14 +385,14 @@ class WorkspacePopup {
       this.selectColor('#667eea');
     }
 
-    modal.classList.add('show');
+    modal.showModal();
     nameInput.focus();
   }
 
   // Hide modal
   hideModal() {
-    const modal = $getElementByIdOrThrow('workspacesModal');
-    modal.classList.remove('show');
+    const modal = $getElementByIdOrThrow<HTMLDialogElement>('workspacesModal');
+    modal.close();
     this.edited = null;
   }
 

@@ -1,9 +1,10 @@
 /* Workspaces Popup Styles */
 * {
-  --primary-color: #2da191;
+  --primary: #2da191;
   --primary-highlight: #3dc7a5;
-  --secondary-color: #0d546a;
+  --secondary: #0d546a;
   --secondary-highlight: #267e99;
+  --danger: #e32649;
 }
 body {
   margin: 0;
@@ -39,7 +40,7 @@ body {
 }
 
 .btn {
-  background: var(--primary-color);
+  background: var(--primary);
   color: white;
   border: none;
   padding: 8px 16px;
@@ -55,7 +56,7 @@ body {
 }
 
 .btn-secondary {
-  background: var(--secondary-color);
+  background: var(--secondary);
 }
 
 .btn-secondary:hover {
@@ -186,79 +187,231 @@ body {
   margin-left: 5px;
 }
 
-.modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
+/* Modern Dialog Styles */
+.workspace-dialog {
+  margin: auto;
+  padding: 0;
+  border: none;
+  border-radius: 12px;
+  background: white;
+  box-shadow:
+    0 20px 25px -5px rgba(0, 0, 0, 0.1),
+    0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  width: min(400px, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+
+  /* Animation setup */
+  opacity: 0;
+  transform: scale(0.95) translateY(-10px);
+  transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.modal.show {
+.workspace-dialog[open] {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.workspace-dialog::backdrop {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+.workspace-dialog[open]::backdrop {
+  opacity: 1;
+}
+
+/* Animation keyframes for older browsers */
+@keyframes dialogFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes dialogFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-10px);
+  }
+}
+
+@keyframes backdropFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdropFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.dialog-content {
+  padding: 0;
+  background: white;
+  border-radius: 12px;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #f1f1f1;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
-.modal-content {
-  background: white;
-  padding: 20px;
-  border-radius: 8px;
-  width: 300px;
-  max-width: 90%;
+.close-btn:hover {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
 }
 
-.modal-header {
-  font-size: 18px;
-  font-weight: 600;
-  margin-bottom: 15px;
+.close-btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+#workspaceForm {
+  padding: 20px 24px 24px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .form-group label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
   font-weight: 500;
+  color: #374151;
+  font-size: 14px;
 }
 
 .form-group input {
   width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 12px 16px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
   font-size: 16px;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.form-group input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(45, 161, 145, 0.1);
+}
+
+.form-group input:invalid {
+  border-color: var(--danger);
 }
 
 .color-picker {
   display: flex;
-  gap: 10px;
-  margin-top: 5px;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 8px;
 }
 
 .color-option {
-  width: 30px;
-  height: 30px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color 0.2s;
+  border: 3px solid transparent;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.color-option:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  transform: scale(1.05);
 }
 
 .color-option.selected {
-  border-color: #333;
+  border-color: #1f2937;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
-.modal-actions {
+.color-option.selected::after {
+  content: '✓';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.dialog-actions {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
-  margin-top: 20px;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.dialog-actions .btn {
+  min-width: 80px;
+  padding: 10px 20px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.dialog-actions .btn:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
 }
 
 .empty-state {

@@ -25,43 +25,53 @@
     <div class="empty-state" id="emptyState" style="display: none;">
       <div class="empty-state-icon">
         <svg t="1758808246143" class="icon" viewBox="0 0 1254 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="11565">
-          <path d="M1128.228571 248.685714c-5.485714-5.485714-16.457143-10.971429-25.6-10.971428H671.085714l-71.314285-64c-7.314286-5.485714-14.628571-9.142857-23.771429-9.142857H224.914286c-10.971429 0-20.114286 3.657143-27.428572 10.971428l-67.657143 73.142857c-5.485714 7.314286-9.142857 16.457143-9.142857 25.6v586.971429c0 20.114286 16.457143 36.571429 36.571429 36.571428H1102.628571c20.114286 0 36.571429-16.457143 36.571429-36.571428V274.285714c0-9.142857-3.657143-18.285714-10.971429-25.6z" fill="var(--primary-color)" p-id="11566"></path>
-          <path d="M120.685714 367.542857v495.542857c0 20.114286 16.457143 36.571429 36.571429 36.571429H1102.628571c20.114286 0 36.571429-16.457143 36.571429-36.571429V365.714286l-1018.514286 1.828571z" fill="var(--secondary-color)" p-id="11567"></path>
+          <path d="M1128.228571 248.685714c-5.485714-5.485714-16.457143-10.971429-25.6-10.971428H671.085714l-71.314285-64c-7.314286-5.485714-14.628571-9.142857-23.771429-9.142857H224.914286c-10.971429 0-20.114286 3.657143-27.428572 10.971428l-67.657143 73.142857c-5.485714 7.314286-9.142857 16.457143-9.142857 25.6v586.971429c0 20.114286 16.457143 36.571429 36.571429 36.571428H1102.628571c20.114286 0 36.571429-16.457143 36.571429-36.571428V274.285714c0-9.142857-3.657143-18.285714-10.971429-25.6z" fill="var(--primary)" p-id="11566"></path>
+          <path d="M120.685714 367.542857v495.542857c0 20.114286 16.457143 36.571429 36.571429 36.571429H1102.628571c20.114286 0 36.571429-16.457143 36.571429-36.571429V365.714286l-1018.514286 1.828571z" fill="var(--secondary)" p-id="11567"></path>
         </svg>
       </div>
       <p>No work groups yet</p>
       <p>Create your first group to get started!</p>
     </div>
 
-    <div class="modal" id="workspacesModal">
-      <div class="modal-content">
-        <div class="modal-header" id="modalTitle">Create New Workspaces</div>
-
-        <div class="form-group">
-          <label for="workspaceName">Workspace Name</label>
-          <input type="text" id="workspaceName" placeholder="Enter Workspace Name" maxlength="50">
+    <dialog id="workspacesModal" class="workspace-dialog">
+      <div class="dialog-content">
+        <div class="dialog-header">
+          <h2 id="modalTitle">Create New Workspaces</h2>
+          <button class="close-btn" id="closeBtn" type="button" aria-label="Close dialog">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
         </div>
 
-        <div class="form-group">
-          <label>Workspace Color</label>
-          <div class="color-picker">
-            <div class="color-option selected" data-color="#667eea" style="background-color: #667eea;"></div>
-            <div class="color-option" data-color="#f093fb" style="background-color: #f093fb;"></div>
-            <div class="color-option" data-color="#4facfe" style="background-color: #4facfe;"></div>
-            <div class="color-option" data-color="#43e97b" style="background-color: #43e97b;"></div>
-            <div class="color-option" data-color="#fa709a" style="background-color: #fa709a;"></div>
-            <div class="color-option" data-color="#ffecd2" style="background-color: #ffecd2;"></div>
-            <div class="color-option" data-color="#a8edea" style="background-color: #a8edea;"></div>
-            <div class="color-option" data-color="#d299c2" style="background-color: #d299c2;"></div>
+        <form id="workspaceForm">
+          <div class="form-group">
+            <label for="workspaceName">Workspace Name</label>
+            <input type="text" id="workspaceName" placeholder="Enter Workspace Name" maxlength="50">
           </div>
-        </div>
 
-        <div class="modal-actions">
-          <button class="btn btn-secondary" id="cancelBtn">Cancel</button>
-          <button class="btn" id="saveBtn">Save</button>
-        </div>
+          <div class="form-group">
+            <label>Workspace Color</label>
+            <div class="color-picker">
+              <div class="color-option selected" data-color="#667eea" style="background-color: #667eea;" tabindex="0" role="button" aria-label="Select purple color"></div>
+              <div class="color-option" data-color="#f093fb" style="background-color: #f093fb;" tabindex="0" role="button" aria-label="Select pink color"></div>
+              <div class="color-option" data-color="#4facfe" style="background-color: #4facfe;" tabindex="0" role="button" aria-label="Select blue color"></div>
+              <div class="color-option" data-color="#43e97b" style="background-color: #43e97b;" tabindex="0" role="button" aria-label="Select green color"></div>
+              <div class="color-option" data-color="#fa709a" style="background-color: #fa709a;" tabindex="0" role="button" aria-label="Select coral color"></div>
+              <div class="color-option" data-color="#ffecd2" style="background-color: #ffecd2;" tabindex="0" role="button" aria-label="Select cream color"></div>
+              <div class="color-option" data-color="#a8edea" style="background-color: #a8edea;" tabindex="0" role="button" aria-label="Select mint color"></div>
+              <div class="color-option" data-color="#d299c2" style="background-color: #d299c2;" tabindex="0" role="button" aria-label="Select lavender color"></div>
+            </div>
+          </div>
+
+          <div class="dialog-actions">
+            <button class="btn btn-secondary" id="cancelBtn" type="button">Cancel</button>
+            <button class="btn" id="saveBtn" type="submit">Save</button>
+          </div>
+        </form>
       </div>
-    </div>
+    </dialog>
   </div>
   <script type="module" src="/src/popup.ts"></script>
 </body>
