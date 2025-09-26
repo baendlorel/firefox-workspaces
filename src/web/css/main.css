@@ -10,6 +10,8 @@
   --warning: #ffc107;
   --light: #f8f9fa;
   --primary-gradient: linear-gradient(135deg, #3dc7a5 0%, #0d546a 100%);
+  --warning-gradient: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
+  --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #dc3435 100%);
   --header-padding: 15px 20px;
 }
 body {

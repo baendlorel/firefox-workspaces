@@ -6,6 +6,7 @@ import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
 import { createMainPage } from './main.js';
 import selectDialog from './components/dialog/select-dialog.js';
+import { danger, info } from './components/dialog/alerts.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -89,11 +90,11 @@ class PopupPage {
         this.render();
         this.main.emit('close-editor');
       } else {
-        alert('Failed to save workspace');
+        danger('Failed to save workspace');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error saving workspace:', error);
-      alert('Error saving workspace');
+      danger('Error saving workspace');
     }
   }
 
@@ -112,11 +113,11 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        alert('Failed to delete workspace');
+        danger('Failed to delete workspace');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error deleting workspace:', error);
-      alert('Error deleting workspace');
+      danger('Error deleting workspace');
     }
   }
 
@@ -132,11 +133,11 @@ class PopupPage {
         // Close popup after opening group
         window.close();
       } else {
-        alert('Failed to open workspace');
+        info('Failed to open workspace, Please try again');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error opening workspace:', error);
-      alert('Error opening workspace');
+      danger('Error opening workspace');
     }
   }
 
@@ -153,11 +154,11 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        alert('Failed to remove tab');
+        info('Failed to remove tab, Please try again');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error removing tab:', error);
-      alert('Error removing tab');
+      danger('Error removing tab');
     }
   }
 
@@ -174,11 +175,11 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        alert('Failed to toggle pin');
+        danger('Failed to toggle pin');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error toggling pin:', error);
-      alert('Error toggling pin');
+      danger('Error toggling pin');
     }
   }
 
@@ -196,18 +197,18 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        alert('Failed to move tab');
+        danger('Failed to move tab');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error moving tab:', error);
-      alert('Error moving tab');
+      danger('Error moving tab');
     }
   }
 
   // Show menu to add current tab to a group
   async showAddTabMenu() {
     if (this.workspaces.length === 0) {
-      alert('Create a workspace first');
+      danger('Create a workspace first');
       return;
     }
 
@@ -234,11 +235,11 @@ class PopupPage {
           await this.load();
           this.render();
         } else {
-          alert('Failed to add tab to group');
+          danger('Failed to add tab to group');
         }
       } catch (error) {
         console.error('[__NAME__: __func__] Error adding tab to group:', error);
-        alert('Error adding tab to group');
+        danger('Error adding tab to group');
       }
     }
   }
