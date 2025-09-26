@@ -2,11 +2,8 @@ import { h, div } from '@/lib/dom.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
 import { EventBus } from '../../event-bus.js';
 
-export default (bus: EventBus<WorkspaceEventMap>, workspace: Workspace) => {
-  const pinnedTabs = workspace.pinnedTabs;
-  const regularTabs = workspace.tabs;
-
-  const renderTab = (tab: TabInfo, pinned: boolean) => {
+export default (bus: EventBus<WorkspaceEventMap>) => {
+  const renderTab = (workspace: Workspace, tab: TabInfo, pinned: boolean) => {
     const img = h('img', {
       src: tab.favIconUrl || 'icons/default-favicon.png',
       class: 'tab-favicon',
@@ -62,21 +59,26 @@ export default (bus: EventBus<WorkspaceEventMap>, workspace: Workspace) => {
     return tabItem;
   };
 
-  const elements: HTMLDivElement[] = [];
+  bus.on('render-tab', (workspace) => {
+    const pinnedTabs = workspace.pinnedTabs;
+    const regularTabs = workspace.tabs;
 
-  for (let i = 0; i < pinnedTabs.length; i++) {
-    elements.push(renderTab(pinnedTabs[i], true));
-  }
+    const elements: HTMLDivElement[] = [];
 
-  for (let i = 0; i < regularTabs.length; i++) {
-    elements.push(renderTab(regularTabs[i], false));
-  }
+    for (let i = 0; i < pinnedTabs.length; i++) {
+      elements.push(renderTab(workspace, pinnedTabs[i], true));
+    }
 
-  if (elements.length === 0) {
-    elements.push(
-      div({ style: 'text-align: center; color: #666; padding: 20px;' }, 'No tabs in this group')
-    );
-  }
+    for (let i = 0; i < regularTabs.length; i++) {
+      elements.push(renderTab(workspace, regularTabs[i], false));
+    }
 
-  return elements;
+    if (elements.length === 0) {
+      elements.push(
+        div({ style: 'text-align: center; color: #666; padding: 20px;' }, 'No tabs in this group')
+      );
+    }
+
+    return elements;
+  });
 };

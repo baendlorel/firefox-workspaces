@@ -7,27 +7,20 @@ import controls from './components/workspace/controls.js';
 import list from './components/workspace/list.js';
 import emptyState from './components/workspace/empty-state.js';
 import formModal from './components/workspace/form-modal.js';
+import tabs from './components/workspace/tabs.js';
 
 export function createMainPage() {
   const bus = new EventBus<WorkspaceEventMap>();
   const fm = formModal(bus);
   $id('app').append(header(), controls(bus), list(bus), emptyState(bus), fm.el);
+  // only for registering the 'render-tab' event
+  tabs(bus);
 
   const emit: typeof bus.emit = (...args) => bus.emit(...args);
 
   const on: typeof bus.on = (...args) => bus.on(...args);
 
   return {
-    /**
-     * Edit a workspace config, open the form modal
-     */
-    edit: (workspace: Workspace) => bus.emit('edit-workspace', workspace),
-
-    /**
-     * Close the workspace edit modal
-     */
-    close: () => bus.emit('close-modal'),
-
     /**
      * Emit internal events
      */
@@ -39,10 +32,5 @@ export function createMainPage() {
     on,
 
     getEditingWorkspace: fm.getEditingWorkspace,
-
-    /**
-     * Render the list of workspaces
-     */
-    renderList: (workspaces: Workspace[]) => bus.emit('render-list', workspaces),
   };
 }
