@@ -1,49 +1,33 @@
 .dialog-header {
+  display: flex;
+  padding: 10px 20px;
+  text-align: center;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f1f1;
   background: var(--primary-gradient);
   color: var(--light);
   padding: var(--header-padding);
-  text-align: center;
+}
+
+.dialog-header .title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dialog-body {
+  padding: 20px 20px;
+}
+
+.dialog-footer {
+  padding: 10px 20px;
 }
 
 .dialog-content {
   padding: 0;
   background: white;
   border-radius: 12px;
-}
-
-.dialog-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #f1f1f1;
-}
-
-.dialog-header h2 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.dialog-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 12px;
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid #f1f5f9;
-}
-
-.dialog-actions .btn {
-  min-width: 80px;
-  padding: 10px 20px;
-  font-weight: 500;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.dialog-actions .btn:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
 }
 
 /* Modern Dialog Styles with Enhanced Animations */
@@ -184,6 +168,8 @@
 }
 
 .dialog-ul-options {
+  padding: 0px;
+  margin: 0;
 }
 
 .dialog-li-option {

@@ -8,12 +8,12 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
   const el = h('dialog', 'dialog-container');
   const content = div('dialog-content');
 
-  // header
-  const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
-  const title = h('h2', '', 'Create New Workspace');
+  // # header
+  const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' }, '');
+  const title = div('title', 'Create New Workspace');
   const header = div('dialog-header', [title, closeBtn]);
 
-  // form
+  // # body
   const inputName = h('input', { type: 'text', id: 'workspace-name', name: 'workspace-name' });
   const colorOptions = WORKSPACE_COLORS.map((color) => {
     const el = div('color-option');
@@ -26,16 +26,17 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     return el;
   });
   const colorPicker = h('input', 'color-picker', colorOptions);
-
-  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
-  const saveBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Save');
-  const form = h('form', '', [
+  const body = h('div', 'dialog-body', [
     div('form-group', [h('label', { for: 'workspace-name' }, 'Workspace Name'), inputName]),
     div('form-group', [h('label', '', 'Workspace Color'), colorPicker]),
-    div('dialog-actions', [cancelBtn, saveBtn]),
   ]);
 
-  content.append(header, form);
+  // # footer
+  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
+  const saveBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Save');
+  const footer = div('dialog-footer', [cancelBtn, saveBtn]);
+
+  content.append(header, body, footer);
   el.appendChild(content);
 
   // # define handlers

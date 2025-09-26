@@ -1,4 +1,4 @@
-if (!__IS_PROD__) {
+if (globalThis.browser === undefined) {
   const createProxy = function (path: any[] = []): any {
     return new Proxy(function () {}, {
       get(_, key) {
@@ -17,13 +17,10 @@ if (!__IS_PROD__) {
       },
     });
   };
-
-  if (globalThis.browser === undefined) {
-    globalThis.browser = createProxy() as typeof browser;
-    console.log('Browser API Mocked');
-  } else {
-    console.log('Browser API exists, not mocking.');
-  }
+  globalThis.browser = createProxy() as typeof browser;
+  console.log('Browser API Mocked');
+} else {
+  console.log('Browser API exists, not mocking.');
 }
 
 // # Extension APIs

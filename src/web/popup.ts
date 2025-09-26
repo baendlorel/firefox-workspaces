@@ -14,6 +14,12 @@ class PopupPage {
 
   constructor() {
     this.main = createMainPage();
+    selectDialog({
+      options: [
+        { value: 2, label: '2 tabs' },
+        { value: 3, label: '3 tabs' },
+      ],
+    });
 
     // tabs
     this.main.on('add-current-tab', () => this.showAddTabMenu());

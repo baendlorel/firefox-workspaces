@@ -18,8 +18,12 @@ export default async (config: {
 
   const el = h('dialog', 'dialog-container');
   const content = div('dialog-content');
+
+  // # header
   const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
-  const header = div('dialog-header', [h('h2', '', title), closeBtn]);
+  const header = div('dialog-header', [div('title', title), closeBtn]);
+
+  // # body
   const msg = div('dialog-message', message);
   const selection = options.map((o) => {
     const op = h('li', 'dialog-li-option', o.label);
@@ -30,9 +34,13 @@ export default async (config: {
     return op;
   });
   const ul = h('ul', 'dialog-ul-options', selection);
-  const confirmBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Confirm');
+  const body = div('dialog-footer', [msg, ul]);
 
-  content.append(header, msg, ul, confirmBtn);
+  // # footer
+  const confirmBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Confirm');
+  const footer = div('dialog-footer', [confirmBtn]);
+
+  content.append(header, body, footer);
   el.appendChild(content);
 
   // # define handlers
@@ -55,6 +63,7 @@ export default async (config: {
 
   // mount to body
   document.body.appendChild(el);
+  el.showModal();
 
   return promise;
 };
