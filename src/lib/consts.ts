@@ -37,3 +37,5 @@ export const enum Action {
   GetGroupStats = 'GetGroupStats',
   CheckPageInGroups = 'CheckPageInGroups',
 }
+
+export const emptyFunction = () => {};

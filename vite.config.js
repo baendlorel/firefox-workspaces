@@ -51,6 +51,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@/': resolve('src') + '/',
+      '@web/': resolve('src/web') + '/',
     },
   },
 });

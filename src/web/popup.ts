@@ -6,6 +6,7 @@ import { $send } from '@/lib/ext-apis.js';
 import { Action, Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
 import { $id, $queryAll, $query, h, div } from '@/lib/dom.js';
+import { createMainPage } from './main.js';
 
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
@@ -26,39 +27,14 @@ class WorkspacePopup {
 
   // Setup elements and events
   setup() {
-    // # setup events
-    $id('createGroupBtn').addEventListener('click', () => this.showModal());
-    $id('addCurrentTabBtn').addEventListener('click', () => this.showAddTabMenu());
-    $id('cancelBtn').addEventListener('click', () => this.hideModal());
-    $id('saveBtn').addEventListener('click', () => this.save());
-    $id('closeBtn').addEventListener('click', () => this.hideModal());
-    $id('workspaceName').addEventListener('keypress', (e) => e.key === 'Enter' && this.save());
-
-    // # Modal
-    const workspacesModal = $id<HTMLDialogElement>('workspacesModal');
-    // Handle ESC key
-    workspacesModal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.hideModal();
-      }
-    });
-
-    // Close dialog when clicking on backdrop (outside the dialog content)
-    workspacesModal.addEventListener('click', (e) => {
-      if (e.target === workspacesModal) {
-        this.hideModal();
-      }
-    });
-
-    // # Workspace color picker
-    const colorPickerOptions = WORKSPACE_COLORS.map((color) => {
-      const el = div('color-option');
-      el.style.backgroundColor = color;
-      el.dataset.color = color;
-      el.addEventListener('click', () => this.selectColor(color));
-      return el;
-    });
-    $id('workspaceColorPicker').append(...colorPickerOptions);
+    const args = {} as CreateMainPageArgs;
+    args.onAddCurrentTab = () => this.showAddTabMenu();
+    args.onNewWorkspace = () => this.showModal();
+    args.onCancel = () => {
+      this.edited = null;
+    };
+    args.onSave = () => this.save();
+    createMainPage(args);
   }
 
   // Load work groups from background
@@ -317,68 +293,6 @@ class WorkspacePopup {
           await this.moveTab(data.workspaceId, workspaceId, data.tabId);
         }
       });
-    }
-  }
-
-  // Show modal for creating/editing groups with enhanced animation
-  showModal(workspace: Workspace | null = null) {
-    this.edited = workspace;
-    const modal = $id<HTMLDialogElement>('workspacesModal');
-    const title = $id('modalTitle');
-    const nameInput = $id<HTMLInputElement>('workspaceName');
-
-    if (workspace) {
-      title.textContent = 'Edit Workspaces';
-      nameInput.value = workspace.name;
-      this.selectColor(workspace.color);
-    } else {
-      title.textContent = 'Create New Workspaces';
-      nameInput.value = '';
-      this.selectColor(Consts.DefaultColor);
-    }
-
-    // Remove any existing animation classes
-    modal.classList.remove('animate-in', 'animate-out');
-
-    modal.showModal();
-
-    // Add entrance animation
-    requestAnimationFrame(() => {
-      modal.classList.add('animate-in');
-    });
-
-    nameInput.focus();
-  }
-
-  // Hide modal with enhanced animation
-  hideModal() {
-    const modal = $id<HTMLDialogElement>('workspacesModal');
-
-    // Add exit animation
-    modal.classList.remove('animate-in');
-    modal.classList.add('animate-out');
-
-    // Close after animation completes
-    setTimeout(() => {
-      modal.close();
-      modal.classList.remove('animate-out');
-      this.edited = null;
-    }, 250); // Match the animation duration
-  }
-
-  // Select color in color picker
-  selectColor(color: HexColor) {
-    // if (!/^#([0-9a-fA-F]{6})$/.test(color) && /^#([0-9a-fA-F]{8})$/.test(color)) {
-    //   alert('Please select a valid 6/8-digit hex color code (e.g., #RRGGBB, #RRGGBBAA)');
-    //   return;
-    // }
-
-    this.selectedColor = color;
-    const options = $queryAll<HTMLElement>('#workspaceColorPicker .color-option');
-
-    for (let i = 0; i < options.length; i++) {
-      const option = options[i];
-      option.classList.toggle('selected', option.dataset.color === color);
     }
   }
 
