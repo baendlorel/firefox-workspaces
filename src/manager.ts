@@ -24,7 +24,7 @@ export class WorkspaceManager {
       await this.load();
       console.log('Workspaces Manager initialized');
     } catch (error) {
-      console.error('__NAME__: Failed to initialize Workspaces Manager:', error);
+      console.error('[__NAME__: __func__] Failed to initialize Workspaces Manager:', error);
     }
   }
 
@@ -59,7 +59,7 @@ export class WorkspaceManager {
     try {
       await browser.storage.local.set(data);
     } catch (error) {
-      console.error('__NAME__: Failed to save workspaces:', error);
+      console.error('[__NAME__: __func__] Failed to save workspaces:', error);
       return false;
     }
     return true;
@@ -121,7 +121,7 @@ export class WorkspaceManager {
   async addTab(id: string, browserTab: browser.tabs.Tab, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      console.error(`__NAME__:addTab Workspace with id ${id} not found`);
+      console.error(`[__NAME__: __func__]addTab Workspace with id ${id} not found`);
       return false;
     }
 
@@ -200,7 +200,7 @@ export class WorkspaceManager {
   async toggleTabPin(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      console.error(`__NAME__:toggleTabPin Workspace with id ${id} not found`);
+      console.error(`[__NAME__: __func__]toggleTabPin Workspace with id ${id} not found`);
       return false;
     }
 
@@ -309,7 +309,7 @@ export class WorkspaceManager {
         try {
           await browser.tabs.update(tab.id, { pinned: true });
         } catch (error) {
-          console.error('__NAME__: Failed to pin tab:', error);
+          console.error('[__NAME__: __func__] Failed to pin tab:', error);
         }
       }
 
@@ -322,7 +322,7 @@ export class WorkspaceManager {
             await browser.tabs.update(tabs[0].id, { pinned: true });
           }
         } catch (error) {
-          console.error('__NAME__: Failed to pin first tab:', error);
+          console.error('[__NAME__: __func__] Failed to pin first tab:', error);
         }
       }
 
@@ -333,7 +333,7 @@ export class WorkspaceManager {
 
       return window;
     } catch (error) {
-      console.error('__NAME__: Failed to open workspace in window:', error);
+      console.error('[__NAME__: __func__] Failed to open workspace in window:', error);
       return null;
     }
   }
@@ -365,7 +365,7 @@ export class WorkspaceManager {
       await this.save();
       return true;
     } catch (error) {
-      console.error('__NAME__: Failed to update group from window:', error);
+      console.error('[__NAME__: __func__] Failed to update group from window:', error);
       return false;
     }
   }
@@ -454,7 +454,7 @@ export class WorkspaceManager {
     try {
       if (!Array.isArray(data.workspaceses)) {
         console.error(
-          `__NAME__: Invalid data format, data.workspaceses must be an array of Workspace Data`
+          `[__NAME__: __func__] Invalid data format, data.workspaceses must be an array of Workspace Data`
         );
         return false;
       }
@@ -480,7 +480,7 @@ export class WorkspaceManager {
       await this.save();
       return true;
     } catch (error) {
-      console.error('__NAME__: Failed to import data:', error);
+      console.error('[__NAME__: __func__] Failed to import data:', error);
       return false;
     }
   }

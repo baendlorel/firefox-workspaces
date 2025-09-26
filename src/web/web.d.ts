@@ -24,11 +24,10 @@ type CreateMainPageArgs = WorkspaceModalArgs & ComponentControlsArgs;
 type WorkspaceEventMap = {
   'render-list': (workspace: Workspace[]) => void;
   'render-tab': (workspace: Workspace) => HTMLDivElement[];
-  'new-workspace': () => void;
   'add-current-tab': () => void;
-  'edit-workspace': (workspace: Workspace) => void;
-  'delete-workspace': (workspaceId: string) => void;
-  'open-workspace': (workspaceId: string) => void;
+  'edit-workspace': (workspace: Workspace | null) => void;
+  'delete-workspace': (workspace: Workspace) => void;
+  'open-workspace': (workspace: Workspace) => void;
   'remove-tab': (workspaceId: string, tabId: number) => void;
   'toggle-tab-pin': (workspaceId: string, tabId: number) => void;
 

@@ -20,7 +20,7 @@ async function init() {
 
     console.log('Workspaces Manager initialized in background');
   } catch (error) {
-    console.error('__NAME__: Failed to initialize Workspaces Manager:', error);
+    console.error('[__NAME__: __func__] Failed to initialize Workspaces Manager:', error);
   }
 }
 
@@ -80,7 +80,7 @@ setInterval(async () => {
         await manager.save();
       }
     } catch (error) {
-      console.error('__NAME__: Error during periodic save:', error);
+      console.error('[__NAME__: __func__] Error during periodic save:', error);
     }
   }
 }, 30000); // Save every 30 seconds
@@ -130,7 +130,7 @@ browser.tabs.onCreated.addListener(async (tab) => {
   }
 
   if (tab.windowId === undefined) {
-    alert('__NAME__: Tab created without windowId. ' + JSON.stringify(tab));
+    alert('[__NAME__: __func__] Tab created without windowId. ' + JSON.stringify(tab));
     return;
   }
 
@@ -161,7 +161,7 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
   }
 
   if (browserTab.windowId === undefined) {
-    alert('__NAME__: Tab created without windowId. ' + JSON.stringify(browserTab));
+    alert('[__NAME__: __func__] Tab created without windowId. ' + JSON.stringify(browserTab));
     return;
   }
 
@@ -276,7 +276,7 @@ browser.runtime.onMessage.addListener(async (message: Message, _sender, respond:
         respond<UnknownActionResponse>({ success: false, error: 'Unknown action' });
     }
   } catch (error) {
-    console.error('__NAME__: Error handling message:', error);
+    console.error('[__NAME__: __func__] Error handling message:', error);
     respond({ success: false });
   }
 

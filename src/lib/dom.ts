@@ -3,7 +3,7 @@
 export const $id = <E extends HTMLElement = HTMLElement>(id: string): E => {
   const element = document.getElementById(id);
   if (!element) {
-    throw new Error(`__NAME__: Element with id "${id}" not found`);
+    throw new Error(`[__NAME__: __func__] Element with id "${id}" not found`);
   }
   return element as E;
 };

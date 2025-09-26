@@ -15,8 +15,14 @@ class PopupPage {
   constructor() {
     this.main = createMainPage();
     this.main.on('add-current-tab', () => this.showAddTabMenu());
-    this.main.on('modal-save', (formData: WorkspaceFormData) => this.save(formData));
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
+
+    // form modal
+    this.main.on('modal-save', (formData: WorkspaceFormData) => this.save(formData));
+    this.main.on('delete-workspace', (workspace: Workspace) => this.delete(workspace));
+    this.main.on('open-workspace', (id: string) => this.open(id));
+    this.main.on('remove-tab', (id: string, tabId: number) => this.removeTab(id, tabId));
+
     this.init();
   }
 
@@ -51,7 +57,7 @@ class PopupPage {
 
       tab.addEventListener('dragstart', (e) => {
         if (!e.dataTransfer) {
-          throw new Error('__NAME__:setupDragAndDrop e.dataTransfer is null');
+          throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
         }
 
         const tabId = tab.dataset.tabId;
@@ -59,7 +65,7 @@ class PopupPage {
         const tabUrl = tab.dataset.tabUrl;
 
         if (workspaceId === undefined) {
-          throw new Error(`__NAME__:setupDragAndDrop tab.closest('.wb') is undefined.`);
+          throw new Error(`[__NAME__: __func__]setupDragAndDrop tab.closest('.wb') is undefined.`);
         }
 
         e.dataTransfer.setData(
@@ -93,7 +99,7 @@ class PopupPage {
         e.preventDefault();
         workspaceDiv.classList.remove('drag-over');
         if (!e.dataTransfer) {
-          throw new Error('__NAME__:setupDragAndDrop e.dataTransfer is null');
+          throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
         }
 
         const data = JSON.parse(e.dataTransfer.getData('text/plain')) as DraggingData;
@@ -101,7 +107,7 @@ class PopupPage {
 
         if (data.workspaceId !== workspaceId) {
           if (workspaceId === undefined) {
-            throw new Error('__NAME__:setupDragAndDrop workspaceId is undefined.');
+            throw new Error('[__NAME__: __func__]setupDragAndDrop workspaceId is undefined.');
           }
           await this.moveTab(data.workspaceId, workspaceId, data.tabId);
         }
@@ -138,44 +144,40 @@ class PopupPage {
         alert('Failed to save workspace');
       }
     } catch (error) {
-      console.error('__NAME__: Error saving workspace:', error);
+      console.error('[__NAME__: __func__] Error saving workspace:', error);
       alert('Error saving workspace');
     }
   }
 
   // Delete workspace
-  async delete(id: string) {
-    const group = this.workspaces.find((g) => g.id === id);
-    if (!group) {
+  async delete(workspace: Workspace) {
+    if (!confirm(`Are you sure you want to delete "${workspace.name}"?`)) {
       return;
     }
+    try {
+      const response = await $send<DeleteWorkspacesRequest>({
+        action: Action.DeleteWorkspaces,
+        id: workspace.id,
+      });
 
-    if (confirm(`Are you sure you want to delete "${group.name}"?`)) {
-      try {
-        const response = await $send<DeleteWorkspacesRequest>({
-          action: Action.DeleteWorkspaces,
-          id: id,
-        });
-
-        if (response.success) {
-          await this.load();
-          this.main.emit('render-list', this.workspaces);
-        } else {
-          alert('Failed to delete workspace');
-        }
-      } catch (error) {
-        console.error('__NAME__: Error deleting workspace:', error);
-        alert('Error deleting workspace');
+      if (response.success) {
+        await this.load();
+        this.main.emit('render-list', this.workspaces);
+      } else {
+        alert('Failed to delete workspace');
       }
+    } catch (error) {
+      console.error('[__NAME__: __func__] Error deleting workspace:', error);
+      alert('Error deleting workspace');
     }
   }
 
   // Open workspace in new window
-  async open(id: string) {
+  async open(workspace: Workspace) {
     try {
       const response = await $send<OpenWorkspacesRequest>({
         action: Action.OpenWorkspaces,
-        workspaceId: id,
+        workspaceId: workspace.id,
       });
 
       if (response.success) {
@@ -185,7 +187,7 @@ class PopupPage {
         alert('Failed to open workspace');
       }
     } catch (error) {
-      console.error('__NAME__: Error opening workspace:', error);
+      console.error('[__NAME__: __func__] Error opening workspace:', error);
       alert('Error opening workspace');
     }
   }
@@ -206,7 +208,7 @@ class PopupPage {
         alert('Failed to remove tab');
       }
     } catch (error) {
-      console.error('__NAME__: Error removing tab:', error);
+      console.error('[__NAME__: __func__] Error removing tab:', error);
       alert('Error removing tab');
     }
   }
@@ -227,7 +229,7 @@ class PopupPage {
         alert('Failed to toggle pin');
       }
     } catch (error) {
-      console.error('__NAME__: Error toggling pin:', error);
+      console.error('[__NAME__: __func__] Error toggling pin:', error);
       alert('Error toggling pin');
     }
   }
@@ -249,7 +251,7 @@ class PopupPage {
         alert('Failed to move tab');
       }
     } catch (error) {
-      console.error('__NAME__: Error moving tab:', error);
+      console.error('[__NAME__: __func__] Error moving tab:', error);
       alert('Error moving tab');
     }
   }
@@ -286,7 +288,7 @@ class PopupPage {
           alert('Failed to add tab to group');
         }
       } catch (error) {
-        console.error('__NAME__: Error adding tab to group:', error);
+        console.error('[__NAME__: __func__] Error adding tab to group:', error);
         alert('Error adding tab to group');
       }
     }

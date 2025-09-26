@@ -35,9 +35,9 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       btnDelete.title = 'Delete group';
       btnToggle.title = 'Show/Hide tabs';
 
-      btnOpen.addEventListener('click', () => bus.emit('open-workspace', workspace.id));
+      btnOpen.addEventListener('click', () => bus.emit('open-workspace', workspace));
       btnEdit.addEventListener('click', () => bus.emit('edit-workspace', workspace));
-      btnDelete.addEventListener('click', () => bus.emit('delete-workspace', workspace.id));
+      btnDelete.addEventListener('click', () => bus.emit('delete-workspace', workspace));
       btnToggle.addEventListener('click', () => block.classList.toggle('expanded'));
       container.appendChild(block);
     }
