@@ -31,6 +31,7 @@ export default async (config: {
 
   const { dialog } = createDialog(title, [msg, ul]);
   dialog.bus.on('closed', () => resolve(value));
+  dialog.escClosable = false;
 
   // mount to body
   document.body.appendChild(dialog);

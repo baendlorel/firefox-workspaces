@@ -17,10 +17,25 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   Reflect.set(dialog, 'bus', bus);
   dialog.escClosable = false;
   dialog.backdropClosable = false;
-  dialog.addEventListener('cancel', (e) => {
+
+  /**
+   * `<dialog>`'s cancel event should be cancelable, but only in FireFox, not in Edge.
+   * So we disable esc globally and prevent its default action.
+   *
+   * @param e
+   */
+  const preventEsc = (e: KeyboardEvent) => {
+    if (e.key !== 'Escape') {
+      return;
+    }
     e.preventDefault();
-    console.log(e.defaultPrevented, e);
-  });
+    e.stopPropagation();
+    console.log('ESC default prevented');
+    if (dialog.escClosable) {
+      console.log('escClosable');
+      bus.emit('close');
+    }
+  };
 
   dialog.addEventListener(
     'keydown',
@@ -47,6 +62,7 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   const show = () => {
     // Remove any existing animation classes
     dialog.classList.remove('animate-in', 'animate-out');
+    document.addEventListener('keydown', preventEsc);
 
     dialog.showModal();
 
@@ -62,6 +78,8 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
     // Add exit animation
     dialog.classList.remove('animate-in');
     dialog.classList.add('animate-out');
+
+    document.removeEventListener('keydown', preventEsc);
 
     // Close after animation completes
     setTimeout(() => {
