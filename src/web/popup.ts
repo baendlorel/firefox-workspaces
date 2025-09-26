@@ -11,15 +11,12 @@ import { createMainPage } from './main.js';
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
   private readonly workspaces: Workspace[] = [];
-  private edited: Workspace | null = null;
-  private selectedColor: HexColor = Consts.DefaultColor;
   private main: ReturnType<typeof createMainPage>;
 
   constructor() {
-    this.main = createMainPage({
-      onAddCurrentTab: () => this.showAddTabMenu(),
-      onSave: () => this.save(),
-    });
+    this.main = createMainPage();
+    // todo  onAddCurrentTab: () => this.showAddTabMenu(),
+    this.main.emit('modal-save', (formData: WorkspaceFormData) => this.save(formData));
     this.init();
   }
 
@@ -289,30 +286,23 @@ class WorkspacePopup {
   }
 
   // Save work group (create or update)
-  async save() {
-    const nameInput = $id<HTMLInputElement>('workspaceName');
-    const name = nameInput.value.trim();
-
-    if (!name) {
-      alert('Please enter a group name');
-      return;
-    }
-
+  async save(formData: WorkspaceFormData) {
     try {
       let response;
-      if (this.edited) {
+      const workspace = this.main.getEditingWorkspace();
+      if (workspace) {
         // Update existing group
         response = await $send<UpdateWorkspacesRequest>({
           action: Action.UpdateWorkspaces,
-          id: this.edited.id,
-          updates: { name, color: this.selectedColor },
+          id: workspace.id,
+          updates: formData,
         });
       } else {
         // Create new group
         response = await $send<CreateWorkspacesRequest>({
           action: Action.CreateWorkspaces,
-          name,
-          color: this.selectedColor,
+          name: formData.name,
+          color: formData.color,
         });
       }
 

@@ -100,11 +100,20 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
   saveBtn.addEventListener('click', () => {
+    // validate
+    const name = inputName.value.trim();
+    if (!name) {
+      alert('Please enter a group name');
+      return;
+    }
+
+    // emit save event
     bus.emit('modal-save', {
       name: inputName.value,
-      color: String(colorPicker.dataset.color),
+      color: colorPicker.dataset.color as HexColor,
     });
 
+    // close the modal
     close();
   });
 
@@ -114,5 +123,5 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
   // Close dialog when clicking on backdrop (outside the dialog content)
   el.addEventListener('click', (e) => e.target === el && close());
 
-  return el;
+  return { el, getEditingWorkspace: () => editingWorkspace };
 };

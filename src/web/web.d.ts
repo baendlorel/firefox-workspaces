@@ -11,7 +11,7 @@ interface WorkspaceModalArgs {
 
 interface WorkspaceFormData {
   name: string;
-  color: string;
+  color: HexColor;
 }
 
 interface TabArgs {
