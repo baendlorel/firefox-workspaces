@@ -1,4 +1,5 @@
 import { h, div, btn } from '@/lib/dom.js';
+import { EventBus } from '../event-bus.js';
 
 type HTMLPart = HTMLElement[] | string;
 
@@ -9,6 +10,8 @@ export function createDialog(
   footer: HTMLElement[]
 ): Omit<Dialog, 'confirmBtn'>;
 export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart) {
+  const bus = new EventBus<DialogEventMap>();
+
   const dialog = h('dialog', 'dialog-container');
   const content = div('dialog-content');
 
@@ -21,24 +24,61 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   const bodyInner = typeof body === 'string' ? [div('', body)] : body;
   const bodyDiv = div('dialog-footer', bodyInner);
 
-  // # footer
+  // & no footer
   if (!footer) {
     const confirmBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Confirm');
     const footerDiv = div('dialog-footer', [confirmBtn]);
     content.append(headerDiv, bodyDiv, footerDiv);
     dialog.appendChild(content);
+
+    const close = () => {
+      // Add exit animation
+      dialog.classList.remove('animate-in');
+      dialog.classList.add('animate-out');
+
+      // Close after animation completes
+      setTimeout(() => {
+        dialog.close();
+        dialog.classList.remove('animate-out');
+        bus.emit('closed');
+        bus.emit('confirmed');
+      }, 250); // Match the animation duration
+    };
+
+    confirmBtn.addEventListener('click', close);
+
     return {
+      bus,
       dialog,
       closeBtn,
       confirmBtn,
     };
   }
+
+  // # footer provided
   const footerInner = typeof footer === 'string' ? [div('', footer)] : [...footer];
   const footerDiv = div('dialog-footer', footerInner);
 
+  // # define handlers
+  const close = () => {
+    // Add exit animation
+    dialog.classList.remove('animate-in');
+    dialog.classList.add('animate-out');
+
+    // Close after animation completes
+    setTimeout(() => {
+      dialog.close();
+      dialog.classList.remove('animate-out');
+      bus.emit('closed');
+    }, 250); // Match the animation duration
+  };
+
+  // # register events
+  closeBtn.addEventListener('click', close);
   content.append(headerDiv, bodyDiv, footerDiv);
   dialog.appendChild(content);
   return {
+    bus,
     dialog,
     closeBtn,
   };

@@ -30,25 +30,11 @@ export default async (config: {
   const ul = h('ul', 'dialog-ul-options', selection);
   const body = div('dialog-footer', [msg, ul]);
 
-  const { dialog, closeBtn, confirmBtn } = createDialog(title, [body]);
+  const { bus, dialog } = createDialog(title, [body]);
 
-  // # define handlers
-  const close = () => {
-    // Add exit animation
-    dialog.classList.remove('animate-in');
-    dialog.classList.add('animate-out');
-
-    // Close after animation completes
-    setTimeout(() => {
-      dialog.close();
-      dialog.classList.remove('animate-out');
-      resolve(value);
-    }, 250); // Match the animation duration
-  };
-
-  // # register events
-  closeBtn.addEventListener('click', close);
-  confirmBtn.addEventListener('click', close);
+  bus.on('closed', () => resolve(value));
+  // & confirming would trigger 'closed' too, no need to trigger it twice
+  // bus.on('confirmed', () => resolve(value));
 
   // mount to body
   document.body.appendChild(dialog);

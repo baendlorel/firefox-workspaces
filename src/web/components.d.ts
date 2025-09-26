@@ -1,7 +1,16 @@
-type HTMLPart = HTMLElement[] | string;
+import { EventBus } from './event-bus.ts';
+declare global {
+  type HTMLPart = HTMLElement[] | string;
 
-interface Dialog {
-  dialog: HTMLDialogElement;
-  closeBtn: HTMLButtonElement;
-  confirmBtn: HTMLButtonElement;
+  interface Dialog {
+    bus: EventBus<DialogEventMap>;
+    dialog: HTMLDialogElement;
+    closeBtn: HTMLButtonElement;
+    confirmBtn: HTMLButtonElement;
+  }
+
+  type DialogEventMap = {
+    closed: () => void;
+    confirmed: () => void;
+  };
 }
