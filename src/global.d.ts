@@ -1,6 +1,8 @@
 import 'rollup-plugin-func-macro';
 
 declare global {
+  const __IS_PROD__: boolean;
+
   type AnyFn = (...args: any[]) => any;
 
   type HTMLTag = keyof HTMLElementTagNameMap;

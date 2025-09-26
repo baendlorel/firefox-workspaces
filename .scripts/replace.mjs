@@ -36,7 +36,7 @@ const __PKG_INFO__ = `## About
 export const replaceOpts = {
   preventAssignment: true,
   values: {
-    __IS_DEV__: 'false',
+    __IS_PROD__: 'true',
     __NAME__,
     __KEBAB_NAME__,
     __PKG_INFO__,
@@ -50,7 +50,8 @@ export const replaceOpts = {
  * @type {Record<string, any>}
  */
 export const replaceLiteralOpts = {
-  'declare const __IS_DEV__: boolean;\n': '',
+  'declare const __IS_PROD__: boolean;\n': '',
+  'const __IS_PROD__: boolean;\n': '',
   // & This flag is used to export types only when generating declaration files.
   // '//__EXPORT_FLAG__\n':'export '
 };
