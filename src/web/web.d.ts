@@ -29,7 +29,6 @@ type WorkspaceEventMap = {
   'edit-workspace': (workspace: Workspace) => void;
   'delete-workspace': (workspaceId: string) => void;
   'open-workspace': (workspaceId: string) => void;
-  'toggle-workspace': (workspaceId: string) => void;
   'remove-tab': (workspaceId: string, tabId: number) => void;
   'toggle-tab-pin': (workspaceId: string, tabId: number) => void;
 

@@ -55,7 +55,7 @@ private lastContextPosition: { x: number; y: number } = { x: 0, y: 0 };
 **问题**:
 
 - popup.ts 中拖拽代码使用 `dataset.workspaceId`
-- 但实际HTML渲染使用的是 `data-group-id`
+- 但实际HTML渲染使用的是 `data-workspace-id`
 - 导致拖拽功能无法正常工作
 
 **修复**:

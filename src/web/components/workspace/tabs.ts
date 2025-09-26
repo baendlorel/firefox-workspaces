@@ -32,6 +32,7 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     btnPin.addEventListener('click', () => bus.emit('toggle-tab-pin', workspace.id, tab.id));
     btnRemove.addEventListener('click', () => bus.emit('remove-tab', workspace.id, tab.id));
 
+    // # origin
     const _ = `
       <div class="tab-item" data-tab-id="${tab.id}" data-tab-url="${tab.url}">
         <img class="tab-favicon" src="${tab.favIconUrl || 'icons/default-favicon.png'}" 

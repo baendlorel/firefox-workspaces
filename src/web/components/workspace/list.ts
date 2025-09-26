@@ -21,7 +21,7 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       const btnDelete = btn('btn-small', '🗑️');
       const btnToggle = btn('btn-small', '🖲️');
       // & wb means workspace-block
-      const block = div({ class: 'wb', 'data-group-id': workspace.id }, [
+      const block = div({ class: 'wb', 'data-workspace-id': workspace.id }, [
         div({ class: 'wb-header', style: `border-left-color:${workspace.color}` }, [
           div('wb-title', $escapeHtml(workspace.name)),
           div('wb-count', countText),
@@ -38,10 +38,11 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       btnOpen.addEventListener('click', () => bus.emit('open-workspace', workspace.id));
       btnEdit.addEventListener('click', () => bus.emit('edit-workspace', workspace));
       btnDelete.addEventListener('click', () => bus.emit('delete-workspace', workspace.id));
-      btnToggle.addEventListener('click', () => bus.emit('toggle-workspace', workspace.id));
+      btnToggle.addEventListener('click', () => block.classList.toggle('expanded'));
 
+      // # origin
       // return `
-      //   <div class="wb" data-group-id="${group.id}">
+      //   <div class="wb" data-workspace-id="${group.id}">
       //     <div class="wb-header" style="border-left-color: ${group.color}">
       //       <div>
       //         <div class="wb-title">${$escapeHtml(group.name)}</div>

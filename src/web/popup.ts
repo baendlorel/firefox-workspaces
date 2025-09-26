@@ -181,7 +181,7 @@ class PopupPage {
 
   // Toggle group expansion
   toggle(id: string) {
-    const element = $query(`[data-group-id="${id}"]`);
+    const element = $query(`[data-workspace-id="${id}"]`);
     if (element) {
       element.classList.toggle('expanded');
     }
