@@ -39,45 +39,6 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       btnEdit.addEventListener('click', () => bus.emit('edit-workspace', workspace));
       btnDelete.addEventListener('click', () => bus.emit('delete-workspace', workspace.id));
       btnToggle.addEventListener('click', () => block.classList.toggle('expanded'));
-
-      // # origin
-      // return `
-      //   <div class="wb" data-workspace-id="${group.id}">
-      //     <div class="wb-header" style="border-left-color: ${group.color}">
-      //       <div>
-      //         <div class="wb-title">${$escapeHtml(group.name)}</div>
-      //         <div class="wb-count">
-      //           ${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}
-      //         </div>
-      //       </div>
-      //       <div class="wb-actions">
-      //         <button class="btn-small" onclick="workspacesPopup.openWorkspaces('${
-      //           group.id
-      //         }')" title="Open in new window">
-      //           🗖
-      //         </button>
-      //         <button class="btn-small" onclick="workspacesPopup.editGroup('${
-      //           group.id
-      //         }')" title="Edit group">
-      //           ✏️
-      //         </button>
-      //         <button class="btn-small" onclick="workspacesPopup.deleteGroup('${
-      //           group.id
-      //         }')" title="Delete group">
-      //           🗑️
-      //         </button>
-      //         <button class="btn-small" onclick="workspacesPopup.toggleGroup('${
-      //           group.id
-      //         }')" title="Show/Hide tabs">
-      //           ▼
-      //         </button>
-      //       </div>
-      //     </div>
-      //     <div class="wb-tabs">
-      //       ${this.renderWorkspaceTabs(group)}
-      //     </div>
-      //   </div>
-      // `;
       container.appendChild(block);
     }
 

@@ -16,6 +16,7 @@ class PopupPage {
     this.main = createMainPage();
     this.main.on('add-current-tab', () => this.showAddTabMenu());
     this.main.on('modal-save', (formData: WorkspaceFormData) => this.save(formData));
+    this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
     this.init();
   }
 
@@ -176,14 +177,6 @@ class PopupPage {
         console.error('__NAME__: Error deleting workspace:', error);
         alert('Error deleting workspace');
       }
-    }
-  }
-
-  // Toggle group expansion
-  toggle(id: string) {
-    const element = $query(`[data-workspace-id="${id}"]`);
-    if (element) {
-      element.classList.toggle('expanded');
     }
   }
 
