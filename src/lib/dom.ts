@@ -17,7 +17,7 @@ export const $queryAll: typeof qsa = (s: string) => qsa.call(document, s);
 
 export const h = <T extends HTMLTag>(
   tag: T,
-  className: string | Record<string, string>,
+  className: string | Record<string, string> = '',
   children: (HTMLElement | string)[] | string = ''
 ): HTMLElementTagNameMap[T] => {
   // Create element
