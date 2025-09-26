@@ -143,16 +143,6 @@ class PopupPage {
     }
   }
 
-  // Edit workspace
-  edit(id: string) {
-    const workspace = this.workspaces.find((g) => g.id === id);
-    if (workspace) {
-      this.main.emit('edit-workspace', workspace);
-    } else {
-      alert('Workspace not found, id: ' + id);
-    }
-  }
-
   // Delete workspace
   async delete(id: string) {
     const group = this.workspaces.find((g) => g.id === id);
