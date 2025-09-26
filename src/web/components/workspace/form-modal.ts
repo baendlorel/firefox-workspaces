@@ -3,7 +3,7 @@ import { btn, div, h } from '@/lib/dom.js';
 import { EventBus } from '@web/event-bus.js';
 import { createDialog } from '../dialog.js';
 
-export default (bus: EventBus<WorkspaceEventMap>) => {
+export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   let editingWorkspace: Workspace | null = null;
 
   // # body
@@ -59,7 +59,7 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
 
   // # register events
 
-  bus.on('edit-workspace', (workspace: Workspace | null = null) => {
+  bus.on('edit', (workspace: Workspace | null = null) => {
     editingWorkspace = workspace;
 
     if (workspace) {
@@ -87,7 +87,7 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     }
 
     // emit save event
-    bus.emit('save-workspace', {
+    bus.emit('save', {
       name: inputName.value,
       color: colorPicker.dataset.color as HexColor,
     });

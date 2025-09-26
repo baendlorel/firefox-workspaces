@@ -2,7 +2,7 @@ import { btn, div } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
 import { EventBus } from '@web/event-bus.js';
 
-export default (bus: EventBus<WorkspaceEventMap>) => {
+export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = div('workspaces');
 
   // #from popup.setupDragAndDrop
@@ -68,9 +68,9 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       btnDelete.title = 'Delete group';
       btnToggle.title = 'Show/Hide tabs';
 
-      btnOpen.addEventListener('click', () => bus.emit('open-workspace', workspace));
-      btnEdit.addEventListener('click', () => bus.emit('edit-workspace', workspace));
-      btnDelete.addEventListener('click', () => bus.emit('delete-workspace', workspace));
+      btnOpen.addEventListener('click', () => bus.emit('open', workspace));
+      btnEdit.addEventListener('click', () => bus.emit('edit', workspace));
+      btnDelete.addEventListener('click', () => bus.emit('delete', workspace));
       btnToggle.addEventListener('click', () => block.classList.toggle('expanded'));
       registerDragAndDrop(block);
 

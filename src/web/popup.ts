@@ -30,9 +30,9 @@ class PopupPage {
     );
 
     // form modal
-    this.main.on('open-workspace', (workspace: Workspace) => this.open(workspace));
-    this.main.on('save-workspace', (formData: WorkspaceFormData) => this.save(formData));
-    this.main.on('delete-workspace', (workspace: Workspace) => this.delete(workspace));
+    this.main.on('open', (workspace: Workspace) => this.open(workspace));
+    this.main.on('save', (formData: WorkspaceFormData) => this.save(formData));
+    this.main.on('delete', (workspace: Workspace) => this.delete(workspace));
 
     this.init();
   }

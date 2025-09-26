@@ -2,7 +2,7 @@ import { h, div, btn } from '@/lib/dom.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
 import { EventBus } from '@web/event-bus.js';
 
-export default (bus: EventBus<WorkspaceEventMap>) => {
+export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   // #from popup.setupDragAndDrop
   const registerDragAndDrop = (tab: HTMLDivElement) => {
     tab.draggable = true;

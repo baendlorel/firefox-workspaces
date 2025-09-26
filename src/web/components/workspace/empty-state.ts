@@ -2,7 +2,7 @@ import { div, h } from '@/lib/dom.js';
 import { EventBus } from '@web/event-bus.js';
 import folderIcon from '@web/assets/folder.svg';
 
-export default (bus: EventBus<WorkspaceEventMap>) => {
+export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const icon = h('img', 'empty-state-icon');
   icon.src = folderIcon;
 

@@ -21,12 +21,12 @@ interface TabArgs {
 
 type CreateMainPageArgs = WorkspaceModalArgs & ComponentControlsArgs;
 
-type WorkspaceEventMap = {
+type WorkspaceEditorEventMap = {
   // workspaces
   'render-list': (workspace: Workspace[]) => void;
-  'edit-workspace': (workspace: Workspace | null) => void;
-  'delete-workspace': (workspace: Workspace) => void;
-  'open-workspace': (workspace: Workspace) => void;
+  edit: (workspace: Workspace | null) => void;
+  delete: (workspace: Workspace) => void;
+  open: (workspace: Workspace) => void;
 
   // tabs
   'add-current-tab': () => void;
@@ -38,5 +38,5 @@ type WorkspaceEventMap = {
   // form
   'select-color': (color: HexColor) => void;
   'close-editor': () => void;
-  'save-workspace': (formData: WorkspaceFormData) => void;
+  save: (formData: WorkspaceFormData) => void;
 };

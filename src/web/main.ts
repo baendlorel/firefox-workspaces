@@ -10,7 +10,7 @@ import formModal from './components/workspace/form-modal.js';
 import tabs from './components/workspace/tabs.js';
 
 export function createMainPage() {
-  const bus = new EventBus<WorkspaceEventMap>();
+  const bus = new EventBus<WorkspaceEditorEventMap>();
   const fm = formModal(bus);
   $id('app').append(header(), controls(bus), list(bus), emptyState(bus), fm.el);
   // only for registering the 'render-tab' event
