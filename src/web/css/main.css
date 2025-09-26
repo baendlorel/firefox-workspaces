@@ -22,8 +22,8 @@ body {
 }
 
 #app {
-  width: 480px;
-  min-height: 540px;
+  width: 520px;
+  min-height: 560px;
   border-radius: 8px;
   overflow: hidden;
 }

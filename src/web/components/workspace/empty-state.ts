@@ -12,6 +12,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     h('p', '', 'Create a new workspace to get started!'),
   ]);
 
-  bus.on('render-list', (list) => (el.style.display = list.length === 0 ? 'block' : 'none'));
+  // fixme this is not triggered
+  bus.on('render-list', (list) => {
+    console.log(list.length === 0);
+    el.style.display = list.length === 0 ? 'block' : 'none';
+  });
   return el;
 };

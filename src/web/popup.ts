@@ -16,15 +16,6 @@ class PopupPage {
   constructor() {
     this.main = createMainPage();
 
-    if (__IS_DEV__) {
-      selectDialog({
-        options: [
-          { value: 2, label: '2 tabs' },
-          { value: 3, label: '3 tabs' },
-        ],
-      }).then((value) => console.log('resolved', value));
-    }
-
     // tabs
     this.main.on('add-current-tab', () => this.showAddTabMenu());
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
@@ -44,6 +35,7 @@ class PopupPage {
   // Initialize popup
   async init() {
     await this.load();
+    this.render();
   }
 
   render() {
@@ -90,7 +82,7 @@ class PopupPage {
         this.render();
         this.main.emit('close-editor');
       } else {
-        danger('Failed to save workspace');
+        info('Failed to save workspace, Please try again');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error saving workspace:', error);
@@ -113,7 +105,7 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        danger('Failed to delete workspace');
+        info('Failed to delete workspace, Please try again');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error deleting workspace:', error);
@@ -175,7 +167,7 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        danger('Failed to toggle pin');
+        info('Failed to toggle pin, Please try again');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error toggling pin:', error);
@@ -197,7 +189,7 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        danger('Failed to move tab');
+        info('Failed to move tab, Please try again');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error moving tab:', error);
@@ -208,7 +200,7 @@ class PopupPage {
   // Show menu to add current tab to a group
   async showAddTabMenu() {
     if (this.workspaces.length === 0) {
-      danger('Create a workspace first');
+      info('Create a workspace first');
       return;
     }
 
@@ -235,7 +227,7 @@ class PopupPage {
           await this.load();
           this.render();
         } else {
-          danger('Failed to add tab to group');
+          info('Failed to add tab to group, Please try again');
         }
       } catch (error) {
         console.error('[__NAME__: __func__] Error adding tab to group:', error);
