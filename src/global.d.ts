@@ -1,6 +1,8 @@
 import 'rollup-plugin-func-macro';
 
 declare global {
+  type AnyFn = (...args: any[]) => any;
+
   type HTMLTag = keyof HTMLElementTagNameMap;
 
   type HexColor = `#${string}`;

@@ -39,7 +39,7 @@ export default (handlers: WorkspaceModalArgs) => {
   modal.appendChild(content);
   content.append(header, form);
 
-  // # register events
+  // # define handlers
   const edit = (workspace: Workspace | null = null) => {
     editingWorkspace = workspace;
 
@@ -94,6 +94,7 @@ export default (handlers: WorkspaceModalArgs) => {
     }
   };
 
+  // # register events
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
   saveBtn.addEventListener('click', () => {
@@ -111,7 +112,7 @@ export default (handlers: WorkspaceModalArgs) => {
   modal.addEventListener('click', (e) => e.target === modal && close());
 
   return {
-    modal,
+    el: modal,
     edit,
     close,
     getEditingWorkspace() {

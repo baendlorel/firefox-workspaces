@@ -1,5 +1,5 @@
 import { div, h } from '@/lib/dom.js';
-import folderIcon from '@/web/assets/folder.svg';
+import folderIcon from '../assets/folder.svg';
 
 export default () => {
   const icon = h('img', 'empty-state-icon');

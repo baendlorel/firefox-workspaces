@@ -22,11 +22,18 @@ export function createMainPage(args: Partial<CreateMainPageArgs>) {
     onAddCurrentTab,
   };
 
-  $id('app').append(header(), controls(controlsArgs), workspaceList(), emptyState(), wfm.modal);
+  const emptyStateEl = emptyState();
+  const wl = workspaceList();
+
+  $id('app').append(header(), controls(controlsArgs), wl.el, emptyStateEl, wfm.el);
 
   return {
     edit: wfm.edit,
     close: wfm.close,
     getEditingWorkspace: wfm.getEditingWorkspace,
+    renderList: (workspaces: Workspace[]) => {
+      emptyStateEl.style.display = workspaces.length === 0 ? 'block' : 'none';
+      wl.renderList(workspaces);
+    },
   };
 }

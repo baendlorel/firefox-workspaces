@@ -1,9 +1,9 @@
-import './main.css';
-import './form.css';
-import './dialog.css';
+import './css/main.css';
+import './css/form.css';
+import './css/dialog.css';
 
 import { $send } from '@/lib/ext-apis.js';
-import { Action, Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
+import { Action, Consts } from '@/lib/consts.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
 import { $id, $queryAll, $query, h, div } from '@/lib/dom.js';
 import { createMainPage } from './main.js';
