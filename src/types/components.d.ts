@@ -5,7 +5,7 @@ declare global {
   interface Dialog {
     dialog: HTMLDialogElement;
     closeBtn: HTMLButtonElement;
-    confirmBtn: HTMLButtonElement;
+    yesBtn: HTMLButtonElement;
   }
 
   type DialogEventMap = {

@@ -7,8 +7,12 @@ export function createDialog(
   header: HTMLPart,
   body: HTMLPart,
   footer: HTMLElement[]
-): Omit<Dialog, 'confirmBtn'>;
-export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart) {
+): Omit<Dialog, 'yesBtn'>;
+export function createDialog(
+  header: HTMLPart,
+  body: HTMLPart,
+  footer?: HTMLPart
+): Omit<Dialog, 'yesBtn'> | Dialog {
   const bus = new EventBus<DialogEventMap>();
 
   const dialog = h('dialog', 'dialog-container');
@@ -56,9 +60,7 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
     dialog.showModal();
 
     // Add entrance animation
-    requestAnimationFrame(() => {
-      dialog.classList.add('animate-in');
-    });
+    requestAnimationFrame(() => dialog.classList.add('animate-in'));
 
     setTimeout(() => bus.emit('shown'), 250);
   };
@@ -83,16 +85,16 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
 
   // # no footer
   if (!footer) {
-    const confirmBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Confirm');
-    content.append(headerDiv, bodyDiv, div('dialog-footer', [confirmBtn]));
+    const yesBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Yes');
+    content.append(headerDiv, bodyDiv, div('dialog-footer', [yesBtn]));
     dialog.appendChild(content);
 
-    confirmBtn.addEventListener('click', close);
+    yesBtn.addEventListener('click', close);
 
     return {
       dialog,
       closeBtn,
-      confirmBtn,
+      yesBtn,
     };
   }
 
