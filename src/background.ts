@@ -250,9 +250,9 @@ browser.runtime.onMessage.addListener(async (message: Message, _sender, respond:
         respond<MoveTabResponse>({ success: moved });
         break;
 
-      case Action.GetGroupStats:
+      case Action.GetStats:
         const stats = manager.getStats(message.workspaceId);
-        respond<GetGroupStatsResponse>({ success: stats !== null, data: stats });
+        respond<GetStatsResponse>({ success: stats !== null, data: stats });
         break;
 
       case Action.CheckPageInGroups:

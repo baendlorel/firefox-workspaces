@@ -34,6 +34,6 @@ export const enum Action {
   TogglePin = 'TogglePin',
   OpenWorkspaces = 'OpenWorkspaces',
   MoveTab = 'MoveTab',
-  GetGroupStats = 'GetGroupStats',
+  GetStats = 'GetStats',
   CheckPageInGroups = 'CheckPageInGroups',
 }

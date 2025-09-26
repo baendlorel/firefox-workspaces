@@ -53,8 +53,8 @@ declare global {
     tabId: number;
   }
 
-  interface GetGroupStatsRequest {
-    action: Action.GetGroupStats;
+  interface GetStatsRequest {
+    action: Action.GetStats;
     workspaceId: string;
   }
 
@@ -74,7 +74,7 @@ declare global {
     | TogglePinRequest
     | OpenWorkspacesRequest
     | MoveTabRequest
-    | GetGroupStatsRequest
+    | GetStatsRequest
     | CheckPageInGroupsRequest;
   // #endregion
 
@@ -123,7 +123,7 @@ declare global {
     success: boolean;
   }
 
-  interface GetGroupStatsResponse {
+  interface GetStatsResponse {
     success: boolean;
     data?: WorkspaceStats | null;
   }
@@ -149,7 +149,7 @@ declare global {
     | TogglePinResponse
     | OpenWorkspacesResponse
     | MoveTabResponse
-    | GetGroupStatsResponse
+    | GetStatsResponse
     | CheckPageInGroupsResponse
     | UnknownActionResponse;
 
@@ -163,7 +163,7 @@ declare global {
     [Action.TogglePin]: TogglePinResponse;
     [Action.OpenWorkspaces]: OpenWorkspacesResponse;
     [Action.MoveTab]: MoveTabResponse;
-    [Action.GetGroupStats]: GetGroupStatsResponse;
+    [Action.GetStats]: GetStatsResponse;
     [Action.CheckPageInGroups]: CheckPageInGroupsResponse;
   }
 

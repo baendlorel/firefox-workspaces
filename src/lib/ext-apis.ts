@@ -1,3 +1,5 @@
+import { Action } from './consts.js';
+
 if (__IS_DEV__) {
   const createProxy = function (path: any[] = []): any {
     return new Proxy(function () {}, {
@@ -12,7 +14,12 @@ if (__IS_DEV__) {
         return true;
       },
       apply(_0, _1, args) {
-        console.log('apply:', path.join('.'), 'args:', args);
+        const key = path.join('.');
+        console.log('apply:', key, 'args:', args);
+        if (key === 'runtime.sendMessage' && args[0].action === Action.GetWorkspaces) {
+          return [];
+        }
+
         return createProxy(path); // 调用后还能继续链式访问
       },
     });
