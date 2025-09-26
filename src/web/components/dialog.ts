@@ -22,6 +22,9 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
     if (e.key !== 'Escape') {
       return;
     }
+
+    // * prevent the default instant closing of <dialog> on Esc
+    // must use my animated version
     e.preventDefault();
     if (dialog.escClosable) {
       bus.emit('close');

@@ -1,7 +1,7 @@
 import 'rollup-plugin-func-macro';
 
 declare global {
-  const __IS_PROD__: boolean;
+  const __IS_DEV__: boolean;
 
   type AnyFn = (...args: any[]) => any;
 

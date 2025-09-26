@@ -36,7 +36,7 @@ const __PKG_INFO__ = `## About
 export const replaceOpts = {
   preventAssignment: true,
   values: {
-    __IS_PROD__: 'true',
+    __IS_DEV__: 'false',
     __NAME__,
     __KEBAB_NAME__,
     __PKG_INFO__,

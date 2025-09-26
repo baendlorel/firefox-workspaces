@@ -30,6 +30,9 @@ export default defineConfig({
   server: {
     open: 'popup.html',
   },
+  define: {
+    __IS_DEV__: process.env.NODE_ENV === 'development',
+  },
   build: {
     outDir: 'dist',
     minify: false,

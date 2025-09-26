@@ -1,4 +1,4 @@
-if (globalThis.browser === undefined) {
+if (__IS_DEV__) {
   const createProxy = function (path: any[] = []): any {
     return new Proxy(function () {}, {
       get(_, key) {
