@@ -1,4 +1,4 @@
-import { Consts, emptyFunction, WORKSPACE_COLORS } from '@/lib/consts.js';
+import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 
 export default (handlers: WorkspaceModalArgs) => {
@@ -40,7 +40,7 @@ export default (handlers: WorkspaceModalArgs) => {
   content.append(header, form);
 
   // # register events
-  const show = (workspace: Workspace | null = null) => {
+  const edit = (workspace: Workspace | null = null) => {
     editingWorkspace = workspace;
 
     if (workspace) {
@@ -75,7 +75,7 @@ export default (handlers: WorkspaceModalArgs) => {
     setTimeout(() => {
       modal.close();
       modal.classList.remove('animate-out');
-      // this.edited = null;
+      editingWorkspace = null;
       onCancel();
     }, 250); // Match the animation duration
   };
@@ -97,7 +97,10 @@ export default (handlers: WorkspaceModalArgs) => {
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
   saveBtn.addEventListener('click', () => {
-    onSave(collect());
+    onSave({
+      name: inputName.value,
+      color: String(colorPicker.dataset.color),
+    });
     close();
   });
 
@@ -107,21 +110,11 @@ export default (handlers: WorkspaceModalArgs) => {
   // Close dialog when clicking on backdrop (outside the dialog content)
   modal.addEventListener('click', (e) => e.target === modal && close());
 
-  /**
-   * Get input data of the form
-   */
-  const collect = (): WorkspaceFormData => {
-    return {
-      name: inputName.value,
-      color: String(colorPicker.dataset.color),
-    };
-  };
-
   return {
     modal,
-    show,
-    close: close,
-    get editingWorkspace() {
+    edit,
+    close,
+    getEditingWorkspace() {
       return editingWorkspace;
     },
   };

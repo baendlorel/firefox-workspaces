@@ -10,7 +10,6 @@ import workspaceFormModal from './components/workspace-form-modal.js';
 
 export function createMainPage(args: Partial<CreateMainPageArgs>) {
   const {
-    onNewWorkspace = emptyFunction,
     onAddCurrentTab = emptyFunction,
     onCancel = emptyFunction,
     onSave = emptyFunction,
@@ -19,12 +18,15 @@ export function createMainPage(args: Partial<CreateMainPageArgs>) {
 
   const wfm = workspaceFormModal({ onSave, onCancel, onSelectColor });
   const controlsArgs = {
-    onNewWorkspace: () => {
-      onNewWorkspace();
-      wfm.show();
-    },
+    onNewWorkspace: () => wfm.edit(null),
     onAddCurrentTab,
   };
 
   $id('app').append(header(), controls(controlsArgs), workspaceList(), emptyState(), wfm.modal);
+
+  return {
+    edit: wfm.edit,
+    close: wfm.close,
+    getEditingWorkspace: wfm.getEditingWorkspace,
+  };
 }

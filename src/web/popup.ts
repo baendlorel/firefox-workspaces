@@ -10,31 +10,23 @@ import { createMainPage } from './main.js';
 
 // Popup JavaScript for Workspaces Manager
 class WorkspacePopup {
-  private readonly workspaceses: Workspace[] = [];
+  private readonly workspaces: Workspace[] = [];
   private edited: Workspace | null = null;
   private selectedColor: HexColor = Consts.DefaultColor;
+  private main: ReturnType<typeof createMainPage>;
 
   constructor() {
+    this.main = createMainPage({
+      onAddCurrentTab: () => this.showAddTabMenu(),
+      onSave: () => this.save(),
+    });
     this.init();
   }
 
   // Initialize popup
   async init() {
-    this.setup();
     await this.load();
     this.render();
-  }
-
-  // Setup elements and events
-  setup() {
-    const args = {} as CreateMainPageArgs;
-    args.onAddCurrentTab = () => this.showAddTabMenu();
-    args.onNewWorkspace = () => this.showModal();
-    args.onCancel = () => {
-      this.edited = null;
-    };
-    args.onSave = () => this.save();
-    createMainPage(args);
   }
 
   // Load work groups from background
@@ -43,8 +35,8 @@ class WorkspacePopup {
       const response = await $send<GetWorkspacesRequest>({ action: Action.GetWorkspaces });
       if (response.success) {
         const loaded = response.data ?? [];
-        this.workspaceses.length = 0;
-        this.workspaceses.push(...loaded);
+        this.workspaces.length = 0;
+        this.workspaces.push(...loaded);
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Failed to load work groups:', error);
@@ -56,7 +48,7 @@ class WorkspacePopup {
     const container = $id('workspacesList');
     const emptyState = $id('emptyState');
 
-    if (this.workspaceses.length === 0) {
+    if (this.workspaces.length === 0) {
       container.style.display = 'none';
       emptyState.style.display = 'block';
       return;
@@ -65,8 +57,8 @@ class WorkspacePopup {
     container.style.display = 'block';
     emptyState.style.display = 'none';
 
-    for (let i = 0; i < this.workspaceses.length; i++) {
-      const workspace = this.workspaceses[i];
+    for (let i = 0; i < this.workspaces.length; i++) {
+      const workspace = this.workspaces[i];
 
       const totalTabs = workspace.tabs.length + workspace.pinnedTabs.length;
       const pinnedCount = workspace.pinnedTabs.length;
@@ -327,7 +319,7 @@ class WorkspacePopup {
       if (response.success) {
         await this.load();
         this.render();
-        this.hideModal();
+        this.main.close();
       } else {
         alert('Failed to save work group');
       }
@@ -339,15 +331,17 @@ class WorkspacePopup {
 
   // Edit work group
   edit(id: string) {
-    const group = this.workspaceses.find((g) => g.id === id);
-    if (group) {
-      this.showModal(group);
+    const workspace = this.workspaces.find((g) => g.id === id);
+    if (workspace) {
+      this.main.edit(workspace);
+    } else {
+      alert('Workspace not found, id: ' + id);
     }
   }
 
   // Delete work group
   async delete(id: string) {
-    const group = this.workspaceses.find((g) => g.id === id);
+    const group = this.workspaces.find((g) => g.id === id);
     if (!group) {
       return;
     }
@@ -466,20 +460,20 @@ class WorkspacePopup {
 
   // Show menu to add current tab to a group
   async showAddTabMenu() {
-    if (this.workspaceses.length === 0) {
+    if (this.workspaces.length === 0) {
       alert('Create a work group first');
       return;
     }
 
     // Simple implementation - show a select dialog
-    const options = this.workspaceses.map(
+    const options = this.workspaces.map(
       (w) => `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`
     );
 
     const selectedIndex = await this.showSelectDialog('Select a work group:', options);
 
     if (selectedIndex !== null) {
-      const workspaceId = this.workspaceses[selectedIndex].id;
+      const workspaceId = this.workspaces[selectedIndex].id;
       const pinned = confirm('Pin this tab in the group?');
 
       try {
