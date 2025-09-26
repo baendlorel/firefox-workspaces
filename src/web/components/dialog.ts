@@ -15,19 +15,21 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   const content = div('dialog-content');
 
   Reflect.set(dialog, 'bus', bus);
-  dialog.escClosabe = false;
-  dialog.backdropClosabe = false;
+  dialog.escClosable = false;
+  dialog.backdropClosable = false;
   dialog.addEventListener('cancel', (e) => {
-    console.log(e);
     e.preventDefault();
+    console.log(e.defaultPrevented, e);
   });
+
   dialog.addEventListener(
     'keydown',
-    (e) => e.key === 'Escape' && dialog.escClosabe && bus.emit('close')
+    (e) => e.key === 'Escape' && dialog.escClosable && bus.emit('close')
   );
+
   dialog.addEventListener(
     'click',
-    (e) => e.target === dialog && dialog.backdropClosabe && bus.emit('close')
+    (e) => e.target === dialog && dialog.backdropClosable && bus.emit('close')
   );
 
   // # header
@@ -36,8 +38,6 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
 
   const headerInner = typeof header === 'string' ? [div('title', header), closeBtn] : header;
   const headerDiv = div('dialog-header', headerInner);
-
-  console.log('closeSvg', closeSvg);
 
   // # body
   const bodyInner = typeof body === 'string' ? [div('', body)] : body;

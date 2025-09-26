@@ -72,7 +72,7 @@
 
 .dialog-container:focus {
   outline: none;
-  box-shadow: 0 0 12px 3px var(--primary-highlight);
+  box-shadow: 0 0 8px 3px var(--primary-highlight-trans);
 }
 
 /* Enhanced animation keyframes */

@@ -18,7 +18,7 @@ declare global {
 
   interface HTMLDialogElement {
     readonly bus: EventBus<DialogEventMap>;
-    escClosabe: boolean;
-    backdropClosabe: boolean;
+    escClosable: boolean;
+    backdropClosable: boolean;
   }
 }

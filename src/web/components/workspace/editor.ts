@@ -30,8 +30,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const footer = [cancelBtn, saveBtn];
 
   const { dialog, closeBtn } = createDialog('Workspace', body, footer);
-  dialog.backdropClosabe = true;
-  dialog.escClosabe = true;
+  dialog.backdropClosable = true;
+  dialog.escClosable = true;
 
   // # define handlers
 
