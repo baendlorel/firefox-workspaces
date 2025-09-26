@@ -1,6 +1,6 @@
 import { h, div, btn } from '@/lib/dom.js';
 import { EventBus } from '../event-bus.js';
-import closeSvg from '@web/assets/close.svg';
+import closeSvg from '@web/assets/close.svg?raw';
 
 type HTMLPart = HTMLElement[] | string;
 
@@ -17,9 +17,9 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   const content = div('dialog-content');
 
   // # header
-  const closeImg = h('img');
-  closeImg.src = closeSvg;
-  const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' }, [closeImg]);
+  const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
+  closeBtn.innerHTML = closeSvg;
+
   const headerInner = typeof header === 'string' ? [div('title', header), closeBtn] : header;
   const headerDiv = div('dialog-header', headerInner);
 
@@ -27,7 +27,7 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
 
   // # body
   const bodyInner = typeof body === 'string' ? [div('', body)] : body;
-  const bodyDiv = div('dialog-footer', bodyInner);
+  const bodyDiv = div('dialog-body', bodyInner);
 
   // & no footer
   if (!footer) {

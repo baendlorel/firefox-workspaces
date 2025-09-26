@@ -1,6 +1,6 @@
 .dialog-header {
   display: flex;
-  padding: 10px 20px;
+  padding: 15px 20px;
   text-align: center;
   justify-content: space-between;
   align-items: center;
@@ -17,11 +17,12 @@
 }
 
 .dialog-body {
-  padding: 20px 20px;
+  padding: 20px 20px 15px 20px;
 }
 
 .dialog-footer {
-  padding: 10px 20px;
+  padding: 15px 20px 20px 20px;
+  text-align: right;
 }
 
 .dialog-content {
@@ -146,19 +147,21 @@
 }
 
 .dialog-close-btn {
+  --dialog-close-btn-size: 12px;
+  --dialog-close-btn-color: #aee4d780;
+  --dialog-close-btn-hover: #b7ffedb4;
+  width: var(--dialog-close-btn-size);
+  height: var(--dialog-close-btn-size);
+  padding: 0px;
+  color: var(--dialog-close-btn-color);
+  background-color: transparent;
   border: none;
-  padding: 8px;
-  cursor: pointer;
-  border-radius: 6px;
-  color: var(--light);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   transition: all 0.2s ease;
+  cursor: pointer;
 }
 
 .dialog-close-btn:hover {
-  color: var(--primary-highlight);
+  color: var(--dialog-close-btn-hover);
 }
 
 .dialog-close-btn:focus {
@@ -169,11 +172,13 @@
 .dialog-ul-options {
   padding: 0px;
   margin: 0;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
 .dialog-li-option {
   list-style: none;
-  padding: 12px 16px;
+  padding: 10px 16px;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
   transition: background 0.2s ease;
@@ -183,10 +188,10 @@
 
 .dialog-li-option:hover {
   color: var(--light);
-  background-color: var(--primary-highlight);
+  background-color: var(--primary);
 }
 
 .dialog-li-option.selected {
   color: var(--light);
-  background-color: var(--primary);
+  background-color: var(--primary-highlight);
 }

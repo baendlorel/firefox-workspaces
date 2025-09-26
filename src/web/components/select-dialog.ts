@@ -18,7 +18,7 @@ export default async (config: {
   let value: any = null;
 
   // # body
-  const msg = div('dialog-message', message);
+  const msg = h('p', 'dialog-message', message);
   const selection = options.map((o) => {
     const op = h('li', 'dialog-li-option', o.label);
     op.onclick = () => {
@@ -28,9 +28,8 @@ export default async (config: {
     return op;
   });
   const ul = h('ul', 'dialog-ul-options', selection);
-  const body = div('dialog-footer', [msg, ul]);
 
-  const { bus, dialog } = createDialog(title, [body]);
+  const { bus, dialog } = createDialog(title, [msg, ul]);
 
   bus.on('closed', () => resolve(value));
   // & confirming would trigger 'closed' too, no need to trigger it twice
