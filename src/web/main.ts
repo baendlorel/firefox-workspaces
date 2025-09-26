@@ -2,11 +2,11 @@ import { $id } from '@/lib/dom.js';
 import { EventBus } from './event-bus.js';
 
 // components
-import header from './components/header.js';
-import controls from './components/controls.js';
-import list from './components/list.js';
-import emptyState from './components/empty-state.js';
-import formModal from './components/form-modal.js';
+import header from './components/workspace/header.js';
+import controls from './components/workspace/controls.js';
+import list from './components/workspace/list.js';
+import emptyState from './components/workspace/empty-state.js';
+import formModal from './components/workspace/form-modal.js';
 
 export function createMainPage() {
   const bus = new EventBus<WorkspaceEventMap>();

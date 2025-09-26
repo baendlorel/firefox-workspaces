@@ -1,5 +1,5 @@
 import { div, h } from '@/lib/dom.js';
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../../event-bus.js';
 import folderIcon from '../assets/folder.svg';
 
 export default (bus: EventBus<WorkspaceEventMap>) => {

@@ -1,6 +1,6 @@
 import { h, div } from '@/lib/dom.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../../event-bus.js';
 
 export default (bus: EventBus<WorkspaceEventMap>, workspace: Workspace) => {
   const pinnedTabs = workspace.pinnedTabs;

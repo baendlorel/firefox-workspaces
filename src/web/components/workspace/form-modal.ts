@@ -1,6 +1,6 @@
 import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '../../event-bus.js';
 
 export default (bus: EventBus<WorkspaceEventMap>) => {
   let editingWorkspace: Workspace | null = null;
