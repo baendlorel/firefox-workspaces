@@ -51,7 +51,7 @@ import { $send } from './lib/ext-apis.js';
       });
     }
 
-    // Inject custom styles for work group features
+    // Inject custom styles for workspace features
     injectStyles() {
       const style = document.createElement('style');
       style.textContent = `
@@ -106,7 +106,7 @@ import { $send } from './lib/ext-apis.js';
       return `${window.location.protocol}//${window.location.host}/favicon.ico`;
     }
 
-    // Highlight page with work group color
+    // Highlight page with workspace color
     highlightPage(color = '#667eea') {
       this.removeHighlight();
 
@@ -135,7 +135,7 @@ import { $send } from './lib/ext-apis.js';
       existing.forEach((el) => el.remove());
     }
 
-    // Check if page belongs to a work group
+    // Check if page belongs to a workspace
     async checkWorkspacesMembership() {
       try {
         const response = await $send<CheckPageInGroupsRequest>({
@@ -148,11 +148,11 @@ import { $send } from './lib/ext-apis.js';
           this.showWorkspaceIndicator(response.groups);
         }
       } catch (error) {
-        console.log('Could not check work group membership:', error);
+        console.log('Could not check workspace membership:', error);
       }
     }
 
-    // Show indicator for work group membership
+    // Show indicator for workspace membership
     showWorkspaceIndicator(workspaces: Workspace[]): void {
       if (workspaces.length === 0) {
         return;
@@ -202,7 +202,7 @@ import { $send } from './lib/ext-apis.js';
   // Initialize content script
   const workspacesContent = new WorkspacesContent();
 
-  // Check work group membership on page load
+  // Check workspace membership on page load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => workspacesContent.checkWorkspacesMembership(), 1000);

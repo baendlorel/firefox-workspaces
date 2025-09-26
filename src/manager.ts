@@ -96,7 +96,7 @@ export class WorkspaceManager {
     return workspace;
   }
 
-  // Delete a work group
+  // Delete a workspace
   async delete(id: string): Promise<boolean> {
     const target = this._map.get(id);
     if (!target) {
@@ -117,7 +117,7 @@ export class WorkspaceManager {
     return this._map.get(id);
   }
 
-  // Add tab to work group
+  // Add tab to workspace
   async addTab(id: string, browserTab: browser.tabs.Tab, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
@@ -228,7 +228,7 @@ export class WorkspaceManager {
     return false;
   }
 
-  // Open work group in new window
+  // Open workspace in new window
   async open(id: string): Promise<{ id?: number } | null> {
     const workspace = this._map.get(id);
     if (!workspace) {
@@ -333,12 +333,12 @@ export class WorkspaceManager {
 
       return window;
     } catch (error) {
-      console.error('__NAME__: Failed to open work group in window:', error);
+      console.error('__NAME__: Failed to open workspace in window:', error);
       return null;
     }
   }
 
-  // Update work group tabs from window state
+  // Update workspace tabs from window state
   async updateByWindowId(id: string, windowId: number | undefined) {
     const workspace = this._map.get(id);
     if (!workspace || workspace.windowId !== windowId) {
@@ -371,7 +371,7 @@ export class WorkspaceManager {
   }
 
   /**
-   * Find work group by window ID
+   * Find workspace by window ID
    *
    * ## Trivia
    *
@@ -425,7 +425,7 @@ export class WorkspaceManager {
     }
   }
 
-  // Restore all work group sessions on startup
+  // Restore all workspace sessions on startup
   async restoreSessions() {
     for (let i = 0; i < this._arr.length; i++) {
       this._arr[i].windowId = undefined;

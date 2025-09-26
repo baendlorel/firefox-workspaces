@@ -15,8 +15,8 @@ class WorkspacePopup {
 
   constructor() {
     this.main = createMainPage();
-    // todo  onAddCurrentTab: () => this.showAddTabMenu(),
-    this.main.emit('modal-save', (formData: WorkspaceFormData) => this.save(formData));
+    this.main.on('add-current-tab', () => this.showAddTabMenu());
+    this.main.on('modal-save', (formData: WorkspaceFormData) => this.save(formData));
     this.init();
   }
 
@@ -285,7 +285,7 @@ class WorkspacePopup {
     }
   }
 
-  // Save work group (create or update)
+  // Save workspace (create or update)
   async save(formData: WorkspaceFormData) {
     try {
       let response;
@@ -311,15 +311,15 @@ class WorkspacePopup {
         this.render();
         this.main.close();
       } else {
-        alert('Failed to save work group');
+        alert('Failed to save workspace');
       }
     } catch (error) {
-      console.error('__NAME__: Error saving work group:', error);
-      alert('Error saving work group');
+      console.error('__NAME__: Error saving workspace:', error);
+      alert('Error saving workspace');
     }
   }
 
-  // Edit work group
+  // Edit workspace
   edit(id: string) {
     const workspace = this.workspaces.find((g) => g.id === id);
     if (workspace) {
@@ -329,7 +329,7 @@ class WorkspacePopup {
     }
   }
 
-  // Delete work group
+  // Delete workspace
   async delete(id: string) {
     const group = this.workspaces.find((g) => g.id === id);
     if (!group) {
@@ -347,11 +347,11 @@ class WorkspacePopup {
           await this.load();
           this.render();
         } else {
-          alert('Failed to delete work group');
+          alert('Failed to delete workspace');
         }
       } catch (error) {
-        console.error('__NAME__: Error deleting work group:', error);
-        alert('Error deleting work group');
+        console.error('__NAME__: Error deleting workspace:', error);
+        alert('Error deleting workspace');
       }
     }
   }
@@ -364,7 +364,7 @@ class WorkspacePopup {
     }
   }
 
-  // Open work group in new window
+  // Open workspace in new window
   async open(id: string) {
     try {
       const response = await $send<OpenWorkspacesRequest>({
@@ -376,11 +376,11 @@ class WorkspacePopup {
         // Close popup after opening group
         window.close();
       } else {
-        alert('Failed to open work group');
+        alert('Failed to open workspace');
       }
     } catch (error) {
-      console.error('__NAME__: Error opening work group:', error);
-      alert('Error opening work group');
+      console.error('__NAME__: Error opening workspace:', error);
+      alert('Error opening workspace');
     }
   }
 
@@ -451,7 +451,7 @@ class WorkspacePopup {
   // Show menu to add current tab to a group
   async showAddTabMenu() {
     if (this.workspaces.length === 0) {
-      alert('Create a work group first');
+      alert('Create a workspace first');
       return;
     }
 
@@ -460,7 +460,7 @@ class WorkspacePopup {
       (w) => `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`
     );
 
-    const selectedIndex = await this.showSelectDialog('Select a work group:', options);
+    const selectedIndex = await this.showSelectDialog('Select a workspace:', options);
 
     if (selectedIndex !== null) {
       const workspaceId = this.workspaces[selectedIndex].id;

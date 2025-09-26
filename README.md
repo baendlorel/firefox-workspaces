@@ -24,7 +24,7 @@ The extension will be available on Firefox Add-ons store once approved.
 - Pin/unpin tabs within work groups
 - Open work groups in dedicated windows
 - Automatic session saving and restoration
-- Visual indicators for work group membership
+- Visual indicators for workspace membership
 
 ## Development
 
@@ -32,8 +32,8 @@ The extension follows Firefox WebExtensions API standards and includes:
 
 - **Background script**: Handles window management, tab events, and data persistence
 - **Popup interface**: Provides user interface for managing work groups
-- **Content script**: Enhances pages with work group indicators
-- **Data manager**: Handles work group storage and operations
+- **Content script**: Enhances pages with workspace indicators
+- **Data manager**: Handles workspace storage and operations
 
 ## Permissions
 
