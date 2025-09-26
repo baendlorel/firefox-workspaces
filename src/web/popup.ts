@@ -19,7 +19,7 @@ class PopupPage {
         { value: 2, label: '2 tabs' },
         { value: 3, label: '3 tabs' },
       ],
-    });
+    }).then((value) => console.log('resolved', value));
 
     // tabs
     this.main.on('add-current-tab', () => this.showAddTabMenu());

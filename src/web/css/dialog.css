@@ -146,12 +146,11 @@
 }
 
 .dialog-close-btn {
-  background: url(/assets/close.svg) no-repeat center;
   border: none;
   padding: 8px;
   cursor: pointer;
   border-radius: 6px;
-  color: #64748b;
+  color: var(--light);
   display: flex;
   align-items: center;
   justify-content: center;
