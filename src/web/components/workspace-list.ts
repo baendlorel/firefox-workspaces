@@ -35,10 +35,10 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       btnDelete.title = 'Delete group';
       btnToggle.title = 'Show/Hide tabs';
 
-      btnOpen.addEventListener('click', () => this.open(workspace.id));
-      btnEdit.addEventListener('click', () => this.edit(workspace.id));
-      btnDelete.addEventListener('click', () => this.delete(workspace.id));
-      btnToggle.addEventListener('click', () => this.toggle(workspace.id));
+      btnOpen.addEventListener('click', () => bus.emit('open-workspace', workspace.id));
+      btnEdit.addEventListener('click', () => bus.emit('edit-workspace', workspace));
+      btnDelete.addEventListener('click', () => bus.emit('delete-workspace', workspace.id));
+      btnToggle.addEventListener('click', () => bus.emit('toggle-workspace', workspace.id));
 
       // return `
       //   <div class="wb" data-group-id="${group.id}">
@@ -82,5 +82,8 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
 
     this.setupDragAndDrop();
   };
-  return { el: container, renderList };
+
+  bus.on('render-list', renderList);
+
+  return container;
 };

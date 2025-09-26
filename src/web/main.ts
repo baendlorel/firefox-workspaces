@@ -1,5 +1,6 @@
 import { $id } from '@/lib/dom.js';
 import { emptyFunction } from '@/lib/consts.js';
+import { EventBus } from './event-bus.js';
 
 // components
 import header from './components/header.js';
@@ -16,24 +17,16 @@ export function createMainPage(args: Partial<CreateMainPageArgs>) {
     onSelectColor = emptyFunction,
   } = args;
 
-  const wfm = workspaceFormModal({ onSave, onCancel, onSelectColor });
-  const controlsArgs = {
-    onNewWorkspace: () => wfm.edit(null),
-    onAddCurrentTab,
-  };
+  const bus = new EventBus<WorkspaceEventMap>();
 
-  const emptyStateEl = emptyState();
-  const wl = workspaceList();
+  const wfm = workspaceFormModal(bus);
 
-  $id('app').append(header(), controls(controlsArgs), wl.el, emptyStateEl, wfm.el);
+  $id('app').append(header(), controls(bus), workspaceList(bus), emptyState(bus), wfm.el);
 
   return {
-    edit: wfm.edit,
-    close: wfm.close,
-    getEditingWorkspace: wfm.getEditingWorkspace,
-    renderList: (workspaces: Workspace[]) => {
-      emptyStateEl.style.display = workspaces.length === 0 ? 'block' : 'none';
-      wl.renderList(workspaces);
-    },
+    edit: (workspace: Workspace) => bus.emit('edit-workspace', workspace),
+    close: () => bus.emit('close-modal'),
+    // getEditingWorkspace: wfm.getEditingWorkspace,
+    renderList: (workspaces: Workspace[]) => bus.emit('render-list', workspaces),
   };
 }

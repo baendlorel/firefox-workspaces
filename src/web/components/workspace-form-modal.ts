@@ -1,12 +1,11 @@
 import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
+import { EventBus } from '../event-bus.js';
 
-export default (handlers: WorkspaceModalArgs) => {
-  const { onCancel, onSave, onSelectColor } = handlers;
-
+export default (bus: EventBus<WorkspaceEventMap>) => {
   let editingWorkspace: Workspace | null = null;
 
-  const modal = h('dialog', 'dialog-container');
+  const el = h('dialog', 'dialog-container');
   const content = div('dialog-content');
 
   // header
@@ -22,7 +21,7 @@ export default (handlers: WorkspaceModalArgs) => {
     el.dataset.color = color;
     el.addEventListener('click', () => {
       colorPicker.dataset.color = color;
-      onSelectColor(color);
+      bus.emit('select-color', color);
     });
     return el;
   });
@@ -36,47 +35,22 @@ export default (handlers: WorkspaceModalArgs) => {
     div('dialog-actions', [cancelBtn, saveBtn]),
   ]);
 
-  modal.appendChild(content);
+  el.appendChild(content);
   content.append(header, form);
 
   // # define handlers
-  const edit = (workspace: Workspace | null = null) => {
-    editingWorkspace = workspace;
-
-    if (workspace) {
-      title.textContent = 'Edit Workspaces';
-      inputName.value = workspace.name;
-      selectColor(workspace.color);
-    } else {
-      title.textContent = 'Create New Workspaces';
-      inputName.value = '';
-      selectColor(Consts.DefaultColor);
-    }
-
-    // Remove any existing animation classes
-    modal.classList.remove('animate-in', 'animate-out');
-
-    modal.showModal();
-
-    // Add entrance animation
-    requestAnimationFrame(() => {
-      modal.classList.add('animate-in');
-    });
-
-    inputName.focus();
-  };
 
   const close = () => {
     // Add exit animation
-    modal.classList.remove('animate-in');
-    modal.classList.add('animate-out');
+    el.classList.remove('animate-in');
+    el.classList.add('animate-out');
 
     // Close after animation completes
     setTimeout(() => {
-      modal.close();
-      modal.classList.remove('animate-out');
+      el.close();
+      el.classList.remove('animate-out');
       editingWorkspace = null;
-      onCancel();
+      bus.emit('modal-cancel');
     }, 250); // Match the animation duration
   };
 
@@ -95,28 +69,50 @@ export default (handlers: WorkspaceModalArgs) => {
   };
 
   // # register events
+
+  bus.on('edit-workspace', (workspace: Workspace | null = null) => {
+    editingWorkspace = workspace;
+
+    if (workspace) {
+      title.textContent = 'Edit Workspaces';
+      inputName.value = workspace.name;
+      selectColor(workspace.color);
+    } else {
+      title.textContent = 'Create New Workspaces';
+      inputName.value = '';
+      selectColor(Consts.DefaultColor);
+    }
+
+    // Remove any existing animation classes
+    el.classList.remove('animate-in', 'animate-out');
+
+    el.showModal();
+
+    // Add entrance animation
+    requestAnimationFrame(() => {
+      el.classList.add('animate-in');
+    });
+
+    inputName.focus();
+  });
+  bus.on('close-modal', close);
+
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
   saveBtn.addEventListener('click', () => {
-    onSave({
+    bus.emit('modal-save', {
       name: inputName.value,
       color: String(colorPicker.dataset.color),
     });
+
     close();
   });
 
   // Close dialog when press Esc key
-  modal.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+  el.addEventListener('keydown', (e) => e.key === 'Escape' && close());
 
   // Close dialog when clicking on backdrop (outside the dialog content)
-  modal.addEventListener('click', (e) => e.target === modal && close());
+  el.addEventListener('click', (e) => e.target === el && close());
 
-  return {
-    el: modal,
-    edit,
-    close,
-    getEditingWorkspace() {
-      return editingWorkspace;
-    },
-  };
+  return el;
 };

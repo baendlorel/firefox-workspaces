@@ -22,6 +22,7 @@ interface TabArgs {
 type CreateMainPageArgs = WorkspaceModalArgs & ComponentControlsArgs;
 
 type WorkspaceEventMap = {
+  'render-list': (workspace: Workspace[]) => void;
   'render-tab': (workspace: Workspace) => HTMLDivElement[];
   'new-workspace': () => void;
   'add-current-tab': () => void;
@@ -31,4 +32,10 @@ type WorkspaceEventMap = {
   'toggle-workspace': (workspaceId: string) => void;
   'remove-tab': (workspaceId: string, tabId: number) => void;
   'toggle-tab-pin': (workspaceId: string, tabId: number) => void;
+
+  // form
+  'select-color': (color: HexColor) => void;
+  'close-modal': () => void;
+  'modal-cancel': () => void;
+  'modal-save': (formData: WorkspaceFormData) => void;
 };

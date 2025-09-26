@@ -1,9 +1,8 @@
 import { h, div } from '@/lib/dom.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
+import { EventBus } from '../event-bus.js';
 
-export default (args: TabArgs) => (workspace: Workspace) => {
-  const { onToggleTabPin, onRemoveTab } = args;
-
+export default (bus: EventBus<WorkspaceEventMap>, workspace: Workspace) => {
   const pinnedTabs = workspace.pinnedTabs;
   const regularTabs = workspace.tabs;
 
@@ -15,8 +14,8 @@ export default (args: TabArgs) => (workspace: Workspace) => {
         'this.src=\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" fill="%23f0f0f0"/><text x="8" y="12" text-anchor="middle" font-size="12" fill="%23666">?</text></svg>\'',
     });
 
-    let btnPin: HTMLButtonElement;
-    let btnRemove: HTMLButtonElement;
+    const btnPin = h('button', 'btn-small');
+    const btnRemove = h('button', 'btn-small');
 
     const tabItem = div(
       { class: 'tab-item', 'data-tab-id': String(tab.id), 'data-tab-url': tab.url },
@@ -27,17 +26,14 @@ export default (args: TabArgs) => (workspace: Workspace) => {
           div('tab-url', $escapeHtml($truncate(tab.url))),
         ]),
         pinned ? div('pinned-indicator', '📌') : '',
-        div('tab-actions', [
-          (btnPin = h('button', 'btn-small')),
-          (btnRemove = h('button', 'btn-small')),
-        ]),
+        div('tab-actions', [btnPin, btnRemove]),
       ]
     );
 
     btnPin.title = pinned ? 'Unpin tab' : 'Pin tab';
     btnRemove.title = 'Remove from workspace';
-    btnPin.addEventListener('click', () => onToggleTabPin(workspace.id, tab.id));
-    btnRemove.addEventListener('click', () => onRemoveTab(workspace.id, tab.id));
+    btnPin.addEventListener('click', () => bus.emit('toggle-tab-pin', workspace.id, tab.id));
+    btnRemove.addEventListener('click', () => bus.emit('remove-tab', workspace.id, tab.id));
 
     const _ = `
       <div class="tab-item" data-tab-id="${tab.id}" data-tab-url="${tab.url}">
