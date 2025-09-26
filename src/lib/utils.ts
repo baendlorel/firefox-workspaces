@@ -55,3 +55,18 @@ export const $mergeTabInfo = (tab: TabInfo, browserTab: browser.tabs.Tab): TabIn
   favIconUrl: browserTab.favIconUrl ?? tab.favIconUrl ?? '[No Favicon]',
   addedAt: tab.addedAt ?? Date.now(),
 });
+
+export const createPromise = <T>() => {
+  let resolve: (value: T | PromiseLike<T>) => void = null as any;
+  let reject: (reason?: any) => void = null as any;
+  const promise = new Promise<T>((_resolve, _reject) => {
+    resolve = _resolve;
+    reject = _reject;
+  });
+
+  return {
+    promise,
+    resolve,
+    reject,
+  };
+};

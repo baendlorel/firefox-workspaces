@@ -35,8 +35,8 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     div('dialog-actions', [cancelBtn, saveBtn]),
   ]);
 
-  el.appendChild(content);
   content.append(header, form);
+  el.appendChild(content);
 
   // # define handlers
 

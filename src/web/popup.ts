@@ -230,7 +230,7 @@ class PopupPage {
   }
 
   // Show a simple select dialog (simplified version)
-  async showSelectDialog(title: string, options: string[]): Promise<number | null> {
+  showSelectDialog(title: string, options: string[]): number | null {
     const choice = prompt(
       title +
         '\n\n' +
