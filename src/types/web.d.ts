@@ -36,7 +36,6 @@ type WorkspaceEditorEventMap = {
   'toggle-tab-pin': (workspaceId: string, tabId: number) => void;
 
   // form
-  'select-color': (color: HexColor) => void;
   'close-editor': () => void;
   save: (formData: WorkspaceFormData) => void;
 };

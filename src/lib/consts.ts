@@ -13,6 +13,7 @@ export const WORKSPACE_COLORS: HexColor[] = [
   '#84cc16',
   '#a8edea',
   '#098cff',
+  '#007acc',
   '#667eea',
   '#8b5cf6',
   '#f093fb',

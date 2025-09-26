@@ -15,11 +15,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     el.dataset.color = color;
     el.addEventListener('click', () => {
       colorPicker.dataset.color = color;
-      bus.emit('select-color', color);
+      colorOptions.forEach((c) => c.classList.toggle('selected', c === el));
     });
     return el;
   });
-  const colorPicker = h('input', 'color-picker', colorOptions);
+  const colorPicker = div('color-picker', colorOptions);
   const body = [
     div('form-group', [h('label', { for: 'workspace-name' }, 'Workspace Name'), inputName]),
     div('form-group', [h('label', '', 'Workspace Color'), colorPicker]),
