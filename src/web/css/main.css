@@ -160,7 +160,6 @@ body {
 }
 
 .empty-state-icon {
-  background: url('../assets/folder.svg') no-repeat center;
   margin: 20px 80px;
   opacity: 0.7;
 }

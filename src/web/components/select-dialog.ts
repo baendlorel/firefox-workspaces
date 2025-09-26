@@ -1,5 +1,6 @@
 import { btn, div, h } from '@/lib/dom.js';
 import { createPromise } from '@/lib/utils.js';
+import { createDialog } from './dialog.js';
 
 export default async (config: {
   title?: string;
@@ -16,13 +17,6 @@ export default async (config: {
 
   let value: any = null;
 
-  const el = h('dialog', 'dialog-container');
-  const content = div('dialog-content');
-
-  // # header
-  const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
-  const header = div('dialog-header', [div('title', title), closeBtn]);
-
   // # body
   const msg = div('dialog-message', message);
   const selection = options.map((o) => {
@@ -36,23 +30,18 @@ export default async (config: {
   const ul = h('ul', 'dialog-ul-options', selection);
   const body = div('dialog-footer', [msg, ul]);
 
-  // # footer
-  const confirmBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Confirm');
-  const footer = div('dialog-footer', [confirmBtn]);
-
-  content.append(header, body, footer);
-  el.appendChild(content);
+  const { dialog, closeBtn, confirmBtn } = createDialog(title, [body]);
 
   // # define handlers
   const close = () => {
     // Add exit animation
-    el.classList.remove('animate-in');
-    el.classList.add('animate-out');
+    dialog.classList.remove('animate-in');
+    dialog.classList.add('animate-out');
 
     // Close after animation completes
     setTimeout(() => {
-      el.close();
-      el.classList.remove('animate-out');
+      dialog.close();
+      dialog.classList.remove('animate-out');
       resolve(value);
     }, 250); // Match the animation duration
   };
@@ -62,8 +51,8 @@ export default async (config: {
   confirmBtn.addEventListener('click', close);
 
   // mount to body
-  document.body.appendChild(el);
-  el.showModal();
+  document.body.appendChild(dialog);
+  dialog.showModal();
 
   return promise;
 };

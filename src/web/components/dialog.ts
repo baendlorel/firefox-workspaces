@@ -8,7 +8,7 @@ export function createDialog(
   body: HTMLPart,
   footer: HTMLElement[]
 ): Omit<Dialog, 'confirmBtn'>;
-export default function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart) {
+export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart) {
   const dialog = h('dialog', 'dialog-container');
   const content = div('dialog-content');
 
