@@ -15,6 +15,20 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   const content = div('dialog-content');
 
   Reflect.set(dialog, 'bus', bus);
+  dialog.escClosabe = false;
+  dialog.backdropClosabe = false;
+  dialog.addEventListener('cancel', (e) => {
+    console.log(e);
+    e.preventDefault();
+  });
+  dialog.addEventListener(
+    'keydown',
+    (e) => e.key === 'Escape' && dialog.escClosabe && bus.emit('close')
+  );
+  dialog.addEventListener(
+    'click',
+    (e) => e.target === dialog && dialog.backdropClosabe && bus.emit('close')
+  );
 
   // # header
   const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
@@ -87,5 +101,3 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
     closeBtn,
   };
 }
-
-export function backdropClosabe(dialog: HTMLDialogElement) {}

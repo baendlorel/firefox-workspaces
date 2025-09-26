@@ -30,11 +30,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const footer = [cancelBtn, saveBtn];
 
   const { dialog, closeBtn } = createDialog('Workspace', body, footer);
-  // Close dialog when press Esc key
-  dialog.addEventListener('keydown', (e) => e.key === 'Escape' && close());
-
-  // Close dialog when clicking on backdrop (outside the dialog content)
-  dialog.addEventListener('click', (e) => e.target === dialog && close());
+  dialog.backdropClosabe = true;
+  dialog.escClosabe = true;
 
   // # define handlers
 

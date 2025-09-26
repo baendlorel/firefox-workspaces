@@ -30,14 +30,12 @@ export default async (config: {
   const ul = h('ul', 'dialog-ul-options', selection);
 
   const { dialog } = createDialog(title, [msg, ul]);
-
   dialog.bus.on('closed', () => resolve(value));
-  // & confirming would trigger 'closed' too, no need to trigger it twice
-  // bus.on('confirmed', () => resolve(value));
 
   // mount to body
   document.body.appendChild(dialog);
-  dialog.showModal();
+
+  dialog.bus.emit('show');
 
   return promise;
 };

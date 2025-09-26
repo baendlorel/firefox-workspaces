@@ -70,6 +70,11 @@
   opacity: 1;
 }
 
+.dialog-container:focus {
+  outline: none;
+  box-shadow: 0 0 12px 3px var(--primary-highlight);
+}
+
 /* Enhanced animation keyframes */
 @keyframes dialogPopIn {
   0% {
