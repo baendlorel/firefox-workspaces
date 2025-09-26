@@ -81,7 +81,7 @@ class PopupPage {
       if (response.success) {
         await this.load();
         this.main.emit('render-list', this.workspaces);
-        this.main.emit('close-modal');
+        this.main.emit('close-editor');
       } else {
         alert('Failed to save workspace');
       }

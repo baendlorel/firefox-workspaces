@@ -3,7 +3,7 @@
     "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "types": ["vite/client"],
+    "types": ["vite/client", "firefox-webext-browser"],
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "declaration": false,
     "esModuleInterop": true,

@@ -29,9 +29,9 @@ export default async (config: {
   });
   const ul = h('ul', 'dialog-ul-options', selection);
 
-  const { bus, dialog } = createDialog(title, [msg, ul]);
+  const { dialog } = createDialog(title, [msg, ul]);
 
-  bus.on('closed', () => resolve(value));
+  dialog.bus.on('closed', () => resolve(value));
   // & confirming would trigger 'closed' too, no need to trigger it twice
   // bus.on('confirmed', () => resolve(value));
 

@@ -2,8 +2,6 @@ import { h, div, btn } from '@/lib/dom.js';
 import { EventBus } from '../event-bus.js';
 import closeSvg from '@web/assets/close.svg?raw';
 
-type HTMLPart = HTMLElement[] | string;
-
 export function createDialog(header: HTMLPart, body: HTMLPart): Dialog;
 export function createDialog(
   header: HTMLPart,
@@ -15,6 +13,8 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
 
   const dialog = h('dialog', 'dialog-container');
   const content = div('dialog-content');
+
+  Reflect.set(dialog, 'bus', bus);
 
   // # header
   const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
@@ -29,42 +29,21 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   const bodyInner = typeof body === 'string' ? [div('', body)] : body;
   const bodyDiv = div('dialog-body', bodyInner);
 
-  // & no footer
-  if (!footer) {
-    const confirmBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Confirm');
-    const footerDiv = div('dialog-footer', [confirmBtn]);
-    content.append(headerDiv, bodyDiv, footerDiv);
-    dialog.appendChild(content);
+  // # controller
+  const show = () => {
+    // Remove any existing animation classes
+    dialog.classList.remove('animate-in', 'animate-out');
 
-    const close = () => {
-      // Add exit animation
-      dialog.classList.remove('animate-in');
-      dialog.classList.add('animate-out');
+    dialog.showModal();
 
-      // Close after animation completes
-      setTimeout(() => {
-        dialog.close();
-        dialog.classList.remove('animate-out');
-        bus.emit('closed');
-        bus.emit('confirmed');
-      }, 250); // Match the animation duration
-    };
+    // Add entrance animation
+    requestAnimationFrame(() => {
+      dialog.classList.add('animate-in');
+    });
 
-    confirmBtn.addEventListener('click', close);
+    setTimeout(() => bus.emit('shown'), 250);
+  };
 
-    return {
-      bus,
-      dialog,
-      closeBtn,
-      confirmBtn,
-    };
-  }
-
-  // # footer provided
-  const footerInner = typeof footer === 'string' ? [div('', footer)] : [...footer];
-  const footerDiv = div('dialog-footer', footerInner);
-
-  // # define handlers
   const close = () => {
     // Add exit animation
     dialog.classList.remove('animate-in');
@@ -75,16 +54,38 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
       dialog.close();
       dialog.classList.remove('animate-out');
       bus.emit('closed');
+      bus.emit('confirmed');
     }, 250); // Match the animation duration
   };
 
-  // # register events
   closeBtn.addEventListener('click', close);
-  content.append(headerDiv, bodyDiv, footerDiv);
+  bus.on('close', close);
+  bus.on('show', show);
+
+  // # no footer
+  if (!footer) {
+    const confirmBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Confirm');
+    content.append(headerDiv, bodyDiv, div('dialog-footer', [confirmBtn]));
+    dialog.appendChild(content);
+
+    confirmBtn.addEventListener('click', close);
+
+    return {
+      dialog,
+      closeBtn,
+      confirmBtn,
+    };
+  }
+
+  // # footer provided
+  const footerInner = typeof footer === 'string' ? [div('', footer)] : [...footer];
+  content.append(headerDiv, bodyDiv, div('dialog-footer', footerInner));
   dialog.appendChild(content);
+
   return {
-    bus,
     dialog,
     closeBtn,
   };
 }
+
+export function backdropClosabe(dialog: HTMLDialogElement) {}

@@ -1,20 +1,13 @@
 import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 import { EventBus } from '@web/event-bus.js';
+import { createDialog } from '../dialog.js';
 
 export default (bus: EventBus<WorkspaceEventMap>) => {
   let editingWorkspace: Workspace | null = null;
 
-  const el = h('dialog', 'dialog-container');
-  const content = div('dialog-content');
-
-  // # header
-  const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' }, '');
-  const title = div('title', 'Create New Workspace');
-  const header = div('dialog-header', [title, closeBtn]);
-
   // # body
-  const inputName = h('input', { type: 'text', id: 'workspace-name', name: 'workspace-name' });
+  const inputName = h('input', { type: 'text', id: 'workspace-name' });
   const colorOptions = WORKSPACE_COLORS.map((color) => {
     const el = div('color-option');
     el.style.backgroundColor = color;
@@ -26,37 +19,32 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     return el;
   });
   const colorPicker = h('input', 'color-picker', colorOptions);
-  const body = h('div', 'dialog-body', [
+  const body = [
     div('form-group', [h('label', { for: 'workspace-name' }, 'Workspace Name'), inputName]),
     div('form-group', [h('label', '', 'Workspace Color'), colorPicker]),
-  ]);
+  ];
 
   // # footer
   const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
   const saveBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Save');
-  const footer = div('dialog-footer', [cancelBtn, saveBtn]);
+  const footer = [cancelBtn, saveBtn];
 
-  content.append(header, body, footer);
-  el.appendChild(content);
+  const { dialog, closeBtn } = createDialog('Workspace', body, footer);
+  // Close dialog when press Esc key
+  dialog.addEventListener('keydown', (e) => e.key === 'Escape' && close());
+
+  // Close dialog when clicking on backdrop (outside the dialog content)
+  dialog.addEventListener('click', (e) => e.target === dialog && close());
 
   // # define handlers
 
   const close = () => {
-    // Add exit animation
-    el.classList.remove('animate-in');
-    el.classList.add('animate-out');
-
-    // Close after animation completes
-    setTimeout(() => {
-      el.close();
-      el.classList.remove('animate-out');
-      editingWorkspace = null;
-      bus.emit('modal-cancel');
-    }, 250); // Match the animation duration
+    dialog.bus.emit('close');
+    dialog.bus.on('closed', () => (editingWorkspace = null));
   };
 
   const selectColor = (color: HexColor) => {
-    // & No need to validate for the options are fixed
+    // & No need to validate since the options are fixed
     // if (!/^#([0-9a-fA-F]{6})$/.test(color) && /^#([0-9a-fA-F]{8})$/.test(color)) {
     //   alert('Please select a valid 6/8-digit hex color code (e.g., #RRGGBB, #RRGGBBAA)');
     //   return;
@@ -75,28 +63,18 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     editingWorkspace = workspace;
 
     if (workspace) {
-      title.textContent = 'Edit Workspaces';
       inputName.value = workspace.name;
       selectColor(workspace.color);
     } else {
-      title.textContent = 'Create New Workspaces';
       inputName.value = '';
       selectColor(Consts.DefaultColor);
     }
 
-    // Remove any existing animation classes
-    el.classList.remove('animate-in', 'animate-out');
-
-    el.showModal();
-
-    // Add entrance animation
-    requestAnimationFrame(() => {
-      el.classList.add('animate-in');
-    });
-
-    inputName.focus();
+    dialog.bus.emit('show');
+    dialog.bus.on('shown', () => inputName.focus());
   });
-  bus.on('close-modal', close);
+
+  bus.on('close-editor', close);
 
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
@@ -118,11 +96,5 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     close();
   });
 
-  // Close dialog when press Esc key
-  el.addEventListener('keydown', (e) => e.key === 'Escape' && close());
-
-  // Close dialog when clicking on backdrop (outside the dialog content)
-  el.addEventListener('click', (e) => e.target === el && close());
-
-  return { el, getEditingWorkspace: () => editingWorkspace };
+  return { el: dialog, getEditingWorkspace: () => editingWorkspace };
 };
