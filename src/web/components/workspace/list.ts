@@ -41,6 +41,12 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const renderList = (workspaces: Workspace[]) => {
     // clear all children
     container.textContent = '';
+    if (workspaces.length === 0) {
+      container.style.display = 'none';
+      return;
+    } else {
+      container.style.display = 'block';
+    }
 
     for (let i = 0; i < workspaces.length; i++) {
       const workspace = workspaces[i];
