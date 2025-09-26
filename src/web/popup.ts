@@ -4,7 +4,6 @@ import './css/dialog.css';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
-import { $queryAll } from '@/lib/dom.js';
 import { createMainPage } from './main.js';
 
 // Popup JavaScript for Workspaces Manager
@@ -14,14 +13,19 @@ class PopupPage {
 
   constructor() {
     this.main = createMainPage();
+
+    // tabs
     this.main.on('add-current-tab', () => this.showAddTabMenu());
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
+    this.main.on('remove-tab', (id: string, tabId: number) => this.removeTab(id, tabId));
+    this.main.on('move-tab', (fromId: string, toId: string, tabId: number) =>
+      this.moveTab(fromId, toId, tabId)
+    );
 
     // form modal
     this.main.on('open-workspace', (workspace: Workspace) => this.open(workspace));
     this.main.on('save-workspace', (formData: WorkspaceFormData) => this.save(formData));
     this.main.on('delete-workspace', (workspace: Workspace) => this.delete(workspace));
-    this.main.on('remove-tab', (id: string, tabId: number) => this.removeTab(id, tabId));
 
     this.init();
   }
@@ -43,75 +47,6 @@ class PopupPage {
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Failed to load work groups:', error);
-    }
-  }
-
-  // Setup drag and drop functionality
-  setupDragAndDrop() {
-    const tabItems = $queryAll<HTMLDivElement>('.tab-item');
-
-    // Make tab items draggable
-    for (let i = 0; i < tabItems.length; i++) {
-      const tab = tabItems[i];
-      tab.draggable = true;
-
-      tab.addEventListener('dragstart', (e) => {
-        if (!e.dataTransfer) {
-          throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
-        }
-
-        const tabId = tab.dataset.tabId;
-        const workspaceId = (tab.closest('.wb') as HTMLDivElement)?.dataset.workspaceId;
-        const tabUrl = tab.dataset.tabUrl;
-
-        if (workspaceId === undefined) {
-          throw new Error(`[__NAME__: __func__]setupDragAndDrop tab.closest('.wb') is undefined.`);
-        }
-
-        e.dataTransfer.setData(
-          'text/plain',
-          `{"tabId":${tabId},"workspaceId":"${workspaceId}","tabUrl":"${tabUrl}"}`
-        );
-        tab.classList.add('dragging');
-      });
-
-      tab.addEventListener('dragend', () => {
-        tab.classList.remove('dragging');
-      });
-    }
-
-    // Make work groups drop targets
-    const workspaceDivs = $queryAll<HTMLDivElement>('.wb');
-    for (let i = 0; i < workspaceDivs.length; i++) {
-      const workspaceDiv = workspaceDivs[i];
-      workspaceDiv.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        workspaceDiv.classList.add('drag-over');
-      });
-
-      workspaceDiv.addEventListener('dragleave', (e) => {
-        if (!workspaceDiv.contains(e.relatedTarget as Node)) {
-          workspaceDiv.classList.remove('drag-over');
-        }
-      });
-
-      workspaceDiv.addEventListener('drop', async (e) => {
-        e.preventDefault();
-        workspaceDiv.classList.remove('drag-over');
-        if (!e.dataTransfer) {
-          throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
-        }
-
-        const data = JSON.parse(e.dataTransfer.getData('text/plain')) as DraggingData;
-        const workspaceId = workspaceDiv.dataset.workspaceId;
-
-        if (data.workspaceId !== workspaceId) {
-          if (workspaceId === undefined) {
-            throw new Error('[__NAME__: __func__]setupDragAndDrop workspaceId is undefined.');
-          }
-          await this.moveTab(data.workspaceId, workspaceId, data.tabId);
-        }
-      });
     }
   }
 

@@ -3,6 +3,34 @@ import { $escapeHtml, $truncate } from '@/lib/utils.js';
 import { EventBus } from '@web/event-bus.js';
 
 export default (bus: EventBus<WorkspaceEventMap>) => {
+  // #from popup.setupDragAndDrop
+  const registerDragAndDrop = (tab: HTMLDivElement) => {
+    tab.draggable = true;
+    tab.addEventListener('dragstart', (e) => {
+      if (!e.dataTransfer) {
+        throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
+      }
+
+      const tabId = tab.dataset.tabId;
+      const workspaceId = (tab.closest('.wb') as HTMLDivElement)?.dataset.workspaceId;
+      const tabUrl = tab.dataset.tabUrl;
+
+      if (workspaceId === undefined) {
+        throw new Error(`[__NAME__: __func__]setupDragAndDrop tab.closest('.wb') is undefined.`);
+      }
+
+      e.dataTransfer.setData(
+        'text/plain',
+        `{"tabId":${tabId},"workspaceId":"${workspaceId}","tabUrl":"${tabUrl}"}`
+      );
+      tab.classList.add('dragging');
+    });
+
+    tab.addEventListener('dragend', () => {
+      tab.classList.remove('dragging');
+    });
+  };
+
   const renderTab = (workspace: Workspace, tab: TabInfo, pinned: boolean) => {
     const img = h('img', {
       src: tab.favIconUrl || 'icons/default-favicon.png',
@@ -33,6 +61,8 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       btnPin.textContent = btnPin.textContent.includes('📌') ? '📍' : '📌';
     });
     btnRemove.addEventListener('click', () => bus.emit('remove-tab', workspace.id, tab.id));
+
+    registerDragAndDrop(tabItem);
     return tabItem;
   };
 
@@ -40,22 +70,22 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     const pinnedTabs = workspace.pinnedTabs;
     const regularTabs = workspace.tabs;
 
-    const elements: HTMLDivElement[] = [];
+    const tabItems: HTMLDivElement[] = [];
 
     for (let i = 0; i < pinnedTabs.length; i++) {
-      elements.push(renderTab(workspace, pinnedTabs[i], true));
+      tabItems.push(renderTab(workspace, pinnedTabs[i], true));
     }
 
     for (let i = 0; i < regularTabs.length; i++) {
-      elements.push(renderTab(workspace, regularTabs[i], false));
+      tabItems.push(renderTab(workspace, regularTabs[i], false));
     }
 
-    if (elements.length === 0) {
-      elements.push(
+    if (tabItems.length === 0) {
+      tabItems.push(
         div({ style: 'text-align: center; color: #666; padding: 20px;' }, 'No tabs in this group')
       );
     }
 
-    return elements;
+    return tabItems;
   });
 };

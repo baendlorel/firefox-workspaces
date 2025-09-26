@@ -22,12 +22,16 @@ interface TabArgs {
 type CreateMainPageArgs = WorkspaceModalArgs & ComponentControlsArgs;
 
 type WorkspaceEventMap = {
+  // workspaces
   'render-list': (workspace: Workspace[]) => void;
-  'render-tab': (workspace: Workspace) => HTMLDivElement[];
-  'add-current-tab': () => void;
   'edit-workspace': (workspace: Workspace | null) => void;
   'delete-workspace': (workspace: Workspace) => void;
   'open-workspace': (workspace: Workspace) => void;
+
+  // tabs
+  'add-current-tab': () => void;
+  'render-tab': (workspace: Workspace) => HTMLDivElement[];
+  'move-tab': (fromId: string, toId: string, tabId: number) => void;
   'remove-tab': (workspaceId: string, tabId: number) => void;
   'toggle-tab-pin': (workspaceId: string, tabId: number) => void;
 

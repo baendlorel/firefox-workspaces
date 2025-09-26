@@ -5,6 +5,39 @@ import { EventBus } from '@web/event-bus.js';
 export default (bus: EventBus<WorkspaceEventMap>) => {
   const container = div('workspaces');
 
+  // #from popup.setupDragAndDrop
+  const registerDragAndDrop = (block: HTMLDivElement) => {
+    block.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      block.classList.add('drag-over');
+    });
+
+    block.addEventListener('dragleave', (e) => {
+      if (!block.contains(e.relatedTarget as Node)) {
+        block.classList.remove('drag-over');
+      }
+    });
+
+    block.addEventListener('drop', async (e) => {
+      e.preventDefault();
+      block.classList.remove('drag-over');
+      if (!e.dataTransfer) {
+        throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
+      }
+
+      const data = JSON.parse(e.dataTransfer.getData('text/plain')) as DraggingData;
+      const workspaceId = block.dataset.workspaceId;
+
+      if (data.workspaceId !== workspaceId) {
+        if (workspaceId === undefined) {
+          throw new Error('[__NAME__: __func__]setupDragAndDrop workspaceId is undefined.');
+        }
+        bus.emit('move-tab', data.workspaceId, workspaceId, data.tabId);
+        // await this.moveTab(data.workspaceId, workspaceId, data.tabId);
+      }
+    });
+  };
+
   const renderList = (workspaces: Workspace[]) => {
     // clear all children
     container.textContent = '';
@@ -39,10 +72,10 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
       btnEdit.addEventListener('click', () => bus.emit('edit-workspace', workspace));
       btnDelete.addEventListener('click', () => bus.emit('delete-workspace', workspace));
       btnToggle.addEventListener('click', () => block.classList.toggle('expanded'));
+      registerDragAndDrop(block);
+
       container.appendChild(block);
     }
-
-    this.setupDragAndDrop();
   };
 
   bus.on('render-list', renderList);
