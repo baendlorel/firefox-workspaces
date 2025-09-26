@@ -5,6 +5,7 @@ import './css/dialog.css';
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
 import { createMainPage } from './main.js';
+import selectDialog from './components/select-dialog.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -199,11 +200,12 @@ class PopupPage {
     }
 
     // Simple implementation - show a select dialog
-    const options = this.workspaces.map(
-      (w) => `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`
-    );
+    const options = this.workspaces.map((w) => ({
+      label: `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`,
+      value: w.id,
+    }));
 
-    const selectedIndex = await this.showSelectDialog('Select a workspace:', options);
+    const selectedIndex = await selectDialog({ title: 'Select a workspace:', options });
 
     if (selectedIndex !== null) {
       const workspaceId = this.workspaces[selectedIndex].id;
@@ -227,24 +229,6 @@ class PopupPage {
         alert('Error adding tab to group');
       }
     }
-  }
-
-  // Show a simple select dialog (simplified version)
-  showSelectDialog(title: string, options: string[]): number | null {
-    const choice = prompt(
-      title +
-        '\n\n' +
-        options.map((opt, i) => `${i + 1}. ${opt}`).join('\n') +
-        '\n\nEnter the number of your choice:'
-    );
-
-    if (choice) {
-      const index = parseInt(choice) - 1;
-      if (index >= 0 && index < options.length) {
-        return index;
-      }
-    }
-    return null;
   }
 }
 
