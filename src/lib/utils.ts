@@ -55,3 +55,31 @@ export const $mergeTabInfo = (tab: TabInfo, browserTab: browser.tabs.Tab): TabIn
   favIconUrl: browserTab.favIconUrl ?? tab.favIconUrl ?? '[No Favicon]',
   addedAt: tab.addedAt ?? Date.now(),
 });
+
+export const $mockBrowser = () => {
+  const createProxy = function (path: any[] = []): any {
+    return new Proxy(function () {}, {
+      get(_, key) {
+        const newPath = [...path, key];
+        console.log('get:', newPath.join('.'));
+        return createProxy(newPath);
+      },
+      set(_, key, value) {
+        const newPath = [...path, key];
+        console.log('set:', newPath.join('.'), '=', value);
+        return true;
+      },
+      apply(_0, _1, args) {
+        console.log('apply:', path.join('.'), 'args:', args);
+        return createProxy(path); // 调用后还能继续链式访问
+      },
+    });
+  };
+
+  if (globalThis.browser === undefined) {
+    globalThis.browser = createProxy() as typeof browser;
+    console.log('Browser API Mocked');
+  } else {
+    console.log('Browser API exists, not mocking.');
+  }
+};

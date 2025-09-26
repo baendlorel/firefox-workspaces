@@ -35,5 +35,5 @@ type WorkspaceEventMap = {
   'select-color': (color: HexColor) => void;
   'close-modal': () => void;
   'modal-cancel': () => void;
-  'modal-save': (formData: WorkspaceFormData) => void;
+  'save-workspace': (formData: WorkspaceFormData) => void;
 };

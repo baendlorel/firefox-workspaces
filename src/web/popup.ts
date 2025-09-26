@@ -4,7 +4,7 @@ import './css/dialog.css';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
-import { $queryAll, $query } from '@/lib/dom.js';
+import { $queryAll } from '@/lib/dom.js';
 import { createMainPage } from './main.js';
 
 // Popup JavaScript for Workspaces Manager
@@ -18,9 +18,9 @@ class PopupPage {
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
 
     // form modal
-    this.main.on('modal-save', (formData: WorkspaceFormData) => this.save(formData));
+    this.main.on('open-workspace', (workspace: Workspace) => this.open(workspace));
+    this.main.on('save-workspace', (formData: WorkspaceFormData) => this.save(formData));
     this.main.on('delete-workspace', (workspace: Workspace) => this.delete(workspace));
-    this.main.on('open-workspace', (id: string) => this.open(id));
     this.main.on('remove-tab', (id: string, tabId: number) => this.removeTab(id, tabId));
 
     this.init();

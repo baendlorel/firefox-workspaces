@@ -1,6 +1,6 @@
 import { btn, div } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
-import { EventBus } from '../../event-bus.js';
+import { EventBus } from '@web/event-bus.js';
 
 export default (bus: EventBus<WorkspaceEventMap>) => {
   const container = div('workspaces');

@@ -1,6 +1,6 @@
 import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
-import { EventBus } from '../../event-bus.js';
+import { EventBus } from '@web/event-bus.js';
 
 export default (bus: EventBus<WorkspaceEventMap>) => {
   let editingWorkspace: Workspace | null = null;
@@ -108,7 +108,7 @@ export default (bus: EventBus<WorkspaceEventMap>) => {
     }
 
     // emit save event
-    bus.emit('modal-save', {
+    bus.emit('save-workspace', {
       name: inputName.value,
       color: colorPicker.dataset.color as HexColor,
     });

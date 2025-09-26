@@ -1,3 +1,7 @@
+import { $mockBrowser } from './utils.js';
+
+$mockBrowser();
+
 // # Extension APIs
 export const $send = <M extends Message, R = MessageResponseMap[M['action']]>(
   message: M

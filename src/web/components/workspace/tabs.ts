@@ -1,6 +1,6 @@
 import { h, div, btn } from '@/lib/dom.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
-import { EventBus } from '../../event-bus.js';
+import { EventBus } from '@web/event-bus.js';
 
 export default (bus: EventBus<WorkspaceEventMap>) => {
   const renderTab = (workspace: Workspace, tab: TabInfo, pinned: boolean) => {
