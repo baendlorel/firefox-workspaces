@@ -21,17 +21,14 @@ export default defineConfig({
       delimiters: ['', ''],
       values: replaceLiteralOpts,
     }),
-    staticCopy({
-      map: {
-        'assets/css': 'dist/assets',
-      },
-    }),
+    // staticCopy({
+    //   map: {
+    //     'assets/css': 'dist/assets',
+    //   },
+    // }),
   ],
   server: {
     open: 'popup.html',
-  },
-  define: {
-    __IS_DEV__: process.env.NODE_ENV === 'development',
   },
   build: {
     outDir: 'dist',

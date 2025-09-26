@@ -1,5 +1,5 @@
 import { h, div, btn } from '@/lib/dom.js';
-import { EventBus } from '../event-bus.js';
+import { EventBus } from '@web/event-bus.js';
 import closeSvg from '@web/assets/close.svg?raw';
 
 export function createDialog(header: HTMLPart, body: HTMLPart): Dialog;

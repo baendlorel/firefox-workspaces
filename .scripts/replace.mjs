@@ -36,7 +36,7 @@ const __PKG_INFO__ = `## About
 export const replaceOpts = {
   preventAssignment: true,
   values: {
-    __IS_DEV__: 'false',
+    __IS_DEV__: process.env.NODE_ENV === 'development' ? 'true' : 'false',
     __NAME__,
     __KEBAB_NAME__,
     __PKG_INFO__,

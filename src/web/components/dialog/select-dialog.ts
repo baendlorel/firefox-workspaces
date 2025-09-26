@@ -1,6 +1,6 @@
-import { btn, div, h } from '@/lib/dom.js';
+import { h } from '@/lib/dom.js';
 import { createPromise } from '@/lib/utils.js';
-import { createDialog } from './dialog.js';
+import { createDialog } from './index.js';
 
 export default async (config: {
   title?: string;

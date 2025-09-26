@@ -5,7 +5,7 @@ import './css/dialog.css';
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
 import { createMainPage } from './main.js';
-import selectDialog from './components/select-dialog.js';
+import selectDialog from './components/dialog/select-dialog.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -43,6 +43,9 @@ class PopupPage {
   // Initialize popup
   async init() {
     await this.load();
+  }
+
+  render() {
     this.main.emit('render-list', this.workspaces);
   }
 
@@ -83,7 +86,7 @@ class PopupPage {
 
       if (response.success) {
         await this.load();
-        this.main.emit('render-list', this.workspaces);
+        this.render();
         this.main.emit('close-editor');
       } else {
         alert('Failed to save workspace');
@@ -107,7 +110,7 @@ class PopupPage {
 
       if (response.success) {
         await this.load();
-        this.main.emit('render-list', this.workspaces);
+        this.render();
       } else {
         alert('Failed to delete workspace');
       }
@@ -148,7 +151,7 @@ class PopupPage {
 
       if (response.success) {
         await this.load();
-        this.main.emit('render-list', this.workspaces);
+        this.render();
       } else {
         alert('Failed to remove tab');
       }
@@ -169,7 +172,7 @@ class PopupPage {
 
       if (response.success) {
         await this.load();
-        this.main.emit('render-list', this.workspaces);
+        this.render();
       } else {
         alert('Failed to toggle pin');
       }
@@ -191,7 +194,7 @@ class PopupPage {
 
       if (response.success) {
         await this.load();
-        this.main.emit('render-list', this.workspaces);
+        this.render();
       } else {
         alert('Failed to move tab');
       }
@@ -229,7 +232,7 @@ class PopupPage {
 
         if (response.success) {
           await this.load();
-          this.main.emit('render-list', this.workspaces);
+          this.render();
         } else {
           alert('Failed to add tab to group');
         }
