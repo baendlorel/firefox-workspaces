@@ -38,11 +38,6 @@ export function createDialog(header: HTMLPart, body: HTMLPart, footer?: HTMLPart
   };
 
   dialog.addEventListener(
-    'keydown',
-    (e) => e.key === 'Escape' && dialog.escClosable && bus.emit('close')
-  );
-
-  dialog.addEventListener(
     'click',
     (e) => e.target === dialog && dialog.backdropClosable && bus.emit('close')
   );
