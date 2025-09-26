@@ -1,6 +1,7 @@
 import './css/main.css';
 import './css/form.css';
 import './css/dialog.css';
+import './components/__mock__/toolbar.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';

@@ -76,3 +76,14 @@ class WorkspacesContent {
 1. 只看src/文件夹下的ts文件
 2. src打包后的代码直接放入dist而不是dist/src
 3. 帮我利用`@types/firefox-webext-browser`写一些测试命令，放在package.json里
+
+---
+
+我要用这个class来mock浏览器插件环境的browser对象，以此做到测试，你帮我完成createResponse函数，要求:
+
+1. 根据不同的action创建类型标注的回复
+2. 在一次测试中，最好能让action之间相互有联动，比如新建的workspace，在getworkspaces的时候能get到
+3. 所有保存的数据会缓存在localstorage中以便刷新的时候加载
+4. 用h函数来创建一个小小的工具栏名为toolbar，它会附着在整个页面中间的顶部。
+5. toolbar至少拥有清空缓存、创建3个随机workspace等功能
+6. toolbar可以控制回复的success字段是true还是false，可以用一个checkbox来切换，这样方便我测试失败场景

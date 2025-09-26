@@ -1,0 +1,63 @@
+/* Mock Browser Toolbar Styles */
+
+.mock-browser-toolbar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mock-browser-title {
+  font-weight: bold;
+}
+
+.mock-browser-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.mock-browser-btn {
+  padding: 4px 8px;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.mock-browser-btn--clear {
+  background: #007acc;
+}
+
+.mock-browser-btn--clear:hover {
+  background: #005a9e;
+}
+
+.mock-browser-btn--create {
+  background: #28a745;
+}
+
+.mock-browser-btn--create:hover {
+  background: #218838;
+}
+
+.mock-browser-btn--close {
+  background: #dc3545;
+}
+
+.mock-browser-btn--close:hover {
+  background: #c82333;
+}
