@@ -3,6 +3,7 @@ import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 
 import { createDialog } from '../dialog/index.js';
+import { confirmation } from '../dialog/alerts.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
@@ -20,6 +21,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     return el;
   });
   const colorPicker = div('color-picker', colorOptions);
+  const deleteBtn = btn({ class: 'btn btn-danger my-2', type: 'button' }, 'Delete Workspace');
   const body = [
     div('form-group', [h('label', { for: 'workspace-name' }, 'Name'), inputName]),
     div('form-group', [h('label', '', 'Color'), colorPicker]),
@@ -64,10 +66,12 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName.value = workspace.name;
       selectColor(workspace.color);
       setTitle('Edit Workspace');
+      (dialog.querySelector('.dialog-body') as HTMLDivElement).appendChild(deleteBtn);
     } else {
       inputName.value = '';
       selectColor(Consts.DefaultColor);
       setTitle('New Workspace');
+      deleteBtn.remove();
     }
 
     dialog.bus.emit('show');
@@ -95,6 +99,15 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
     // close the modal
     close();
+  });
+  deleteBtn.addEventListener('click', async () => {
+    const yes = await confirmation(
+      'Are you sure you want to delete this workspace?',
+      'Delete Workspace'
+    );
+    if (yes && editingWorkspace) {
+      bus.emit('delete', editingWorkspace);
+    }
   });
 
   return dialog;

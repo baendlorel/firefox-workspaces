@@ -8,11 +8,12 @@ import './components/__mock__/toolbar.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
-import { createMainPage } from './main.js';
-import selectDialog from './components/dialog/select-dialog.js';
-import { confirmation, danger, info } from './components/dialog/alerts.js';
 import { div } from '@/lib/dom.js';
-import entryIcon from './components/workspace/entry-icon.js';
+
+import selectDialog from './components/dialog/select-dialog.js';
+import { createMainPage } from './main.js';
+import { confirmation, danger, info } from './components/dialog/alerts.js';
+import { entryIcon } from './components/workspace/list.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {

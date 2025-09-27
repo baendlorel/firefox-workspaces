@@ -34,7 +34,7 @@ export const danger = (message: string, title: string = 'Danger') => {
 /**
  * Since `confirm` is taken
  */
-export const confirmation = (message: string, title: string = 'Information') => {
+export const confirmation = (message: string, title: string = 'Confirm') => {
   return new Promise<boolean>((resolve) => {
     const yesBtn = btn('btn btn-primary ms-2', 'Yes');
     const noBtn = btn('btn btn-secondary', 'No');

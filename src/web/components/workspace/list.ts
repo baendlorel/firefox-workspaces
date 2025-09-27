@@ -1,9 +1,14 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, div, h } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
-import entryIcon from './entry-icon.js';
 
-import pencilSvg from '@web/assets/pencil.svg?raw';
+import editIcon from '@web/assets/3-dots.svg?raw';
+
+export const entryIcon = (color: HexColor): HTMLDivElement => {
+  const el = div('wb-icon');
+  el.style.backgroundColor = color;
+  return el;
+};
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'workspaces');
@@ -64,7 +69,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
       // & wb means workspace-block
       const edit = div('icon-btn text-muted ms-auto');
-      edit.innerHTML = pencilSvg;
+      edit.innerHTML = editIcon;
       const item = h('li', { class: 'wb', 'data-workspace-id': workspace.id }, [
         div({ class: 'wb-li', style: `border-left-color:${workspace.color}` }, [
           entryIcon(workspace.color),
