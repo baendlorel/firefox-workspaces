@@ -25,6 +25,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const body = [
     div('form-group', [h('label', { for: 'workspace-name' }, 'Name'), inputName]),
     div('form-group', [h('label', '', 'Color'), colorPicker]),
+    deleteBtn,
   ];
 
   // # footer
@@ -66,12 +67,14 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName.value = workspace.name;
       selectColor(workspace.color);
       setTitle('Edit Workspace');
-      (dialog.querySelector('.dialog-body') as HTMLDivElement).appendChild(deleteBtn);
+      deleteBtn.style.display = 'block';
+      deleteBtn.disabled = false;
     } else {
       inputName.value = '';
       selectColor(Consts.DefaultColor);
       setTitle('New Workspace');
-      deleteBtn.remove();
+      deleteBtn.style.display = 'none';
+      deleteBtn.disabled = true;
     }
 
     dialog.bus.emit('show');
