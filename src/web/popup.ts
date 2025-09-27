@@ -7,7 +7,7 @@ import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
 import { createMainPage } from './main.js';
 import selectDialog from './components/dialog/select-dialog.js';
-import { danger, info } from './components/dialog/alerts.js';
+import { confirmation, danger, info } from './components/dialog/alerts.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -211,16 +211,16 @@ class PopupPage {
       value: w.id,
     }));
 
-    const selectedIndex = await selectDialog({ title: 'Select a workspace:', options });
+    const selectedId = await selectDialog({ title: 'Select a workspace:', options });
+    console.log('Selected workspace index:', selectedId);
 
-    if (selectedIndex !== null) {
-      const workspaceId = this.workspaces[selectedIndex].id;
-      const pinned = confirm('Pin this tab in the group?');
+    if (selectedId !== null) {
+      const pinned = await confirmation('Pin this tab in the group?');
 
       try {
         const response = await $send<AddCurrentTabRequest>({
           action: Action.AddCurrentTab,
-          workspaceId,
+          workspaceId: selectedId,
           pinned,
         });
 

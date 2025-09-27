@@ -1,0 +1,29 @@
+<!-- viewBox="0 4 50 56": This is adjusted by testing -->
+<svg viewBox="0 4 50 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <g transform="scale(0.9,1)">
+    <g transform="skewY(-19)">
+      <g transform="translate(0,20)">
+        <path
+          d="M12 8 
+             H28 Q32 8 32 12 
+             M12 8 
+             Q8 8 8 12 
+             V28 Q8 32 12 32"
+          stroke-linecap="round"
+          stroke="currentColor" stroke-width="3" />
+
+        <path
+          d="M20 16 
+             H36 Q40 16 40 20
+             M20 16 
+             Q16 16 16 20 
+             V36 Q16 40 20 40"
+          stroke-linecap="round"
+          stroke="currentColor" stroke-width="3" />
+
+        <rect x="24" y="24" width="24" height="24" rx="4"
+          stroke="currentColor" stroke-width="3" />
+      </g>
+    </g>
+  </g>
+</svg>

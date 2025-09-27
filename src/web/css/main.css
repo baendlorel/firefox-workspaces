@@ -57,11 +57,12 @@ body {
 }
 
 .wb-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
   padding: 12px 15px;
   border-left: 4px solid #667eea;
   background: #f8f9fa;
-  display: flex;
-  justify-content: space-between;
   align-items: center;
   cursor: pointer;
 }
@@ -92,6 +93,10 @@ body {
 
 .wb.expanded .wb-tabs {
   display: block;
+}
+
+.wb-icon {
+  width: 16px;
 }
 
 .tab-item {

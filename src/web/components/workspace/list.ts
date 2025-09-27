@@ -1,6 +1,7 @@
 import { btn, div } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
 import { EventBus } from '@web/event-bus.js';
+import entryIcon from './entry-icon.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = div('workspaces');
@@ -62,6 +63,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       // & wb means workspace-block
       const block = div({ class: 'wb', 'data-workspace-id': workspace.id }, [
         div({ class: 'wb-header', style: `border-left-color:${workspace.color}` }, [
+          entryIcon(workspace.color),
           div('wb-title', $escapeHtml(workspace.name)),
           div('wb-count', countText),
         ]),
