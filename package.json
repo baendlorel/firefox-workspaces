@@ -55,5 +55,8 @@
 		"typescript": "^5.9.2",
 		"vite": "^7.1.7",
 		"vitest": "^3.2.4"
+	},
+	"dependencies": {
+		"minimal-event-bus": "^1.0.0"
 	}
 }

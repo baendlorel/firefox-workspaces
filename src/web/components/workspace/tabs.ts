@@ -1,6 +1,6 @@
+import { EventBus } from 'minimal-event-bus';
 import { h, div, btn } from '@/lib/dom.js';
 import { $escapeHtml, $truncate } from '@/lib/utils.js';
-import { EventBus } from '@web/event-bus.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   // #from popup.setupDragAndDrop

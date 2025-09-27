@@ -1,5 +1,5 @@
-import { btn, div } from '@/lib/dom.js';
-import { EventBus } from '@web/event-bus.js';
+import { EventBus } from 'minimal-event-bus';
+import { btn } from '@/lib/dom.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const newWorkspace = btn('btn', 'New Workspace');

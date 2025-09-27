@@ -7,7 +7,7 @@ import replace from '@rollup/plugin-replace';
 import funcMacro from 'rollup-plugin-func-macro';
 
 import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
-import staticCopy from './.scripts/static-copy.mjs';
+// import staticCopy from './.scripts/static-copy.mjs';
 
 const tsconfig = './tsconfig.build.json';
 

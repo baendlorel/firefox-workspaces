@@ -7,6 +7,10 @@ settings:
 importers:
 
   .:
+    dependencies:
+      minimal-event-bus:
+        specifier: ^1.0.0
+        version: 1.0.0
     devDependencies:
       '@rollup/plugin-replace':
         specifier: ^6.0.2
@@ -706,6 +710,9 @@ packages:
   make-dir@4.0.0:
     resolution: {integrity: sha512-hXdUTZYIVOt1Ex//jAQi+wTZZpUpwBj/0QsOzqegb3rGMMeJiSEu5xLHnYfBrRV4RH2+OCSOO95Is/7x1WJ4bw==}
     engines: {node: '>=10'}
+
+  minimal-event-bus@1.0.0:
+    resolution: {integrity: sha512-UehDB53Vrky1LIbL533G+iFMQJPMQG1DLgxX05LkZYh1zZXDHgHSrWKvtr6bBFqEderBVJGkbeJ1DM6T7hN65w==}
 
   minimatch@10.0.3:
     resolution: {integrity: sha512-IPZ167aShDZZUMdRk66cyQAW3qr0WzbHkPdMYa8bzZhlHhO3jALbKdxcaak7W9FfT2rZNpQuUu4Od7ILEpXSaw==}
@@ -1521,6 +1528,8 @@ snapshots:
   make-dir@4.0.0:
     dependencies:
       semver: 7.7.2
+
+  minimal-event-bus@1.0.0: {}
 
   minimatch@10.0.3:
     dependencies:

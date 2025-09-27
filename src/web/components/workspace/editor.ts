@@ -1,6 +1,6 @@
+import { EventBus } from 'minimal-event-bus';
 import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
-import { EventBus } from '@web/event-bus.js';
 
 import { createDialog } from '../dialog/index.js';
 

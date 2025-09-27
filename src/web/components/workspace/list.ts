@@ -1,6 +1,6 @@
+import { EventBus } from 'minimal-event-bus';
 import { btn, div } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
-import { EventBus } from '@web/event-bus.js';
 import entryIcon from './entry-icon.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {

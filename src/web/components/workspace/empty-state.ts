@@ -1,5 +1,5 @@
+import { EventBus } from 'minimal-event-bus';
 import { div, h } from '@/lib/dom.js';
-import { EventBus } from '@web/event-bus.js';
 import folderIcon from '@web/assets/folder-ao.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {

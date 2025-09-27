@@ -1,4 +1,4 @@
-import { div, h } from '@/lib/dom.js';
+import { div } from '@/lib/dom.js';
 
 export default (children: HTMLElement[]) =>
   div('header', [

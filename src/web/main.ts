@@ -1,5 +1,4 @@
 import { $id } from '@/lib/dom.js';
-import { EventBus } from './event-bus.js';
 
 // components
 import header from './components/workspace/header.js';
@@ -8,9 +7,10 @@ import list from './components/workspace/list.js';
 import emptyState from './components/workspace/empty-state.js';
 import editor from './components/workspace/editor.js';
 import tabs from './components/workspace/tabs.js';
+import { EventBus } from 'minimal-event-bus';
 
 export function createMainPage() {
-  const bus = new EventBus<WorkspaceEditorEventMap>();
+  const { bus, emit, on } = EventBus.create<WorkspaceEditorEventMap>();
   const children = [
     // header
     header(controls(bus)),
@@ -29,11 +29,11 @@ export function createMainPage() {
     /**
      * Emit internal events
      */
-    emit: bus.getEmitFn(),
+    emit,
 
     /**
      * Register internal events
      */
-    on: bus.getOnFn(),
+    on,
   };
 }
