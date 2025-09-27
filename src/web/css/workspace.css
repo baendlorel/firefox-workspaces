@@ -13,7 +13,7 @@
 }
 
 .wb-icon {
-  width: 25px;
+  width: 21px;
   height: 100%;
   -webkit-mask: url('../assets/workspace.svg') no-repeat center;
   mask: url('../assets/workspace.svg') no-repeat center;
