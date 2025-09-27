@@ -1,4 +1,6 @@
+import './css/theme.css';
 import './css/main.css';
+import './css/grid.css';
 import './css/workspace.css';
 import './css/form.css';
 import './css/dialog.css';
@@ -9,6 +11,8 @@ import { Action } from '@/lib/consts.js';
 import { createMainPage } from './main.js';
 import selectDialog from './components/dialog/select-dialog.js';
 import { confirmation, danger, info } from './components/dialog/alerts.js';
+import { div } from '@/lib/dom.js';
+import entryIcon from './components/workspace/entry-icon.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -208,24 +212,26 @@ class PopupPage {
 
     // Simple implementation - show a select dialog
     const options = this.workspaces.map((w) => ({
-      label: `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`,
+      label: div('d-flex', [
+        entryIcon(w.color),
+        div('ms-2', w.name),
+        div('', `(${w.tabs.length + w.pinnedTabs.length} tabs)`),
+      ]), // `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`
       value: w.id,
     }));
 
-    const selectedId = await selectDialog({
-      title: 'Select A Workspace',
+    const selected = await selectDialog({
       message: 'Add current tab to which workspace?',
       options,
     });
-    console.log('Selected workspace index:', selectedId);
 
-    if (selectedId !== null) {
+    if (selected !== null) {
       const pinned = await confirmation('Pin this tab in the group?');
 
       try {
         const response = await $send<AddCurrentTabRequest>({
           action: Action.AddCurrentTab,
-          workspaceId: selectedId,
+          workspaceId: selected,
           pinned,
         });
 

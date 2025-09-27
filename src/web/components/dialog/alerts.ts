@@ -36,7 +36,7 @@ export const danger = (message: string, title: string = 'Danger') => {
  */
 export const confirmation = (message: string, title: string = 'Information') => {
   return new Promise<boolean>((resolve) => {
-    const yesBtn = btn({ class: 'btn btn-primary', style: 'margin-left:10px;' }, 'Yes');
+    const yesBtn = btn('btn btn-primary ms-2', 'Yes');
     const noBtn = btn('btn btn-secondary', 'No');
     const dialog = createDialog(title, message, [noBtn, yesBtn]).dialog;
     yesBtn.onclick = () => {

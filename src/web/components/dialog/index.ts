@@ -2,14 +2,14 @@ import { EventBus } from 'minimal-event-bus';
 import { h, div, btn } from '@/lib/dom.js';
 import closeSvg from '@web/assets/close.svg?raw';
 
-export function createDialog(header: HTMLPart, body: HTMLPart): Dialog;
+export function createDialog(header: HTMLPart | undefined, body: HTMLPart): Dialog;
 export function createDialog(
-  header: HTMLPart,
+  header: HTMLPart | undefined,
   body: HTMLPart,
   footer: HTMLElement[]
 ): Omit<Dialog, 'yesBtn'>;
 export function createDialog(
-  header: HTMLPart,
+  header: HTMLPart | undefined,
   body: HTMLPart,
   footer?: HTMLPart
 ): Omit<Dialog, 'yesBtn'> | Dialog {
@@ -47,8 +47,8 @@ export function createDialog(
   const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
   closeBtn.innerHTML = closeSvg;
 
-  const title = div('title', header);
-  const headerInner = typeof header === 'string' ? [title, closeBtn] : header;
+  const title = div('title', header ?? '');
+  const headerInner = typeof header === 'string' ? [title, closeBtn] : (header ?? '');
   const headerDiv = div('dialog-header', headerInner);
 
   // # body
@@ -59,7 +59,10 @@ export function createDialog(
   const show = () => {
     // Remove any existing animation classes
     dialog.classList.remove('animate-in', 'animate-out');
-    // document.addEventListener('keydown', preventEsc);
+
+    if (header === undefined) {
+      headerDiv.remove();
+    }
 
     dialog.showModal();
 

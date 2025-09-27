@@ -1,13 +1,12 @@
 .dialog-header {
   display: flex;
-  padding: 15px 20px;
+  padding: var(--header-padding);
   text-align: center;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid #f1f1f1;
   background: var(--primary-gradient);
   color: var(--light);
-  padding: var(--header-padding);
 }
 .dialog-container[type='warning'] .dialog-header {
   background: var(--warning-gradient);
@@ -28,7 +27,7 @@
 }
 
 .dialog-footer {
-  padding: 12px 20px 14px 20px;
+  padding: 4px 20px 14px 20px;
   text-align: right;
 }
 
@@ -43,8 +42,8 @@
   margin: auto;
   padding: 0;
   border: none;
-  border-radius: 16px;
-  background: white;
+  border-radius: var(--border-radius);
+  background: var(--light);
   box-shadow:
     0 32px 64px -12px rgba(0, 0, 0, 0.25),
     0 25px 35px -8px rgba(0, 0, 0, 0.15),
@@ -183,26 +182,30 @@
 
 .dialog-ul-options {
   margin: 0;
+  padding: 0;
   overflow: hidden;
 }
 
 .dialog-li-option {
-  list-style: disc;
-
-  padding: 10px 16px;
+  list-style: none;
+  margin: 6px 0px;
+  padding: 8px 12px;
+  border-radius: 6px;
   border-bottom: 1px solid #f1f5f9;
   color: var(--dark);
-  transition: color 0.3s ease;
-  /* background-color: var(--light); */
+  background-color: var(--light);
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .dialog-li-option:hover {
-  color: var(--primary);
+  color: var(--light);
+  background-color: var(--primary);
 }
 
 .dialog-li-option.selected {
-  color: var(--primary-highlight);
+  color: var(--light);
+  background-color: var(--primary-highlight);
 }
 
 .dialog-message {

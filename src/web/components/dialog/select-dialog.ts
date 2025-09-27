@@ -5,10 +5,10 @@ import { createDialog } from './index.js';
 export default async (config: {
   title?: string;
   message?: string;
-  options: { value: any; label: string }[];
+  options: { value: any; label: HTMLElement | string }[];
 }): Promise<any> => {
   const { promise, resolve } = createPromise<number | null>();
-  const { title = 'Select an option', message = '', options } = config;
+  const { title, message = '', options } = config;
   if (options.length === 0) {
     console.warn('[__NAME__: __func__] No options provided for select dialog.');
     resolve(null);
@@ -20,7 +20,8 @@ export default async (config: {
   // # body
   const msg = h('p', 'dialog-message', message);
   const selection = options.map((o) => {
-    const op = h('li', 'dialog-li-option', o.label);
+    const label = typeof o.label === 'string' ? o.label : [o.label];
+    const op = h('li', 'dialog-li-option', label);
     op.onclick = () => {
       value = o.value;
       selection.forEach((s) => s.classList.toggle('selected', s === op));

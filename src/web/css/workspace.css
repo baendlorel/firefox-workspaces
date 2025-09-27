@@ -29,7 +29,7 @@ li.wb {
 
 .wb-icon {
   width: 21px;
-  height: 100%;
+  height: 21px;
   -webkit-mask: url('../assets/workspace.svg') no-repeat center;
   mask: url('../assets/workspace.svg') no-repeat center;
 }

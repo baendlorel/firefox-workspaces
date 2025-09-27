@@ -27,10 +27,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   // # footer
   const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
-  const saveBtn = btn(
-    { class: 'btn btn-primary', style: 'margin-left:10px;', type: 'button' },
-    'Save'
-  );
+  const saveBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Save');
   const footer = [cancelBtn, saveBtn];
 
   const { dialog, closeBtn, setTitle } = createDialog('Workspace', body, footer);
