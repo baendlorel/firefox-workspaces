@@ -8,6 +8,7 @@
   --secondary: #6c757d;
   --secondary-light: #869099;
   --danger: #dc3435;
+  --danger-light: #ec4f4f;
   --dark: #212529;
   --warning: #ffc107;
   --light: #f8f9fa;
@@ -115,6 +116,14 @@
 
 .btn-secondary:hover {
   background: var(--secondary-light);
+}
+
+.btn-danger {
+  background: var(--danger);
+}
+
+.btn-danger:hover {
+  background: var(--danger-light);
 }
 
 .btn-trans {

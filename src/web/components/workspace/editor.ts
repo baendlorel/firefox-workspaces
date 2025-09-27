@@ -21,7 +21,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     return el;
   });
   const colorPicker = div('color-picker', colorOptions);
-  const deleteBtn = btn({ class: 'btn btn-danger my-2', type: 'button' }, 'Delete Workspace');
+  const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
   const body = [
     div('form-group', [h('label', { for: 'workspace-name' }, 'Name'), inputName]),
     div('form-group', [h('label', '', 'Color'), colorPicker]),
