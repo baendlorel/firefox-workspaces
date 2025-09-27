@@ -63,29 +63,22 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const pinnedCount = workspace.pinnedTabs.length;
       const countText = `${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}`;
 
-      const openBtn = btn('btn-small', '🗖');
-      const deleteBtn = btn('btn-small', '🗑️');
-      const toggleBtn = btn('btn-small', '🖲️');
-
       // & wb means workspace-block
-      const edit = div('icon-btn text-muted ms-auto');
-      edit.innerHTML = editIcon;
+      const editBtn = div('icon-btn text-muted ms-auto');
+      editBtn.innerHTML = editIcon;
       const item = h('li', { class: 'wb', 'data-workspace-id': workspace.id }, [
         div({ class: 'wb-li', style: `border-left-color:${workspace.color}` }, [
           entryIcon(workspace.color),
           div('wb-title', $escapeHtml(workspace.name)),
           div('wb-count', countText),
-          div('wb-actions', [edit]),
+          div('wb-actions', [editBtn]),
         ]),
       ]);
 
       // # register events
-      openBtn.addEventListener('click', () => bus.emit('open', workspace));
-      deleteBtn.addEventListener('click', () => bus.emit('delete', workspace));
-      toggleBtn.addEventListener('click', () => item.classList.toggle('expanded'));
+      item.addEventListener('click', () => bus.emit('open', workspace));
+      editBtn.addEventListener('click', () => bus.emit('edit', workspace));
       registerDragAndDrop(item);
-
-      edit.addEventListener('click', () => bus.emit('edit', workspace));
 
       container.appendChild(item);
     }
