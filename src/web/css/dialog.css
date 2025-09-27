@@ -199,13 +199,11 @@
 }
 
 .dialog-li-option:hover {
-  color: var(--light);
-  background-color: var(--primary);
+  background-color: #e9ecef;
 }
 
 .dialog-li-option.selected {
-  color: var(--light);
-  background-color: var(--primary-highlight);
+  background-color: var(--primary-highlight-trans);
 }
 
 .dialog-message {

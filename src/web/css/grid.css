@@ -1,3 +1,26 @@
+/* Auto margin utilities */
+.m-auto {
+  margin: auto !important;
+}
+.mt-auto {
+  margin-top: auto !important;
+}
+.mb-auto {
+  margin-bottom: auto !important;
+}
+.ms-auto {
+  margin-inline-start: auto !important;
+}
+.me-auto {
+  margin-inline-end: auto !important;
+}
+.mx-auto {
+  margin-inline: auto !important;
+}
+.my-auto {
+  margin-top: auto !important;
+  margin-bottom: auto !important;
+}
 /* Spacing Utilities */
 .m-1 {
   margin: 0.25rem !important;

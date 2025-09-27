@@ -84,29 +84,6 @@
   background-color: var(--muted) !important;
 }
 
-#app {
-  position: relative;
-  width: var(--app-width);
-  min-height: 480px;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-}
-
-.header {
-  display: grid;
-  grid-template-columns: 1fr auto auto;
-  gap: 10px;
-
-  background: var(--primary-gradient);
-  color: var(--light);
-  padding: 10px 20px;
-}
-
-.header h2 {
-  margin: 0;
-  font-size: var(--font-size-big);
-}
-
 .btn {
   font-size: var(--font-size-normal);
   padding: 6px 10px;
@@ -165,4 +142,22 @@
 .btn-text:hover {
   background-color: transparent;
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+}
+
+.icon-btn {
+  width: 16px;
+  height: 16px;
+  padding: 5px;
+  border-radius: 4px;
+  background-color: transparent;
+  transition: background-color 0.3s;
+}
+
+.icon-btn:hover {
+  background-color: var(--light);
+}
+
+.icon-btn:active {
+  background-color: var(--light);
+  opacity: 0.9;
 }

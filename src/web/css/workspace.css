@@ -11,8 +11,7 @@ li.wb {
 }
 
 .wb-li {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   gap: 10px;
   margin: 5px 6px;
   padding: 8px 14px;
@@ -21,6 +20,7 @@ li.wb {
   align-items: center;
   cursor: pointer;
   transition: background-color 0.2s;
+  background-color: var(--light);
 }
 
 .wb-li:hover {
@@ -36,20 +36,19 @@ li.wb {
 
 .wb-title {
   font-weight: 600;
-  color: #333;
+  color: var(--dark);
 }
 
 .wb-count {
   font-size: 14px;
   color: #666;
-  background: #e9ecef;
   padding: 2px 6px;
   border-radius: 10px;
 }
 
 .wb-actions {
-  display: flex;
-  gap: 5px;
+  flex: 1;
+  text-align: right;
 }
 
 .wb-tabs {

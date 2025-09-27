@@ -3,6 +3,8 @@ import { btn, div, h } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
 import entryIcon from './entry-icon.js';
 
+import pencilSvg from '@web/assets/pencil.svg?raw';
+
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'workspaces');
 
@@ -57,29 +59,28 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const countText = `${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}`;
 
       const openBtn = btn('btn-small', '🗖');
-      const editBtn = btn('btn-small', '✏️');
       const deleteBtn = btn('btn-small', '🗑️');
       const toggleBtn = btn('btn-small', '🖲️');
 
       // & wb means workspace-block
+      const edit = div('icon-btn text-muted ms-auto');
+      edit.innerHTML = pencilSvg;
       const item = h('li', { class: 'wb', 'data-workspace-id': workspace.id }, [
         div({ class: 'wb-li', style: `border-left-color:${workspace.color}` }, [
           entryIcon(workspace.color),
           div('wb-title', $escapeHtml(workspace.name)),
           div('wb-count', countText),
+          div('wb-actions', [edit]),
         ]),
       ]);
 
-      openBtn.title = 'Open in new window';
-      editBtn.title = 'Edit group';
-      deleteBtn.title = 'Delete group';
-      toggleBtn.title = 'Show/Hide tabs';
-
+      // # register events
       openBtn.addEventListener('click', () => bus.emit('open', workspace));
-      editBtn.addEventListener('click', () => bus.emit('edit', workspace));
       deleteBtn.addEventListener('click', () => bus.emit('delete', workspace));
       toggleBtn.addEventListener('click', () => item.classList.toggle('expanded'));
       registerDragAndDrop(item);
+
+      edit.addEventListener('click', () => bus.emit('edit', workspace));
 
       container.appendChild(item);
     }
