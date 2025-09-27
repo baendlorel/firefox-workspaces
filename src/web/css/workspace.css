@@ -24,7 +24,7 @@
   grid-template-columns: auto 1fr auto;
   gap: 10px;
   padding: 12px 15px;
-  border-left: 4px solid #667eea;
+  border-left: 0px solid #667eea;
   background: #f8f9fa;
   align-items: center;
   cursor: pointer;

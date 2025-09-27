@@ -23,4 +23,12 @@ export class EventBus<T extends Record<string, AnyFn>> {
 
     return handlers.map((fn) => fn(...args));
   }
+
+  getEmitFn(): typeof this.emit {
+    return (...args) => this.emit(...args);
+  }
+
+  getOnFn(): typeof this.on {
+    return (...args) => this.on(...args);
+  }
 }

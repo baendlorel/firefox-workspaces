@@ -12,8 +12,9 @@ import tabs from './components/workspace/tabs.js';
 export function createMainPage() {
   const bus = new EventBus<WorkspaceEditorEventMap>();
   const children = [
-    // header(),
-    controls(bus),
+    // header
+    header(controls(bus)),
+    // body
     list(bus),
     emptyState(bus),
     editor(bus),
@@ -24,19 +25,15 @@ export function createMainPage() {
   // only for registering the 'render-tab' event
   tabs(bus);
 
-  const emit: typeof bus.emit = (...args) => bus.emit(...args);
-
-  const on: typeof bus.on = (...args) => bus.on(...args);
-
   return {
     /**
      * Emit internal events
      */
-    emit,
+    emit: bus.getEmitFn(),
 
     /**
      * Register internal events
      */
-    on,
+    on: bus.getOnFn(),
   };
 }
