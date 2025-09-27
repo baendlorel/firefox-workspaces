@@ -1,32 +1,14 @@
 <!-- viewBox and translates are adjusted by testing -->
-<svg viewBox="0 0 42 46" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect x="0" y="0" width="100%" height="100%"
     stroke="red" stroke-width="0" text="for boundary test" />
 
-  <g transform="scale(0.9,1)">
-    <g transform="skewY(-19)">
-      <g transform="translate(-5,3)">
-        <path
-          d="M12 8 
-             H28 Q32 8 32 12 
-             M12 8 
-             Q8 8 8 12 
-             V28 Q8 32 12 32"
-          stroke-linecap="round"
-          stroke="currentColor" stroke-width="6" />
-
-        <path
-          d="M20 16 
-             H36 Q40 16 40 20
-             M20 16 
-             Q16 16 16 20 
-             V36 Q16 40 20 40"
-          stroke-linecap="round"
-          stroke="currentColor" stroke-width="6" />
-
-        <rect x="24" y="24" width="24" height="24" rx="4"
-          stroke="currentColor" stroke-width="6" />
-      </g>
-    </g>
+  <g transform="scale(0.9,1) skewY(-20) translate(0,7)">
+    <path d="M8 6 H24 Q28 6 28 10 M8 6 Q4 6 4 10 V26 Q4 30 8 30"
+      stroke-linecap="round" stroke="currentColor" stroke-width="4" fill="none" />
+    <path d="M18 15 H34 Q38 15 38 19 M18 15 Q14 15 14 19 V35 Q14 39 18 39"
+      stroke-linecap="round" stroke="currentColor" stroke-width="4" fill="none" />
+    <rect x="26" y="25" width="24" height="24" rx="4"
+      stroke="currentColor" stroke-width="4" />
   </g>
 </svg>

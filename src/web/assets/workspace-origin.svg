@@ -1,0 +1,32 @@
+<!-- viewBox and translates are adjusted by testing -->
+<svg viewBox="0 0 47 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="100%" height="100%"
+    stroke="red" stroke-width="0" text="for boundary test" />
+
+  <g transform="scale(0.9,1) skewY(-20) translate(0,7)">
+    <g transform="translate(-4,-2)">
+      <path
+        d="M12 8 
+             H28 Q32 8 32 12 
+             M12 8 
+             Q8 8 8 12 
+             V28 Q8 32 12 32"
+        stroke-linecap="round"
+        stroke="#aa00aa" stroke-width="5" />
+    </g>
+
+    <g transform="translate(-2,-1)">
+      <path
+        d="M20 16 
+             H36 Q40 16 40 20
+             M20 16 
+             Q16 16 16 20 
+             V36 Q16 40 20 40"
+        stroke-linecap="round"
+        stroke="#aa00aa" stroke-width="5" />
+    </g>
+
+    <rect x="24" y="24" width="24" height="24" rx="4"
+      stroke="#aa00aa" stroke-width="5" />
+  </g>
+</svg>

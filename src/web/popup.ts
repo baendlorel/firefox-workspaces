@@ -1,4 +1,5 @@
 import './css/main.css';
+import './css/workspace.css';
 import './css/form.css';
 import './css/dialog.css';
 import './components/__mock__/toolbar.js';
