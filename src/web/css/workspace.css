@@ -1,15 +1,30 @@
 .workspaces {
+  margin: 0;
+  padding: 0px;
   max-height: 400px;
   overflow-y: auto;
-  padding: 20px;
+  background-color: var(--light);
 }
 
-.wb {
-  background: white;
+li.wb {
+  margin-bottom: 0px;
+}
+
+.wb-li {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  margin: 5px 6px;
+  padding: 8px 14px;
+  border-left: 0px solid #667eea;
   border-radius: 8px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.wb-li:hover {
+  background-color: #e9ecef;
 }
 
 .wb-icon {
@@ -17,17 +32,6 @@
   height: 100%;
   -webkit-mask: url('../assets/workspace.svg') no-repeat center;
   mask: url('../assets/workspace.svg') no-repeat center;
-}
-
-.wb-header {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  gap: 10px;
-  padding: 12px 15px;
-  border-left: 0px solid #667eea;
-  background: #f8f9fa;
-  align-items: center;
-  cursor: pointer;
 }
 
 .wb-title {

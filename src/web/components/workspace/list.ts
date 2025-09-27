@@ -1,13 +1,13 @@
 import { EventBus } from 'minimal-event-bus';
-import { btn, div } from '@/lib/dom.js';
+import { btn, div, h } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
 import entryIcon from './entry-icon.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const container = div('workspaces');
+  const container = h('ul', 'workspaces');
 
   // #from popup.setupDragAndDrop
-  const registerDragAndDrop = (block: HTMLDivElement) => {
+  const registerDragAndDrop = (block: HTMLElement) => {
     block.addEventListener('dragover', (e) => {
       e.preventDefault();
       block.classList.add('drag-over');
@@ -56,33 +56,32 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const pinnedCount = workspace.pinnedTabs.length;
       const countText = `${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}`;
 
-      const btnOpen = btn('btn-small', '🗖');
-      const btnEdit = btn('btn-small', '✏️');
-      const btnDelete = btn('btn-small', '🗑️');
-      const btnToggle = btn('btn-small', '🖲️');
+      const openBtn = btn('btn-small', '🗖');
+      const editBtn = btn('btn-small', '✏️');
+      const deleteBtn = btn('btn-small', '🗑️');
+      const toggleBtn = btn('btn-small', '🖲️');
+
       // & wb means workspace-block
-      const block = div({ class: 'wb', 'data-workspace-id': workspace.id }, [
-        div({ class: 'wb-header', style: `border-left-color:${workspace.color}` }, [
+      const item = h('li', { class: 'wb', 'data-workspace-id': workspace.id }, [
+        div({ class: 'wb-li', style: `border-left-color:${workspace.color}` }, [
           entryIcon(workspace.color),
           div('wb-title', $escapeHtml(workspace.name)),
           div('wb-count', countText),
         ]),
-        div('wb-actions', [btnOpen, btnEdit, btnDelete, btnToggle]),
-        div('workspace-tabs', bus.emit('render-tab', workspace)[0]), // this.renderWorkspaceTabs(workspace)
       ]);
 
-      btnOpen.title = 'Open in new window';
-      btnEdit.title = 'Edit group';
-      btnDelete.title = 'Delete group';
-      btnToggle.title = 'Show/Hide tabs';
+      openBtn.title = 'Open in new window';
+      editBtn.title = 'Edit group';
+      deleteBtn.title = 'Delete group';
+      toggleBtn.title = 'Show/Hide tabs';
 
-      btnOpen.addEventListener('click', () => bus.emit('open', workspace));
-      btnEdit.addEventListener('click', () => bus.emit('edit', workspace));
-      btnDelete.addEventListener('click', () => bus.emit('delete', workspace));
-      btnToggle.addEventListener('click', () => block.classList.toggle('expanded'));
-      registerDragAndDrop(block);
+      openBtn.addEventListener('click', () => bus.emit('open', workspace));
+      editBtn.addEventListener('click', () => bus.emit('edit', workspace));
+      deleteBtn.addEventListener('click', () => bus.emit('delete', workspace));
+      toggleBtn.addEventListener('click', () => item.classList.toggle('expanded'));
+      registerDragAndDrop(item);
 
-      container.appendChild(block);
+      container.appendChild(item);
     }
   };
 

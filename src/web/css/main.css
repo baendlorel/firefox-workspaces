@@ -16,7 +16,10 @@
   --header-padding: 15px 20px;
 
   /* App params */
-  --app-width: 420px;
+  --app-width: 380px;
+  --font-size-big: 18px;
+  --font-size-normal: 14px;
+  --font-size-small: 12px;
 }
 body {
   margin: 0;
@@ -40,18 +43,17 @@ body {
 
   background: var(--primary-gradient);
   color: var(--light);
-  padding: var(--header-padding);
+  padding: 10px 20px;
 }
 
 .header h2 {
   margin: 0;
-  font-size: 21px;
-  font-weight: 600;
+  font-size: var(--font-size-big);
 }
 
 .btn {
-  font-size: 16px;
-  padding: 8px 16px;
+  font-size: var(--font-size-normal);
+  padding: 6px 10px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -73,11 +75,11 @@ body {
 }
 
 .btn-trans {
-  background: #ffffff2b;
+  background: #ffffff1c;
 }
 
 .btn-trans:hover {
-  background: #ffffff43;
+  background: #ffffff36;
 }
 
 .btn-small {
@@ -87,7 +89,7 @@ body {
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 14px;
+  font-size: var(--font-size-small);
 }
 
 .btn-small:hover {
@@ -95,7 +97,7 @@ body {
 }
 
 .btn-text {
-  font-size: 16px;
+  font-size: var(--font-size-normal);
   padding: 8px 8px;
   border: none;
   cursor: pointer;

@@ -1,5 +1,5 @@
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .form-group label {
@@ -12,10 +12,10 @@
 
 .form-group input {
   width: 100%;
-  padding: 12px 16px;
+  padding: 6px 12px;
   border: 2px solid #e5e7eb;
   border-radius: 8px;
-  font-size: 16px;
+  font-size: var(--font-size-normal);
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
@@ -32,10 +32,9 @@
 
 .color-picker {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
   margin-top: 12px;
-  padding: 4px;
 }
 
 .color-option {

@@ -21,13 +21,16 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   });
   const colorPicker = div('color-picker', colorOptions);
   const body = [
-    div('form-group', [h('label', { for: 'workspace-name' }, 'Workspace Name'), inputName]),
-    div('form-group', [h('label', '', 'Workspace Color'), colorPicker]),
+    div('form-group', [h('label', { for: 'workspace-name' }, 'Name'), inputName]),
+    div('form-group', [h('label', '', 'Color'), colorPicker]),
   ];
 
   // # footer
   const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
-  const saveBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Save');
+  const saveBtn = btn(
+    { class: 'btn btn-primary', style: 'margin-left:10px;', type: 'button' },
+    'Save'
+  );
   const footer = [cancelBtn, saveBtn];
 
   const { dialog, closeBtn, setTitle } = createDialog('Workspace', body, footer);
