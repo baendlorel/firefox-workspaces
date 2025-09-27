@@ -1,7 +1,7 @@
 <!-- viewBox and translates are adjusted by testing -->
 <svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect x="0" y="0" width="100%" height="100%"
-    stroke="red" stroke-width="0" text="for boundary test" />
+    stroke="red" stroke-width="0" text="for boundary test" fill="none" />
 
   <g transform="scale(0.9,1) skewY(-20) translate(0,7)">
     <path d="M8 6 H24 Q28 6 28 10 M8 6 Q4 6 4 10 V26 Q4 30 8 30"
