@@ -120,8 +120,6 @@ class PopupPage {
     }
   }
 
-  // todo 需要记录当前是哪个工作区
-  // todo 如果全局记录了当前工作区不为null，则关闭的时候触发工作区保存，保存下所有tab和pinnedtab
   // Open workspace in new window
   async open(workspace: Workspace) {
     try {

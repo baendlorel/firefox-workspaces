@@ -87,3 +87,11 @@ class WorkspacesContent {
 4. 用h函数来创建一个小小的工具栏名为toolbar，它会附着在整个页面中间的顶部。
 5. toolbar至少拥有清空缓存、创建3个随机workspace等功能
 6. toolbar可以控制回复的success字段是true还是false，可以用一个checkbox来切换，这样方便我测试失败场景
+
+---
+
+强化workspace功能:
+
+1. 'open'事件的初衷是打开一个新的浏览器窗口，然后打开所有的标签页和并pin那些pinned的标签页，你检查下，如果符合就不用改；
+2. 插件要记录当前是哪个工作区，并且在主页列表里高亮显示（可以给这一条li元素加上这个workspace的color的带有0.3alpha的背景）
+3. 如果全局记录了当前工作区不为null，则关闭的时候触发工作区保存，保存并更新当前工作区的tab和pinnedtab；
