@@ -83,11 +83,11 @@ class PopupPage {
         this.render();
         this.main.emit('close-editor');
       } else {
-        info('Failed to save workspace, Please try again');
+        info('Failed to save workspace, Please try again.');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error saving workspace:', error);
-      danger('Error saving workspace');
+      danger('Error saving workspace.');
     }
   }
 
@@ -107,11 +107,11 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        info('Failed to delete workspace, Please try again');
+        info('Failed to delete workspace, Please try again.');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error deleting workspace:', error);
-      danger('Error deleting workspace');
+      danger('Error deleting workspace.');
     }
   }
 
@@ -127,11 +127,11 @@ class PopupPage {
         // Close popup after opening group
         window.close();
       } else {
-        info('Failed to open workspace, Please try again');
+        info('Failed to open workspace, Please try again.');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error opening workspace:', error);
-      danger('Error opening workspace');
+      danger('Error opening workspace.');
     }
   }
 
@@ -148,11 +148,11 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        info('Failed to remove tab, Please try again');
+        info('Failed to remove tab, Please try again.');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error removing tab:', error);
-      danger('Error removing tab');
+      danger('Error removing tab.');
     }
   }
 
@@ -169,11 +169,11 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        info('Failed to toggle pin, Please try again');
+        info('Failed to toggle pin, Please try again.');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error toggling pin:', error);
-      danger('Error toggling pin');
+      danger('Error toggling pin.');
     }
   }
 
@@ -191,18 +191,18 @@ class PopupPage {
         await this.load();
         this.render();
       } else {
-        info('Failed to move tab, Please try again');
+        info('Failed to move tab, Please try again.');
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error moving tab:', error);
-      danger('Error moving tab');
+      danger('Error moving tab.');
     }
   }
 
   // Show menu to add current tab to a group
   async showAddTabMenu() {
     if (this.workspaces.length === 0) {
-      info('Create a workspace first');
+      info('Create a workspace first.');
       return;
     }
 
@@ -229,11 +229,11 @@ class PopupPage {
           await this.load();
           this.render();
         } else {
-          info('Failed to add tab to group, Please try again');
+          info('Failed to add tab to group, Please try again.');
         }
       } catch (error) {
         console.error('[__NAME__: __func__] Error adding tab to group:', error);
-        danger('Error adding tab to group');
+        danger('Error adding tab to group.');
       }
     }
   }

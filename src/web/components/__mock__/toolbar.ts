@@ -405,13 +405,14 @@ class MockBrowser {
   }
 
   private createProxy(path: any[] = []): any {
-    const thisArg = this;
+    const createProxy: typeof this.createProxy = (...args) => this.createProxy(...args);
+    const createResponse: typeof this.createResponse = (...args) => this.createResponse(...args);
 
     return new Proxy(function () {}, {
       get(_, key) {
         const newPath = [...path, key];
         console.log('get:', newPath.join('.'));
-        return thisArg.createProxy(newPath);
+        return createProxy(newPath);
       },
       set(_, key, value) {
         const newPath = [...path, key];
@@ -422,10 +423,10 @@ class MockBrowser {
         const key = path.join('.');
         console.log('apply:', key, ...args);
         if (key === 'runtime.sendMessage') {
-          return thisArg.createResponse(args[0]);
+          return createResponse(args[0]);
         }
 
-        return thisArg.createProxy(path); // 调用后还能继续链式访问
+        return createProxy(path); // 调用后还能继续链式访问
       },
     });
   }
