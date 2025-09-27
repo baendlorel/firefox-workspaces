@@ -58,7 +58,7 @@
 }
 
 .color-option.selected {
-  border-color: var(--primary-highlight);
+  border-color: var(--primary-light);
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   opacity: 1;

@@ -1,4 +1,4 @@
-import { h } from '@/lib/dom.js';
+import { btn, h } from '@/lib/dom.js';
 import { createPromise } from '@/lib/utils.js';
 import { createDialog } from './index.js';
 
@@ -30,9 +30,14 @@ export default async (config: {
   });
   const ul = h('ul', 'dialog-ul-options', selection);
 
-  const { dialog } = createDialog(title, [msg, ul]);
+  const confirmBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Confirm');
+  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
+
+  const { dialog } = createDialog(title, [msg, ul], [cancelBtn, confirmBtn]);
   dialog.bus.on('closed', () => resolve(value));
   dialog.escClosable = true;
+  cancelBtn.addEventListener('click', () => ((value = null), dialog.bus.emit('close')));
+  confirmBtn.addEventListener('click', () => dialog.bus.emit('close'));
 
   // mount to body
   document.body.appendChild(dialog);

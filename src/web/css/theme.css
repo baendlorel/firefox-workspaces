@@ -1,10 +1,12 @@
 /* themes */
 :root {
   --primary: #2da191;
-  --primary-highlight: #3dc7a5;
-  --primary-highlight-trans: #3dc7a446;
-  --secondary: #0d546a;
-  --secondary-highlight: #267e99;
+  --primary-light: #3dc7a5;
+  --primary-light-trans: #3dc7a446;
+  --primary-dark: #0d546a;
+  --primary-dark-light: #267e99;
+  --secondary: #6c757d;
+  --secondary-light: #869099;
   --danger: #dc3435;
   --dark: #212529;
   --warning: #ffc107;
@@ -26,16 +28,16 @@
   color: var(--primary) !important;
 }
 .text-primary-highlight {
-  color: var(--primary-highlight) !important;
+  color: var(--primary-light) !important;
 }
 .text-primary-highlight-trans {
-  color: var(--primary-highlight-trans) !important;
+  color: var(--primary-light-trans) !important;
 }
 .text-secondary {
-  color: var(--secondary) !important;
+  color: var(--primary-dark) !important;
 }
 .text-secondary-highlight {
-  color: var(--secondary-highlight) !important;
+  color: var(--primary-dark-light) !important;
 }
 .text-danger {
   color: var(--danger) !important;
@@ -57,16 +59,16 @@
   background-color: var(--primary) !important;
 }
 .bg-primary-highlight {
-  background-color: var(--primary-highlight) !important;
+  background-color: var(--primary-light) !important;
 }
 .bg-primary-highlight-trans {
-  background-color: var(--primary-highlight-trans) !important;
+  background-color: var(--primary-light-trans) !important;
 }
 .bg-secondary {
-  background-color: var(--secondary) !important;
+  background-color: var(--primary-dark) !important;
 }
 .bg-secondary-highlight {
-  background-color: var(--secondary-highlight) !important;
+  background-color: var(--primary-dark-light) !important;
 }
 .bg-danger {
   background-color: var(--danger) !important;
@@ -96,7 +98,15 @@
 }
 
 .btn:hover {
-  background: var(--primary-highlight);
+  background: var(--primary-light);
+}
+
+.btn-primary-dark {
+  background: var(--primary-dark);
+}
+
+.btn-primary-dark:hover {
+  background: var(--primary-dark-light);
 }
 
 .btn-secondary {
@@ -104,7 +114,7 @@
 }
 
 .btn-secondary:hover {
-  background: var(--secondary-highlight);
+  background: var(--secondary-light);
 }
 
 .btn-trans {

@@ -1,5 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { btn, div, h } from '@/lib/dom.js';
+import { div, h } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
 
 import editIcon from '@web/assets/3-dots.svg?raw';

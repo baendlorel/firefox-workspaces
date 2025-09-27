@@ -78,7 +78,7 @@
 
 .dialog-container:focus {
   outline: none;
-  box-shadow: 0 0 8px 3px var(--primary-highlight-trans);
+  box-shadow: 0 0 8px 3px var(--primary-light-trans);
 }
 
 /* Enhanced animation keyframes */
@@ -203,7 +203,7 @@
 }
 
 .dialog-li-option.selected {
-  background-color: var(--primary-highlight-trans);
+  background-color: var(--primary-light-trans);
 }
 
 .dialog-message {
