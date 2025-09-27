@@ -11,8 +11,16 @@ import tabs from './components/workspace/tabs.js';
 
 export function createMainPage() {
   const bus = new EventBus<WorkspaceEditorEventMap>();
-  const editorEl = editor(bus);
-  $id('app').append(header(), controls(bus), list(bus), emptyState(bus), editorEl.el);
+  const children = [
+    // header(),
+    controls(bus),
+    list(bus),
+    emptyState(bus),
+    editor(bus),
+  ];
+
+  $id('app').append(...children);
+
   // only for registering the 'render-tab' event
   tabs(bus);
 
@@ -30,7 +38,5 @@ export function createMainPage() {
      * Register internal events
      */
     on,
-
-    getEditingWorkspace: editorEl.getEditingWorkspace,
   };
 }

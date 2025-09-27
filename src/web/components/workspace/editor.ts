@@ -4,7 +4,7 @@ import { EventBus } from '@web/event-bus.js';
 
 import { createDialog } from '../dialog/index.js';
 
-export default (bus: EventBus<WorkspaceEditorEventMap>) => {
+export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
 
   // # body
@@ -86,6 +86,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
     // emit save event
     bus.emit('save', {
+      id: editingWorkspace === null ? undefined : editingWorkspace.id,
       name: inputName.value,
       color: colorPicker.dataset.color as HexColor,
     });
@@ -94,5 +95,5 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     close();
   });
 
-  return { el: dialog, getEditingWorkspace: () => editingWorkspace };
+  return dialog;
 };

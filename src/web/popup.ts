@@ -61,20 +61,19 @@ class PopupPage {
   async save(formData: WorkspaceFormData) {
     try {
       let response;
-      const workspace = this.main.getEditingWorkspace();
-      if (workspace) {
-        // Update existing group
-        response = await $send<UpdateWorkspacesRequest>({
-          action: Action.UpdateWorkspaces,
-          id: workspace.id,
-          updates: formData,
-        });
-      } else {
+      if (formData.id === undefined) {
         // Create new group
         response = await $send<CreateWorkspacesRequest>({
           action: Action.CreateWorkspaces,
           name: formData.name,
           color: formData.color,
+        });
+      } else {
+        // Update existing group
+        response = await $send<UpdateWorkspacesRequest>({
+          action: Action.UpdateWorkspaces,
+          id: formData.id,
+          updates: formData,
         });
       }
 

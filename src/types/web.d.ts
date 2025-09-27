@@ -10,6 +10,7 @@ interface WorkspaceModalArgs {
 }
 
 interface WorkspaceFormData {
+  id: string | undefined;
   name: string;
   color: HexColor;
 }
