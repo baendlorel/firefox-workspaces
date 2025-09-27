@@ -33,13 +33,22 @@ browser.windows.onRemoved.addListener(async (windowId) => {
   // Check if this window belongs to a workspace
   const workspace = manager.getByWindowId(windowId);
   if (workspace) {
-    console.log(`workspace window closed: ${workspace.name}`);
+    console.log(`Workspace window closed: ${workspace.name}`);
 
-    // The tabs were already saved during the session, just clear window association
+    try {
+      // ?? First save the current state of tabs before clearing window association
+      await manager.updateByWindowId(workspace.id, windowId);
+      console.log(`Saved workspace session for: ${workspace.name}`);
+    } catch (error) {
+      console.error(`Failed to save workspace session for: ${workspace.name}`, error);
+    }
+
+    // Clear window association and remove from active list
     workspace.windowId = undefined;
+    manager.deactivate(workspace.id);
     await manager.save();
 
-    console.log(`Saved workspace session for: ${workspace.name}`);
+    console.log(`Workspace ${workspace.name} removed from active list`);
   }
 });
 
@@ -77,6 +86,7 @@ setInterval(async () => {
       } else {
         // Window was closed but event wasn't caught
         workspace.windowId = undefined;
+        manager.deactivate(workspace.id);
         await manager.save();
       }
     } catch (error) {
@@ -197,7 +207,11 @@ browser.runtime.onMessage.addListener(async (message: Message, _sender, respond:
   try {
     switch (message.action) {
       case Action.GetWorkspaces:
-        respond<GetWorkspacesResponse>({ success: true, data: manager.workspaces });
+        respond<GetWorkspacesResponse>({
+          success: true,
+          data: manager.workspaces,
+          activeWorkspaces: manager.activeWorkspaces,
+        });
         break;
 
       case Action.CreateWorkspaces:

@@ -18,6 +18,7 @@ import { entryIcon } from './components/workspace/list.js';
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
   private readonly workspaces: Workspace[] = [];
+  private readonly activeWorkspaces: string[] = []; // Track active workspace IDs
   private main: ReturnType<typeof createMainPage>;
 
   constructor() {
@@ -46,7 +47,7 @@ class PopupPage {
   }
 
   render() {
-    this.main.emit('render-list', this.workspaces);
+    this.main.emit('render-list', this.workspaces, this.activeWorkspaces);
   }
 
   // Load work groups from background
@@ -57,6 +58,12 @@ class PopupPage {
         const loaded = response.data ?? [];
         this.workspaces.length = 0;
         this.workspaces.push(...loaded);
+
+        // Update active workspaces
+        this.activeWorkspaces.length = 0;
+        if (response.activeWorkspaces) {
+          this.activeWorkspaces.push(...response.activeWorkspaces);
+        }
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Failed to load work groups:', error);

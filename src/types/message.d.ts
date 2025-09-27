@@ -82,6 +82,7 @@ declare global {
   interface GetWorkspacesResponse {
     success: boolean;
     data: Workspace[];
+    activeWorkspaces?: string[]; // Array of active workspace IDs
   }
 
   interface CreateWorkspacesResponse {

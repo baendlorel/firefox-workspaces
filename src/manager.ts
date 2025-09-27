@@ -13,6 +13,7 @@ export class WorkspaceManager {
   private static _instance: WorkspaceManager;
   private readonly _map = new Map<string, IndexedWorkspace>();
   private readonly _arr: IndexedWorkspace[] = [];
+  private readonly _activated: string[] = []; // Track currently opened workspaces by ID
 
   constructor() {
     this.init();
@@ -30,6 +31,24 @@ export class WorkspaceManager {
 
   get workspaces() {
     return this._arr;
+  }
+
+  // Get currently active/opened workspaces
+  get activeWorkspaces(): string[] {
+    return [...this._activated];
+  }
+
+  // Check if a workspace is currently active
+  isActive(id: string): boolean {
+    return this._activated.includes(id);
+  }
+
+  // Remove workspace from active list when window is closed
+  deactivate(id: string) {
+    const index = this._activated.indexOf(id);
+    if (index !== -1) {
+      this._activated.splice(index, 1);
+    }
   }
 
   // Load work groups from browser storage
@@ -239,11 +258,14 @@ export class WorkspaceManager {
       // If group already has an active window, focus it
       if (workspace.windowId) {
         try {
+          // Check if window still exists
+          await browser.windows.get(workspace.windowId);
           await browser.windows.update(workspace.windowId, { focused: true });
           return { id: workspace.windowId };
         } catch {
-          // Window doesn't exist anymore, clear the reference
+          // Window doesn't exist anymore, clear the reference and remove from active list
           workspace.windowId = undefined;
+          this.deactivate(id);
         }
       }
 
@@ -294,27 +316,15 @@ export class WorkspaceManager {
             url: allUrls[i],
             active: false,
           });
-          createdTabs.push({ tab, pinned: i <= pinnedUrls.length });
+          // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
+          const shouldPin = i < pinnedUrls.length;
+          createdTabs.push({ tab, pinned: shouldPin });
         } catch (error) {
           console.error(`Failed to create tab for URL: ${allUrls[i]}`, error);
         }
       }
 
-      // Pin tabs that should be pinned
-      for (let i = 0; i < createdTabs.length; i++) {
-        const tab = createdTabs[i].tab;
-        if (!createdTabs[i].pinned || !tab.id) {
-          continue;
-        }
-        try {
-          await browser.tabs.update(tab.id, { pinned: true });
-        } catch (error) {
-          console.error('[__NAME__: __func__] Failed to pin tab:', error);
-        }
-      }
-
       // Pin the first tab if it should be pinned
-      // ? 难道不需要都pin上？
       if (pinnedUrls.length > 0) {
         try {
           const tabs = await browser.tabs.query({ windowId: window.id });
@@ -326,10 +336,27 @@ export class WorkspaceManager {
         }
       }
 
+      // Pin additional tabs that should be pinned
+      for (let i = 0; i < createdTabs.length; i++) {
+        const { tab, pinned } = createdTabs[i];
+        if (!pinned || !tab.id) {
+          continue;
+        }
+        try {
+          await browser.tabs.update(tab.id, { pinned: true });
+        } catch (error) {
+          console.error('[__NAME__: __func__] Failed to pin tab:', error);
+        }
+      }
+
       // Update group with window association and last opened time
       workspace.windowId = window.id;
       workspace.lastOpened = Date.now();
-      this.save();
+
+      // Add to active workspaces if not already there
+      !this._activated.includes(id) && this._activated.push(id);
+
+      await this.save();
 
       return window;
     } catch (error) {
@@ -430,8 +457,10 @@ export class WorkspaceManager {
     for (let i = 0; i < this._arr.length; i++) {
       this._arr[i].windowId = undefined;
     }
+    // Clear active workspaces on startup
+    this._activated.length = 0;
     await this.save();
-    console.log('Cleared stale window associations on startup');
+    console.log('Cleared stale window associations and active workspaces on startup');
   }
 
   // Get recently closed work groups
