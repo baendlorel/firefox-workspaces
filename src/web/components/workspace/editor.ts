@@ -30,7 +30,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const saveBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Save');
   const footer = [cancelBtn, saveBtn];
 
-  const { dialog, closeBtn } = createDialog('Workspace', body, footer);
+  const { dialog, closeBtn, setTitle } = createDialog('Workspace', body, footer);
   dialog.backdropClosable = true;
   dialog.escClosable = true;
 
@@ -63,9 +63,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     if (workspace) {
       inputName.value = workspace.name;
       selectColor(workspace.color);
+      setTitle('Edit Workspace');
     } else {
       inputName.value = '';
       selectColor(Consts.DefaultColor);
+      setTitle('New Workspace');
     }
 
     dialog.bus.emit('show');

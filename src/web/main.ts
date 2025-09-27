@@ -1,8 +1,8 @@
-import { $id } from '@/lib/dom.js';
+import { $id, h } from '@/lib/dom.js';
+import icon from '@web/assets/workspace.svg';
 
 // components
 import header from './components/workspace/header.js';
-import controls from './components/workspace/controls.js';
 import list from './components/workspace/list.js';
 import emptyState from './components/workspace/empty-state.js';
 import editor from './components/workspace/editor.js';
@@ -10,10 +10,12 @@ import tabs from './components/workspace/tabs.js';
 import { EventBus } from 'minimal-event-bus';
 
 export function createMainPage() {
+  document.head.appendChild(h('link', { rel: 'icon', href: icon }));
+
   const { bus, emit, on } = EventBus.create<WorkspaceEditorEventMap>();
   const children = [
     // header
-    header(controls(bus)),
+    header(bus),
     // body
     list(bus),
     emptyState(bus),

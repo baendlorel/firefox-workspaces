@@ -182,28 +182,30 @@
 }
 
 .dialog-ul-options {
-  padding: 0px;
   margin: 0;
-  border-radius: 6px;
   overflow: hidden;
 }
 
 .dialog-li-option {
-  list-style: none;
+  list-style: disc;
+
   padding: 10px 16px;
   border-bottom: 1px solid #f1f5f9;
-  cursor: pointer;
-  transition: background 0.2s ease;
   color: var(--dark);
-  background-color: var(--light);
+  transition: color 0.3s ease;
+  /* background-color: var(--light); */
+  cursor: pointer;
 }
 
 .dialog-li-option:hover {
-  color: var(--light);
-  background-color: var(--primary);
+  color: var(--primary);
 }
 
 .dialog-li-option.selected {
-  color: var(--light);
-  background-color: var(--primary-highlight);
+  color: var(--primary-highlight);
+}
+
+.dialog-message {
+  margin-top: 0;
+  margin-bottom: 22px;
 }

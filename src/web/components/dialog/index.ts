@@ -40,11 +40,15 @@ export function createDialog(
     (e) => e.target === dialog && dialog.backdropClosable && bus.emit('close')
   );
 
+  // # public methods
+  const setTitle = (text: string) => (title.textContent = text);
+
   // # header
   const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
   closeBtn.innerHTML = closeSvg;
 
-  const headerInner = typeof header === 'string' ? [div('title', header), closeBtn] : header;
+  const title = div('title', header);
+  const headerInner = typeof header === 'string' ? [title, closeBtn] : header;
   const headerDiv = div('dialog-header', headerInner);
 
   // # body
@@ -95,6 +99,7 @@ export function createDialog(
       dialog,
       closeBtn,
       yesBtn,
+      setTitle,
     };
   }
 
@@ -106,5 +111,6 @@ export function createDialog(
   return {
     dialog,
     closeBtn,
+    setTitle,
   };
 }

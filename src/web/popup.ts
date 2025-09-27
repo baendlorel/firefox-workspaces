@@ -212,7 +212,11 @@ class PopupPage {
       value: w.id,
     }));
 
-    const selectedId = await selectDialog({ title: 'Select a workspace:', options });
+    const selectedId = await selectDialog({
+      title: 'Select A Workspace',
+      message: 'Add current tab to which workspace?',
+      options,
+    });
     console.log('Selected workspace index:', selectedId);
 
     if (selectedId !== null) {

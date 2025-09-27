@@ -1,4 +1,5 @@
-import { EventBus } from '../web/event-bus.ts';
+import { EventBus } from 'minimal-event-bus';
+
 declare global {
   type HTMLPart = HTMLElement[] | string;
 
@@ -6,6 +7,7 @@ declare global {
     dialog: HTMLDialogElement;
     closeBtn: HTMLButtonElement;
     yesBtn: HTMLButtonElement;
+    setTitle: (text: string) => void;
   }
 
   type DialogEventMap = {
