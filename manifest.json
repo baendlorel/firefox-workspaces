@@ -20,11 +20,11 @@
     "type": "module"
   },
   "action": {
-    "default_popup": "dist/popup.html",
+    "default_popup": "dist/index.html",
     "default_title": "Workspaces Manager"
   },
   "icons": {
-    "128": "src/icons/icon-128.png"
+    "128": "dist/icons/icon-128.png"
   },
   "content_scripts": [
     {

@@ -7,7 +7,6 @@ import replace from '@rollup/plugin-replace';
 import funcMacro from 'rollup-plugin-func-macro';
 
 import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
-import staticCopy from './.scripts/static-copy.mjs';
 
 const tsconfig = './tsconfig.build.json';
 
@@ -21,21 +20,16 @@ export default defineConfig({
       delimiters: ['', ''],
       values: replaceLiteralOpts,
     }),
-    staticCopy({
-      map: {
-        'src/icons': 'dist/icons',
-      },
-    }),
   ],
   server: {
-    open: 'public/popup.html',
+    open: 'src/web/index.html',
   },
   build: {
     outDir: 'dist',
     minify: false,
     rollupOptions: {
       input: {
-        index: resolve('public/popup.html'),
+        index: resolve('src/web/index.html'),
         background: resolve('src/background.ts'),
         content: resolve('src/content.ts'),
         popup: resolve('src/web/popup.ts'),
