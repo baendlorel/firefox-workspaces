@@ -84,6 +84,8 @@ class MockBrowser {
   }
 
   private createToolbar(): void {
+    let isCollapsed = false;
+
     // Create checkbox input
     const checkbox = h('input', { type: 'checkbox', checked: 'true' });
     checkbox.checked = this.shouldSucceed;
@@ -93,24 +95,33 @@ class MockBrowser {
     const clearBtn = h('button', 'mock-browser-btn mock-browser-btn--clear', 'Clear Cache');
     clearBtn.addEventListener('click', () => this.clearCache());
 
-    const createBtn = h(
-      'button',
-      'mock-browser-btn mock-browser-btn--create',
-      'Create 3 Random WS'
-    );
+    const createBtn = h('button', 'mock-browser-btn mock-browser-btn--create', 'Random 3 WS');
     createBtn.addEventListener('click', () => this.createRandomWorkspaces());
 
-    const closeBtn = h('button', 'mock-browser-btn mock-browser-btn--close', '×');
-    closeBtn.addEventListener('click', () => toolbar.remove());
+    // Create toggle button (replaces close button)
+    const toggleBtn = h('button', 'mock-browser-btn mock-browser-btn--toggle', '−');
 
-    // Create toolbar
-    const toolbar = h('div', 'mock-browser-toolbar', [
-      h('span', 'mock-browser-title', 'Mock Browser'),
+    // Create controls container for elements that can be hidden
+    const controls = h('div', 'mock-browser-controls', [
       h('label', 'mock-browser-checkbox-label', [checkbox, h('span', '', 'Success')]),
       clearBtn,
       createBtn,
-      closeBtn,
     ]);
+
+    // Create toolbar
+    const toolbar = h('div', 'mock-browser-toolbar', [controls, toggleBtn]);
+
+    // Toggle functionality
+    toggleBtn.addEventListener('click', () => {
+      isCollapsed = !isCollapsed;
+      if (isCollapsed) {
+        toolbar.classList.add('mock-browser-toolbar--collapsed');
+        toggleBtn.textContent = '+';
+      } else {
+        toolbar.classList.remove('mock-browser-toolbar--collapsed');
+        toggleBtn.textContent = '−';
+      }
+    });
 
     document.body.appendChild(toolbar);
   }

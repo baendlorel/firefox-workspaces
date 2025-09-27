@@ -93,7 +93,8 @@ class PopupPage {
 
   // Delete workspace
   async delete(workspace: Workspace) {
-    if (!confirm(`Are you sure you want to delete "${workspace.name}"?`)) {
+    const yes = await confirmation(`Are you sure you want to delete "${workspace.name}"?`);
+    if (!yes) {
       return;
     }
     try {

@@ -3,7 +3,7 @@
 .mock-browser-toolbar {
   position: fixed;
   top: 0;
-  left: 50%;
+  right: 40px;
   /* transform: translateX(-50%); */
   background: #333;
   color: white;
@@ -60,4 +60,28 @@
 
 .mock-browser-btn--close:hover {
   background: #c82333;
+}
+
+/* Toolbar collapsed state */
+.mock-browser-toolbar--collapsed {
+}
+
+.mock-browser-toolbar--collapsed .mock-browser-controls {
+  display: none;
+}
+
+.mock-browser-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: opacity 0.3s ease;
+}
+
+.mock-browser-btn--toggle {
+  background: #6c757d;
+  min-width: 24px;
+}
+
+.mock-browser-btn--toggle:hover {
+  background: #5a6268;
 }
