@@ -39,14 +39,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
         'this.src=\'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect width="16" height="16" fill="%23f0f0f0"/><text x="8" y="12" text-anchor="middle" font-size="12" fill="%23666">?</text></svg>\'',
     });
 
-    const btnPin = btn(
-      'text-xs px-2 py-1 rounded bg-transparent hover:bg-gray-100 border-none text-gray-600 cursor-pointer',
-      pinned ? '📌' : '📍'
-    );
-    const btnRemove = btn(
-      'text-xs px-2 py-1 rounded bg-transparent hover:bg-gray-100 border-none text-gray-600 cursor-pointer',
-      '✕'
-    );
+    const btnPin = btn('btn-small', pinned ? '📌' : '📍');
+    const btnRemove = btn('btn-small', '✕');
 
     const tabItem = div(
       { class: 'tab-item', 'data-tab-id': String(tab.id), 'data-tab-url': tab.url },

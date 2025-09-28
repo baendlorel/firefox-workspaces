@@ -1,22 +1,14 @@
+@import 'tailwindcss';
+
 .workspaces {
-  margin: 0;
-  padding: 0px;
-  max-height: 400px;
-  overflow-y: auto;
-  background-color: var(--light);
+  @apply m-0 p-0 bg-gray-50 max-h-96 overflow-y-auto;
 }
 
 .wb-list-item {
-  display: grid;
-  gap: 6px;
+  @apply grid gap-1.5 p-3 rounded-md items-center cursor-pointer transition-colors;
   grid-template-columns: auto 1fr auto;
   /* margin: 5px 6px; */
-  padding: 10px 12px;
   border-left: 3px solid #667eea;
-  border-radius: 6px;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s;
   background-color: transparent;
 }
 
@@ -34,20 +26,16 @@
 } */
 
 .wb-icon {
-  width: 21px;
-  height: 21px;
+  @apply w-5 h-5;
 }
 
 .wb-title {
-  font-weight: 500;
+  @apply font-medium;
   color: var(--dark);
 }
 
 .wb-count {
-  font-size: 14px;
-  color: #666;
-  padding: 2px 6px;
-  border-radius: 10px;
+  @apply text-sm text-gray-600 px-1.5 py-0.5 rounded-full;
 }
 
 .wb-actions {
@@ -56,51 +44,31 @@
 }
 
 .tab-item {
-  display: flex;
-  align-items: center;
-  padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
+  @apply flex items-center py-2 border-b border-gray-200 cursor-pointer;
 }
 
 .tab-item:last-child {
-  border-bottom: none;
+  @apply border-b-0;
 }
 
 .tab-favicon {
-  width: 16px;
-  height: 16px;
-  margin-right: 10px;
-  border-radius: 2px;
+  @apply w-4 h-4 mr-2.5 rounded-sm;
 }
 
 .tab-info {
-  flex: 1;
-  min-width: 0;
+  @apply flex-1 min-w-0;
 }
 
 .tab-title {
-  font-weight: 500;
-  color: #333;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  font-size: 16px;
+  @apply font-medium text-gray-800 whitespace-nowrap overflow-hidden text-ellipsis text-base;
 }
 
 .tab-url {
-  color: #666;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  @apply text-gray-600 text-sm whitespace-nowrap overflow-hidden text-ellipsis;
 }
 
 .tab-actions {
-  display: flex;
-  gap: 5px;
-  opacity: 0;
-  transition: opacity 0.2s;
+  @apply flex gap-1.5 opacity-0 transition-opacity duration-200;
 }
 
 .tab-item:hover .tab-actions {
@@ -118,28 +86,21 @@
 }
 
 .empty-state {
-  text-align: center;
-  padding: 40px 20px;
+  @apply text-center py-10 px-5;
   color: var(--secondary-light);
 }
 
 .version {
-  position: absolute;
-  right: 10px;
-  bottom: 5px;
-  padding: 5px 0;
-  text-align: right;
-  font-size: var(--font-size-small);
+  @apply absolute right-2.5 bottom-1.5 py-1.5 px-0 text-right text-xs;
   color: var(--secondary-light);
 }
 .version p {
-  margin: 2px 0px;
+  @apply my-0.5 mx-0;
 }
 
 .empty-state-icon {
-  margin: auto;
+  @apply mx-auto opacity-60;
   width: 61.8%;
-  opacity: 0.6;
 }
 
 .drag-over {
@@ -148,15 +109,9 @@
 }
 
 .dragging {
-  opacity: 0.5;
+  @apply opacity-50;
 }
 
 .bookmark {
-  position: absolute;
-  top: 0;
-  right: 50px;
-  border: 0;
-  margin: 0;
-  padding: 0;
-  background-color: transparent;
+  @apply absolute top-0 right-12 border-0 m-0 p-0 bg-transparent;
 }

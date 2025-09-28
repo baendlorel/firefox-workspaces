@@ -2,31 +2,26 @@
 @import 'tailwindcss';
 
 body {
-  margin: 0;
-  padding: 0;
+  @apply m-0 p-0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background-color: #f3f4f6; /* equivalent to bg-gray-100 */
 }
 
 #app {
-  position: relative;
+  @apply relative overflow-hidden;
   width: var(--app-width);
   min-height: 480px;
   border-radius: var(--border-radius);
-  overflow: hidden;
 }
 
 .header {
-  display: grid;
+  @apply grid gap-2.5 px-5 py-2.5;
   grid-template-columns: 1fr auto auto;
-  gap: 10px;
-
   background: var(--primary-gradient);
   color: var(--light);
-  padding: 10px 20px;
 }
 
 .header h2 {
-  margin: 0;
+  @apply m-0;
   font-size: var(--font-size-big);
 }

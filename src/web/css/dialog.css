@@ -1,10 +1,8 @@
+@import 'tailwindcss';
+
 .dialog-header {
-  display: flex;
+  @apply flex text-center justify-between items-center border-b border-gray-200;
   padding: var(--header-padding);
-  text-align: center;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px solid #f1f1f1;
   background: var(--primary-gradient);
   color: var(--light);
 }
@@ -17,9 +15,8 @@
 }
 
 .dialog-header .title {
-  margin: 0;
+  @apply m-0 font-semibold;
   font-size: var(--font-size-big);
-  font-weight: 600;
 }
 
 .dialog-body {
@@ -27,40 +24,33 @@
 }
 
 .dialog-footer {
+  @apply text-right;
   padding: 4px 20px 14px 20px;
-  text-align: right;
 }
 
 .dialog-content {
-  padding: 0;
-  background: white;
-  border-radius: 12px;
+  @apply p-0 bg-white rounded-xl;
 }
 
 /* Modern Dialog Styles with Enhanced Animations */
 .dialog-container {
-  margin: auto;
-  padding: 0;
-  border: none;
+  @apply m-auto p-0 border-none bg-gray-50 overflow-hidden opacity-0;
   border-radius: var(--border-radius);
-  background: var(--light);
   box-shadow:
     0 32px 64px -12px rgba(0, 0, 0, 0.25),
     0 25px 35px -8px rgba(0, 0, 0, 0.15),
     0 10px 15px -5px rgba(0, 0, 0, 0.1);
   width: min(320px, calc(100vw - 2rem));
   max-height: calc(100vh - 2rem);
-  overflow: hidden;
 
   /* Enhanced animation setup */
-  opacity: 0;
   transform: scale(0.8) translateY(-30px) rotateX(10deg);
   transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   filter: blur(8px);
 }
 
 .dialog-container[open] {
-  opacity: 1;
+  @apply opacity-100;
   transform: scale(1) translateY(0) rotateX(0deg);
   filter: blur(0);
 }
@@ -158,17 +148,14 @@
 }
 
 .dialog-close-btn {
+  @apply p-0 bg-transparent border-none cursor-pointer;
   --dialog-close-btn-size: 12px;
   --dialog-close-btn-color: #aee4d780;
   --dialog-close-btn-hover: #b7ffedb4;
   width: var(--dialog-close-btn-size);
   height: var(--dialog-close-btn-size);
-  padding: 0px;
   color: var(--dialog-close-btn-color);
-  background-color: transparent;
-  border: none;
   transition: all 0.2s ease;
-  cursor: pointer;
 }
 
 .dialog-close-btn:hover {
@@ -181,21 +168,11 @@
 }
 
 .dialog-ul-options {
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
+  @apply m-0 p-0 overflow-hidden;
 }
 
 .dialog-li-option {
-  list-style: none;
-  margin: 6px 0px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  border-bottom: 1px solid #f1f5f9;
-  color: var(--dark);
-  background-color: var(--light);
-  cursor: pointer;
-  transition: all 0.3s ease;
+  @apply list-none my-1.5 mx-0 px-3 py-2 rounded-md border-b border-slate-200 text-gray-800 bg-gray-50 cursor-pointer transition-all duration-300;
 }
 
 .dialog-li-option:hover {

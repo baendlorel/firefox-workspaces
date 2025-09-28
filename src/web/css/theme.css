@@ -28,7 +28,6 @@
 }
 
 .btn {
-  @apply m-12;
   font-size: var(--font-size-normal);
   padding: 6px 10px;
   border-radius: 6px;
