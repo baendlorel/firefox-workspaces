@@ -6,7 +6,7 @@ interface ColorPickerOptions {
 }
 
 // Convert angle and radius to color
-const getColorFromPosition = (x: number, y: number, rect: DOMRect): string => {
+const getColorAngleFromPosition = (x: number, y: number, rect: DOMRect): number => {
   const centerX = rect.width / 2;
   const centerY = rect.height / 2;
   const deltaX = x - centerX;
@@ -18,20 +18,14 @@ const getColorFromPosition = (x: number, y: number, rect: DOMRect): string => {
     angle += 360;
   }
 
-  // Convert angle to HSL color
-  const hue = angle;
-  console.log(`hsl(${hue}, 100%, 50%)`);
-  return `hsl(${hue}, 100%, 50%)`;
+  return angle;
 };
 
 // Convert HSL to HEX
-const hslToHex = (hsl: string): HexColor => {
-  const hslMatch = hsl.match(/hsl\((\d+),\s*(\d+)%,\s*(\d+)%\)/);
-  if (!hslMatch) return '#000000';
-
-  const h = parseInt(hslMatch[1]);
-  const s = parseInt(hslMatch[2]) / 100;
-  const l = parseInt(hslMatch[3]) / 100;
+const hslToHex = (angle: number): HexColor => {
+  const h = angle;
+  const s = 1;
+  const l = 0.5;
 
   const c = (1 - Math.abs(2 * l - 1)) * s;
   const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
@@ -74,45 +68,30 @@ const hslToHex = (hsl: string): HexColor => {
   return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}` as HexColor;
 };
 
-const change = (color: HexColor) => {};
+const change = (_: HexColor) => {};
 
 export default (options: Partial<ColorPickerOptions>) => {
   const { onChange = change, initial = '#ffffff' } = options;
 
   // Create the main circular color picker
-  const el = div('', '');
-  el.style.cssText = `
-    width: 128px;
-    height: 128px;
-    border-radius: 50%;
-    cursor: pointer;
-    position: relative;
-    background: conic-gradient(
-      from 0deg,
-    #ff0000 0deg,
-    #ff8000 30deg,
-    #ffff00 60deg,
-    #80ff00 90deg,
-    #00ff00 120deg,
-    #00ff80 150deg,
-    #00ffff 180deg,
-    #0080ff 210deg,
-    #0000ff 240deg,
-    #8000ff 270deg,
-    #ff00ff 300deg,
-    #ff0080 330deg,
-    #ff0000 360deg
-    );
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  `;
+  const palette = div('palette');
+  palette.style.setProperty('--pallete-value', initial);
 
-  const inputHex = h('input', { type: 'text', style: 'width:120px;height:30px' });
-  el.appendChild(inputHex);
+  const inputHex = h('input', {
+    type: 'text',
+    class: 'text-center',
+    style: 'width:120px;height:30px',
+  });
+  inputHex.value = initial;
 
+  const el = div('', [palette, inputHex]);
+
+  // # register events
   const pick = (x: number, y: number, rect: DOMRect) => {
-    const color = getColorFromPosition(x, y, rect);
-    const hex = hslToHex(color);
+    const angle = getColorAngleFromPosition(x, y, rect);
+    const hex = hslToHex(angle);
     inputHex.value = hex;
+    palette.style.setProperty('--pallete-value', hex);
     onChange(hex);
   };
 
@@ -148,8 +127,8 @@ export default (options: Partial<ColorPickerOptions>) => {
     }
   };
 
-  // Event listeners
-  el.addEventListener('mousedown', handleMouseDown);
+  inputHex.addEventListener('mousedown', (e) => e.stopImmediatePropagation());
+  palette.addEventListener('mousedown', handleMouseDown);
 
   return el;
 };

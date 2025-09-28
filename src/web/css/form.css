@@ -71,8 +71,38 @@
   z-index: 10;
 }
 
-.controls {
-  padding: 15px 20px;
-  background: white;
-  border-bottom: 1px solid #e0e0e0;
+.palette {
+  position: relative;
+  width: 128px;
+  height: 128px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    #ff0000 0deg,
+    #ff8000 30deg,
+    #ffff00 60deg,
+    #80ff00 90deg,
+    #00ff00 120deg,
+    #00ff80 150deg,
+    #00ffff 180deg,
+    #0080ff 210deg,
+    #0000ff 240deg,
+    #8000ff 270deg,
+    #ff00ff 300deg,
+    #ff0080 330deg,
+    #ff0000 360deg
+  );
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+
+.palette::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background-color: var(--pallete-value);
+  pointer-events: none;
 }

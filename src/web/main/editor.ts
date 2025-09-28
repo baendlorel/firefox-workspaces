@@ -36,7 +36,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     ]),
     div('form-group', [h('label', { for: 'workspace-color' }, 'Color'), inputColorPicker]),
     deleteBtn,
-    colorPicker({}),
+    div('form-group', [h('label', { for: 'workspace-color2' }, 'Color'), colorPicker({})]),
   ];
 
   // # footer
