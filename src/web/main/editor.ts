@@ -5,38 +5,29 @@ import { $randInt } from '@/lib/utils.js';
 
 import { createDialog } from '../components/dialog/index.js';
 import { confirmation, danger, info } from '../components/dialog/alerts.js';
-import colorPicker from '../components/color-picker.js';
+import colorPicker from '../components/color-selector.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
 
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });
-  const randomName = btn('btn btn-primary ms-2', 'Random');
-  randomName.title = 'Generate a random workspace name';
-  const colorOptions = WORKSPACE_COLORS.map((color) => {
-    const el = div('color-option');
-    el.style.backgroundColor = color;
-    el.dataset.color = color;
-    el.addEventListener('click', () => {
-      inputColorPicker.dataset.color = color;
-      colorOptions.forEach((c) => c.classList.toggle('selected', c === el));
-    });
-    return el;
-  });
+  const randomNameBtn = btn(
+    { class: 'btn btn-primary ms-2', title: 'Generate a random name' },
+    'Random'
+  );
+  const colorSelector = colorPicker('workspace-color');
 
-  const inputColorPicker = div({ id: 'workspace-color', class: 'color-picker' }, colorOptions);
   const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
   deleteBtn.title = 'Delete this workspace';
   const body = [
     div('form-group form-group-with-btn', [
       h('label', { for: 'workspace-name' }, 'Name'),
       inputName,
-      randomName,
+      randomNameBtn,
     ]),
-    div('form-group', [h('label', { for: 'workspace-color' }, 'Color'), inputColorPicker]),
+    div('form-group', [h('label', { for: 'workspace-color' }, 'Color'), colorSelector]),
     deleteBtn,
-    div('form-group', [h('label', { for: 'workspace-color2' }, 'Color'), colorPicker({})]),
   ];
 
   // # footer
@@ -59,20 +50,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     dialog.bus.on('closed', () => (editingWorkspace = null));
   };
 
-  const selectColor = (color: HexColor) => {
-    // & No need to validate since the options are fixed
-    // if (!/^#([0-9a-fA-F]{6})$/.test(color) && /^#([0-9a-fA-F]{8})$/.test(color)) {
-    //   alert('Please select a valid 6/8-digit hex color code (e.g., #RRGGBB, #RRGGBBAA)');
-    //   return;
-    // }
-
-    inputColorPicker.dataset.color = color;
-    for (let i = 0; i < colorOptions.length; i++) {
-      const option = colorOptions[i];
-      option.classList.toggle('selected', option.dataset.color === color);
-    }
-  };
-
   // # register events
 
   bus.on('edit', (workspace: Workspace | null = null) => {
@@ -80,12 +57,12 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
     if (workspace) {
       inputName.value = workspace.name;
-      selectColor(workspace.color);
+      colorSelector.value = workspace.color;
       setTitle('Edit Workspace');
       deleteBtn.style.display = 'block';
     } else {
       inputName.value = '';
-      selectColor(Consts.DefaultColor);
+      colorSelector.value = Consts.DefaultColor;
       setTitle('New Workspace');
       deleteBtn.style.display = 'none';
     }
@@ -96,7 +73,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   bus.on('close-editor', close);
 
-  randomName.addEventListener('click', () => {
+  randomNameBtn.addEventListener('click', () => {
     const part1 = RANDOM_NAME_PART1[$randInt(RANDOM_NAME_PART1.length)];
     const part2 = RANDOM_NAME_PART2[$randInt(RANDOM_NAME_PART2.length)];
     inputName.value = `${part1} ${part2}`;
@@ -116,7 +93,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     bus.emit('save', {
       id: editingWorkspace === null ? undefined : editingWorkspace.id,
       name: inputName.value,
-      color: inputColorPicker.dataset.color as HexColor,
+      color: colorSelector.dataset.color as HexColor,
     });
 
     // close the modal

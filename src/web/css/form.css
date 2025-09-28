@@ -14,7 +14,7 @@
 }
 
 .form-group label {
-  @apply block mb-2 text-gray-700 text-xs font-medium;
+  @apply block mb-2 text-gray-700 text-sm font-medium;
   grid-area: top;
 }
 
@@ -33,12 +33,12 @@
   border-color: var(--danger);
 }
 
-.color-picker {
-  @apply grid grid-cols-8 gap-1.5 mt-3;
+.color-selector {
+  @apply grid grid-cols-8 gap-1.5 mt-0;
 }
 
 .color-option {
-  @apply w-7 h-7 rounded-full cursor-pointer border-4 border-transparent relative justify-self-center opacity-100;
+  @apply w-7 h-7 rounded-full cursor-pointer border-0 relative justify-self-center opacity-100;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   outline-style: solid;
@@ -71,11 +71,8 @@
   z-index: 10;
 }
 
-.palette {
-  position: relative;
-  width: 128px;
-  height: 128px;
-  border-radius: 50%;
+div.palette {
+  @apply border-4;
   background: conic-gradient(
     from 0deg,
     #ff0000 0deg,
@@ -92,17 +89,14 @@
     #ff0080 330deg,
     #ff0000 360deg
   );
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
+  border-color: var(--pallete-value);
 }
 
-.palette::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 20px;
-  height: 20px;
-  background-color: var(--pallete-value);
-  pointer-events: none;
+input.palette {
+  margin: 0;
+  padding: 0;
+  width: 0;
+  height: 0;
+  border: 0;
+  outline: 0;
 }
