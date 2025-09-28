@@ -1,3 +1,5 @@
+@import 'tailwindcss';
+
 /* themes */
 :root {
   --primary: #2da191;
@@ -24,70 +26,9 @@
   --font-size-normal: 14px;
   --font-size-small: 12px;
 }
-/* Color utility classes */
-.text-primary {
-  color: var(--primary) !important;
-}
-.text-primary-highlight {
-  color: var(--primary-light) !important;
-}
-.text-primary-highlight-trans {
-  color: var(--primary-light-trans) !important;
-}
-.text-secondary {
-  color: var(--primary-dark) !important;
-}
-.text-secondary-highlight {
-  color: var(--primary-dark-light) !important;
-}
-.text-danger {
-  color: var(--danger) !important;
-}
-.text-dark {
-  color: var(--dark) !important;
-}
-.text-warning {
-  color: var(--warning) !important;
-}
-.text-light {
-  color: var(--light) !important;
-}
-.text-muted {
-  color: var(--muted) !important;
-}
-
-.bg-primary {
-  background-color: var(--primary) !important;
-}
-.bg-primary-highlight {
-  background-color: var(--primary-light) !important;
-}
-.bg-primary-highlight-trans {
-  background-color: var(--primary-light-trans) !important;
-}
-.bg-secondary {
-  background-color: var(--primary-dark) !important;
-}
-.bg-secondary-highlight {
-  background-color: var(--primary-dark-light) !important;
-}
-.bg-danger {
-  background-color: var(--danger) !important;
-}
-.bg-dark {
-  background-color: var(--dark) !important;
-}
-.bg-warning {
-  background-color: var(--warning) !important;
-}
-.bg-light {
-  background-color: var(--light) !important;
-}
-.bg-muted {
-  background-color: var(--muted) !important;
-}
 
 .btn {
+  @apply m-12;
   font-size: var(--font-size-normal);
   padding: 6px 10px;
   border-radius: 6px;
@@ -179,12 +120,4 @@
 .icon-btn:active {
   background-color: var(--light);
   opacity: 0.9;
-}
-
-.small {
-  font-size: 0.82rem;
-}
-
-.strong {
-  font-weight: 500;
 }
