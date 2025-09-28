@@ -10,7 +10,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
 
   // # body
-  const inputName = h('input', { type: 'text', id: 'workspace-name' });
+  const inputName = h('input', { id: 'workspace-name', type: 'text' });
   const randomName = btn('btn btn-primary ms-2', 'Random');
   randomName.title = 'Generate a random workspace name';
   const colorOptions = WORKSPACE_COLORS.map((color) => {

@@ -91,7 +91,7 @@ class MockBrowser {
     let isCollapsed = false;
 
     // Create checkbox input
-    const checkbox = h('input', { type: 'checkbox', checked: 'true' });
+    const checkbox = h('input', { id: 'success-switch', type: 'checkbox', checked: 'true' });
     checkbox.checked = this.shouldSucceed;
     checkbox.addEventListener('change', () => (this.shouldSucceed = checkbox.checked));
 
