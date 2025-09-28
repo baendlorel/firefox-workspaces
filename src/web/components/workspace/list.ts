@@ -83,7 +83,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
       // # register events
       item.addEventListener('click', () => bus.emit('open', workspace));
-      editBtn.addEventListener('click', () => bus.emit('edit', workspace));
+      editBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        bus.emit('edit', workspace);
+      });
       registerDragAndDrop(item);
 
       container.appendChild(item);

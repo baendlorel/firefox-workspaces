@@ -289,7 +289,7 @@ export class WorkspaceManager {
       if (allUrls.length === 0) {
         // Create window with new tab page if no URLs
         const window = await browser.windows.create({
-          url: 'about:newtab',
+          url: 'about:blank',
           type: 'normal',
         });
         workspace.windowId = window.id;

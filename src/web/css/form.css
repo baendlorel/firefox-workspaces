@@ -6,6 +6,14 @@
   margin-bottom: 15px;
 }
 
+/* .form-group::before {
+  position: absolute;
+  content: 'Name';
+  margin: 10px;
+  font-size: var(--font-size-small);
+  font-weight: 500;
+} */
+
 .form-group.form-group-with-btn {
   grid-template-areas:
     'top top'
@@ -16,9 +24,9 @@
   grid-area: top;
   display: block;
   margin-bottom: 8px;
-  font-weight: 500;
   color: #374151;
-  font-size: 14px;
+  font-size: var(--font-size-small);
+  font-weight: 500;
 }
 
 .form-group input {
@@ -43,14 +51,14 @@
 
 .color-picker {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 5px;
   margin-top: 12px;
 }
 
 .color-option {
-  width: 36px;
-  height: 36px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   cursor: pointer;
   border: 3px solid transparent;
