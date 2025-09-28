@@ -14,6 +14,7 @@ export class WorkspaceManager {
   private readonly _map = new Map<string, IndexedWorkspace>();
   private readonly _arr: IndexedWorkspace[] = [];
   private readonly _activated: string[] = []; // Track currently opened workspaces by ID
+  private readonly _deleting = new Set<string>(); // Track workspaces being deleted to avoid conflicts
 
   constructor() {
     this.init();
@@ -41,6 +42,11 @@ export class WorkspaceManager {
   // Check if a workspace is currently active
   isActive(id: string): boolean {
     return this._activated.includes(id);
+  }
+
+  // Check if a workspace is currently being deleted
+  isDeleting(id: string): boolean {
+    return this._deleting.has(id);
   }
 
   // Remove workspace from active list when window is closed
@@ -122,14 +128,38 @@ export class WorkspaceManager {
       return false;
     }
 
-    this._map.delete(id);
-    this._arr.splice(target.index, 1);
-    for (let i = target.index; i < this._arr.length; i++) {
-      this._arr[i].index = i;
-    }
+    // Mark this workspace as being deleted to avoid conflicts with window close events
+    this._deleting.add(id);
 
-    await this.save();
-    return true;
+    try {
+      // If workspace has an active window, close it before deletion
+      if (target.windowId !== undefined) {
+        try {
+          // Check if window still exists before trying to close it
+          await browser.windows.get(target.windowId);
+          await browser.windows.remove(target.windowId);
+          console.log(`Closed window ${target.windowId} for workspace: ${target.name}`);
+        } catch (error) {
+          // Window might already be closed or doesn't exist
+          console.debug(`Window ${target.windowId} was already closed or doesn't exist:`, error);
+        }
+
+        // Remove from active workspaces list
+        this.deactivate(id);
+      }
+
+      this._map.delete(id);
+      this._arr.splice(target.index, 1);
+      for (let i = target.index; i < this._arr.length; i++) {
+        this._arr[i].index = i;
+      }
+
+      await this.save();
+      return true;
+    } finally {
+      // Always remove from deleting set
+      this._deleting.delete(id);
+    }
   }
 
   get(id: string) {

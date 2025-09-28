@@ -35,6 +35,12 @@ browser.windows.onRemoved.addListener(async (windowId) => {
   if (workspace) {
     console.log(`Workspace window closed: ${workspace.name}`);
 
+    // Skip processing if this workspace is being deleted
+    if (manager.isDeleting(workspace.id)) {
+      console.log(`Workspace ${workspace.name} is being deleted, skipping window close handling`);
+      return;
+    }
+
     try {
       // ?? First save the current state of tabs before clearing window association
       await manager.updateByWindowId(workspace.id, windowId);
