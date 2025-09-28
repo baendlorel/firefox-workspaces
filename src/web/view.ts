@@ -10,7 +10,6 @@ import editor from './components/workspace/editor.js';
 import tabs from './components/workspace/tabs.js';
 import version from './components/workspace/version.js';
 
-// todo 使用tailwind css
 export function createView() {
   document.head.appendChild(h('link', { rel: 'icon', href: icon }));
 
@@ -18,10 +17,15 @@ export function createView() {
   const children = [
     // header
     header(bus),
+
     // body
     list(bus),
     emptyState(bus),
+
+    // footer
     version(),
+
+    // other components
     editor(bus),
   ];
 

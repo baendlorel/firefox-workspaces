@@ -68,7 +68,8 @@
 
 .dialog-container:focus {
   outline: none;
-  box-shadow: 0 0 8px 3px var(--primary-light-trans);
+  /* it is beautiful but we decided not to use it */
+  /* box-shadow: 0 0 8px 3px var(--primary-light-trans); */
 }
 
 /* Enhanced animation keyframes */

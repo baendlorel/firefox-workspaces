@@ -3,7 +3,6 @@ import './css/main.css';
 import './css/workspace.css';
 import './css/form.css';
 import './css/dialog.css';
-import './components/color-picker.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
