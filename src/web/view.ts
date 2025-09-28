@@ -1,6 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { $id, h } from '@/lib/dom.js';
-import icon from '@web/assets/workspace.svg';
+import { $id } from '@/lib/dom.js';
 
 // components
 import header from './main/header.js';
@@ -11,8 +10,6 @@ import tabs from './main/tabs.js';
 import version from './main/version.js';
 
 export function createView() {
-  document.head.appendChild(h('link', { rel: 'icon', href: icon }));
-
   const { bus, emit, on } = EventBus.create<WorkspaceEditorEventMap>();
   const children = [
     // header

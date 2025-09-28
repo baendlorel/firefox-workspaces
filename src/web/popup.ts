@@ -35,7 +35,7 @@ class PopupPage {
     this.main.on('delete', (workspace: Workspace) => this.delete(workspace));
 
     if (__IS_DEV__) {
-      import('./components/__mock__/toolbar.js').then(() => this.init());
+      import('./__mock__/toolbar.js').then(() => this.init());
       return;
     }
     this.init();
