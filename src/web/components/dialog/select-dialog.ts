@@ -34,6 +34,8 @@ export default async (config: {
 
   const confirmBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Confirm');
   const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
+  confirmBtn.title = 'Confirm selection';
+  cancelBtn.title = 'Cancel and close dialog';
 
   const { dialog } = createDialog(title, [msg, ul], [cancelBtn, confirmBtn]);
   dialog.bus.on('closed', () => resolve(value));

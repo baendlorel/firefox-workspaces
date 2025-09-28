@@ -45,6 +45,7 @@ export function createDialog(
 
   // # header
   const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
+  closeBtn.title = 'Close the dialog';
   closeBtn.innerHTML = closeSvg;
 
   const title = div('title', header ?? '');
@@ -93,6 +94,7 @@ export function createDialog(
   // # no footer
   if (!footer) {
     const yesBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Yes');
+    yesBtn.title = 'Yes';
     content.append(headerDiv, bodyDiv, div('dialog-footer', [yesBtn]));
     dialog.appendChild(content);
 

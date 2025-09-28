@@ -41,6 +41,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
     const btnPin = btn('btn-small', pinned ? '📌' : '📍');
     const btnRemove = btn('btn-small', '✕');
+    btnPin.title = 'Pin/Unpin this tab';
+    btnRemove.title = 'Remove from workspace';
 
     const tabItem = div(
       { class: 'tab-item', 'data-tab-id': String(tab.id), 'data-tab-url': tab.url },

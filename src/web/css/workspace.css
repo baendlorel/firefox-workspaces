@@ -7,7 +7,6 @@
 .wb-list-item {
   @apply grid gap-1.5 p-3 rounded-md items-center cursor-pointer transition-colors;
   grid-template-columns: auto 1fr auto;
-  /* margin: 5px 6px; */
   border-left: 3px solid #667eea;
   background-color: transparent;
 }
@@ -19,11 +18,6 @@
 .wb-list-item:hover {
   background-color: var(--wb-list-item-hover-bg);
 }
-
-/* .selected .wb-list-item,
-.selected.wb-list-item {
-  background-color: var(--primary-light-trans);
-} */
 
 .wb-icon {
   @apply w-5 h-5;

@@ -12,6 +12,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   // # body
   const inputName = h('input', { type: 'text', id: 'workspace-name' });
   const randomName = btn('btn btn-primary ms-2', 'Random');
+  randomName.title = 'Generate a random workspace name';
   const colorOptions = WORKSPACE_COLORS.map((color) => {
     const el = div('color-option');
     el.style.backgroundColor = color;
@@ -24,6 +25,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   });
   const colorPicker = div('color-picker', colorOptions);
   const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
+  deleteBtn.title = 'Delete this workspace';
   const body = [
     div('form-group form-group-with-btn', [
       h('label', { for: 'workspace-name' }, 'Name'),
@@ -37,6 +39,9 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   // # footer
   const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
   const saveBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Save');
+  cancelBtn.title = 'Cancel and close dialog';
+  saveBtn.title = 'Save workspace';
+
   const footer = [cancelBtn, saveBtn];
 
   // # Editor dialog
