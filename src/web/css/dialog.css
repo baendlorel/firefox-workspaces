@@ -206,6 +206,14 @@
   background-color: var(--primary-light-trans);
 }
 
+.use-element .dialog-li-option {
+  padding: 0;
+}
+
+.use-element .dialog-li-option:hover {
+  background-color: var(--light);
+}
+
 .dialog-message {
   margin-top: 0;
   margin-bottom: 22px;

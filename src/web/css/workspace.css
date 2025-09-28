@@ -6,26 +6,32 @@
   background-color: var(--light);
 }
 
-li.wb {
-  margin-bottom: 0px;
-}
-
-.wb-li {
-  display: flex;
-  gap: 10px;
-  margin: 5px 6px;
-  padding: 8px 14px;
-  border-left: 0px solid #667eea;
-  border-radius: 8px;
+.wb-list-item {
+  display: grid;
+  gap: 6px;
+  grid-template-columns: auto 1fr auto;
+  /* margin: 5px 6px; */
+  padding: 10px 12px;
+  border-left: 3px solid #667eea;
+  border-radius: 6px;
   align-items: center;
   cursor: pointer;
-  transition: background-color 0.2s;
-  background-color: var(--light);
+  transition: background-color 0.3s;
+  background-color: transparent;
 }
 
-.wb-li:hover {
-  background-color: #e9ecef;
+.wb-list-item.with-action-btns {
+  grid-template-columns: auto 1fr auto auto;
 }
+
+.wb-list-item:hover {
+  background-color: var(--wb-list-item-hover-bg);
+}
+
+/* .selected .wb-list-item,
+.selected.wb-list-item {
+  background-color: var(--primary-light-trans);
+} */
 
 .wb-icon {
   width: 21px;

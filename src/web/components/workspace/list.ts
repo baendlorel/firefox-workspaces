@@ -1,9 +1,8 @@
 import { EventBus } from 'minimal-event-bus';
 import { div, h } from '@/lib/dom.js';
-import { $escapeHtml } from '@/lib/utils.js';
-import { wbicon } from './icon.js';
 
 import editIcon from '@web/assets/3-dots.svg?raw';
+import listItem from './list-item.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'workspaces');
@@ -55,21 +54,13 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const workspace = workspaces[i];
       const isActive = activeWorkspaces.includes(workspace.id);
 
-      const totalTabs = workspace.tabs.length + workspace.pinnedTabs.length;
-      const pinnedCount = workspace.pinnedTabs.length;
-      const countText = `${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}`;
-
       // & wb means workspace-block
       const editBtn = div('icon-btn text-muted ms-auto');
       editBtn.innerHTML = editIcon;
-      const wbli = div({ class: 'wb-li', style: `border-left-color:${workspace.color}` }, [
-        wbicon(workspace.color),
-        div('wb-title', $escapeHtml(workspace.name)),
-        div('wb-count', countText),
-        div('wb-actions', [editBtn]),
-      ]);
+      const wbli = listItem(workspace, [editBtn]);
+
       // Create workspace item with potential highlight
-      const item = h('li', { class: 'wb', 'data-workspace-id': workspace.id }, [wbli]);
+      const item = h('li', { class: 'my-2', 'data-workspace-id': workspace.id }, [wbli]);
 
       // Add highlight effect for active workspaces
       if (isActive) {

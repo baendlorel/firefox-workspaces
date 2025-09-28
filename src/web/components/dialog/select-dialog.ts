@@ -19,8 +19,9 @@ export default async (config: {
 
   // # body
   const msg = h('p', 'dialog-message', message);
+  let useElement = false;
   const selection = options.map((o) => {
-    const label = typeof o.label === 'string' ? o.label : [o.label];
+    const label = typeof o.label === 'string' ? o.label : ((useElement = true), [o.label]);
     const op = h('li', 'dialog-li-option', label);
     op.onclick = () => {
       value = o.value;
@@ -29,6 +30,7 @@ export default async (config: {
     return op;
   });
   const ul = h('ul', 'dialog-ul-options', selection);
+  ul.classList.toggle('use-element', useElement);
 
   const confirmBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Confirm');
   const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
