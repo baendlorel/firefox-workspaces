@@ -1,10 +1,11 @@
 import { EventBus } from 'minimal-event-bus';
 import { Consts, RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
+import { $randInt } from '@/lib/utils.js';
 
 import { createDialog } from '../components/dialog/index.js';
 import { confirmation, danger, info } from '../components/dialog/alerts.js';
-import { $randInt } from '@/lib/utils.js';
+import colorPicker from '../components/color-picker.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
@@ -18,13 +19,13 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     el.style.backgroundColor = color;
     el.dataset.color = color;
     el.addEventListener('click', () => {
-      colorPicker.dataset.color = color;
+      inputColorPicker.dataset.color = color;
       colorOptions.forEach((c) => c.classList.toggle('selected', c === el));
     });
     return el;
   });
 
-  const colorPicker = div({ id: 'workspace-color', class: 'color-picker' }, colorOptions);
+  const inputColorPicker = div({ id: 'workspace-color', class: 'color-picker' }, colorOptions);
   const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
   deleteBtn.title = 'Delete this workspace';
   const body = [
@@ -33,8 +34,9 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName,
       randomName,
     ]),
-    div('form-group', [h('label', { for: 'workspace-color' }, 'Color'), colorPicker]),
+    div('form-group', [h('label', { for: 'workspace-color' }, 'Color'), inputColorPicker]),
     deleteBtn,
+    colorPicker({}),
   ];
 
   // # footer
@@ -64,7 +66,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     //   return;
     // }
 
-    colorPicker.dataset.color = color;
+    inputColorPicker.dataset.color = color;
     for (let i = 0; i < colorOptions.length; i++) {
       const option = colorOptions[i];
       option.classList.toggle('selected', option.dataset.color === color);
@@ -114,7 +116,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     bus.emit('save', {
       id: editingWorkspace === null ? undefined : editingWorkspace.id,
       name: inputName.value,
-      color: colorPicker.dataset.color as HexColor,
+      color: inputColorPicker.dataset.color as HexColor,
     });
 
     // close the modal
