@@ -98,3 +98,10 @@ class WorkspacesContent {
 4. 如果反复open一个已经打开的workspace，那么就切换到那个窗口
 5. 如果当前正在关闭一个浏览器窗口，且这个窗口是一个workspace关联的，则关闭的时候触发工作区保存，保存并更新当前工作区的tab和pinnedtab；
 6. 如果当前没有开启任何工作区，那么当前工作区数组为空；
+
+---
+
+改造这一段swtich，要求：
+
+1. 改为 if+return的形式
+2. 所有的satisfies改为 `const response: MessageResponseMap[typeof action]= {...}`的格式，然后return response
