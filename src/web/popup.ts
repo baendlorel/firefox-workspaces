@@ -10,7 +10,7 @@ import { Action } from '@/lib/consts.js';
 import selectDialog from './components/dialog/select-dialog.js';
 import { confirmation, danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
-import listItem from './components/workspace/list-item.js';
+import listItem from './main/list-item.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {

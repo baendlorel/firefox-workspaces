@@ -3,12 +3,12 @@ import { $id, h } from '@/lib/dom.js';
 import icon from '@web/assets/workspace.svg';
 
 // components
-import header from './components/workspace/header.js';
-import list from './components/workspace/list.js';
-import emptyState from './components/workspace/empty-state.js';
-import editor from './components/workspace/editor.js';
-import tabs from './components/workspace/tabs.js';
-import version from './components/workspace/version.js';
+import header from './main/header.js';
+import list from './main/list.js';
+import emptyState from './main/empty-state.js';
+import editor from './main/editor.js';
+import tabs from './main/tabs.js';
+import version from './main/version.js';
 
 export function createView() {
   document.head.appendChild(h('link', { rel: 'icon', href: icon }));

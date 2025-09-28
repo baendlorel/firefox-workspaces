@@ -2,8 +2,8 @@ import { EventBus } from 'minimal-event-bus';
 import { Consts, RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 
-import { createDialog } from '../dialog/index.js';
-import { confirmation, danger, info } from '../dialog/alerts.js';
+import { createDialog } from '../components/dialog/index.js';
+import { confirmation, danger, info } from '../components/dialog/alerts.js';
 import { $randInt } from '@/lib/utils.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
