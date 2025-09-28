@@ -1,14 +1,9 @@
 import { EventBus } from 'minimal-event-bus';
 import { div, h } from '@/lib/dom.js';
 import { $escapeHtml } from '@/lib/utils.js';
+import { wbicon } from './icon.js';
 
 import editIcon from '@web/assets/3-dots.svg?raw';
-
-export const entryIcon = (color: HexColor): HTMLDivElement => {
-  const el = div('wb-icon');
-  el.style.backgroundColor = color;
-  return el;
-};
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'workspaces');
@@ -68,7 +63,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const editBtn = div('icon-btn text-muted ms-auto');
       editBtn.innerHTML = editIcon;
       const wbli = div({ class: 'wb-li', style: `border-left-color:${workspace.color}` }, [
-        entryIcon(workspace.color),
+        wbicon(workspace.color),
         div('wb-title', $escapeHtml(workspace.name)),
         div('wb-count', countText),
         div('wb-actions', [editBtn]),

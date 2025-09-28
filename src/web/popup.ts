@@ -7,11 +7,11 @@ import './css/dialog.css';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
-import { div } from '@/lib/dom.js';
+import { div, span } from '@/lib/dom.js';
 
 import selectDialog from './components/dialog/select-dialog.js';
 import { confirmation, danger, info } from './components/dialog/alerts.js';
-import { entryIcon } from './components/workspace/list.js';
+import { wbicon } from './components/workspace/icon.js';
 import { createView } from './view.js';
 
 // Popup JavaScript for Workspaces Manager
@@ -221,11 +221,11 @@ class PopupPage {
 
     // Simple implementation - show a select dialog
     const options = this.workspaces.map((w) => ({
-      label: div('d-flex', [
-        entryIcon(w.color),
-        div('ms-2', w.name),
-        div('', `(${w.tabs.length + w.pinnedTabs.length} tabs)`),
-      ]), // `${w.name} (${w.tabs.length + w.pinnedTabs.length} tabs)`
+      label: div('d-grid gap-2 grid-template-columns-a1a', [
+        wbicon(w.color),
+        span('strong', w.name),
+        span('text-muted small ', `${w.tabs.length + w.pinnedTabs.length} tabs`),
+      ]),
       value: w.id,
     }));
 

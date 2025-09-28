@@ -18,7 +18,7 @@ export const $queryAll: typeof qsa = (s: string) => qsa.call(document, s);
 export const h = <T extends HTMLTag>(
   tag: T,
   className: string | Record<string, string> = '',
-  children: (HTMLElement | string)[] | string = ''
+  children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLElementTagNameMap[T] => {
   // Create element
   const el = document.createElement(tag);
@@ -58,10 +58,15 @@ export const h = <T extends HTMLTag>(
 
 export const div = (
   className: string | Record<string, string>,
-  children: (HTMLElement | string)[] | string = ''
+  children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLDivElement => h('div', className, children);
+
+export const span = (
+  className: string | Record<string, string>,
+  children: (HTMLElement | SVGElement | string)[] | string = ''
+): HTMLSpanElement => h('span', className, children);
 
 export const btn = (
   className: string | Record<string, string>,
-  children: (HTMLElement | string)[] | string = ''
+  children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLButtonElement => h('button', className, children);

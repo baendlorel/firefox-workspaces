@@ -180,3 +180,11 @@
   background-color: var(--light);
   opacity: 0.9;
 }
+
+.small {
+  font-size: 0.82rem;
+}
+
+.strong {
+  font-weight: 500;
+}

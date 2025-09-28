@@ -30,12 +30,10 @@ li.wb {
 .wb-icon {
   width: 21px;
   height: 21px;
-  -webkit-mask: url('../assets/workspace.svg') no-repeat center;
-  mask: url('../assets/workspace.svg') no-repeat center;
 }
 
 .wb-title {
-  font-weight: 600;
+  font-weight: 500;
   color: var(--dark);
 }
 
