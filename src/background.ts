@@ -193,28 +193,30 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
   }
 });
 
-type Respond = <T>(o: T) => void;
 // Handle messages from popup and content scripts
-browser.runtime.onMessage.addListener(async (message: Message, _sender, respond: Respond) => {
+browser.runtime.onMessage.addListener(async (message: MessageRequest): Promise<MessageResponse> => {
   if (!manager) {
     await init();
   }
 
+  const action = message.action;
   try {
-    switch (message.action) {
+    switch (action) {
       case Action.GetWorkspaces:
-        respond<GetWorkspacesResponse>({
+        const response: MessageResponseMap[typeof action] = {
           success: true,
           data: manager.workspaces,
           activeWorkspaces: manager.activeWorkspaces,
-        });
-        break;
+        };
+        return response;
 
       case Action.CreateWorkspaces:
         const newWorkspace = await manager.create(message.name, message.color);
-        console.log('New workspace:', newWorkspace);
-        respond<CreateWorkspacesResponse>({ success: true, data: newWorkspace });
-        break;
+        const response: MessageResponseMap[typeof action] = {
+          success: true,
+          data: newWorkspace,
+        };
+        return response;
 
       case Action.UpdateWorkspaces:
         const updated = await manager.update(message.id, message.updates);

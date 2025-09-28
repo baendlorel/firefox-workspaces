@@ -64,7 +64,7 @@ declare global {
   }
 
   // Union type for all possible requests
-  type Message =
+  type MessageRequest =
     | GetWorkspacesRequest
     | CreateWorkspacesRequest
     | UpdateWorkspacesRequest

@@ -159,7 +159,7 @@ class MockBrowser {
     alert('Created 3 random workspaces!');
   }
 
-  private createResponse(request: Message): MessageResponse {
+  private createResponse(request: MessageRequest): MessageResponse {
     if (!this.shouldSucceed) {
       return {
         success: false,
