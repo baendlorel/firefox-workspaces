@@ -109,10 +109,6 @@ class PopupPage {
 
   // Delete workspace
   async delete(workspace: Workspace) {
-    const yes = await confirmation(`Are you sure you want to delete "${workspace.name}"?`);
-    if (!yes) {
-      return;
-    }
     try {
       const response = await $send<DeleteWorkspacesRequest>({
         action: Action.DeleteWorkspaces,

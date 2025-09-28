@@ -10,7 +10,8 @@
     "storage",
     "sessions",
     "activeTab",
-    "contextMenus"
+    "contextMenus",
+    "scripting"
   ],
   "background": {
     "scripts": [

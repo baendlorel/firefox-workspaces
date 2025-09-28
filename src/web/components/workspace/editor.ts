@@ -3,7 +3,7 @@ import { Consts, RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '
 import { btn, div, h } from '@/lib/dom.js';
 
 import { createDialog } from '../dialog/index.js';
-import { confirmation, info } from '../dialog/alerts.js';
+import { confirmation, danger, info } from '../dialog/alerts.js';
 import { $randInt } from '@/lib/utils.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
@@ -75,13 +75,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       selectColor(workspace.color);
       setTitle('Edit Workspace');
       deleteBtn.style.display = 'block';
-      deleteBtn.disabled = false;
     } else {
       inputName.value = '';
       selectColor(Consts.DefaultColor);
       setTitle('New Workspace');
       deleteBtn.style.display = 'none';
-      deleteBtn.disabled = true;
     }
 
     dialog.bus.emit('show');
@@ -116,14 +114,19 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     // close the modal
     close();
   });
+
   deleteBtn.addEventListener('click', async () => {
-    const yes = await confirmation(
-      'Are you sure you want to delete this workspace?',
-      'Delete Workspace'
-    );
-    if (yes && editingWorkspace) {
-      bus.emit('delete', editingWorkspace);
+    if (!editingWorkspace) {
+      danger('No workspace selected to delete.');
+      return;
     }
+
+    const yes = await confirmation(`Are you sure you want to delete "${editingWorkspace.name}"?`);
+    if (!yes) {
+      return;
+    }
+    bus.emit('delete', editingWorkspace as Workspace);
+    close();
   });
 
   return dialog;
