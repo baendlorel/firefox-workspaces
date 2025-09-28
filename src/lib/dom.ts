@@ -23,16 +23,18 @@ export const h = <T extends HTMLTag>(
   // Create element
   const el = document.createElement(tag);
   // Set className or attributes
-  if (typeof className === 'string') {
-    el.className = className;
-  } else {
-    for (const [key, value] of Object.entries(className)) {
-      if (key === 'class') {
-        el.className = value;
-      } else if (key === 'style') {
-        el.style = value;
-      } else {
-        el.setAttribute(key, value);
+  if (className !== '') {
+    if (typeof className === 'string') {
+      el.className = className;
+    } else {
+      for (const [key, value] of Object.entries(className)) {
+        if (key === 'class') {
+          el.className = value;
+        } else if (key === 'style') {
+          el.style = value;
+        } else {
+          el.setAttribute(key, value);
+        }
       }
     }
   }

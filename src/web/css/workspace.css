@@ -1,14 +1,16 @@
 @import 'tailwindcss';
 
 .workspaces {
-  @apply m-0 p-0 bg-gray-50 max-h-96 overflow-y-auto;
+  @apply m-0 p-0 max-h-96 overflow-y-auto;
 }
 
 .wb-list-item {
-  @apply grid gap-1.5 p-3 rounded-md items-center cursor-pointer transition-colors;
+  @apply grid gap-1.5 px-2 py-3 rounded-md items-center cursor-pointer;
   grid-template-columns: auto 1fr auto;
   border-left: 3px solid #667eea;
+  border-bottom: 1px solid var(--color-slate-200);
   background-color: transparent;
+  transition: all var(--transition-duration);
 }
 
 .wb-list-item.with-action-btns {
@@ -17,6 +19,12 @@
 
 .wb-list-item:hover {
   background-color: var(--wb-list-item-hover-bg);
+}
+
+.selected .wb-list-item,
+.selected.wb-list-item,
+.wb-list-item:active {
+  background-color: var(--wb-list-item-active-bg);
 }
 
 .wb-icon {

@@ -110,7 +110,7 @@ class MockBrowser {
 
     // Create controls container for elements that can be hidden
     const controls = h('div', 'mock-browser-controls', [
-      h('label', 'mock-browser-checkbox-label', [checkbox, h('span', '', 'Success')]),
+      h('span', { class: 'mock-browser-checkbox-label' }, [checkbox, h('span', '', 'Success')]),
       clearBtn,
       createBtn,
     ]);

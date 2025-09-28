@@ -19,6 +19,10 @@
   --warning-gradient: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
   --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #dc3435 100%);
   --header-padding: 8px 14px 10px 14px;
+
+  /* Ext */
+  --transition-duration: 0.3s;
+
   /* App params */
   --app-width: 380px;
   --border-radius: 8px;
@@ -104,8 +108,8 @@
 }
 
 .icon-btn {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   padding: 5px;
   border-radius: 4px;
   background-color: transparent;

@@ -55,7 +55,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const isActive = activeWorkspaces.includes(workspace.id);
 
       // & wb means workspace-block
-      const editBtn = div('icon-btn text-muted ms-auto');
+      const editBtn = div('icon-btn text-muted ms-2');
       editBtn.innerHTML = editIcon;
       const wbli = listItem(workspace, [editBtn]);
 

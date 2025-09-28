@@ -105,3 +105,9 @@ class WorkspacesContent {
 
 1. 改为 if+return的形式
 2. 所有的satisfies改为 `const response: MessageResponseMap[typeof action]= {...}`的格式，然后return response
+
+---
+
+`InputColorPicker`
+完成这个组件，要求能够选择所有颜色，只需要支持#rrggbb即可。value可以设置，
+invalid的value会变为白色

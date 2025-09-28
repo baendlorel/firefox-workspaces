@@ -186,10 +186,15 @@
 /* & Give up some styles when using elements as options */
 .use-element .dialog-li-option {
   padding: 0;
+  border: 0;
 }
 
 .use-element .dialog-li-option:hover {
   background-color: var(--light);
+}
+
+.use-element .dialog-li-option.selected {
+  background-color: transparent;
 }
 
 .dialog-message {

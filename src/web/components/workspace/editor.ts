@@ -23,6 +23,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     });
     return el;
   });
+  const inputColorPicker = h('input', { is: 'input-color-picker' });
+  inputColorPicker.addEventListener('colorchange', (event) => {
+    console.log('Selected color:', (event as any).detail.value);
+  });
+
   const colorPicker = div('color-picker', colorOptions);
   const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
   deleteBtn.title = 'Delete this workspace';
@@ -32,7 +37,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName,
       randomName,
     ]),
-    div('form-group', [h('label', '', 'Color'), colorPicker]),
+    div('form-group', [h('label', '', 'Color'), colorPicker, inputColorPicker]),
     deleteBtn,
   ];
 
