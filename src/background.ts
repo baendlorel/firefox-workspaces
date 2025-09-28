@@ -212,6 +212,7 @@ browser.runtime.onMessage.addListener(async (message: Message, _sender, respond:
 
       case Action.CreateWorkspaces:
         const newWorkspace = await manager.create(message.name, message.color);
+        console.log('New workspace:', newWorkspace);
         respond<CreateWorkspacesResponse>({ success: true, data: newWorkspace });
         break;
 

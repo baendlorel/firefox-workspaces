@@ -38,3 +38,39 @@ export const enum Action {
   GetStats = 'GetStats',
   CheckPageInGroups = 'CheckPageInGroups',
 }
+
+// Prefix parts for randomly generated workspace names. Single-word, capitalized.
+export const RANDOM_NAME_PART1 = [
+  'Crimson',
+  'Azure',
+  'Golden',
+  'Silver',
+  'Emerald',
+  'Midnight',
+  'Silent',
+  'Hidden',
+  'Bright',
+  'Wandering',
+  'Lonely',
+  'Rapid',
+  'Calm',
+  'Bold',
+];
+
+// Suffix parts for randomly generated workspace names. Single-word, capitalized.
+export const RANDOM_NAME_PART2 = [
+  'Haven',
+  'Harbor',
+  'Oasis',
+  'Sanctum',
+  'Vault',
+  'Garden',
+  'Grove',
+  'Pier',
+  'Station',
+  'Portal',
+  'Hub',
+  'Forge',
+  'Nexus',
+  'Realm',
+];

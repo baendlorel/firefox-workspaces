@@ -1,15 +1,17 @@
 import { EventBus } from 'minimal-event-bus';
-import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
+import { Consts, RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 
 import { createDialog } from '../dialog/index.js';
 import { confirmation, info } from '../dialog/alerts.js';
+import { $randInt } from '@/lib/utils.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
 
   // # body
   const inputName = h('input', { type: 'text', id: 'workspace-name' });
+  const randomName = btn('btn btn-primary ms-2', 'Random');
   const colorOptions = WORKSPACE_COLORS.map((color) => {
     const el = div('color-option');
     el.style.backgroundColor = color;
@@ -23,7 +25,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const colorPicker = div('color-picker', colorOptions);
   const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
   const body = [
-    div('form-group', [h('label', { for: 'workspace-name' }, 'Name'), inputName]),
+    div('form-group form-group-with-btn', [
+      h('label', { for: 'workspace-name' }, 'Name'),
+      inputName,
+      randomName,
+    ]),
     div('form-group', [h('label', '', 'Color'), colorPicker]),
     deleteBtn,
   ];
@@ -33,6 +39,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const saveBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Save');
   const footer = [cancelBtn, saveBtn];
 
+  // # Editor dialog
   const { dialog, closeBtn, setTitle } = createDialog('Workspace', body, footer);
   dialog.backdropClosable = true;
   dialog.escClosable = true;
@@ -82,6 +89,12 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   });
 
   bus.on('close-editor', close);
+
+  randomName.addEventListener('click', () => {
+    const part1 = RANDOM_NAME_PART1[$randInt(RANDOM_NAME_PART1.length)];
+    const part2 = RANDOM_NAME_PART2[$randInt(RANDOM_NAME_PART2.length)];
+    inputName.value = `${part1} ${part2}`;
+  });
 
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);

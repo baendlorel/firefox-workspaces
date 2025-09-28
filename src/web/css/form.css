@@ -1,8 +1,19 @@
 .form-group {
+  display: grid;
+  grid-template-areas:
+    'top'
+    '1fr';
   margin-bottom: 15px;
 }
 
+.form-group .form-group-with-btn {
+  grid-template-areas:
+    'top top'
+    '1fr auto';
+}
+
 .form-group label {
+  grid-area: top;
   display: block;
   margin-bottom: 8px;
   font-weight: 500;

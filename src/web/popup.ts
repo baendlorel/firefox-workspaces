@@ -38,9 +38,9 @@ class PopupPage {
 
     if (__IS_DEV__) {
       import('./components/__mock__/toolbar.js').then(() => this.init());
-    } else {
-      this.init();
+      return;
     }
+    this.init();
   }
 
   // Initialize popup
