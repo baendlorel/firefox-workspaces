@@ -113,10 +113,11 @@ li.wb {
   padding: 20px 24px 24px;
 }
 
-.empty-state {
+.empty-state,
+.version {
   text-align: center;
   padding: 40px 20px;
-  color: #666;
+  color: var(--secondary-light);
 }
 
 .empty-state-icon {

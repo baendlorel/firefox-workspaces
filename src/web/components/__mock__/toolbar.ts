@@ -9,9 +9,13 @@ class MockBrowser {
   private storageKey = 'mock_workspaces_data';
 
   constructor() {
-    globalThis.browser = this.createProxy() as typeof browser;
-    this.createToolbar();
-    console.log('MockBrowser init');
+    if (browser === undefined) {
+      globalThis.browser = this.createProxy() as typeof browser;
+      this.createToolbar();
+      console.log('MockBrowser init');
+    } else {
+      console.log('No need for MockBrowser');
+    }
   }
 
   private getStoredWorkspaces(): Workspace[] {

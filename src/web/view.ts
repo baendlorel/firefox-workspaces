@@ -1,3 +1,4 @@
+import { EventBus } from 'minimal-event-bus';
 import { $id, h } from '@/lib/dom.js';
 import icon from '@web/assets/workspace.svg';
 
@@ -7,7 +8,7 @@ import list from './components/workspace/list.js';
 import emptyState from './components/workspace/empty-state.js';
 import editor from './components/workspace/editor.js';
 import tabs from './components/workspace/tabs.js';
-import { EventBus } from 'minimal-event-bus';
+import version from './components/workspace/version.js';
 
 export function createView() {
   document.head.appendChild(h('link', { rel: 'icon', href: icon }));
@@ -19,6 +20,7 @@ export function createView() {
     // body
     list(bus),
     emptyState(bus),
+    version(),
     editor(bus),
   ];
 

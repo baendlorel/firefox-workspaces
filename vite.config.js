@@ -11,6 +11,7 @@ import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
 const tsconfig = './tsconfig.build.json';
 
 export default defineConfig({
+  base: './',
   plugins: [
     typescript({ tsconfig }),
     funcMacro(),

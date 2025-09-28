@@ -17,13 +17,14 @@ function formatDateFull(dt = new Date()) {
   return `${y}.${m}.${d} ${hh}:${mm}:${ss}.${ms}`;
 }
 
+const __DATE_TIME__ = formatDateFull();
 const __KEBAB_NAME__ = pkg.name.replace('rollup-plugin-', '');
 const __NAME__ = __KEBAB_NAME__.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
 
 const __PKG_INFO__ = `## About
  * @package ${__NAME__}
  * @author ${pkg.author.name} <${pkg.author.email}>
- * @version ${pkg.version} (Last Update: ${formatDateFull()})
+ * @version ${pkg.version} (Last Update: ${__DATE_TIME__})
  * @license ${pkg.license}
  * @link ${pkg.repository.url}
  * @link https://baendlorel.github.io/ Welcome to my site!
@@ -41,6 +42,7 @@ export const replaceOpts = {
     __KEBAB_NAME__,
     __PKG_INFO__,
     __VERSION__: pkg.version,
+    __DATE_TIME__,
     // __OPTS__: `Rollup${__NAME__}Options`,
     // __STRICT_OPTS__: `Rollup${__NAME__}StrictOptions`,
   },
