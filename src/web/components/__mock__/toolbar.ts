@@ -404,7 +404,7 @@ class MockBrowser {
         return {
           success: false,
           error: `Unknown action: ${action}`,
-        } as UnknownActionResponse;
+        } as ErrorResponse;
     }
   }
 

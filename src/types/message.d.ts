@@ -134,7 +134,7 @@ declare global {
     groups: Workspace[];
   }
 
-  interface UnknownActionResponse {
+  interface ErrorResponse {
     success: false;
     error: string;
   }
@@ -152,7 +152,7 @@ declare global {
     | MoveTabResponse
     | GetStatsResponse
     | CheckPageInGroupsResponse
-    | UnknownActionResponse;
+    | ErrorResponse;
 
   interface MessageResponseMap {
     [Action.GetWorkspaces]: GetWorkspacesResponse;

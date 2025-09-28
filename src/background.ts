@@ -203,56 +203,56 @@ browser.runtime.onMessage.addListener(async (message: MessageRequest): Promise<M
   try {
     switch (action) {
       case Action.GetWorkspaces:
-        const response: MessageResponseMap[typeof action] = {
+        return {
           success: true,
           data: manager.workspaces,
           activeWorkspaces: manager.activeWorkspaces,
-        };
-        return response;
+        } satisfies MessageResponseMap[typeof action];
 
       case Action.CreateWorkspaces:
         const newWorkspace = await manager.create(message.name, message.color);
-        const response: MessageResponseMap[typeof action] = {
+        return {
           success: true,
           data: newWorkspace,
-        };
-        return response;
-
+        } satisfies MessageResponseMap[typeof action];
       case Action.UpdateWorkspaces:
         const updated = await manager.update(message.id, message.updates);
-        respond<UpdateWorkspacesResponse>({ success: updated !== null, data: updated });
-        break;
+        return {
+          success: updated !== null,
+          data: updated,
+        } satisfies MessageResponseMap[typeof action];
 
       case Action.DeleteWorkspaces:
         const deleted = await manager.delete(message.id);
-        respond<DeleteWorkspacesResponse>({ success: deleted });
-        break;
+        return { success: deleted } satisfies MessageResponseMap[typeof action];
 
       case Action.AddCurrentTab:
         const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
 
         if (currentTab[0]) {
           const added = await manager.addTab(message.workspaceId, currentTab[0], message.pinned);
-          respond<AddCurrentTabResponse>({ success: added });
+          return { success: added } satisfies MessageResponseMap[typeof action];
         } else {
-          respond<AddCurrentTabResponse>({ success: false, error: 'No active tab found' });
+          return {
+            success: false,
+            error: 'No active tab found',
+          } satisfies MessageResponseMap[typeof action];
         }
-        break;
 
       case Action.RemoveTab:
         const removed = await manager.removeTab(message.workspaceId, message.tabId);
-        respond<RemoveTabResponse>({ success: removed });
-        break;
+        return { success: removed } satisfies MessageResponseMap[typeof action];
 
       case Action.TogglePin:
         const pinToggled = await manager.toggleTabPin(message.workspaceId, message.tabId);
-        respond<TogglePinResponse>({ success: pinToggled });
-        break;
+        return { success: pinToggled } satisfies MessageResponseMap[typeof action];
 
       case Action.OpenWorkspaces:
         const window = await manager.open(message.workspaceId);
-        respond<OpenWorkspacesResponse>({ success: window !== null, data: window });
-        break;
+        return {
+          success: window !== null,
+          data: window,
+        } satisfies MessageResponseMap[typeof action];
 
       case Action.MoveTab:
         const moved = await manager.moveTabBetweenWorkspaces(
@@ -260,13 +260,11 @@ browser.runtime.onMessage.addListener(async (message: MessageRequest): Promise<M
           message.toWorkspaceId,
           message.tabId
         );
-        respond<MoveTabResponse>({ success: moved });
-        break;
+        return { success: moved } satisfies MessageResponseMap[typeof action];
 
       case Action.GetStats:
         const stats = manager.getStats(message.workspaceId);
-        respond<GetStatsResponse>({ success: stats !== null, data: stats });
-        break;
+        return { success: stats !== null, data: stats } satisfies MessageResponseMap[typeof action];
 
       case Action.CheckPageInGroups:
         const matched = manager.workspaces.filter((workspace) => {
@@ -282,18 +280,18 @@ browser.runtime.onMessage.addListener(async (message: MessageRequest): Promise<M
           }
           return false;
         });
-        respond<CheckPageInGroupsResponse>({ success: true, groups: matched });
-        break;
+        return { success: true, groups: matched } satisfies MessageResponseMap[typeof action];
 
       default:
-        respond<UnknownActionResponse>({ success: false, error: 'Unknown action' });
+        return {
+          success: false,
+          error: 'Unknown action: ' + action,
+        } satisfies ErrorResponse;
     }
   } catch (error) {
     console.error('[__NAME__: __func__] Error handling message:', error);
-    respond({ success: false });
+    return { success: false, error: 'Error handling message.' } satisfies ErrorResponse;
   }
-
-  return true; // Keep message channel open for async response
 });
 
 // Context menu setup
