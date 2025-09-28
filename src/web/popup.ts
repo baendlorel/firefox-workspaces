@@ -96,6 +96,7 @@ class PopupPage {
         this.main.emit('close-editor');
       } else {
         info('Failed to save workspace, Please try again.');
+        console.log('[__NAME__: __func__] Save workspace failed:', typeof response, response);
       }
     } catch (error) {
       console.error('[__NAME__: __func__] Error saving workspace:', error);

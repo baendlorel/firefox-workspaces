@@ -9,7 +9,7 @@ class MockBrowser {
   private storageKey = 'mock_workspaces_data';
 
   constructor() {
-    if (browser === undefined) {
+    if (typeof browser === 'undefined') {
       globalThis.browser = this.createProxy() as typeof browser;
       this.createToolbar();
       console.log('MockBrowser init');
