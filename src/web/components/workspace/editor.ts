@@ -3,7 +3,7 @@ import { Consts, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 
 import { createDialog } from '../dialog/index.js';
-import { confirmation } from '../dialog/alerts.js';
+import { confirmation, info } from '../dialog/alerts.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
@@ -89,7 +89,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     // validate
     const name = inputName.value.trim();
     if (!name) {
-      alert('Please enter a group name');
+      info('Please enter a group name');
       return;
     }
 

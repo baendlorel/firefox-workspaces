@@ -4,16 +4,15 @@ import './css/grid.css';
 import './css/workspace.css';
 import './css/form.css';
 import './css/dialog.css';
-import './components/__mock__/toolbar.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
 import { div } from '@/lib/dom.js';
 
 import selectDialog from './components/dialog/select-dialog.js';
-import { createView } from './view.js';
 import { confirmation, danger, info } from './components/dialog/alerts.js';
 import { entryIcon } from './components/workspace/list.js';
+import { createView } from './view.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -37,7 +36,11 @@ class PopupPage {
     this.main.on('save', (formData: WorkspaceFormData) => this.save(formData));
     this.main.on('delete', (workspace: Workspace) => this.delete(workspace));
 
-    this.init();
+    if (__IS_DEV__) {
+      import('./components/__mock__/toolbar.js').then(() => this.init());
+    } else {
+      this.init();
+    }
   }
 
   // Initialize popup

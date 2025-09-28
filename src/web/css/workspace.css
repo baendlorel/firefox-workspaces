@@ -120,11 +120,13 @@ li.wb {
 }
 
 .version {
-  margin-right: 10px;
+  position: absolute;
+  right: 10px;
+  bottom: 5px;
   padding: 5px 0;
   text-align: right;
+  font-size: var(--font-size-small);
   color: var(--secondary-light);
-  font-size: 12px;
 }
 .version p {
   margin: 2px 0px;

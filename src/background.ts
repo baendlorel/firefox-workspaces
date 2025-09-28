@@ -64,6 +64,7 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
   }
 });
 
+// todo 此处可能不需要这样
 // Periodically save workspace states for active windows
 setInterval(async () => {
   if (!manager) {
@@ -101,11 +102,6 @@ browser.runtime.onSuspend.addListener(async () => {
     console.log('Saving workspace sessions before browser shutdown');
     await manager.saveActiveSessions();
   }
-});
-
-// Handle browser startup
-browser.runtime.onStartup.addListener(async () => {
-  await init();
 });
 
 // Save workspace sessions periodically and on important events
@@ -324,6 +320,3 @@ async function backgroundOnClickListener(info: browser.contextMenus.OnClickData)
 }
 
 browser.contextMenus.onClicked.addListener(backgroundOnClickListener);
-
-// Initialize immediately
-init();
