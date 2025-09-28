@@ -11,7 +11,7 @@ import { Action } from '@/lib/consts.js';
 import { div } from '@/lib/dom.js';
 
 import selectDialog from './components/dialog/select-dialog.js';
-import { createMainPage } from './main.js';
+import { createView } from './view.js';
 import { confirmation, danger, info } from './components/dialog/alerts.js';
 import { entryIcon } from './components/workspace/list.js';
 
@@ -19,10 +19,10 @@ import { entryIcon } from './components/workspace/list.js';
 class PopupPage {
   private readonly workspaces: Workspace[] = [];
   private readonly activeWorkspaces: string[] = []; // Track active workspace IDs
-  private main: ReturnType<typeof createMainPage>;
+  private main: ReturnType<typeof createView>;
 
   constructor() {
-    this.main = createMainPage();
+    this.main = createView();
 
     // tabs
     this.main.on('add-current-tab', () => this.showAddTabMenu());

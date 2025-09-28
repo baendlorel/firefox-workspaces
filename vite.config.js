@@ -22,14 +22,14 @@ export default defineConfig({
     }),
   ],
   server: {
-    open: 'src/web/index.html',
+    open: 'index.html',
   },
   build: {
     outDir: 'dist',
     minify: false,
     rollupOptions: {
       input: {
-        index: resolve('src/web/index.html'),
+        index: resolve('index.html'),
         background: resolve('src/background.ts'),
         content: resolve('src/content.ts'),
         popup: resolve('src/web/popup.ts'),

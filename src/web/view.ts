@@ -9,7 +9,7 @@ import editor from './components/workspace/editor.js';
 import tabs from './components/workspace/tabs.js';
 import { EventBus } from 'minimal-event-bus';
 
-export function createMainPage() {
+export function createView() {
   document.head.appendChild(h('link', { rel: 'icon', href: icon }));
 
   const { bus, emit, on } = EventBus.create<WorkspaceEditorEventMap>();
