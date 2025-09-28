@@ -206,6 +206,7 @@
   background-color: var(--primary-light-trans);
 }
 
+/* & Give up some styles when using elements as options */
 .use-element .dialog-li-option {
   padding: 0;
 }
