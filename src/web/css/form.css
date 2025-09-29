@@ -107,9 +107,11 @@ input.palette {
   top: -20px;
   width: 210px;
   height: 180px;
-  grid-template-areas: 'top top top' '1fr auto auto';
+  grid-template-areas:
+    'indicator indicator indicator'
+    'picker alpha hue';
   grid-template-rows: auto 1fr;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr auto auto;
 
   box-shadow:
     0 32px 64px -12px rgba(0, 0, 0, 0.25),
@@ -124,7 +126,7 @@ input.palette {
 
 input.palette-indicator {
   @apply text-center rounded-sm border-0;
-  grid-area: top;
+  grid-area: indicator;
   height: 30px;
 }
 
@@ -133,17 +135,22 @@ input.palette-indicator:focus {
 }
 
 .palette-picker {
-  @apply rounded-sm;
+  @apply rounded-sm relative;
+  grid-area: picker;
+  background: linear-gradient(to bottom, transparent, black), linear-gradient(to right, white, red);
+  cursor: crosshair;
 }
 
 .palette-alpha {
-  @apply rounded-sm;
+  @apply rounded-sm relative;
+  grid-area: alpha;
   width: 24px;
-  background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+  cursor: ns-resize;
 }
 
 .palette-hue {
-  @apply rounded-sm;
+  @apply rounded-sm relative;
+  grid-area: hue;
   width: 24px;
   background: linear-gradient(
     to bottom,
@@ -161,4 +168,37 @@ input.palette-indicator:focus {
     #ff0080 91.67%,
     #ff0000 100%
   );
+  cursor: ns-resize;
+}
+
+/* Indicators for color picker */
+.picker-indicator {
+  @apply absolute rounded-full bg-white border-2 border-gray-800;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.palette-container[data-visible='true'] .picker-indicator {
+  opacity: 1;
+}
+
+.alpha-indicator,
+.hue-indicator {
+  @apply absolute w-full h-1 bg-white border-1 border-gray-800;
+  margin-top: -2px;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.palette-container[data-visible='true'] .alpha-indicator,
+.palette-container[data-visible='true'] .hue-indicator {
+  opacity: 1;
 }
