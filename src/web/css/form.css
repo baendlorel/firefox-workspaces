@@ -38,7 +38,7 @@
 }
 
 .color-option {
-  @apply w-7 h-7 rounded-full cursor-pointer border-0 relative justify-self-center opacity-100;
+  @apply w-7 h-7 rounded-full cursor-pointer border-0 justify-self-center opacity-100;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   outline-style: solid;
@@ -72,7 +72,7 @@
 }
 
 div.palette {
-  @apply border-4;
+  @apply relative border-4;
   background: conic-gradient(
     from 0deg,
     #ff0000 0deg,
@@ -89,7 +89,7 @@ div.palette {
     #ff0080 330deg,
     #ff0000 360deg
   );
-  border-color: var(--pallete-value);
+  border-color: var(--palette-value);
 }
 
 input.palette {
@@ -99,4 +99,61 @@ input.palette {
   height: 0;
   border: 0;
   outline: 0;
+}
+
+.palette-container {
+  @apply absolute grid gap-1.5 overflow-hidden bg-slate-100 rounded-lg border-1 border-gray-300;
+  width: 210px;
+  height: 160px;
+  grid-template-areas: 'top top top' '1fr auto auto';
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr;
+
+  box-shadow:
+    0 32px 64px -12px rgba(0, 0, 0, 0.25),
+    0 25px 35px -8px rgba(0, 0, 0, 0.15),
+    0 10px 15px -5px rgba(0, 0, 0, 0.1);
+  transform: scale(0.8) translateY(-30px) rotateX(10deg);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  overflow: hidden;
+  z-index: 10;
+}
+
+.palette-indicator {
+  grid-area: top;
+  height: 30px;
+  background-color: var(--palette-value);
+}
+
+.palette-picker {
+  @apply rounded-sm;
+  background-color: var(--palette-picker);
+}
+
+.palette-alpha {
+  @apply rounded-sm;
+  width: 24px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.palette-hue {
+  @apply rounded-sm;
+  width: 24px;
+  background: linear-gradient(
+    to bottom,
+    #ff0000 0%,
+    #ff8000 8.33%,
+    #ffff00 16.67%,
+    #80ff00 25%,
+    #00ff00 33.33%,
+    #00ff80 41.67%,
+    #00ffff 50%,
+    #0080ff 58.33%,
+    #0000ff 66.67%,
+    #8000ff 75%,
+    #ff00ff 83.33%,
+    #ff0080 91.67%,
+    #ff0000 100%
+  );
 }

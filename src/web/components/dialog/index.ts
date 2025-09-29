@@ -1,6 +1,7 @@
 import { EventBus } from 'minimal-event-bus';
 import { h, div, btn } from '@/lib/dom.js';
 import closeSvg from '@web/assets/close.svg?raw';
+import { popIn, popOut } from '../pop/index.js';
 
 export function createDialog(header: HTMLPart | undefined, body: HTMLPart): Dialog;
 export function createDialog(
@@ -57,35 +58,23 @@ export function createDialog(
   const bodyDiv = div('dialog-body', bodyInner);
 
   // # controller
-  const show = () => {
-    // Remove any existing animation classes
-    dialog.classList.remove('animate-in', 'animate-out');
+  const show = popIn(
+    dialog,
+    () => {
+      if (header === undefined) {
+        headerDiv.remove();
+      }
 
-    if (header === undefined) {
-      headerDiv.remove();
-    }
+      dialog.showModal();
+    },
+    () => bus.emit('shown')
+  );
 
-    dialog.showModal();
-
-    // Add entrance animation
-    requestAnimationFrame(() => dialog.classList.add('animate-in'));
-
-    setTimeout(() => bus.emit('shown'), 250);
-  };
-
-  const close = () => {
-    // Add exit animation
-    dialog.classList.remove('animate-in');
-    dialog.classList.add('animate-out');
-
-    // Close after animation completes
-    setTimeout(() => {
-      dialog.close();
-      dialog.classList.remove('animate-out');
-      bus.emit('closed');
-      bus.emit('confirmed');
-    }, 250); // Match the animation duration
-  };
+  const close = popOut(dialog, undefined, () => {
+    dialog.close();
+    bus.emit('closed');
+    bus.emit('confirmed');
+  });
 
   closeBtn.addEventListener('click', close);
   bus.on('close', close);

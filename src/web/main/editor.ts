@@ -16,6 +16,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     { class: 'btn btn-primary ms-2', title: 'Generate a random name' },
     'Random'
   );
+  const colorSelectorLabel = h('label', { for: 'workspace-color' }, 'Color');
   const colorSelector = colorPicker('workspace-color');
 
   const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
@@ -26,7 +27,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName,
       randomNameBtn,
     ]),
-    div('form-group', [h('label', { for: 'workspace-color' }, 'Color'), colorSelector]),
+    div('form-group', [colorSelectorLabel, colorSelector]),
     deleteBtn,
   ];
 
@@ -78,6 +79,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     const part2 = RANDOM_NAME_PART2[$randInt(RANDOM_NAME_PART2.length)];
     inputName.value = `${part1} ${part2}`;
   });
+  colorSelectorLabel.addEventListener('click', (e) => e.preventDefault());
 
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
