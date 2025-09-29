@@ -15,7 +15,7 @@
 }
 
 .dialog-header .title {
-  @apply m-0 font-semibold;
+  @apply m-0 font-medium text-shadow-lg;
   font-size: var(--font-size-big);
 }
 
@@ -103,9 +103,9 @@
 }
 
 .dialog-close-btn {
-  @apply p-0 bg-transparent border-none cursor-pointer;
+  @apply me-1 p-0 bg-transparent border-none cursor-pointer;
   --dialog-close-btn-size: 12px;
-  --dialog-close-btn-color: #aee4d780;
+  --dialog-close-btn-color: #aee4d7a9;
   --dialog-close-btn-hover: #b7ffedb4;
   width: var(--dialog-close-btn-size);
   height: var(--dialog-close-btn-size);

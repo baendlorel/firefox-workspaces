@@ -16,6 +16,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     { class: 'btn btn-primary ms-2', title: 'Generate a random name' },
     'Random'
   );
+  // fixme 选中的颜色和实际添加的颜色不一样
   const colorSelectorLabel = h('label', { for: 'workspace-color' }, 'Color');
   const colorSelector = colorPicker('workspace-color');
 
@@ -45,14 +46,12 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   dialog.escClosable = true;
 
   // # define handlers
-
   const close = () => {
     dialog.bus.emit('close');
     dialog.bus.on('closed', () => (editingWorkspace = null));
   };
 
   // # register events
-
   bus.on('edit', (workspace: Workspace | null = null) => {
     editingWorkspace = workspace;
 

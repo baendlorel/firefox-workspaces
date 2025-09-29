@@ -15,15 +15,22 @@ body {
 }
 
 .header {
-  @apply grid gap-2.5 px-5 py-2.5;
+  @apply relative grid gap-2.5 px-5 py-2.5;
   grid-template-columns: 1fr auto auto;
-  background: var(--primary-gradient);
   color: var(--light);
+  background-color: var(--primary);
+}
+
+.header::after {
+  @apply absolute;
+  width: 100%;
+  height: 100%;
+  background: var(--primary-gradient);
+  pointer-events: none;
 }
 
 .header h2 {
-  @apply m-0;
-  font-size: var(--font-size-big);
+  @apply mt-0.5 font-medium text-shadow-lg;
 }
 
 .sr-only {

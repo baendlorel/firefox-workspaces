@@ -66,7 +66,7 @@ declare global {
   interface WindowFocusChangedNotification {
     action: Action.WindowFocusChanged;
     windowId: number;
-    workspaceName?: string;
+    workspace: Workspace;
   }
 
   // Union type for all possible requests

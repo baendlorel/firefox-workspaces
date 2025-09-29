@@ -77,16 +77,18 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
   const notification: WindowFocusChangedNotification = {
     action: Action.WindowFocusChanged,
     windowId,
-    workspaceName: workspace.name,
+    workspace,
   };
 
   // Send message to all extension pages (popup, options, etc.)
-  const views = browser.extension.getViews({ type: 'popup' });
-  for (const view of views) {
-    if (view.popup && typeof view.popup.handleWindowFocusChanged === 'function') {
-      view.popup.handleWindowFocusChanged(notification);
+  browser.extension.getViews({ type: 'popup' }).some((view) => {
+    const handler = view.popup?.onWindowFocusChanged;
+    if (typeof handler !== 'function') {
+      return false;
     }
-  }
+    handler.call(view.popup, notification);
+    return true;
+  });
 });
 
 // todo 此处可能不需要这样

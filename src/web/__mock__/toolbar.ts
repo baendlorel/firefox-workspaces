@@ -104,6 +104,14 @@ class MockBrowser {
     createBtn.title = 'Create 3 random workspaces with random tabs';
     createBtn.addEventListener('click', () => this.createRandomWorkspaces());
 
+    const setCurrentBtn = h(
+      'button',
+      'mock-browser-btn mock-browser-btn--set-current',
+      'Set Current'
+    );
+    setCurrentBtn.title = 'Create a fake workspace and trigger set-current event';
+    setCurrentBtn.addEventListener('click', () => this.triggerSetCurrent());
+
     // Create toggle button (replaces close button)
     const toggleBtn = h('button', 'mock-browser-btn mock-browser-btn--toggle', '−');
     toggleBtn.title = 'Toggle toolbar collapse/expand';
@@ -116,6 +124,7 @@ class MockBrowser {
       ]),
       clearBtn,
       createBtn,
+      setCurrentBtn,
     ]);
 
     // Create toolbar
@@ -163,6 +172,49 @@ class MockBrowser {
     this.saveWorkspaces(workspaces);
     console.log('Created 3 random workspaces');
     alert('Created 3 random workspaces!');
+  }
+
+  private triggerSetCurrent(): void {
+    // Create a fake workspace
+    const fakeWorkspace: Workspace = {
+      id: `fake-workspace-${Date.now()}`,
+      name: `Fake Workspace ${new Date().toLocaleTimeString()}`,
+      color: WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)],
+      tabs: [
+        {
+          id: 1,
+          title: 'Fake Tab 1',
+          url: 'https://example.com',
+          favIconUrl: 'https://example.com/favicon.ico',
+          addedAt: Date.now(),
+        },
+        {
+          id: 2,
+          title: 'Fake Tab 2',
+          url: 'https://github.com',
+          favIconUrl: 'https://github.com/favicon.ico',
+          addedAt: Date.now(),
+        },
+      ],
+      pinnedTabs: [],
+      createdAt: Date.now(),
+      lastOpened: Date.now(),
+      windowId: 999, // Fake window ID
+    };
+
+    // Trigger set-current event through the global popup instance
+    if (window.popup) {
+      window.popup.onWindowFocusChanged({
+        workspace: fakeWorkspace,
+        windowId: NaN,
+        action: Action.WindowFocusChanged,
+      });
+      console.log('Triggered set-current event with fake workspace:', fakeWorkspace);
+      alert(`Set current workspace to: ${fakeWorkspace.name}`);
+    } else {
+      console.error('Popup instance not found on window object');
+      alert('Error: Could not access popup instance');
+    }
   }
 
   private createResponse(request: MessageRequest): MessageResponse {

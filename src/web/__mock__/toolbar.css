@@ -54,6 +54,14 @@
   background: #218838;
 }
 
+.mock-browser-btn--set-current {
+  background: #fd7e14;
+}
+
+.mock-browser-btn--set-current:hover {
+  background: #e8650d;
+}
+
 .mock-browser-btn--close {
   background: #dc3545;
 }

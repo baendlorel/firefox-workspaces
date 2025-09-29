@@ -54,20 +54,26 @@ class PopupPage {
 
   // Check if current window belongs to a workspace and update header
   async checkCurrentWindow() {
-    try {
-      const currentWindow = await browser.windows.getCurrent();
-      const currentWorkspace = this.workspaces.find((w) => w.windowId === currentWindow.id);
-      if (currentWorkspace) {
-        this.main.emit('set-header-title', currentWorkspace.name);
-      }
-    } catch (error) {
+    const currentWindow = await browser.windows.getCurrent().catch((error) => {
       console.error('[__NAME__: __func__] Failed to check current window:', error);
+      return null;
+    });
+    if (currentWindow === null) {
+      return;
     }
+
+    this.workspaces.some((workspace) => {
+      if (workspace.windowId !== currentWindow.id) {
+        return false;
+      }
+      this.main.emit('set-current', workspace);
+      return true;
+    });
   }
 
   // Handle window focus change notification from background
-  handleWindowFocusChanged(notification: WindowFocusChangedNotification) {
-    this.main.emit('set-header-title', notification.workspaceName);
+  onWindowFocusChanged(notification: WindowFocusChangedNotification) {
+    this.main.emit('set-current', notification.workspace);
   }
 
   render() {
