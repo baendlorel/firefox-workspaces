@@ -4,7 +4,7 @@ import { popIn, popOut } from './pop/index.js';
 
 type HTMLColorSelectorElement = HTMLDivElement & { value: HexColor };
 
-const realPicker = () => {
+const realPicker = (onChange: (color: HexColor) => void) => {
   const indicator = h('input', 'palette-indicator');
   const picker = div('palette-picker');
   const alpha = div('palette-alpha');
@@ -19,7 +19,7 @@ const realPicker = () => {
   alpha.appendChild(alphaIndicator);
   hue.appendChild(hueIndicator);
 
-  const container = div({ class: 'palette-container', style: 'display:none' }, [
+  const el = div({ class: 'palette-container', style: 'display:none' }, [
     indicator,
     picker,
     alpha,
@@ -101,9 +101,10 @@ const realPicker = () => {
     const color = rgbaToHex(r, g, b, currentAlpha);
 
     indicator.value = color.toUpperCase();
-    indicator.style.backgroundColor = rgbToHex(r, g, b);
+    indicator.style.backgroundColor = color;
     indicator.style.color = getTextColor(rgbToHex(r, g, b));
-    indicator.style.opacity = currentAlpha.toString();
+
+    onChange(color as HexColor);
 
     // Update alpha background based on current color
     updateAlphaBackground();
@@ -130,6 +131,55 @@ const realPicker = () => {
     }
   };
 
+  const updateWithRGBA = (value: string) => {
+    // Parse hex color
+    const hex = value.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16) / 255;
+    const g = parseInt(hex.substring(2, 4), 16) / 255;
+    const b = parseInt(hex.substring(4, 6), 16) / 255;
+    const a = hex.length > 6 ? parseInt(hex.substring(6, 8), 16) / 255 : 1;
+
+    // Convert RGB to HSV
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+
+    // Hue
+    let h = 0;
+    if (delta !== 0) {
+      if (max === r) {
+        h = 60 * (((g - b) / delta) % 6);
+      } else if (max === g) {
+        h = 60 * ((b - r) / delta + 2);
+      } else {
+        h = 60 * ((r - g) / delta + 4);
+      }
+    }
+    if (h < 0) {
+      h += 360;
+    }
+
+    // Saturation
+    const s = max === 0 ? 0 : delta / max;
+
+    // Value
+    const v = max;
+
+    currentHue = h;
+    currentSaturation = s;
+    currentValue = v;
+    currentAlpha = a;
+
+    requestAnimationFrame(() => {
+      // & When inputing '007acc' and last letter is alphabet, it will appear 2 of them at a press
+      // & To avoid this we justify it in the next frame
+      indicator.value = value;
+    });
+
+    updatePickerBackground();
+    updateIndicator();
+  };
+
   // Initialize picker background
   updatePickerBackground();
   updateAlphaBackground();
@@ -138,8 +188,8 @@ const realPicker = () => {
   const observer = new MutationObserver((mutations) =>
     mutations.forEach((mutation) => {
       if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
-        const isVisible = container.style.display !== 'none';
-        container.dataset.visible = isVisible.toString();
+        const isVisible = el.style.display !== 'none';
+        el.dataset.visible = isVisible.toString();
         if (isVisible) {
           // Delay to ensure DOM is ready
           setTimeout(updateIndicator, 50);
@@ -148,13 +198,15 @@ const realPicker = () => {
     })
   );
 
-  observer.observe(container, { attributes: true, attributeFilter: ['style'] });
+  observer.observe(el, { attributes: true, attributeFilter: ['style'] });
 
   let isDragging = false;
   let currentTarget: HTMLElement | null = null;
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (!isDragging || !currentTarget) return;
+    if (!isDragging || !currentTarget) {
+      return;
+    }
 
     const rect = currentTarget.getBoundingClientRect();
     const x = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
@@ -199,58 +251,25 @@ const realPicker = () => {
 
   // Allow direct editing of indicator input
   indicator.addEventListener('input', (e) => {
-    const value = (e.target as HTMLInputElement).value;
+    const value = indicator.value;
     if (/^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(value)) {
-      // Parse hex color
-      const hex = value.replace('#', '');
-      const r = parseInt(hex.substring(0, 2), 16) / 255;
-      const g = parseInt(hex.substring(2, 4), 16) / 255;
-      const b = parseInt(hex.substring(4, 6), 16) / 255;
-      const a = hex.length > 6 ? parseInt(hex.substring(6, 8), 16) / 255 : 1;
-
-      // Convert RGB to HSV
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      const delta = max - min;
-
-      // Hue
-      let h = 0;
-      if (delta !== 0) {
-        if (max === r) h = 60 * (((g - b) / delta) % 6);
-        else if (max === g) h = 60 * ((b - r) / delta + 2);
-        else h = 60 * ((r - g) / delta + 4);
-      }
-      if (h < 0) h += 360;
-
-      // Saturation
-      const s = max === 0 ? 0 : delta / max;
-
-      // Value
-      const v = max;
-
-      currentHue = h;
-      currentSaturation = s;
-      currentValue = v;
-      currentAlpha = a;
-
-      updatePickerBackground();
-      updateIndicator();
+      updateWithRGBA(value);
     }
   });
 
   // Initialize
   updateIndicator();
 
-  return { container, indicator, picker, alpha, hue };
+  Object.defineProperty(el, 'value', {
+    get: () => indicator.value as HexColor,
+    set: updateWithRGBA,
+  });
+
+  return { el, getter: () => indicator.value, setter: updateWithRGBA };
 };
 
 export default (): HTMLColorSelectorElement => {
-  // Create the main circular color picker
-  const inputColor = h('input', { type: 'color', class: 'palette' });
-  const { container: picker, indicator } = realPicker();
-  const palette = div('color-option palette', [inputColor]);
-  palette.style.setProperty('--palette-value', '#ffffff');
-
+  const palette = div('color-option palette');
   const colorOptions: HTMLElement[] = WORKSPACE_COLORS.map((color) => {
     const el = div('color-option');
     el.style.backgroundColor = color;
@@ -262,43 +281,44 @@ export default (): HTMLColorSelectorElement => {
     return el;
   });
 
-  const el = div('color-selector', [palette, ...colorOptions, picker]);
+  const setOutlineColor = (color: HexColor) => {
+    colorOptions.forEach((c) => c.classList.remove('selected'));
+    palette.style.setProperty('--palette-value', color);
+  };
+
+  // Create the main circular color picker
+  const picker = realPicker(setOutlineColor);
+  palette.style.setProperty('--palette-value', '#ffffff');
+  const el = div('color-selector', [palette, ...colorOptions, picker.el]);
 
   // # register events
 
   const pick = (color: HexColor) => {
-    colorOptions.forEach((c) => c.classList.remove('selected'));
-    inputColor.value = color;
-    palette.style.setProperty('--palette-value', color);
-    indicator.value = color.toUpperCase();
-    indicator.style.backgroundColor = color;
-    indicator.style.color = getTextColor(color);
+    setOutlineColor(color);
+    picker.setter(color);
   };
 
   const close = (e: PointerEvent) => {
     const node = e.target as Node;
     console.log('closePicker', node);
     e.stopPropagation();
-    if (palette.contains(node) || picker.contains(node)) {
+    if (palette.contains(node) || picker.el.contains(node)) {
       return;
     }
     closePicker();
   };
-  const closePicker = popOut(picker, undefined, () => (picker.style.display = 'none'));
+  const closePicker = popOut(picker.el, undefined, () => (picker.el.style.display = 'none'));
 
   document.removeEventListener('click', close);
   document.addEventListener('click', close);
   palette.addEventListener(
     'click',
-    popIn(picker, () => (picker.style.display = 'grid'))
+    popIn(picker.el, () => (picker.el.style.display = 'grid'))
   );
-  inputColor.addEventListener('input', () => pick(inputColor.value as HexColor));
 
   Object.defineProperty(el, 'value', {
-    get() {
-      return inputColor.value;
-    },
-    set: pick,
+    get: picker.getter,
+    set: picker.setter,
   });
 
   return el as HTMLColorSelectorElement;
