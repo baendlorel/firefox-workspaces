@@ -329,28 +329,21 @@ export class WorkspaceManager {
       }
 
       // Create new window with first URL
-      const window = await browser.windows.create({
-        url: allUrls[0],
-        type: 'normal',
-      });
+      const window = await browser.windows
+        .create({
+          url: allUrls[0],
+          type: 'normal',
+        })
+        .catch((e) => {
+          console.error('[__NAME__: __func__] Failed to create window:', e);
+          return browser.windows.create({
+            url: 'about:blank',
+            type: 'normal',
+          });
+        });
 
       // Wait a moment for window to be ready
       await $sleep(500);
-
-      // ?? 新增的设置标签页颜色
-      // Set window title to include workspace name
-      if (window.id) {
-        try {
-          // Get the first tab to update its title
-          const tabs = await browser.tabs.query({ windowId: window.id });
-          if (tabs.length > 0 && tabs[0].id) {
-            // We'll inject a script to modify the document title
-            await this.injectWorkspaceIdentifier(window.id, workspace.name, workspace.color);
-          }
-        } catch (error) {
-          console.error('[__NAME__: __func__] Failed to set workspace identifier:', error);
-        }
-      }
 
       // Open remaining URLs as tabs
       const createdTabs: { tab: browser.tabs.Tab; pinned: boolean }[] = [];
@@ -364,18 +357,6 @@ export class WorkspaceManager {
           // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
           const shouldPin = i < pinnedUrls.length;
           createdTabs.push({ tab, pinned: shouldPin });
-
-          // ?? 新增的设置标签页颜色
-          // Apply workspace identifier to each new tab
-          if (tab.id) {
-            await $sleep(200); // Small delay to ensure tab is ready
-            await this.injectWorkspaceIdentifier(
-              window.id,
-              workspace.name,
-              workspace.color,
-              tab.id
-            );
-          }
         } catch (error) {
           console.error(`Failed to create tab for URL: ${allUrls[i]}`, error);
         }
@@ -569,102 +550,6 @@ export class WorkspaceManager {
       console.error('[__NAME__: __func__] Failed to import data:', error);
       return false;
     }
-  }
-
-  // ?? 新增的设置标签页颜色
-  // Inject workspace visual identifier into tabs
-  private async injectWorkspaceIdentifier(
-    windowId: number | undefined,
-    workspaceName: string,
-    workspaceColor: HexColor,
-    tabId?: number
-  ) {
-    if (!windowId) return;
-
-    try {
-      // Create the code to inject with dynamic values
-      // todo 这里可能要改成function定义而非字符串;
-      const injectionCode = `
-        (function() {
-          const workspaceName = '${workspaceName.replace(/'/g, "\\'")}';
-          const workspaceColor = '${workspaceColor}';
-          
-          // Remove existing workspace identifier if it exists
-          const existingIdentifier = document.getElementById('workspace-identifier');
-          if (existingIdentifier) {
-            existingIdentifier.remove();
-          }
-
-          // Create workspace identifier bar
-          const workspaceBar = document.createElement('div');
-          workspaceBar.id = 'workspace-identifier';
-          workspaceBar.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; height: 4px; background-color: ' + workspaceColor + '; z-index: 2147483647; box-shadow: 0 1px 3px rgba(0,0,0,0.2); pointer-events: none;';
-          document.documentElement.appendChild(workspaceBar);
-
-          // Update document title to include workspace name
-          const originalTitle = document.title;
-          const prefix = '[' + workspaceName + '] ';
-          if (!originalTitle.startsWith(prefix)) {
-            document.title = prefix + originalTitle;
-          }
-        })();
-      `;
-
-      if (tabId) {
-        // Inject into specific tab
-        try {
-          // Try to use the newer scripting API first
-          if (typeof browser.scripting !== 'undefined' && browser.scripting.executeScript) {
-            await (browser.scripting.executeScript as any)({
-              target: { tabId },
-              code: injectionCode,
-            });
-          } else {
-            // Fallback to older API
-            await (browser.tabs as any).executeScript(tabId, {
-              code: injectionCode,
-            });
-          }
-        } catch (error) {
-          console.debug('Could not inject workspace identifier into tab:', tabId);
-        }
-      } else {
-        // Inject into all tabs in the window
-        const tabs = await browser.tabs.query({ windowId });
-        for (const tab of tabs) {
-          if (tab.id) {
-            try {
-              if (typeof browser.scripting !== 'undefined' && browser.scripting.executeScript) {
-                await (browser.scripting.executeScript as any)({
-                  target: { tabId: tab.id },
-                  code: injectionCode,
-                });
-              } else {
-                await (browser.tabs as any).executeScript(tab.id, {
-                  code: injectionCode,
-                });
-              }
-            } catch (error) {
-              console.debug('Could not inject workspace identifier into tab:', tab.url);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Failed to inject workspace identifier:', error);
-    }
-  }
-
-  // ?? 新增的设置标签页颜色
-  // Public method to apply workspace identifier to a specific tab
-  async applyWorkspaceIdentifier(windowId: number, tabId?: number) {
-    const workspace = this.getByWindowId(windowId);
-    if (!workspace) {
-      return false;
-    }
-
-    await this.injectWorkspaceIdentifier(windowId, workspace.name, workspace.color, tabId);
-    return true;
   }
 }
 

@@ -1,5 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { Consts, RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
+import { Consts, RANDOM_NAME_PART1, RANDOM_NAME_PART2 } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
 

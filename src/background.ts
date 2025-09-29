@@ -145,27 +145,6 @@ browser.tabs.onCreated.addListener(async (tab) => {
     alert('[__NAME__: __func__] Tab created without windowId. ' + JSON.stringify(tab));
     return;
   }
-
-  // Check if tab was created in a workspace window
-  const workspace = manager.getByWindowId(tab.windowId);
-  if (workspace) {
-    console.log(`New tab created in workspace: ${workspace.name}`);
-
-    // ?? 新增的设置标签页颜色
-    // Apply workspace color identifier to the new tab
-    if (tab.id) {
-      // Add a small delay to ensure the tab is ready for script injection
-      setTimeout(async () => {
-        try {
-          await manager.applyWorkspaceIdentifier(tab.windowId!, tab.id);
-        } catch (error) {
-          console.debug('Failed to apply workspace identifier to new tab:', error);
-        }
-      }, 1000);
-    }
-
-    // The tab will be saved when the window is closed or manually updated
-  }
 });
 
 browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
@@ -208,18 +187,6 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
       const updated = updateTab(workspace.tabs) || updateTab(workspace.pinnedTabs);
       if (updated) {
         await manager.save();
-      }
-
-      // ?? 新增的设置标签页颜色
-      // If URL changed, reapply workspace identifier (navigation may have cleared it)
-      if (changeInfo.url && browserTab.status === 'complete') {
-        setTimeout(async () => {
-          try {
-            await manager.applyWorkspaceIdentifier(browserTab.windowId!, tabId);
-          } catch (error) {
-            console.debug('Failed to reapply workspace identifier after navigation:', error);
-          }
-        }, 500);
       }
     }
   }

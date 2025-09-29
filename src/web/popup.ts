@@ -229,13 +229,11 @@ class PopupPage {
     });
 
     if (selected !== null) {
-      const pinned = await confirmation('Pin this tab in the group?');
-
       try {
         const response = await $send<AddCurrentTabRequest>({
           action: Action.AddCurrentTab,
           workspaceId: selected,
-          pinned,
+          pinned: false,
         });
 
         if (response.success) {
