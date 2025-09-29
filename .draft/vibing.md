@@ -146,3 +146,11 @@ invalid的value会变为白色
 3. 含有public的属性r,g,b,a
 4. 编写多个转换方法，可以直接转换为#rrggbb、#rrggbbaa；
 5. 编写adjust-brightness方法，可以调整亮度，入参是一个-1~1的数字，负数表示变暗，正数表示变亮
+
+---
+
+完成这个函数，要求：
+
+1. 加载图片public/icon-128.png
+2. 用canvas把图片染成传入的颜色
+3. 把染色后的图片转换为 new ImageData(data: ImageDataArray, sw: number, sh?: number); 并返回。

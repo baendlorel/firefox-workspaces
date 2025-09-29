@@ -14,27 +14,24 @@ export default (id: string): HTMLColorSelectorElement => {
     const el = div('color-option');
     el.style.backgroundColor = color;
     el.dataset.color = color;
-    el.addEventListener('click', () => {
-      pick(color);
-      el.classList.add('selected');
-    });
+    el.addEventListener('click', () => pick(color));
     return el;
   });
 
-  const setOutlineColor = (color: HexColor) => {
-    colorOptions.forEach((c) => c.classList.remove('selected'));
+  const setSelection = (color: HexColor) => {
+    colorOptions.forEach((c) => c.classList.toggle('selected', color === c.dataset.color));
     palette.style.setProperty('--palette-value', color);
   };
 
   // Create the main circular color picker
-  const picker = createPicker(id, setOutlineColor);
+  const picker = createPicker(id, setSelection);
   palette.style.setProperty('--palette-value', '#ffffff');
   const el = div('color-selector', [palette, ...colorOptions, picker.el]);
 
   // # register events
 
   const pick = (color: HexColor) => {
-    setOutlineColor(color);
+    setSelection(color);
     picker.setter(color);
   };
 
@@ -57,7 +54,7 @@ export default (id: string): HTMLColorSelectorElement => {
 
   Object.defineProperty(el, 'value', {
     get: picker.getter,
-    set: picker.setter,
+    set: pick,
   });
 
   return el as HTMLColorSelectorElement;

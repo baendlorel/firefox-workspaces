@@ -1,5 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { Consts, RANDOM_NAME_PART1, RANDOM_NAME_PART2 } from '@/lib/consts.js';
+import { RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
 
@@ -61,9 +61,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       deleteBtn.style.display = 'block';
     } else {
       inputName.value = '';
-      colorSelector.value = Consts.DefaultColor;
       setTitle('New Workspace');
       deleteBtn.style.display = 'none';
+      // randomly pick a color
+      colorSelector.value = WORKSPACE_COLORS[$randInt(WORKSPACE_COLORS.length)];
     }
 
     dialog.bus.emit('show');

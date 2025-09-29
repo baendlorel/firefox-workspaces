@@ -1,4 +1,5 @@
 import { Action } from './lib/consts.js';
+import { loadIcon } from './lib/icon-loader.js';
 import { $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
@@ -60,6 +61,10 @@ browser.windows.onRemoved.addListener(async (windowId) => {
 
 // Track window focus changes to update workspace states
 browser.windows.onFocusChanged.addListener(async (windowId) => {
+  // todo 最终要应用到切换窗口的时候，配合badge显示工作区开头俩字母
+  const icon = await loadIcon('#ff0000');
+  browser.action.setIcon({ imageData: icon });
+
   if (!manager || windowId === browser.windows.WINDOW_ID_NONE) {
     return;
   }
