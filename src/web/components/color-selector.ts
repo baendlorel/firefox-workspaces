@@ -1,15 +1,16 @@
 import { WORKSPACE_COLORS } from '@/lib/consts.js';
-import { div, h } from '@/lib/dom.js';
+import { div, getTextColor, h } from '@/lib/dom.js';
+import { popIn, popOut } from './pop/index.js';
 
 type HTMLColorSelectorElement = HTMLDivElement & { value: HexColor };
 
 const realPicker = () => {
-  const indicator = div('palette-indicator');
+  const indicator = h('input', 'palette-indicator');
   const picker = div('palette-picker');
   const alpha = div('palette-alpha');
   const hue = div('palette-hue');
 
-  const el = div({ class: 'palette-container', style: 'display:none' }, [
+  const container = div({ class: 'palette-container', style: 'display:none' }, [
     indicator,
     picker,
     alpha,
@@ -26,13 +27,13 @@ const realPicker = () => {
     document.removeEventListener('mousemove', mousemove);
   };
 
-  return el;
+  return { container, indicator, picker, alpha, hue };
 };
 
-export default (id: string): HTMLColorSelectorElement => {
+export default (): HTMLColorSelectorElement => {
   // Create the main circular color picker
-  const inputColor = h('input', { id, type: 'color', class: 'palette' });
-  const picker = realPicker();
+  const inputColor = h('input', { type: 'color', class: 'palette' });
+  const { container: picker, indicator } = realPicker();
   const palette = div('color-option palette', [inputColor]);
   palette.style.setProperty('--palette-value', '#ffffff');
 
@@ -50,34 +51,40 @@ export default (id: string): HTMLColorSelectorElement => {
   const el = div('color-selector', [palette, ...colorOptions, picker]);
 
   // # register events
+
   const pick = (color: HexColor) => {
     colorOptions.forEach((c) => c.classList.remove('selected'));
     inputColor.value = color;
     palette.style.setProperty('--palette-value', color);
+    indicator.value = color.toUpperCase();
+    indicator.style.backgroundColor = color;
+    indicator.style.color = getTextColor(color);
   };
-  const closePicker = (e: PointerEvent) => {
+
+  const close = (e: PointerEvent) => {
     const node = e.target as Node;
     console.log('closePicker', node);
     e.stopPropagation();
     if (palette.contains(node) || picker.contains(node)) {
       return;
     }
-    picker.style.display = 'none';
+    closePicker();
   };
+  const closePicker = popOut(picker, undefined, () => (picker.style.display = 'none'));
 
-  document.removeEventListener('click', closePicker);
-  document.addEventListener('click', closePicker);
-  palette.addEventListener('click', () => (picker.style.display = 'block'));
+  document.removeEventListener('click', close);
+  document.addEventListener('click', close);
+  palette.addEventListener(
+    'click',
+    popIn(picker, () => (picker.style.display = 'grid'))
+  );
   inputColor.addEventListener('input', () => pick(inputColor.value as HexColor));
 
   Object.defineProperty(el, 'value', {
     get() {
       return inputColor.value;
     },
-    set(color: HexColor) {
-      console.log('sss', color);
-      pick(color);
-    },
+    set: pick,
   });
 
   return el as HTMLColorSelectorElement;

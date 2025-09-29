@@ -34,7 +34,7 @@
 }
 
 .color-selector {
-  @apply grid grid-cols-8 gap-1.5 mt-0;
+  @apply relative grid grid-cols-8 gap-1.5 mt-0;
 }
 
 .color-option {
@@ -102,9 +102,11 @@ input.palette {
 }
 
 .palette-container {
-  @apply absolute grid gap-1.5 overflow-hidden bg-slate-100 rounded-lg border-1 border-gray-300;
+  @apply absolute grid gap-2 p-2 overflow-hidden bg-neutral-800 rounded-lg border-1 border-gray-300;
+  left: 30px;
+  top: -20px;
   width: 210px;
-  height: 160px;
+  height: 180px;
   grid-template-areas: 'top top top' '1fr auto auto';
   grid-template-rows: auto 1fr;
   grid-template-columns: 1fr;
@@ -120,15 +122,18 @@ input.palette {
   z-index: 10;
 }
 
-.palette-indicator {
+input.palette-indicator {
+  @apply text-center rounded-sm border-0;
   grid-area: top;
   height: 30px;
-  background-color: var(--palette-value);
+}
+
+input.palette-indicator:focus {
+  @apply outline-0;
 }
 
 .palette-picker {
   @apply rounded-sm;
-  background-color: var(--palette-picker);
 }
 
 .palette-alpha {
