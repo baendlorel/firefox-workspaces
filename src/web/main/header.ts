@@ -12,7 +12,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
   const title = h('h2', 'title', 'Workspace');
 
-  bus.on('set-header-title', (newTitle) => (title.textContent = newTitle));
+  bus.on('set-header-title', (newTitle) => (title.textContent = newTitle ?? 'Workspace'));
 
   return div('header', [title, newWorkspace, addCurrentTab]);
 };

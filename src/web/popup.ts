@@ -47,6 +47,27 @@ class PopupPage {
   async init() {
     await this.load();
     this.render();
+
+    // Check current window on initialization
+    await this.checkCurrentWindow();
+  }
+
+  // Check if current window belongs to a workspace and update header
+  async checkCurrentWindow() {
+    try {
+      const currentWindow = await browser.windows.getCurrent();
+      const currentWorkspace = this.workspaces.find((w) => w.windowId === currentWindow.id);
+      if (currentWorkspace) {
+        this.main.emit('set-header-title', currentWorkspace.name);
+      }
+    } catch (error) {
+      console.error('[__NAME__: __func__] Failed to check current window:', error);
+    }
+  }
+
+  // Handle window focus change notification from background
+  handleWindowFocusChanged(notification: WindowFocusChangedNotification) {
+    this.main.emit('set-header-title', notification.workspaceName);
   }
 
   render() {
@@ -62,14 +83,6 @@ class PopupPage {
         this.workspaces.length = 0;
         this.workspaces.push(...loaded);
 
-        loaded.some((w) => {
-          console.log('curwindow', browser.windows.WINDOW_ID_CURRENT, 'wsid:' + w.id, w.windowId);
-          if (w.windowId === browser.windows.WINDOW_ID_CURRENT) {
-            this.main.emit('set-header-title', w.name);
-            return true;
-          }
-          return false;
-        });
         // Update active workspaces
         this.activeWorkspaces.length = 0;
         if (response.activeWorkspaces) {

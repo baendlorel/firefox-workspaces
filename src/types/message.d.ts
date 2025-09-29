@@ -63,6 +63,12 @@ declare global {
     url: string;
   }
 
+  interface WindowFocusChangedNotification {
+    action: Action.WindowFocusChanged;
+    windowId: number;
+    workspaceName?: string;
+  }
+
   // Union type for all possible requests
   type MessageRequest =
     | GetWorkspacesRequest

@@ -37,6 +37,7 @@ export const enum Action {
   MoveTab = 'MoveTab',
   GetStats = 'GetStats',
   CheckPageInGroups = 'CheckPageInGroups',
+  WindowFocusChanged = 'WindowFocusChanged',
 }
 
 // Prefix parts for randomly generated workspace names. Single-word, capitalized.

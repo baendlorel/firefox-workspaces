@@ -65,10 +65,27 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
   }
 
   const workspace = manager.getByWindowId(windowId);
-  if (workspace) {
-    // Update workspace's last accessed time
-    workspace.lastOpened = Date.now();
-    await manager.save();
+  if (!workspace) {
+    return;
+  }
+
+  // Update workspace's last accessed time
+  workspace.lastOpened = Date.now();
+  await manager.save();
+
+  // Notify all popup windows about the focus change
+  const notification: WindowFocusChangedNotification = {
+    action: Action.WindowFocusChanged,
+    windowId,
+    workspaceName: workspace.name,
+  };
+
+  // Send message to all extension pages (popup, options, etc.)
+  const views = browser.extension.getViews({ type: 'popup' });
+  for (const view of views) {
+    if (view.popup && typeof view.popup.handleWindowFocusChanged === 'function') {
+      view.popup.handleWindowFocusChanged(notification);
+    }
   }
 });
 

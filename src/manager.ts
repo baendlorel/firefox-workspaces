@@ -24,7 +24,7 @@ export class WorkspaceManager {
   async init() {
     try {
       await this.load();
-      console.log('__NAME__ initialized');
+      console.log('__NAME__ initialized. Updated at __DATE_TIME__');
     } catch (error) {
       console.error('[__NAME__: __func__] Failed to initialize __NAME__:', error);
     }
@@ -335,7 +335,7 @@ export class WorkspaceManager {
           type: 'normal',
         })
         .catch((e) => {
-          console.error('[__NAME__: __func__] Failed to create window:', e);
+          console.warn('[__NAME__: __func__] Fallback to about:blank because', e);
           return browser.windows.create({
             url: 'about:blank',
             type: 'normal',
