@@ -1,5 +1,5 @@
+import { Color } from '@/lib/color.js';
 import { h, div, getTextColor } from '@/lib/dom.js';
-import { hsvToRgb, rgbToHex, rgbaToHex, hexToRgba } from './utils.js';
 
 export const createPicker = (id: string, onChange: (color: HexColor) => void) => {
   const indicator = h('input', { id, class: 'palette-indicator' });
@@ -31,35 +31,32 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
 
   // Update picker background based on current hue
   const updatePickerBackground = () => {
-    const [r, g, b] = hsvToRgb(currentHue, 1, 1);
-    const hueColor = rgbToHex(r, g, b);
+    const color = Color.create(currentHue, 1, 1);
     // Create the correct gradient: white to hue horizontally, transparent to black vertically
     picker.style.background = `
       linear-gradient(to bottom, transparent, black),
-      linear-gradient(to right, white, ${hueColor})
+      linear-gradient(to right, white, ${color.toHex()})
     `;
   };
 
   // Update alpha background based on current color
   const updateAlphaBackground = () => {
-    const [r, g, b] = hsvToRgb(currentHue, currentSaturation, currentValue);
-    const color = rgbToHex(r, g, b);
+    const color = Color.create(currentHue, currentSaturation, currentValue);
     alpha.style.background = `
-      linear-gradient(to bottom, ${color} 0%, transparent 100%),
+      linear-gradient(to bottom, ${color.toHex()} 0%, transparent 100%),
       repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 8px 8px
     `;
   };
 
   // Update indicator color and position indicators
   const updateIndicator = () => {
-    const [r, g, b] = hsvToRgb(currentHue, currentSaturation, currentValue);
-    const color = rgbaToHex(r, g, b, currentAlpha);
+    const color = Color.create(currentHue, currentSaturation, currentValue, currentAlpha);
+    const hexa = color.toHexWithAlpha();
+    indicator.value = hexa;
+    indicator.style.backgroundColor = hexa;
+    indicator.style.color = color.brightness > 128 ? 'var(--dark)' : 'var(--light)';
 
-    indicator.value = color.toUpperCase();
-    indicator.style.backgroundColor = color;
-    indicator.style.color = getTextColor(rgbToHex(r, g, b));
-
-    onChange(color as HexColor);
+    onChange(hexa);
 
     // Update alpha background based on current color
     updateAlphaBackground();
@@ -88,33 +85,8 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
 
   const updateWithRgba = (value: string) => {
     // Parse hex color
-    const [r, g, b, a] = hexToRgba(value);
-
-    // Convert RGB to HSV
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    const delta = max - min;
-
-    // Hue
-    let h = 0;
-    if (delta !== 0) {
-      if (max === r) {
-        h = 60 * (((g - b) / delta) % 6);
-      } else if (max === g) {
-        h = 60 * ((b - r) / delta + 2);
-      } else {
-        h = 60 * ((r - g) / delta + 4);
-      }
-    }
-    if (h < 0) {
-      h += 360;
-    }
-
-    // Saturation
-    const s = max === 0 ? 0 : delta / max;
-
-    // Value
-    const v = max;
+    const color = Color.from(value);
+    const { h, s, v, a } = color.toHsv();
 
     currentHue = h;
     currentSaturation = s;

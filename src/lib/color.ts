@@ -37,25 +37,58 @@ export class Color {
     return new Color(r, g, b, a);
   }
 
+  get brightness(): number {
+    return (this.r * 299 + this.g * 587 + this.b * 114) / 1000;
+  }
+
+  toHsv(): { h: number; s: number; v: number; a: number } {
+    const r = this.r / 255;
+    const g = this.g / 255;
+    const b = this.b / 255;
+
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const delta = max - min;
+
+    let h = 0;
+    if (delta !== 0) {
+      if (max === r) {
+        h = 60 * (((g - b) / delta) % 6);
+      } else if (max === g) {
+        h = 60 * ((b - r) / delta + 2);
+      } else {
+        h = 60 * ((r - g) / delta + 4);
+      }
+    }
+    if (h < 0) {
+      h += 360;
+    }
+
+    const s = max === 0 ? 0 : delta / max;
+    const v = max;
+
+    return { h, s, v, a: this.a };
+  }
+
   /**
    * Convert to hex string without alpha (#rrggbb)
    * @returns Hex color string
    */
-  toHex(): string {
-    return Color.rgbToHex(Math.round(this.r), Math.round(this.g), Math.round(this.b));
+  toHex(): HexColor {
+    return Color.rgbToHex(Math.round(this.r), Math.round(this.g), Math.round(this.b)) as HexColor;
   }
 
   /**
    * Convert to hex string with alpha (#rrggbbaa)
    * @returns Hex color string with alpha
    */
-  toHexWithAlpha(): string {
+  toHexWithAlpha(): HexColor {
     return Color.rgbaToHex(
       Math.round(this.r),
       Math.round(this.g),
       Math.round(this.b),
       this.a / 255
-    );
+    ) as HexColor;
   }
 
   /**

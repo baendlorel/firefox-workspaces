@@ -15,10 +15,10 @@
   --warning: #ffc107;
   --light: #f8f9fa;
   --muted: #737b84;
-  --darken-gradient: linear-gradient(135deg, #ffffff00 0%, #0000005c 100%);
-  --primary-gradient: linear-gradient(135deg, #3dc7a5 0%, #0d546a 100%);
-  --warning-gradient: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-  --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #dc3435 100%);
+  --darken-gradient: linear-gradient(160deg, #ffffff00 0%, #0000005c 100%);
+  --primary-gradient: linear-gradient(160deg, #3dc7a5 0%, #0d546a 100%);
+  --warning-gradient: linear-gradient(160deg, #ffc107 0%, #ff9800 100%);
+  --danger-gradient: linear-gradient(160deg, #ff6b6b 0%, #dc3435 100%);
 
   /* Ext */
   --transition-duration: 0.3s;
