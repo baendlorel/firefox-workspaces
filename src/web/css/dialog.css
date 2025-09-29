@@ -14,11 +14,6 @@
   background: var(--danger-gradient);
 }
 
-.dialog-header .title {
-  @apply m-0 font-medium text-shadow-lg;
-  font-size: var(--font-size-big);
-}
-
 .dialog-body {
   padding: 16px 20px 12px 20px;
 }

@@ -49,7 +49,7 @@ export function createDialog(
   closeBtn.title = 'Close the dialog';
   closeBtn.innerHTML = closeSvg;
 
-  const title = div('title', header ?? '');
+  const title = h('h2', 'header-title', header ?? '');
   const headerInner = typeof header === 'string' ? [title, closeBtn] : (header ?? '');
   const headerDiv = div('dialog-header', headerInner);
 

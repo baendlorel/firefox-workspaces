@@ -10,7 +10,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   newWorkspace.addEventListener('click', () => bus.emit('edit', null));
   addCurrentTab.addEventListener('click', () => bus.emit('add-current-tab'));
 
-  const title = h('h2', 'title', 'Workspace');
+  const title = h('h2', 'header-title', 'Workspace');
+  // fixme .header::after的渐变不生效
   const header = div('header', [title, newWorkspace, addCurrentTab]);
   bus.on('set-current', (workspace) => {
     if (!workspace) {

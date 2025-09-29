@@ -72,6 +72,7 @@
 }
 
 .btn-trans {
+  @apply text-shadow-lg/10;
   background: #ffffff1c;
 }
 
