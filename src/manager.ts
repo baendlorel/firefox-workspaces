@@ -1,3 +1,4 @@
+import { Color } from './lib/color.js';
 import { Consts } from './lib/consts.js';
 import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 
@@ -277,6 +278,14 @@ export class WorkspaceManager {
     return false;
   }
 
+  setBadge(workspace: Workspace, windowId?: number) {
+    browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
+    browser.action.setBadgeText({ text: workspace.name.slice(0, 2), windowId });
+    const color = Color.from(workspace.color);
+    const textColor = color.brightness < 128 ? '#F8F9FA' : '#212729';
+    browser.action.setBadgeTextColor({ color: textColor, windowId });
+  }
+
   // Open workspace in new window
   async open(id: string): Promise<{ id?: number } | null> {
     const workspace = this._map.get(id);
@@ -322,6 +331,7 @@ export class WorkspaceManager {
           url: 'about:blank',
           type: 'normal',
         });
+        this.setBadge(workspace, window.id);
         workspace.windowId = window.id;
         workspace.lastOpened = Date.now();
         await this.save();
@@ -341,6 +351,7 @@ export class WorkspaceManager {
             type: 'normal',
           });
         });
+      this.setBadge(workspace, window.id);
 
       // Wait a moment for window to be ready
       await $sleep(500);

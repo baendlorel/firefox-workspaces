@@ -61,10 +61,6 @@ browser.windows.onRemoved.addListener(async (windowId) => {
 
 // Track window focus changes to update workspace states
 browser.windows.onFocusChanged.addListener(async (windowId) => {
-  // todo 最终要应用到切换窗口的时候，配合badge显示工作区开头俩字母
-  const icon = await loadIcon('#ff0000');
-  browser.action.setIcon({ imageData: icon });
-
   if (!manager || windowId === browser.windows.WINDOW_ID_NONE) {
     return;
   }
@@ -77,6 +73,13 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
   // Update workspace's last accessed time
   workspace.lastOpened = Date.now();
   await manager.save();
+
+  // & Already do this on creating the window
+  // const icon = await loadIcon(workspace.color);
+  // browser.action.setIcon({ imageData: icon });
+  // browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
+  // browser.action.setBadgeText({ text: workspace.name.slice(0, 2), windowId });
+  // browser.action.setBadgeTextColor({ color: 'white', windowId });
 
   // Notify all popup windows about the focus change
   const notification: WindowFocusChangedNotification = {

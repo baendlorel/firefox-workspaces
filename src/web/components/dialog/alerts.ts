@@ -1,7 +1,6 @@
 import { btn } from '@/lib/dom.js';
 import { createDialog } from './index.js';
 
-// GOAL Add to example of kt.js
 export const info = (message: string, title: string = 'Information') => {
   return new Promise<void>((resolve) => {
     const dialog = createDialog(title, message).dialog;
