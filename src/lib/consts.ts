@@ -75,3 +75,5 @@ export const RANDOM_NAME_PART2 = [
   'Nexus',
   'Realm',
 ];
+
+export const SYM_REJECT = Symbol('reject');

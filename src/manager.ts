@@ -1,6 +1,7 @@
 import { Color } from './lib/color.js';
-import { Consts } from './lib/consts.js';
-import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
+import { Consts, SYM_REJECT } from './lib/consts.js';
+import { $aboutBlank } from './lib/ext-apis.js';
+import { $createTabInfo, $genId, $sleep, onrejected } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -80,15 +81,12 @@ export class WorkspaceManager {
     }
   }
 
-  async save() {
+  /**
+   * Safe, will not throw an error
+   */
+  save() {
     const data: WorkspaceStoredData = { list: this._arr };
-    try {
-      await browser.storage.local.set(data);
-    } catch (error) {
-      console.error('[__NAME__: __func__] Failed to save workspaces:', error);
-      return false;
-    }
-    return true;
+    return browser.storage.local.set(data).catch(onrejected('Saving failed'));
   }
 
   async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
@@ -132,35 +130,26 @@ export class WorkspaceManager {
     // Mark this workspace as being deleted to avoid conflicts with window close events
     this._deleting.add(id);
 
-    try {
-      // If workspace has an active window, close it before deletion
-      if (target.windowId !== undefined) {
-        try {
-          // Check if window still exists before trying to close it
-          await browser.windows.get(target.windowId);
-          await browser.windows.remove(target.windowId);
-          console.log(`Closed window ${target.windowId} for workspace: ${target.name}`);
-        } catch (error) {
-          // Window might already be closed or doesn't exist
-          console.debug(`Window ${target.windowId} was already closed or doesn't exist:`, error);
-        }
+    // If workspace has an active window, close it before deletion
+    if (target.windowId !== undefined) {
+      await browser.windows
+        .remove(target.windowId)
+        .then(() => console.log(`Closed window ${target.windowId} for workspace: ${target.name}`))
+        .catch(onrejected(`Window ${target.windowId} was already closed or doesn't exist:`));
 
-        // Remove from active workspaces list
-        this.deactivate(id);
-      }
-
-      this._map.delete(id);
-      this._arr.splice(target.index, 1);
-      for (let i = target.index; i < this._arr.length; i++) {
-        this._arr[i].index = i;
-      }
-
-      await this.save();
-      return true;
-    } finally {
-      // Always remove from deleting set
-      this._deleting.delete(id);
+      // Remove from active workspaces list
+      this.deactivate(id);
     }
+
+    this._map.delete(id);
+    this._arr.splice(target.index, 1);
+    for (let i = target.index; i < this._arr.length; i++) {
+      this._arr[i].index = i;
+    }
+
+    await this.save();
+    this._deleting.delete(id);
+    return true;
   }
 
   get(id: string) {
@@ -282,6 +271,7 @@ export class WorkspaceManager {
     browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
     browser.action.setBadgeText({ text: workspace.name.slice(0, 2), windowId });
     const color = Color.from(workspace.color);
+    console.log('color.brightness', color.brightness, color);
     const textColor = color.brightness < 128 ? '#F8F9FA' : '#212729';
     browser.action.setBadgeTextColor({ color: textColor, windowId });
   }
@@ -296,15 +286,18 @@ export class WorkspaceManager {
     try {
       // If group already has an active window, focus it
       if (workspace.windowId) {
-        try {
-          // Check if window still exists
-          await browser.windows.get(workspace.windowId);
-          await browser.windows.update(workspace.windowId, { focused: true });
-          return { id: workspace.windowId };
-        } catch {
+        // Check if window still exists
+        const result = await browser.windows
+          .update(workspace.windowId, { focused: true })
+          .then(() => ({ id: workspace.windowId }))
+          .catch(onrejected());
+
+        if (result === SYM_REJECT) {
           // Window doesn't exist anymore, clear the reference and remove from active list
           workspace.windowId = undefined;
           this.deactivate(id);
+        } else {
+          return result;
         }
       }
 
@@ -327,10 +320,7 @@ export class WorkspaceManager {
 
       if (allUrls.length === 0) {
         // Create window with new tab page if no URLs
-        const window = await browser.windows.create({
-          url: 'about:blank',
-          type: 'normal',
-        });
+        const window = await $aboutBlank();
         this.setBadge(workspace, window.id);
         workspace.windowId = window.id;
         workspace.lastOpened = Date.now();
@@ -344,13 +334,7 @@ export class WorkspaceManager {
           url: allUrls[0],
           type: 'normal',
         })
-        .catch((e) => {
-          console.warn('[__NAME__: __func__] Fallback to about:blank because', e);
-          return browser.windows.create({
-            url: 'about:blank',
-            type: 'normal',
-          });
-        });
+        .catch(onrejected('Fallback to about:blank because', $aboutBlank()));
       this.setBadge(workspace, window.id);
 
       // Wait a moment for window to be ready
@@ -359,18 +343,20 @@ export class WorkspaceManager {
       // Open remaining URLs as tabs
       const createdTabs: { tab: browser.tabs.Tab; pinned: boolean }[] = [];
       for (let i = 1; i < allUrls.length; i++) {
-        try {
-          const tab = await browser.tabs.create({
+        const tab = await browser.tabs
+          .create({
             windowId: window.id,
             url: allUrls[i],
             active: false,
-          });
-          // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
-          const shouldPin = i < pinnedUrls.length;
-          createdTabs.push({ tab, pinned: shouldPin });
-        } catch (error) {
-          console.error(`Failed to create tab for URL: ${allUrls[i]}`, error);
+          })
+          .catch(onrejected(`Failed to create tab for URL: ${allUrls[i]}`));
+
+        if (tab === SYM_REJECT) {
+          continue;
         }
+        // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
+        const shouldPin = i < pinnedUrls.length;
+        createdTabs.push({ tab, pinned: shouldPin });
       }
 
       // Pin the first tab if it should be pinned

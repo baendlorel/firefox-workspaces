@@ -1,3 +1,5 @@
+import { SYM_REJECT } from './consts.js';
+
 export const $randInt = (max: number) => Math.floor(Math.random() * max);
 
 const alphabets = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
@@ -70,3 +72,14 @@ export const createPromise = <T>() => {
     reject,
   };
 };
+
+export const onrejected =
+  <T = typeof SYM_REJECT>(message: string = '', returnValue: T = SYM_REJECT as T) =>
+  (error: unknown): T => {
+    if (message) {
+      console.log('[__NAME__: __func__] ' + message, error);
+    } else {
+      console.log(error);
+    }
+    return returnValue;
+  };

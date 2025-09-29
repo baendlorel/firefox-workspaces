@@ -1,5 +1,4 @@
 import { Action } from './lib/consts.js';
-import { loadIcon } from './lib/icon-loader.js';
 import { $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
@@ -13,16 +12,16 @@ browser.runtime.onInstalled.addListener(init);
 
 async function init() {
   // WorkspaceManager is already loaded via manifest scripts
-  try {
-    manager = WorkspaceManager.getInstance();
+  manager = WorkspaceManager.getInstance();
 
-    // Restore sessions on startup
-    await manager.restoreSessions();
-
-    console.log('__NAME__ initialized in background');
-  } catch (error) {
-    console.error('[__NAME__: __func__] Failed to initialize __NAME__:', error);
-  }
+  // Restore sessions on startup
+  await manager
+    .restoreSessions()
+    .then(() => console.log('__NAME__ initialized in background'))
+    .catch((error) => {
+      console.error('[__NAME__: __func__] Failed to initialize __NAME__:', error);
+      return null;
+    });
 }
 
 // Handle window events for session management
