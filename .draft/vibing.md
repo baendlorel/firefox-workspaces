@@ -136,3 +136,13 @@ invalid的value会变为白色
 3. 3者都要可以点选，交互。点选的时候会有一个小标志显示当前选择位置；
 4. hue决定picker的颜色，picker决定indicator的颜色，alpha决定indicator的透明度；
 5. picker是一个矩形，渐变，左上角是白色，左下角是黑色，右下角是黑色，右上角是hue的颜色
+
+---
+
+在不改动其他代码的前提下，整合本文件的内容，写一个新的class Color放在src/lib/color.ts里。:
+
+1. 可以用静态create方法以HSV为入参创建颜色；
+2. 静态方法from，可以做到从#rrggbb或#rrggbbaa创建颜色；
+3. 含有public的属性r,g,b,a
+4. 编写多个转换方法，可以直接转换为#rrggbb、#rrggbbaa；
+5. 编写adjust-brightness方法，可以调整亮度，入参是一个-1~1的数字，负数表示变暗，正数表示变亮
