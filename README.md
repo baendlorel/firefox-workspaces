@@ -1,6 +1,6 @@
-# Workspaces Firefox Extension
+# Workspace Firefox Extension
 
-A Firefox extension that provides tab grouping functionality similar to Microsoft Edge's Workspaces feature.
+A Firefox extension that provides tab grouping functionality similar to Microsoft Edge's Workspace feature.
 
 For more awesome packages, check out [my homepage💛](https://baendlorel.github.io/?repoType=npm)
 

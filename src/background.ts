@@ -2,7 +2,7 @@ import { Action } from './lib/consts.js';
 import { $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
-// Background script for Workspaces extension
+// Background script for Workspace extension
 let manager: WorkspaceManager;
 
 // Initialize when extension starts
@@ -18,9 +18,9 @@ async function init() {
     // Restore sessions on startup
     await manager.restoreSessions();
 
-    console.log('Workspaces Manager initialized in background');
+    console.log('__NAME__ initialized in background');
   } catch (error) {
-    console.error('[__NAME__: __func__] Failed to initialize Workspaces Manager:', error);
+    console.error('[__NAME__: __func__] Failed to initialize __NAME__:', error);
   }
 }
 
@@ -236,7 +236,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
     return response;
   }
 
-  if (action === Action.CreateWorkspaces) {
+  if (action === Action.CreateWorkspace) {
     const newWorkspace = await manager.create(message.name, message.color);
     const response: MessageResponseMap[typeof action] = {
       success: true,
@@ -245,7 +245,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
     return response;
   }
 
-  if (action === Action.UpdateWorkspaces) {
+  if (action === Action.UpdateWorkspace) {
     const updated = await manager.update(message.id, message.updates);
     const response: MessageResponseMap[typeof action] = {
       success: updated !== null,
@@ -254,7 +254,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
     return response;
   }
 
-  if (action === Action.DeleteWorkspaces) {
+  if (action === Action.DeleteWorkspace) {
     const deleted = await manager.delete(message.id);
     const response: MessageResponseMap[typeof action] = { success: deleted };
     return response;
@@ -288,7 +288,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
     return response;
   }
 
-  if (action === Action.OpenWorkspaces) {
+  if (action === Action.OpenWorkspace) {
     const window = await manager.open(message.workspaceId);
     const response: MessageResponseMap[typeof action] = {
       success: window !== null,
@@ -355,14 +355,14 @@ browser.runtime.onMessage.addListener(async (message: MessageRequest): Promise<M
 browser.runtime.onInstalled.addListener(() => {
   // Create context menu item for adding current tab to workspace
   browser.contextMenus.create({
-    id: 'addToWorkspaces',
+    id: 'addToWorkspace',
     title: 'Add to Workspaces',
     contexts: ['page'],
   });
 });
 
 async function backgroundOnClickListener(info: browser.contextMenus.OnClickData) {
-  if (info.menuItemId === 'addToWorkspaces') {
+  if (info.menuItemId === 'addToWorkspace') {
     // Open popup to select workspace
     // This could be enhanced with a submenu showing available groups
     // browser.browserAction.openPopup() is not implemented in Firefox (and

@@ -6,20 +6,20 @@ declare global {
     action: Action.GetWorkspaces;
   }
 
-  interface CreateWorkspacesRequest {
-    action: Action.CreateWorkspaces;
+  interface CreateWorkspaceRequest {
+    action: Action.CreateWorkspace;
     name: string;
     color: HexColor;
   }
 
-  interface UpdateWorkspacesRequest {
-    action: Action.UpdateWorkspaces;
+  interface UpdateWorkspaceRequest {
+    action: Action.UpdateWorkspace;
     id: string;
     updates: Partial<Workspace>;
   }
 
-  interface DeleteWorkspacesRequest {
-    action: Action.DeleteWorkspaces;
+  interface DeleteWorkspaceRequest {
+    action: Action.DeleteWorkspace;
     id: string;
   }
 
@@ -41,8 +41,8 @@ declare global {
     tabId: number;
   }
 
-  interface OpenWorkspacesRequest {
-    action: Action.OpenWorkspaces;
+  interface OpenWorkspaceRequest {
+    action: Action.OpenWorkspace;
     workspaceId: string;
   }
 
@@ -66,13 +66,13 @@ declare global {
   // Union type for all possible requests
   type MessageRequest =
     | GetWorkspacesRequest
-    | CreateWorkspacesRequest
-    | UpdateWorkspacesRequest
-    | DeleteWorkspacesRequest
+    | CreateWorkspaceRequest
+    | UpdateWorkspaceRequest
+    | DeleteWorkspaceRequest
     | AddCurrentTabRequest
     | RemoveTabRequest
     | TogglePinRequest
-    | OpenWorkspacesRequest
+    | OpenWorkspaceRequest
     | MoveTabRequest
     | GetStatsRequest
     | CheckPageInGroupsRequest;
@@ -85,17 +85,17 @@ declare global {
     activeWorkspaces?: string[]; // Array of active workspace IDs
   }
 
-  interface CreateWorkspacesResponse {
+  interface CreateWorkspaceResponse {
     success: boolean;
     data: Workspace;
   }
 
-  interface UpdateWorkspacesResponse {
+  interface UpdateWorkspaceResponse {
     success: boolean;
     data: Workspace | null;
   }
 
-  interface DeleteWorkspacesResponse {
+  interface DeleteWorkspaceResponse {
     success: boolean;
   }
 
@@ -112,7 +112,7 @@ declare global {
     success: boolean;
   }
 
-  interface OpenWorkspacesResponse {
+  interface OpenWorkspaceResponse {
     success: boolean;
     data: {
       // ? 这里不要紧吗？
@@ -142,13 +142,13 @@ declare global {
   // Union type for all possible responses
   type MessageResponse =
     | GetWorkspacesResponse
-    | CreateWorkspacesResponse
-    | UpdateWorkspacesResponse
-    | DeleteWorkspacesResponse
+    | CreateWorkspaceResponse
+    | UpdateWorkspaceResponse
+    | DeleteWorkspaceResponse
     | AddCurrentTabResponse
     | RemoveTabResponse
     | TogglePinResponse
-    | OpenWorkspacesResponse
+    | OpenWorkspaceResponse
     | MoveTabResponse
     | GetStatsResponse
     | CheckPageInGroupsResponse
@@ -156,13 +156,13 @@ declare global {
 
   interface MessageResponseMap {
     [Action.GetWorkspaces]: GetWorkspacesResponse;
-    [Action.CreateWorkspaces]: CreateWorkspacesResponse;
-    [Action.UpdateWorkspaces]: UpdateWorkspacesResponse;
-    [Action.DeleteWorkspaces]: DeleteWorkspacesResponse;
+    [Action.CreateWorkspace]: CreateWorkspaceResponse;
+    [Action.UpdateWorkspace]: UpdateWorkspaceResponse;
+    [Action.DeleteWorkspace]: DeleteWorkspaceResponse;
     [Action.AddCurrentTab]: AddCurrentTabResponse;
     [Action.RemoveTab]: RemoveTabResponse;
     [Action.TogglePin]: TogglePinResponse;
-    [Action.OpenWorkspaces]: OpenWorkspacesResponse;
+    [Action.OpenWorkspace]: OpenWorkspaceResponse;
     [Action.MoveTab]: MoveTabResponse;
     [Action.GetStats]: GetStatsResponse;
     [Action.CheckPageInGroups]: CheckPageInGroupsResponse;

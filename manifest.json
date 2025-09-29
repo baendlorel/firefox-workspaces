@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Workspaces",
+  "name": "Workspace",
   "version": "0.0.1",
   "author": "Kasukabe Tsumugi",
   "homepage_url": "https://github.com/baendlorel/firefox-workspaces",
@@ -22,7 +22,7 @@
   },
   "action": {
     "default_popup": "dist/index.html",
-    "default_title": "Workspaces Manager"
+    "default_title": "Workspace Manager"
   },
   "icons": {
     "128": "dist/icon-128.png"

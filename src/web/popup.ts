@@ -77,15 +77,15 @@ class PopupPage {
       let response;
       if (formData.id === undefined) {
         // Create new group
-        response = await $send<CreateWorkspacesRequest>({
-          action: Action.CreateWorkspaces,
+        response = await $send<CreateWorkspaceRequest>({
+          action: Action.CreateWorkspace,
           name: formData.name,
           color: formData.color,
         });
       } else {
         // Update existing group
-        response = await $send<UpdateWorkspacesRequest>({
-          action: Action.UpdateWorkspaces,
+        response = await $send<UpdateWorkspaceRequest>({
+          action: Action.UpdateWorkspace,
           id: formData.id,
           updates: formData,
         });
@@ -108,8 +108,8 @@ class PopupPage {
   // Delete workspace
   async delete(workspace: Workspace) {
     try {
-      const response = await $send<DeleteWorkspacesRequest>({
-        action: Action.DeleteWorkspaces,
+      const response = await $send<DeleteWorkspaceRequest>({
+        action: Action.DeleteWorkspace,
         id: workspace.id,
       });
 
@@ -128,8 +128,8 @@ class PopupPage {
   // Open workspace in new window
   async open(workspace: Workspace) {
     try {
-      const response = await $send<OpenWorkspacesRequest>({
-        action: Action.OpenWorkspaces,
+      const response = await $send<OpenWorkspaceRequest>({
+        action: Action.OpenWorkspace,
         workspaceId: workspace.id,
       });
 

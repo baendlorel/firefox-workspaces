@@ -40,7 +40,6 @@ export default (id: string): HTMLColorSelectorElement => {
 
   const close = (e: PointerEvent) => {
     const node = e.target as Node;
-    console.log('closePicker', node);
     e.stopPropagation();
     if (palette.contains(node) || picker.el.contains(node)) {
       return;

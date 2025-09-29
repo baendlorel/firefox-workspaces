@@ -24,9 +24,9 @@ export class WorkspaceManager {
   async init() {
     try {
       await this.load();
-      console.log('Workspaces Manager initialized');
+      console.log('__NAME__ initialized');
     } catch (error) {
-      console.error('[__NAME__: __func__] Failed to initialize Workspaces Manager:', error);
+      console.error('[__NAME__: __func__] Failed to initialize __NAME__:', error);
     }
   }
 

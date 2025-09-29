@@ -27,13 +27,13 @@ export const WORKSPACE_COLORS: HexColor[] = [
 
 export const enum Action {
   GetWorkspaces = 'GetWorkspaces',
-  CreateWorkspaces = 'CreateWorkspaces',
-  UpdateWorkspaces = 'UpdateWorkspaces',
-  DeleteWorkspaces = 'DeleteWorkspaces',
+  CreateWorkspace = 'CreateWorkspace',
+  UpdateWorkspace = 'UpdateWorkspace',
+  DeleteWorkspace = 'DeleteWorkspace',
   AddCurrentTab = 'AddCurrentTab',
   RemoveTab = 'RemoveTab',
   TogglePin = 'TogglePin',
-  OpenWorkspaces = 'OpenWorkspaces',
+  OpenWorkspace = 'OpenWorkspace',
   MoveTab = 'MoveTab',
   GetStats = 'GetStats',
   CheckPageInGroups = 'CheckPageInGroups',
