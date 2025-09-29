@@ -3,6 +3,7 @@
 import { Action, Consts } from './lib/consts.js';
 import { $query } from './lib/dom.js';
 import { $send } from './lib/ext-apis.js';
+import { reject } from './lib/utils.js';
 
 (function () {
   'use strict';
@@ -137,18 +138,14 @@ import { $send } from './lib/ext-apis.js';
 
     // Check if page belongs to a workspace
     async checkWorkspacesMembership() {
-      try {
-        const response = await $send<CheckPageInGroupsRequest>({
-          action: Action.CheckPageInGroups,
-          url: window.location.href,
-        });
+      const response = await $send<CheckPageInWorkspacesRequest>({
+        action: Action.CheckPageInWorkspaces,
+        url: window.location.href,
+      }).catch(reject('Could not check workspace membership:', { success: false, data: [] }));
 
-        if (response.success && response.groups.length > 0) {
-          // Page belongs to work groups, show indicator
-          this.showWorkspaceIndicator(response.groups);
-        }
-      } catch (error) {
-        console.log('Could not check workspace membership:', error);
+      if (response.success && response.data.length > 0) {
+        // Page belongs to work groups, show indicator
+        this.showWorkspaceIndicator(response.data);
       }
     }
 

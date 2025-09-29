@@ -1,7 +1,8 @@
 import { Action } from './lib/consts.js';
-import { $mergeTabInfo } from './lib/utils.js';
+import { $mergeTabInfo, reject } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
+// todo 是否改用定义class的方法来确保manager存在？
 // Background script for Workspace extension
 let manager: WorkspaceManager;
 
@@ -18,10 +19,7 @@ async function init() {
   await manager
     .restoreSessions()
     .then(() => console.log('__NAME__ initialized in background'))
-    .catch((error) => {
-      console.error('[__NAME__: __func__] Failed to initialize __NAME__:', error);
-      return null;
-    });
+    .catch(reject('Failed to initialize __NAME__:'));
 }
 
 // Handle window events for session management
@@ -32,30 +30,28 @@ browser.windows.onRemoved.addListener(async (windowId) => {
 
   // Check if this window belongs to a workspace
   const workspace = manager.getByWindowId(windowId);
-  if (workspace) {
-    console.log(`Workspace window closed: ${workspace.name}`);
-
-    // Skip processing if this workspace is being deleted
-    if (manager.isDeleting(workspace.id)) {
-      console.log(`Workspace ${workspace.name} is being deleted, skipping window close handling`);
-      return;
-    }
-
-    // ?? First save the current state of tabs before clearing window association
-    await manager
-      .updateByWindowId(workspace.id, windowId)
-      .then(() => console.log(`Saved workspace session for: ${workspace.name}`))
-      .catch((error) =>
-        console.error(`Failed to save workspace session for: ${workspace.name}`, error)
-      );
-
-    // Clear window association and remove from active list
-    workspace.windowId = undefined;
-    manager.deactivate(workspace.id);
-    await manager.save();
-
-    console.log(`Workspace ${workspace.name} removed from active list`);
+  if (!workspace) {
+    return;
   }
+  console.log(`Workspace window closed: ${workspace.name}`);
+
+  // Skip processing if this workspace is being deleted
+  if (manager.isDeleting(workspace.id)) {
+    console.log(`Workspace ${workspace.name} is being deleted, skipping window close handling`);
+  }
+
+  // ?? First save the current state of tabs before clearing window association
+  await manager
+    .updateByWindowId(workspace.id, windowId)
+    .then(() => console.log(`Saved workspace session for: ${workspace.name}`))
+    .catch(reject(`Failed to save workspace session for: ${workspace.name}`));
+
+  // Clear window association and remove from active list
+  workspace.windowId = undefined;
+  manager.deactivate(workspace.id);
+  await manager.save();
+
+  console.log(`Workspace ${workspace.name} removed from active list`);
 });
 
 // Track window focus changes to update workspace states
@@ -111,22 +107,20 @@ setInterval(async () => {
     if (workspace.windowId === undefined) {
       continue;
     }
-    try {
-      // Verify window still exists
-      const windows = await browser.windows.getAll();
-      const windowExists = windows.some((w) => w.id === workspace.windowId);
 
-      if (windowExists) {
-        await manager.updateByWindowId(workspace.id, workspace.windowId);
-      } else {
-        // Window was closed but event wasn't caught
-        workspace.windowId = undefined;
-        manager.deactivate(workspace.id);
-        await manager.save();
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Error during periodic save:', error);
+    // Verify window still exists
+    const windows = await browser.windows.getAll();
+    const windowExists = windows.some((w) => w.id === workspace.windowId);
+
+    if (windowExists) {
+      await manager.updateByWindowId(workspace.id, workspace.windowId);
+      continue;
     }
+
+    // Window was closed but event wasn't caught
+    workspace.windowId = undefined;
+    manager.deactivate(workspace.id);
+    await manager.save();
   }
 }, 30000); // Save every 30 seconds
 
@@ -140,7 +134,9 @@ browser.runtime.onSuspend.addListener(async () => {
 
 // Save workspace sessions periodically and on important events
 browser.tabs.onAttached.addListener(async (tabId, attachInfo) => {
-  if (!manager) return;
+  if (!manager) {
+    return;
+  }
 
   const workspace = manager.getByWindowId(attachInfo.newWindowId);
   if (workspace) {
@@ -286,7 +282,9 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
   }
 
   if (action === Action.OpenWorkspace) {
-    const window = await manager.open(message.workspaceId);
+    const window = await manager
+      .open(message.workspaceId)
+      .then(reject('Failed to open workspace in window:', null));
     const response: MessageResponseMap[typeof action] = {
       success: window !== null,
       data: window,
@@ -310,7 +308,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
     return response;
   }
 
-  if (action === Action.CheckPageInGroups) {
+  if (action === Action.CheckPageInWorkspaces) {
     const matched = manager.workspaces.filter((workspace) => {
       for (let i = 0; i < workspace.pinnedTabs.length; i++) {
         if (workspace.pinnedTabs[i].url === message.url) {
@@ -324,7 +322,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
       }
       return false;
     });
-    const response: MessageResponseMap[typeof action] = { success: true, groups: matched };
+    const response: MessageResponseMap[typeof action] = { success: true, data: matched };
     return response;
   }
 
@@ -349,29 +347,20 @@ browser.runtime.onMessage.addListener(async (message: MessageRequest): Promise<M
 });
 
 // Context menu setup
-browser.runtime.onInstalled.addListener(() => {
-  // Create context menu item for adding current tab to workspace
+browser.runtime.onInstalled.addListener(() =>
   browser.contextMenus.create({
     id: 'addToWorkspace',
     title: 'Add to Workspaces',
     contexts: ['page'],
-  });
-});
+  })
+);
 
-async function backgroundOnClickListener(info: browser.contextMenus.OnClickData) {
-  if (info.menuItemId === 'addToWorkspace') {
-    // Open popup to select workspace
-    // This could be enhanced with a submenu showing available groups
-    // browser.browserAction.openPopup() is not implemented in Firefox (and
-    // can be disallowed in Manifest V3). To keep compatibility, open the
-    // extension popup page in a small popup window instead.
-    try {
-      const popupUrl = browser.runtime.getURL('popup.html');
-      await browser.windows.create({ url: popupUrl, type: 'popup', width: 400, height: 600 });
-    } catch (error) {
-      console.error(`[__NAME__: __func__] `, error);
-    }
+browser.contextMenus.onClicked.addListener(async (info: browser.contextMenus.OnClickData) => {
+  if (info.menuItemId !== 'addToWorkspace') {
+    return;
   }
-}
-
-browser.contextMenus.onClicked.addListener(backgroundOnClickListener);
+  const popupUrl = browser.runtime.getURL('popup.html');
+  await browser.windows
+    .create({ url: popupUrl, type: 'popup', width: 1000, height: 600 })
+    .catch(reject(':'));
+});

@@ -444,8 +444,8 @@ class MockBrowser {
         } as GetStatsResponse;
       }
 
-      case Action.CheckPageInGroups: {
-        const req = request as CheckPageInGroupsRequest;
+      case Action.CheckPageInWorkspaces: {
+        const req = request as CheckPageInWorkspacesRequest;
         const matchingWorkspaces = workspaces.filter((workspace) =>
           [...workspace.tabs, ...workspace.pinnedTabs].some(
             (tab) => tab.url.includes(req.url) || req.url.includes(tab.url)
@@ -454,8 +454,8 @@ class MockBrowser {
 
         return {
           success: true,
-          groups: matchingWorkspaces,
-        } as CheckPageInGroupsResponse;
+          data: matchingWorkspaces,
+        } as CheckPageInWorkspacesResponse;
       }
 
       default:

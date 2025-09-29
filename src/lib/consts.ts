@@ -1,5 +1,5 @@
 export const enum Consts {
-  StorageKey = 'workspaces',
+  StorageKey = 'kasukabe_tsumugi:workspaces',
   InjectionFlag = 'kasukabe_tsumugi_workspaces_content_loaded',
   DefaultColor = '#2da191',
 }
@@ -36,7 +36,7 @@ export const enum Action {
   OpenWorkspace = 'OpenWorkspace',
   MoveTab = 'MoveTab',
   GetStats = 'GetStats',
-  CheckPageInGroups = 'CheckPageInGroups',
+  CheckPageInWorkspaces = 'CheckPageInWorkspaces',
   WindowFocusChanged = 'WindowFocusChanged',
 }
 
@@ -76,4 +76,6 @@ export const RANDOM_NAME_PART2 = [
   'Realm',
 ];
 
-export const SYM_REJECT = Symbol('reject');
+export class Sym extends null {
+  static readonly Reject = Symbol('reject');
+}

@@ -5,12 +5,13 @@ import './css/form.css';
 import './css/dialog.css';
 
 import { $send } from '@/lib/ext-apis.js';
-import { Action } from '@/lib/consts.js';
+import { Action, Sym } from '@/lib/consts.js';
 
 import selectDialog from './components/dialog/select-dialog.js';
 import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
 import listItem from './main/list-item.js';
+import { reject, rejectWithDialog } from '@/lib/utils.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -57,7 +58,7 @@ class PopupPage {
   // Check if current window belongs to a workspace and update header
   async checkCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent().catch((error) => {
-      console.error('[__NAME__: __func__] Failed to check current window:', error);
+      console.error('[__NAME__: __func__] Failed to check current window', error);
       return null;
     });
     if (currentWindow === null) {
@@ -84,160 +85,157 @@ class PopupPage {
 
   // Load work groups from background
   async load() {
-    try {
-      const response = await $send<GetWorkspacesRequest>({ action: Action.GetWorkspaces });
-      if (response.success) {
-        const loaded = response.data ?? [];
-        this.workspaces.length = 0;
-        this.workspaces.push(...loaded);
+    const fn = rejectWithDialog('Failed to load work groups', {
+      success: false,
+      data: [],
+      activeWorkspaces: [],
+    });
+    const response = await $send<GetWorkspacesRequest>({ action: Action.GetWorkspaces }).catch(fn);
+    if (!response.success) {
+      return;
+    }
 
-        // Update active workspaces
-        this.activeWorkspaces.length = 0;
-        if (response.activeWorkspaces) {
-          this.activeWorkspaces.push(...response.activeWorkspaces);
-        }
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Failed to load work groups:', error);
+    const loaded = response.data ?? [];
+    this.workspaces.length = 0;
+    this.workspaces.push(...loaded);
+
+    // Update active workspaces
+    this.activeWorkspaces.length = 0;
+    if (response.activeWorkspaces) {
+      this.activeWorkspaces.push(...response.activeWorkspaces);
     }
   }
 
   // Save workspace (create or update)
   async save(formData: WorkspaceFormData) {
-    try {
-      let response;
-      if (formData.id === undefined) {
-        // Create new group
-        response = await $send<CreateWorkspaceRequest>({
-          action: Action.CreateWorkspace,
-          name: formData.name,
-          color: formData.color,
-        });
-      } else {
-        // Update existing group
-        response = await $send<UpdateWorkspaceRequest>({
-          action: Action.UpdateWorkspace,
-          id: formData.id,
-          updates: formData,
-        });
-      }
+    let response;
+    if (formData.id === undefined) {
+      // Create new group
+      response = await $send<CreateWorkspaceRequest>({
+        action: Action.CreateWorkspace,
+        name: formData.name,
+        color: formData.color,
+      }).catch(rejectWithDialog('Failed saving workspace'));
+    } else {
+      // Update existing group
+      response = await $send<UpdateWorkspaceRequest>({
+        action: Action.UpdateWorkspace,
+        id: formData.id,
+        updates: formData,
+      }).catch(rejectWithDialog('Failed saving workspace'));
+    }
 
-      if (response.success) {
-        await this.load();
-        this.render();
-        this.main.emit('close-editor');
-      } else {
-        info('Failed to save workspace, Please try again.');
-        console.log('[__NAME__: __func__] Save workspace failed:', typeof response, response);
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Error saving workspace:', error);
-      danger('Error saving workspace.');
+    if (response === Sym.Reject) {
+      return;
+    }
+
+    if (response.success) {
+      await this.load();
+      this.render();
+      this.main.emit('close-editor');
+    } else {
+      info('Failed to save workspace, Please try again.');
+      console.log('[__NAME__: __func__] Save workspace failed', typeof response, response);
     }
   }
 
   // Delete workspace
   async delete(workspace: Workspace) {
-    try {
-      const response = await $send<DeleteWorkspaceRequest>({
-        action: Action.DeleteWorkspace,
-        id: workspace.id,
-      });
+    const response = await $send<DeleteWorkspaceRequest>({
+      action: Action.DeleteWorkspace,
+      id: workspace.id,
+    }).catch(rejectWithDialog('Error deleting workspace'));
 
-      if (response.success) {
-        await this.load();
-        this.render();
-      } else {
-        info('Failed to delete workspace, Please try again.');
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Error deleting workspace:', error);
-      danger('Error deleting workspace.');
+    if (response === Sym.Reject) {
+      return;
+    }
+
+    if (response.success) {
+      await this.load();
+      this.render();
+    } else {
+      info('Failed to delete workspace, Please try again.');
     }
   }
 
   // Open workspace in new window
   async open(workspace: Workspace) {
-    try {
-      const response = await $send<OpenWorkspaceRequest>({
-        action: Action.OpenWorkspace,
-        workspaceId: workspace.id,
-      });
+    const response = await $send<OpenWorkspaceRequest>({
+      action: Action.OpenWorkspace,
+      workspaceId: workspace.id,
+    }).catch(rejectWithDialog('Error opening workspace'));
 
-      if (response.success) {
-        // Close popup after opening group
-        // !NO don't close!
-        // window.close();
-      } else {
-        info('Failed to open workspace, Please try again.');
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Error opening workspace:', error);
-      danger('Error opening workspace.');
+    if (response === Sym.Reject) {
+      return;
+    }
+
+    if (response.success) {
+      // Close popup after opening group
+      // !NO don't close!
+      // window.close();
+    } else {
+      info('Failed to open workspace, Please try again.');
     }
   }
 
   // Remove tab from group
   async removeTab(workspaceId: string, tabId: number) {
-    try {
-      const response = await $send<RemoveTabRequest>({
-        action: Action.RemoveTab,
-        workspaceId,
-        tabId,
-      });
+    const response = await $send<RemoveTabRequest>({
+      action: Action.RemoveTab,
+      workspaceId,
+      tabId,
+    }).catch(rejectWithDialog('Error removing tab'));
 
-      if (response.success) {
-        await this.load();
-        this.render();
-      } else {
-        info('Failed to remove tab, Please try again.');
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Error removing tab:', error);
-      danger('Error removing tab.');
+    if (response === Sym.Reject) {
+      return;
+    }
+
+    if (response.success) {
+      await this.load();
+      this.render();
+    } else {
+      info('Failed to remove tab, Please try again.');
     }
   }
 
   // Toggle tab pin status
   async toggleTabPin(workspaceId: string, tabId: number) {
-    try {
-      const response = await $send<TogglePinRequest>({
-        action: Action.TogglePin,
-        workspaceId,
-        tabId,
-      });
+    const response = await $send<TogglePinRequest>({
+      action: Action.TogglePin,
+      workspaceId,
+      tabId,
+    }).catch(rejectWithDialog('Error toggling pin'));
 
-      if (response.success) {
-        await this.load();
-        this.render();
-      } else {
-        info('Failed to toggle pin, Please try again.');
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Error toggling pin:', error);
-      danger('Error toggling pin.');
+    if (response === Sym.Reject) {
+      return;
+    }
+
+    if (response.success) {
+      await this.load();
+      this.render();
+    } else {
+      info('Failed to toggle pin, Please try again.');
     }
   }
 
   // Move tab between groups
   async moveTab(fromId: string, toId: string, tabId: number) {
-    try {
-      const response = await $send<MoveTabRequest>({
-        action: Action.MoveTab,
-        fromWorkspaceId: fromId,
-        toWorkspaceId: toId,
-        tabId,
-      });
+    const response = await $send<MoveTabRequest>({
+      action: Action.MoveTab,
+      fromWorkspaceId: fromId,
+      toWorkspaceId: toId,
+      tabId,
+    }).catch(rejectWithDialog('Error moving tab'));
 
-      if (response.success) {
-        await this.load();
-        this.render();
-      } else {
-        info('Failed to move tab, Please try again.');
-      }
-    } catch (error) {
-      console.error('[__NAME__: __func__] Error moving tab:', error);
-      danger('Error moving tab.');
+    if (response === Sym.Reject) {
+      return;
+    }
+
+    if (response.success) {
+      await this.load();
+      this.render();
+    } else {
+      info('Failed to move tab, Please try again.');
     }
   }
 
@@ -259,24 +257,25 @@ class PopupPage {
       options,
     });
 
-    if (selected !== null) {
-      try {
-        const response = await $send<AddCurrentTabRequest>({
-          action: Action.AddCurrentTab,
-          workspaceId: selected,
-          pinned: false,
-        });
+    if (selected === null) {
+      return;
+    }
 
-        if (response.success) {
-          await this.load();
-          this.render();
-        } else {
-          info('Failed to add tab to group, Please try again.');
-        }
-      } catch (error) {
-        console.error('[__NAME__: __func__] Error adding tab to group:', error);
-        danger('Error adding tab to group.');
-      }
+    const response = await $send<AddCurrentTabRequest>({
+      action: Action.AddCurrentTab,
+      workspaceId: selected,
+      pinned: false,
+    }).catch(rejectWithDialog('Error adding tab to group'));
+
+    if (response === Sym.Reject) {
+      return;
+    }
+
+    if (response.success) {
+      await this.load();
+      this.render();
+    } else {
+      info('Failed to add tab to group, Please try again.');
     }
   }
 }

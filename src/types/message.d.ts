@@ -58,8 +58,8 @@ declare global {
     workspaceId: string;
   }
 
-  interface CheckPageInGroupsRequest {
-    action: Action.CheckPageInGroups;
+  interface CheckPageInWorkspacesRequest {
+    action: Action.CheckPageInWorkspaces;
     url: string;
   }
 
@@ -81,7 +81,7 @@ declare global {
     | OpenWorkspaceRequest
     | MoveTabRequest
     | GetStatsRequest
-    | CheckPageInGroupsRequest;
+    | CheckPageInWorkspacesRequest;
   // #endregion
 
   // #region Response
@@ -135,9 +135,9 @@ declare global {
     data?: WorkspaceStats | null;
   }
 
-  interface CheckPageInGroupsResponse {
+  interface CheckPageInWorkspacesResponse {
     success: boolean;
-    groups: Workspace[];
+    data: Workspace[];
   }
 
   interface ErrorResponse {
@@ -157,7 +157,7 @@ declare global {
     | OpenWorkspaceResponse
     | MoveTabResponse
     | GetStatsResponse
-    | CheckPageInGroupsResponse
+    | CheckPageInWorkspacesResponse
     | ErrorResponse;
 
   interface MessageResponseMap {
@@ -171,7 +171,7 @@ declare global {
     [Action.OpenWorkspace]: OpenWorkspaceResponse;
     [Action.MoveTab]: MoveTabResponse;
     [Action.GetStats]: GetStatsResponse;
-    [Action.CheckPageInGroups]: CheckPageInGroupsResponse;
+    [Action.CheckPageInWorkspaces]: CheckPageInWorkspacesResponse;
   }
 
   // #endregion

@@ -1,7 +1,7 @@
 import { Color } from './lib/color.js';
-import { Consts, SYM_REJECT } from './lib/consts.js';
+import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank } from './lib/ext-apis.js';
-import { $createTabInfo, $genId, $sleep, onrejected } from './lib/utils.js';
+import { $createTabInfo, $genId, $sleep, reject } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -24,12 +24,8 @@ export class WorkspaceManager {
 
   // Initialize the manager and load saved data
   async init() {
-    try {
-      await this.load();
-      console.log('__NAME__ initialized. Updated at __DATE_TIME__');
-    } catch (error) {
-      console.error('[__NAME__: __func__] Failed to initialize __NAME__:', error);
-    }
+    await this.load();
+    console.log('__NAME__ initialized. Updated at __DATE_TIME__');
   }
 
   get workspaces() {
@@ -59,7 +55,10 @@ export class WorkspaceManager {
     }
   }
 
-  // Load work groups from browser storage
+  /**
+   * Load work groups from browser storage
+   * - Won't throw
+   */
   async load() {
     const workspaces = (await browser.storage.local.get(Consts.StorageKey)) as WorkspaceStoredData;
     if (!workspaces.list) {
@@ -82,11 +81,15 @@ export class WorkspaceManager {
   }
 
   /**
-   * Safe, will not throw an error
+   * Save workspace data
+   * - Won't throw
    */
-  save() {
+  save(): Promise<boolean> {
     const data: WorkspaceStoredData = { list: this._arr };
-    return browser.storage.local.set(data).catch(onrejected('Saving failed'));
+    return browser.storage.local
+      .set(data)
+      .then(() => true)
+      .catch(reject('Saving failed', false));
   }
 
   async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
@@ -135,7 +138,7 @@ export class WorkspaceManager {
       await browser.windows
         .remove(target.windowId)
         .then(() => console.log(`Closed window ${target.windowId} for workspace: ${target.name}`))
-        .catch(onrejected(`Window ${target.windowId} was already closed or doesn't exist:`));
+        .catch(reject(`Window ${target.windowId} was already closed or doesn't exist:`));
 
       // Remove from active workspaces list
       this.deactivate(id);
@@ -283,153 +286,136 @@ export class WorkspaceManager {
       return null;
     }
 
-    try {
-      // If group already has an active window, focus it
-      if (workspace.windowId) {
-        // Check if window still exists
-        const result = await browser.windows
-          .update(workspace.windowId, { focused: true })
-          .then(() => ({ id: workspace.windowId }))
-          .catch(onrejected());
+    // If group already has an active window, focus it
+    if (workspace.windowId) {
+      // Check if window still exists
+      const result = await browser.windows
+        .update(workspace.windowId, { focused: true })
+        .then(() => ({ id: workspace.windowId }))
+        .catch(reject());
 
-        if (result === SYM_REJECT) {
-          // Window doesn't exist anymore, clear the reference and remove from active list
-          workspace.windowId = undefined;
-          this.deactivate(id);
-        } else {
-          return result;
-        }
+      if (result !== Sym.Reject) {
+        return result;
       }
 
-      // Collect all URLs (pinned first, then regular)
-      const allUrls: string[] = [];
-      const pinnedUrls: string[] = [];
-      for (let i = 0; i < workspace.pinnedTabs.length; i++) {
-        const url = workspace.pinnedTabs[i].url;
-        if (url) {
-          allUrls.push(url);
-          pinnedUrls.push(url);
-        }
-      }
-      for (let i = 0; i < workspace.tabs.length; i++) {
-        const url = workspace.tabs[i].url;
-        if (url) {
-          allUrls.push(url);
-        }
-      }
+      // Window doesn't exist anymore, clear the reference and remove from active list
+      workspace.windowId = undefined;
+      this.deactivate(id);
+    }
 
-      if (allUrls.length === 0) {
-        // Create window with new tab page if no URLs
-        const window = await $aboutBlank();
-        this.setBadge(workspace, window.id);
-        workspace.windowId = window.id;
-        workspace.lastOpened = Date.now();
-        await this.save();
-        return window;
+    // Collect all URLs (pinned first, then regular)
+    const allUrls: string[] = [];
+    const pinnedUrls: string[] = [];
+    for (let i = 0; i < workspace.pinnedTabs.length; i++) {
+      const url = workspace.pinnedTabs[i].url;
+      if (url) {
+        allUrls.push(url);
+        pinnedUrls.push(url);
       }
+    }
+    for (let i = 0; i < workspace.tabs.length; i++) {
+      const url = workspace.tabs[i].url;
+      if (url) {
+        allUrls.push(url);
+      }
+    }
 
-      // Create new window with first URL
-      const window = await browser.windows
-        .create({
-          url: allUrls[0],
-          type: 'normal',
-        })
-        .catch(onrejected('Fallback to about:blank because', $aboutBlank()));
+    if (allUrls.length === 0) {
+      // Create window with new tab page if no URLs
+      const window = await $aboutBlank();
       this.setBadge(workspace, window.id);
-
-      // Wait a moment for window to be ready
-      await $sleep(500);
-
-      // Open remaining URLs as tabs
-      const createdTabs: { tab: browser.tabs.Tab; pinned: boolean }[] = [];
-      for (let i = 1; i < allUrls.length; i++) {
-        const tab = await browser.tabs
-          .create({
-            windowId: window.id,
-            url: allUrls[i],
-            active: false,
-          })
-          .catch(onrejected(`Failed to create tab for URL: ${allUrls[i]}`));
-
-        if (tab === SYM_REJECT) {
-          continue;
-        }
-        // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
-        const shouldPin = i < pinnedUrls.length;
-        createdTabs.push({ tab, pinned: shouldPin });
-      }
-
-      // Pin the first tab if it should be pinned
-      if (pinnedUrls.length > 0) {
-        try {
-          const tabs = await browser.tabs.query({ windowId: window.id });
-          if (tabs.length > 0 && tabs[0].id) {
-            await browser.tabs.update(tabs[0].id, { pinned: true });
-          }
-        } catch (error) {
-          console.error('[__NAME__: __func__] Failed to pin first tab:', error);
-        }
-      }
-
-      // Pin additional tabs that should be pinned
-      for (let i = 0; i < createdTabs.length; i++) {
-        const { tab, pinned } = createdTabs[i];
-        if (!pinned || !tab.id) {
-          continue;
-        }
-        try {
-          await browser.tabs.update(tab.id, { pinned: true });
-        } catch (error) {
-          console.error('[__NAME__: __func__] Failed to pin tab:', error);
-        }
-      }
-
-      // Update group with window association and last opened time
       workspace.windowId = window.id;
       workspace.lastOpened = Date.now();
-
-      // Add to active workspaces if not already there
-      !this._activated.includes(id) && this._activated.push(id);
-
       await this.save();
-
       return window;
-    } catch (error) {
-      console.error('[__NAME__: __func__] Failed to open workspace in window:', error);
-      return null;
     }
+
+    // Create new window with first URL
+    const window = await browser.windows
+      .create({
+        url: allUrls[0],
+        type: 'normal',
+      })
+      .catch(reject('Fallback to about:blank because', $aboutBlank()));
+    this.setBadge(workspace, window.id);
+
+    // Wait a moment for window to be ready
+    await $sleep(500);
+
+    // Open remaining URLs as tabs
+    const createdTabs: { tab: browser.tabs.Tab; pinned: boolean }[] = [];
+    for (let i = 1; i < allUrls.length; i++) {
+      const tab = await browser.tabs
+        .create({
+          windowId: window.id,
+          url: allUrls[i],
+          active: false,
+        })
+        .catch(reject(`Failed to create tab for URL: ${allUrls[i]}`));
+
+      if (tab === Sym.Reject) {
+        continue;
+      }
+      // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
+      const shouldPin = i < pinnedUrls.length;
+      createdTabs.push({ tab, pinned: shouldPin });
+    }
+
+    // Pin the first tab if it should be pinned
+    if (pinnedUrls.length > 0) {
+      const tabs = await browser.tabs.query({ windowId: window.id });
+      if (tabs.length > 0 && tabs[0].id) {
+        await browser.tabs
+          .update(tabs[0].id, { pinned: true })
+          .catch(reject('Failed to pin the first tab'));
+      }
+    }
+
+    // Pin additional tabs that should be pinned
+    for (let i = 0; i < createdTabs.length; i++) {
+      const { tab, pinned } = createdTabs[i];
+      if (!pinned || !tab.id) {
+        continue;
+      }
+      await browser.tabs.update(tab.id, { pinned: true }).then(reject('Failed to pin tab:'));
+    }
+
+    // Update group with window association and last opened time
+    workspace.windowId = window.id;
+    workspace.lastOpened = Date.now();
+
+    // Add to active workspaces if not already there
+    !this._activated.includes(id) && this._activated.push(id);
+
+    await this.save();
+
+    return window;
   }
 
   // Update workspace tabs from window state
-  async updateByWindowId(id: string, windowId: number | undefined) {
+  async updateByWindowId(id: string, windowId: number | undefined): Promise<boolean> {
     const workspace = this._map.get(id);
     if (!workspace || workspace.windowId !== windowId) {
       return false;
     }
-    try {
-      const browserTabs = await browser.tabs.query({ windowId });
+    const browserTabs = await browser.tabs.query({ windowId });
 
-      // Clear existing tabs
-      workspace.tabs = [];
-      workspace.pinnedTabs = [];
+    // Clear existing tabs
+    workspace.tabs = [];
+    workspace.pinnedTabs = [];
 
-      // Categorize tabs
-      for (let i = 0; i < browserTabs.length; i++) {
-        const browserTab = browserTabs[i];
-        const tab: TabInfo = $createTabInfo(browserTab);
-        if (browserTab.pinned) {
-          workspace.pinnedTabs.push(tab);
-        } else {
-          workspace.tabs.push(tab);
-        }
+    // Categorize tabs
+    for (let i = 0; i < browserTabs.length; i++) {
+      const browserTab = browserTabs[i];
+      const tab: TabInfo = $createTabInfo(browserTab);
+      if (browserTab.pinned) {
+        workspace.pinnedTabs.push(tab);
+      } else {
+        workspace.tabs.push(tab);
       }
-
-      await this.save();
-      return true;
-    } catch (error) {
-      console.error('[__NAME__: __func__] Failed to update group from window:', error);
-      return false;
     }
+
+    return this.save();
   }
 
   /**
@@ -479,10 +465,10 @@ export class WorkspaceManager {
       if (workspace.windowId === undefined) {
         continue;
       }
-      try {
-        await this.updateByWindowId(workspace.id, workspace.windowId);
-      } catch (error) {
-        console.error(`Failed to save session for group ${workspace.name}:`, error);
+
+      const succ = await this.updateByWindowId(workspace.id, workspace.windowId);
+      if (succ === false) {
+        console.error(`[__NAME__:__func__] failed: ${workspace.name}(${workspace.id})`);
       }
     }
   }
@@ -515,38 +501,31 @@ export class WorkspaceManager {
   }
 
   async importData(data: ExportData): Promise<boolean> {
-    try {
-      if (!Array.isArray(data.workspaceses)) {
-        console.error(
-          `[__NAME__: __func__] Invalid data format, data.workspaceses must be an array of Workspace Data`
-        );
-        return false;
-      }
-
-      // Clear existing groups (with confirmation in UI)
-      this._map.clear();
-      this._arr.length = 0;
-
-      // Import groups
-      for (let i = 0; i < data.workspaceses.length; i++) {
-        const workspace = data.workspaceses[i];
-        const newWorkspace: IndexedWorkspace = {
-          ...workspace,
-          index: i,
-          id: $genId(),
-          windowId: undefined,
-          lastOpened: NaN,
-        };
-        this._map.set(newWorkspace.id, newWorkspace);
-        this._arr.push(newWorkspace);
-      }
-
-      await this.save();
-      return true;
-    } catch (error) {
-      console.error('[__NAME__: __func__] Failed to import data:', error);
+    if (!Array.isArray(data.workspaceses)) {
+      console.error(`[__NAME__: __func__] data.workspaceses must be Workspace[]`);
       return false;
     }
+
+    // Clear existing groups (with confirmation in UI)
+    this._map.clear();
+    this._arr.length = 0;
+
+    // Import groups
+    for (let i = 0; i < data.workspaceses.length; i++) {
+      const workspace = data.workspaceses[i];
+      const newWorkspace: IndexedWorkspace = {
+        ...workspace,
+        index: i,
+        id: $genId(),
+        windowId: undefined,
+        lastOpened: NaN,
+      };
+      this._map.set(newWorkspace.id, newWorkspace);
+      this._arr.push(newWorkspace);
+    }
+
+    this.save();
+    return this.save();
   }
 }
 

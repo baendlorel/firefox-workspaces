@@ -1,4 +1,5 @@
-import { SYM_REJECT } from './consts.js';
+import { danger } from '@/web/components/dialog/alerts.js';
+import { Sym } from './consts.js';
 
 export const $randInt = (max: number) => Math.floor(Math.random() * max);
 
@@ -73,11 +74,23 @@ export const createPromise = <T>() => {
   };
 };
 
-export const onrejected =
-  <T = typeof SYM_REJECT>(message: string = '', returnValue: T = SYM_REJECT as T) =>
+export const reject =
+  <T = typeof Sym.Reject>(message: string = '', returnValue: T = Sym.Reject as T) =>
   (error: unknown): T => {
     if (message) {
-      console.log('[__NAME__: __func__] ' + message, error);
+      console.log('[__NAME__] ' + message, error);
+    } else {
+      console.log(error);
+    }
+    return returnValue;
+  };
+
+export const rejectWithDialog =
+  <T = typeof Sym.Reject>(message: string = '', returnValue: T = Sym.Reject as T) =>
+  (error: unknown): T => {
+    if (message) {
+      console.log('[__NAME__] ' + message, error);
+      danger(message);
     } else {
       console.log(error);
     }
