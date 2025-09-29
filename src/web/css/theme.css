@@ -16,10 +16,9 @@
   --light: #f8f9fa;
   --muted: #737b84;
   --darken-gradient: linear-gradient(135deg, #ffffff00 0%, #0000005c 100%);
-  --primary-gradient: linear-gradient(135deg, #0d546a 0%, #3dc7a5 100%);
+  --primary-gradient: linear-gradient(135deg, #3dc7a5 0%, #0d546a 100%);
   --warning-gradient: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
   --danger-gradient: linear-gradient(135deg, #ff6b6b 0%, #dc3435 100%);
-  --header-padding: 8px 14px 10px 14px;
 
   /* Ext */
   --transition-duration: 0.3s;

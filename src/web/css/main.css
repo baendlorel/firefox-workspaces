@@ -18,14 +18,7 @@ body {
   @apply relative grid gap-2.5 px-5 py-2.5;
   grid-template-columns: 1fr auto auto;
   color: var(--light);
-  background-color: var(--primary);
-}
-
-.header::after {
-  width: 200px;
-  height: 200px;
-  background: var(--primary-gradient);
-  pointer-events: none;
+  background: var(--header-darken-gradient);
 }
 
 .header-title {

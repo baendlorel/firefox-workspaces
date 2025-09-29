@@ -107,7 +107,7 @@ import { $send } from './lib/ext-apis.js';
     }
 
     // Highlight page with workspace color
-    highlightPage(color = '#667eea') {
+    highlightPage(color: string) {
       this.removeHighlight();
 
       // Create highlight bar

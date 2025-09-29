@@ -1,7 +1,7 @@
 export const enum Consts {
   StorageKey = 'workspaces',
   InjectionFlag = 'kasukabe_tsumugi_workspaces_content_loaded',
-  DefaultColor = '#0d546a',
+  DefaultColor = '#2da191',
 }
 
 export const WORKSPACE_COLORS: HexColor[] = [

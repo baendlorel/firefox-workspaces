@@ -24,7 +24,7 @@ type CreateMainPageArgs = WorkspaceModalArgs & ComponentControlsArgs;
 
 type WorkspaceEditorEventMap = {
   // workspaces
-  'set-current': (workspace: Workspace | undefined) => void;
+  'set-current': (workspace?: Workspace) => void;
   'render-list': (workspaces: Workspace[], activeWorkspaces?: string[]) => void;
   edit: (workspace: Workspace | null) => void;
   delete: (workspace: Workspace) => void;

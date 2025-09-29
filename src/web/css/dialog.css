@@ -1,11 +1,12 @@
 @import 'tailwindcss';
 
-.dialog-header {
+.dialog-container .dialog-header {
   @apply flex text-center justify-between items-center border-b border-gray-200;
-  padding: var(--header-padding);
+  padding: 8px 14px 10px 14px;
   background: var(--primary-gradient);
   color: var(--light);
 }
+
 .dialog-container[type='warning'] .dialog-header {
   background: var(--warning-gradient);
   color: var(--dark);

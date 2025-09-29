@@ -90,7 +90,7 @@ export class WorkspaceManager {
     return true;
   }
 
-  async create(name: string, color: HexColor = '#667eea'): Promise<IndexedWorkspace> {
+  async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
     const id = $genId();
     const workspace: IndexedWorkspace = {
       index: this._arr.length,
