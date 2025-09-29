@@ -9,5 +9,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
   newWorkspace.addEventListener('click', () => bus.emit('edit', null));
   addCurrentTab.addEventListener('click', () => bus.emit('add-current-tab'));
-  return div('header', [h('h2', 'title', 'Workspace'), newWorkspace, addCurrentTab]);
+
+  const title = h('h2', 'title', 'Workspace');
+
+  bus.on('set-header-title', (newTitle) => (title.textContent = newTitle));
+
+  return div('header', [title, newWorkspace, addCurrentTab]);
 };

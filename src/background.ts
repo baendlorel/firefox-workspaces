@@ -41,13 +41,13 @@ browser.windows.onRemoved.addListener(async (windowId) => {
       return;
     }
 
-    try {
-      // ?? First save the current state of tabs before clearing window association
-      await manager.updateByWindowId(workspace.id, windowId);
-      console.log(`Saved workspace session for: ${workspace.name}`);
-    } catch (error) {
-      console.error(`Failed to save workspace session for: ${workspace.name}`, error);
-    }
+    // ?? First save the current state of tabs before clearing window association
+    await manager
+      .updateByWindowId(workspace.id, windowId)
+      .then(() => console.log(`Saved workspace session for: ${workspace.name}`))
+      .catch((error) =>
+        console.error(`Failed to save workspace session for: ${workspace.name}`, error)
+      );
 
     // Clear window association and remove from active list
     workspace.windowId = undefined;
@@ -60,7 +60,9 @@ browser.windows.onRemoved.addListener(async (windowId) => {
 
 // Track window focus changes to update workspace states
 browser.windows.onFocusChanged.addListener(async (windowId) => {
-  if (!manager || windowId === browser.windows.WINDOW_ID_NONE) return;
+  if (!manager || windowId === browser.windows.WINDOW_ID_NONE) {
+    return;
+  }
 
   const workspace = manager.getByWindowId(windowId);
   if (workspace) {
@@ -124,7 +126,9 @@ browser.tabs.onAttached.addListener(async (tabId, attachInfo) => {
 });
 
 browser.tabs.onDetached.addListener(async (tabId, detachInfo) => {
-  if (!manager) return;
+  if (!manager) {
+    return;
+  }
 
   const workspace = manager.getByWindowId(detachInfo.oldWindowId);
   if (workspace) {

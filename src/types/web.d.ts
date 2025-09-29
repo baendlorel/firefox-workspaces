@@ -24,6 +24,7 @@ type CreateMainPageArgs = WorkspaceModalArgs & ComponentControlsArgs;
 
 type WorkspaceEditorEventMap = {
   // workspaces
+  'set-header-title': (title: string) => void;
   'render-list': (workspaces: Workspace[], activeWorkspaces?: string[]) => void;
   edit: (workspace: Workspace | null) => void;
   delete: (workspace: Workspace) => void;

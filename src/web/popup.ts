@@ -8,7 +8,7 @@ import { $send } from '@/lib/ext-apis.js';
 import { Action } from '@/lib/consts.js';
 
 import selectDialog from './components/dialog/select-dialog.js';
-import { confirmation, danger, info } from './components/dialog/alerts.js';
+import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
 import listItem from './main/list-item.js';
 
@@ -19,6 +19,8 @@ class PopupPage {
   private main: ReturnType<typeof createView>;
 
   constructor() {
+    console.log('__NAME__', 'Creating new popup page');
+
     this.main = createView();
 
     // tabs
@@ -60,6 +62,14 @@ class PopupPage {
         this.workspaces.length = 0;
         this.workspaces.push(...loaded);
 
+        loaded.some((w) => {
+          console.log('curwindow', browser.windows.WINDOW_ID_CURRENT, 'wsid:' + w.id, w.windowId);
+          if (w.windowId === browser.windows.WINDOW_ID_CURRENT) {
+            this.main.emit('set-header-title', w.name);
+            return true;
+          }
+          return false;
+        });
         // Update active workspaces
         this.activeWorkspaces.length = 0;
         if (response.activeWorkspaces) {
