@@ -5,7 +5,7 @@ import { $randInt } from '@/lib/utils.js';
 
 import { createDialog } from '../components/dialog/index.js';
 import { confirmation, danger, info } from '../components/dialog/alerts.js';
-import colorPicker from '../components/color-selector.js';
+import colorPicker from '../components/color/index.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
@@ -16,8 +16,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     { class: 'btn btn-primary ms-2', title: 'Generate a random name' },
     'Random'
   );
-  const colorSelectorLabel = h('span', '', 'Color');
-  const colorSelector = colorPicker();
+  const colorSelectorLabel = h('label', { for: 'workspace-color' }, 'Color');
+  const colorSelector = colorPicker('workspace-color');
 
   const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
   deleteBtn.title = 'Delete this workspace';

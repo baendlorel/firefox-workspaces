@@ -1,11 +1,7 @@
-import { WORKSPACE_COLORS } from '@/lib/consts.js';
-import { div, getTextColor, h } from '@/lib/dom.js';
-import { popIn, popOut } from './pop/index.js';
+import { h, div, getTextColor } from '@/lib/dom.js';
 
-type HTMLColorSelectorElement = HTMLDivElement & { value: HexColor };
-
-const realPicker = (onChange: (color: HexColor) => void) => {
-  const indicator = h('input', 'palette-indicator');
+export const createPicker = (id: string, onChange: (color: HexColor) => void) => {
+  const indicator = h('input', { id, class: 'palette-indicator' });
   const picker = div('palette-picker');
   const alpha = div('palette-alpha');
   const hue = div('palette-hue');
@@ -266,60 +262,4 @@ const realPicker = (onChange: (color: HexColor) => void) => {
   });
 
   return { el, getter: () => indicator.value, setter: updateWithRGBA };
-};
-
-export default (): HTMLColorSelectorElement => {
-  const palette = div('color-option palette');
-  const colorOptions: HTMLElement[] = WORKSPACE_COLORS.map((color) => {
-    const el = div('color-option');
-    el.style.backgroundColor = color;
-    el.dataset.color = color;
-    el.addEventListener('click', () => {
-      pick(color);
-      el.classList.add('selected');
-    });
-    return el;
-  });
-
-  const setOutlineColor = (color: HexColor) => {
-    colorOptions.forEach((c) => c.classList.remove('selected'));
-    palette.style.setProperty('--palette-value', color);
-  };
-
-  // Create the main circular color picker
-  const picker = realPicker(setOutlineColor);
-  palette.style.setProperty('--palette-value', '#ffffff');
-  const el = div('color-selector', [palette, ...colorOptions, picker.el]);
-
-  // # register events
-
-  const pick = (color: HexColor) => {
-    setOutlineColor(color);
-    picker.setter(color);
-  };
-
-  const close = (e: PointerEvent) => {
-    const node = e.target as Node;
-    console.log('closePicker', node);
-    e.stopPropagation();
-    if (palette.contains(node) || picker.el.contains(node)) {
-      return;
-    }
-    closePicker();
-  };
-  const closePicker = popOut(picker.el, undefined, () => (picker.el.style.display = 'none'));
-
-  document.removeEventListener('click', close);
-  document.addEventListener('click', close);
-  palette.addEventListener(
-    'click',
-    popIn(picker.el, () => (picker.el.style.display = 'grid'))
-  );
-
-  Object.defineProperty(el, 'value', {
-    get: picker.getter,
-    set: picker.setter,
-  });
-
-  return el as HTMLColorSelectorElement;
 };
