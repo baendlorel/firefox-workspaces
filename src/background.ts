@@ -18,7 +18,7 @@ class WorkspaceBackground {
     // Restore sessions on startup
     return this.manager
       .restoreSessions()
-      .then(() => logger.info(__func__, 'initialized in background'))
+      .then(() => logger.info('initialized in background'))
       .fallback('Failed to initialize');
   }
 
@@ -35,10 +35,10 @@ class WorkspaceBackground {
         return;
       }
 
-      logger.info(__func__, `Workspace window closed: ${workspace.name}`);
+      logger.info(`Workspace window closed: ${workspace.name}`);
       // Skip processing if this workspace is being deleted
       if (this.manager.isDeleting(workspace.id)) {
-        logger.debug(__func__, `Deleting '${workspace.name}', skip window close handling`);
+        logger.debug(`Deleting '${workspace.name}', skip window close handling`);
         return;
       }
 
@@ -49,7 +49,7 @@ class WorkspaceBackground {
       await this.manager.save();
 
       // fixme 没有自动保存tab
-      logger.info(__func__, `Workspace ${workspace.name} removed from active list`);
+      logger.info(`Workspace ${workspace.name} removed from active list`);
     });
 
     // Track window focus changes to update workspace states
@@ -85,7 +85,7 @@ class WorkspaceBackground {
 
     // Save sessions before browser shuts down
     browser.runtime.onSuspend.addListener(async () => {
-      logger.info(__func__, 'Saving workspace sessions before browser shutdown');
+      logger.info('Saving workspace sessions before browser shutdown');
       await this.manager.saveActiveSessions();
     });
 
@@ -155,7 +155,7 @@ class WorkspaceBackground {
     browser.runtime.onMessage.addListener(
       async (message: MessageRequest): Promise<MessageResponse> =>
         this.handlePopupMessage(message).catch((error) => {
-          logger.error(__func__, 'Error handling message', error);
+          logger.error('Error handling message', error);
           const errorResponse: ErrorResponse = { success: false, error: 'Error handling message.' };
           return errorResponse;
         })
@@ -279,7 +279,7 @@ class WorkspaceBackground {
   private async periodicallySave() {
     setInterval(
       async () => {
-        logger.debug(__func__, 'Periodic save of active workspace sessions');
+        logger.debug('Periodic save of active workspace sessions');
         await this.manager.saveActiveSessions();
       },
       5 * 60 * 1000

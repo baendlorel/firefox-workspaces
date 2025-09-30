@@ -54,6 +54,8 @@ export const replaceOpts = {
 export const replaceLiteralOpts = {
   'declare const __IS_PROD__: boolean;\n': '',
   'const __IS_PROD__: boolean;\n': '',
-  // & This flag is used to export types only when generating declaration files.
-  // '//__EXPORT_FLAG__\n':'export '
+  'logger.info(': "console.log(`%c[__NAME__ info] __func__:`, 'color:blue',",
+  'logger.warn(': "console.log(`%c[__NAME__ info] __func__:`, 'color:orange',",
+  'logger.error(': "console.log(`%c[__NAME__ info] __func__:`, 'color:red',",
+  'logger.debug(': "console.log(`%c[__NAME__ info] __func__:`, 'color:purple',",
 };

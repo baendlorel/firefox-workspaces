@@ -14,11 +14,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const contextMenu = new Menu([
     {
       label: 'Add current tabs to a new Workspace',
-      action: () => logger.debug(__func__, 'Create new workspace action triggered'),
+      action: () => logger.debug('Create new workspace action triggered'),
     },
-    { label: 'Import', action: () => logger.debug(__func__, 'Import action triggered') },
-    { label: 'Export', action: () => logger.debug(__func__, 'Export action triggered') },
-    { label: 'Settings', action: () => logger.debug(__func__, 'Settings action triggered') },
+    { label: 'Import', action: () => logger.debug('Import action triggered') },
+    { label: 'Export', action: () => logger.debug('Export action triggered') },
+    { label: 'Settings', action: () => logger.debug('Settings action triggered') },
   ]);
   const title = h('h2', 'wb-header-title', 'Workspace');
   const header = div('wb-header', [title, addBtn, moreBtn]);

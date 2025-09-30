@@ -19,10 +19,10 @@ Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
 ): Promise<S> {
   return Promise.prototype.catch.call(this, (error: unknown) => {
     if (message) {
-      console.debug('[__NAME__] ' + message, error);
+      logger.debug(message, error);
       danger(message);
     } else {
-      console.debug(error);
+      logger.debug(error);
     }
     return value;
   });
@@ -70,7 +70,7 @@ class PopupPage {
   // Check if current window belongs to a workspace and update header
   async checkCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent().catch((error) => {
-      logger.error(__func__, 'Failed to check current window', error);
+      logger.error('Failed to check current window', error);
       return null;
     });
     if (currentWindow === null) {
@@ -152,7 +152,7 @@ class PopupPage {
       this.main.emit('close-editor');
     } else {
       info('Failed to save workspace, Please try again.');
-      logger.error(__func__, 'Save workspace failed', response);
+      logger.error('Save workspace failed', response);
     }
   }
 

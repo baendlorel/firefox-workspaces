@@ -28,7 +28,7 @@ export class WorkspaceManager {
   // Initialize the manager and load saved data
   async init() {
     await this.load();
-    logger.info(__func__, 'initialized. Updated at __DATE_TIME__');
+    logger.info('initialized. Updated at __DATE_TIME__');
   }
 
   get workspaces() {
@@ -130,10 +130,8 @@ export class WorkspaceManager {
     if (target.windowId !== undefined) {
       await browser.windows
         .remove(target.windowId)
-        .then(() =>
-          logger.info(__func__, `Closed window ${target.windowId} for workspace: ${target.name}`)
-        )
-        .fallback(__func__, `Window ${target.windowId} was already closed or doesn't exist:`);
+        .then(() => logger.info(`Closed window ${target.windowId} for workspace: ${target.name}`))
+        .fallback(`Window ${target.windowId} was already closed or doesn't exist:`);
 
       // Remove from active workspaces list
       this.deactivate(id);
@@ -158,7 +156,7 @@ export class WorkspaceManager {
   async addTab(id: string, browserTab: browser.tabs.Tab) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      logger.WorkspaceNotFound(__func__, id);
+      logger.WorkspaceNotFound(id);
       return false;
     }
 
@@ -173,7 +171,7 @@ export class WorkspaceManager {
   async removeTab(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      logger.WorkspaceNotFound(__func__, id);
+      logger.WorkspaceNotFound(id);
       return false;
     }
 
@@ -193,7 +191,7 @@ export class WorkspaceManager {
     // Find tab in source group
     const tab = from.tabs.find((t) => t.id === tabId);
     if (!tab) {
-      logger.TabNotFoundInWorkspace(__func__, fromId, tabId);
+      logger.TabNotFoundInWorkspace(fromId, tabId);
       return false;
     }
 
@@ -210,14 +208,14 @@ export class WorkspaceManager {
   async toggleTabPin(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      logger.WorkspaceNotFound(__func__, id);
+      logger.WorkspaceNotFound(id);
       return false;
     }
 
     // Check if tab is in regular tabs
     const tab = workspace.tabs.find((t) => t.id === tabId);
     if (!tab) {
-      logger.TabNotFoundInWorkspace(__func__, id, tabId);
+      logger.TabNotFoundInWorkspace(id, tabId);
       return false;
     }
 
@@ -227,7 +225,7 @@ export class WorkspaceManager {
 
   setBadge(workspace: Workspace, windowId?: number) {
     if (!windowId) {
-      logger.debug(__func__, 'Not setting badge, no windowId');
+      logger.debug('Not setting badge, no windowId');
       return;
     }
 
@@ -248,7 +246,7 @@ export class WorkspaceManager {
   async open(id: string): Promise<{ id?: number } | null> {
     const workspace = this._map.get(id);
     if (!workspace) {
-      logger.WorkspaceNotFound(__func__, id);
+      logger.WorkspaceNotFound(id);
       return null;
     }
 
@@ -382,7 +380,7 @@ export class WorkspaceManager {
       // todo 这里能改成入参是workspace而不是.id吗
       const succ = await this.updateByWindowId(workspace.id, workspace.windowId);
       if (succ === false) {
-        logger.error(__func__, `failed: ${workspace.name}(${workspace.id})`);
+        logger.error(`failed: ${workspace.name}(${workspace.id})`);
       }
     }
   }
@@ -395,10 +393,7 @@ export class WorkspaceManager {
     // Clear active workspaces on startup
     this._activated.length = 0;
     await this.save();
-    logger.info(
-      'restoreSessions',
-      'Cleared stale window associations and active workspaces on startup'
-    );
+    logger.info('Cleared stale window associations and active workspaces on startup');
   }
 
   // Get recently closed work groups
@@ -419,7 +414,7 @@ export class WorkspaceManager {
 
   async importData(data: ExportData): Promise<boolean> {
     if (!Array.isArray(data.workspaceses)) {
-      logger.error(__func__, 'data.workspaceses must be Workspace[]', data);
+      logger.error('data.workspaceses must be Workspace[]', data);
       return false;
     }
 
