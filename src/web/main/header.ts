@@ -3,13 +3,13 @@ import { btn, div, h } from '@/lib/dom.js';
 import { Consts } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 
-// todo 这个图标可以用workspace.svg添加一个加号来改到
-import folderPlus from '@web/assets/folder-plus.svg?raw';
+// import folderPlus from '@web/assets/folder-plus.svg?raw';
+import plus from '@web/assets/workspace-plus.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const newWorkspaceBtn = btn('btn-text', 'New');
   newWorkspaceBtn.title = 'Create new workspace';
-  newWorkspaceBtn.innerHTML = folderPlus;
+  newWorkspaceBtn.innerHTML = plus.replaceAll('currentColor', '#fff');
   newWorkspaceBtn.style.width = '18px';
 
   newWorkspaceBtn.addEventListener('click', () => bus.emit('edit', null));
