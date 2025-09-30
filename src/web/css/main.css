@@ -10,7 +10,7 @@ body {
 #app {
   @apply relative overflow-hidden;
   width: var(--app-width);
-  min-height: 480px;
+  min-height: 520px;
   border-radius: var(--border-radius);
 }
 

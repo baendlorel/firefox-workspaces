@@ -64,13 +64,13 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName.value = workspace.name;
       colorSelector.value = workspace.color;
       setTitle('Edit Workspace');
-      deleteBtn.classList.remove('hidden');
+      deleteBtn.style.display = '';
     } else {
       inputName.value = '';
       setTitle('New Workspace');
       // randomly pick a color
       colorSelector.value = WORKSPACE_COLORS[$randInt(WORKSPACE_COLORS.length)];
-      deleteBtn.classList.add('hidden');
+      deleteBtn.style.display = 'none';
     }
 
     dialog.bus.emit('show');
