@@ -272,8 +272,19 @@ export class WorkspaceManager {
   }
 
   setBadge(workspace: Workspace, windowId?: number) {
+    if (!windowId) {
+      console.log('[__NAME__] __func__: Not setting badge, no windowId');
+      return;
+    }
+
+    const spaceIndex = workspace.name.indexOf(' ');
+    const name =
+      spaceIndex === -1
+        ? workspace.name.slice(0, 2)
+        : workspace.name[0] + workspace.name[spaceIndex + 1];
+
     browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
-    browser.action.setBadgeText({ text: workspace.name.slice(0, 2), windowId });
+    browser.action.setBadgeText({ text: name + '12345', windowId });
     const color = Color.from(workspace.color);
     console.log('color.brightness', color.brightness, color);
     const textColor = color.brightness < 128 ? '#F8F9FA' : '#212729';

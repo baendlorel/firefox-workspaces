@@ -51,6 +51,7 @@ class WorkspaceBackground {
       this.manager.deactivate(workspace.id);
       await this.manager.save();
 
+      // fixme 没有自动保存tab
       console.log(`Workspace ${workspace.name} removed from active list`);
     });
 
@@ -346,3 +347,5 @@ class WorkspaceBackground {
     setTimeout(callback, 60000);
   }
 }
+
+new WorkspaceBackground();

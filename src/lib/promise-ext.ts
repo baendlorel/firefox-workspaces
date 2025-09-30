@@ -1,4 +1,3 @@
-import { danger } from '../web/components/dialog/alerts.js';
 import { Sym } from './consts.js';
 
 declare global {
@@ -37,22 +36,6 @@ Promise.prototype.fallback = function <S = typeof Sym.Reject>(
   return Promise.prototype.catch.call(this, (error: unknown) => {
     if (message) {
       console.debug('[__NAME__] ' + message, error);
-    } else {
-      console.debug(error);
-    }
-    return value;
-  });
-};
-
-Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
-  this: Promise<any>,
-  message: string,
-  value = Sym.Reject
-): Promise<S> {
-  return Promise.prototype.catch.call(this, (error: unknown) => {
-    if (message) {
-      console.debug('[__NAME__] ' + message, error);
-      danger(message);
     } else {
       console.debug(error);
     }

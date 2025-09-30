@@ -3,17 +3,19 @@ import { btn, div, h } from '@/lib/dom.js';
 import { Consts } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 
-export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const newWorkspace = btn('btn btn-trans', 'New');
-  const addCurrentTab = btn('btn btn-trans', 'Add Tab');
-  newWorkspace.title = 'Create new workspace';
-  addCurrentTab.title = 'Add current tab to a workspace';
+// todo 这个图标可以用workspace.svg添加一个加号来改到
+import folderPlus from '@web/assets/folder-plus.svg?raw';
 
-  newWorkspace.addEventListener('click', () => bus.emit('edit', null));
-  addCurrentTab.addEventListener('click', () => bus.emit('add-current-tab'));
+export default (bus: EventBus<WorkspaceEditorEventMap>) => {
+  const newWorkspaceBtn = btn('btn-text', 'New');
+  newWorkspaceBtn.title = 'Create new workspace';
+  newWorkspaceBtn.innerHTML = folderPlus;
+  newWorkspaceBtn.style.width = '18px';
+
+  newWorkspaceBtn.addEventListener('click', () => bus.emit('edit', null));
 
   const title = h('h2', 'header-title', 'Workspace');
-  const header = div('header', [title, newWorkspace, addCurrentTab]);
+  const header = div('header', [title, newWorkspaceBtn]);
   bus.on('set-current', (workspace) => {
     title.textContent = workspace?.name ?? 'Workspace';
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);

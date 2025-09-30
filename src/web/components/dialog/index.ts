@@ -45,7 +45,7 @@ export function createDialog(
   const setTitle = (text: string) => (title.textContent = text);
 
   // # header
-  const closeBtn = btn({ class: 'dialog-close-btn', type: 'button' });
+  const closeBtn = btn({ class: 'btn-text dialog-close-btn', type: 'button' });
   closeBtn.title = 'Close the dialog';
   closeBtn.innerHTML = closeSvg;
 

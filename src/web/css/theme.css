@@ -94,10 +94,7 @@
 }
 
 .btn-text {
-  font-size: var(--font-size-normal);
-  padding: 8px 8px;
-  border: none;
-  cursor: pointer;
+  @apply border-0 text-sm cursor-pointer;
   background-color: transparent;
   transition: all 0.3s;
   filter: drop-shadow(0 0 0px rgba(255, 255, 255, 0.8));

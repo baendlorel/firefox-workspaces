@@ -9,9 +9,25 @@ import { $send } from '@/lib/ext-apis.js';
 import { Action, Sym } from '@/lib/consts.js';
 
 import selectDialog from './components/dialog/select-dialog.js';
-import { info } from './components/dialog/alerts.js';
+import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
 import listItem from './main/list-item.js';
+
+Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
+  this: Promise<any>,
+  message: string,
+  value = Sym.Reject
+): Promise<S> {
+  return Promise.prototype.catch.call(this, (error: unknown) => {
+    if (message) {
+      console.debug('[__NAME__] ' + message, error);
+      danger(message);
+    } else {
+      console.debug(error);
+    }
+    return value;
+  });
+};
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {

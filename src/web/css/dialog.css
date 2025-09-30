@@ -99,23 +99,19 @@
 }
 
 .dialog-close-btn {
-  @apply me-1 p-0 bg-transparent border-none cursor-pointer;
-  --dialog-close-btn-size: 12px;
-  --dialog-close-btn-color: #aee4d7a9;
-  --dialog-close-btn-hover: #b7ffedb4;
+  @apply me-1 mt-0.5;
+  --dialog-close-btn-size: 10px;
   width: var(--dialog-close-btn-size);
   height: var(--dialog-close-btn-size);
-  color: var(--dialog-close-btn-color);
-  transition: all 0.2s ease;
+  opacity: 0.65;
 }
 
 .dialog-close-btn:hover {
-  color: var(--dialog-close-btn-hover);
+  opacity: 0.9;
 }
 
 .dialog-close-btn:focus {
-  outline: 0;
-  outline-offset: 0px;
+  opacity: 1;
 }
 
 .dialog-ul-options {

@@ -16,13 +16,13 @@ body {
 
 .header {
   @apply relative grid gap-2.5 px-5 py-2.5;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   color: var(--light);
   background: var(--header-darken-gradient);
 }
 
 .header-title {
-  @apply mt-0.5 font-medium text-shadow-lg/10;
+  @apply font-medium text-shadow-lg/10;
 }
 
 .sr-only {
