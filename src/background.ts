@@ -73,14 +73,12 @@ class WorkspaceBackground {
       };
 
       // Send message to all extension pages (popup, options, etc.)
-      browser.extension.getViews({ type: 'popup' }).some((view) => {
-        const handler = view.popup?.onWindowFocusChanged;
-        if (typeof handler !== 'function') {
-          return false;
-        }
-        handler.call(view.popup, notification);
-        return true;
-      });
+      const popupPage = browser.extension
+        .getViews({ type: 'popup' })
+        .find((v) => typeof v.popup.onWindowFocusChanged === 'function');
+      if (popupPage) {
+        popupPage.popup.onWindowFocusChanged(notification);
+      }
     });
 
     // Save sessions before browser shuts down
@@ -288,11 +286,10 @@ class WorkspaceBackground {
         }
 
         // Verify window still exists
-        const windows = await browser.windows.getAll();
-        const windowExists = windows.some((w) => w.id === workspace.windowId);
+        const windows = await browser.windows.get(workspace.windowId).fallback('', null);
 
-        if (windowExists) {
-          await this.manager.updateByWindowId(workspace.id, workspace.windowId);
+        if (windows) {
+          await this.manager.updateByWindowId(workspace.id, workspace.windowId as number);
           continue;
         }
 

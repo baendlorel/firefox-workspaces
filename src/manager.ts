@@ -341,23 +341,14 @@ export class WorkspaceManager {
     return window;
   }
 
-  // todo 这里最好不要了
   // Update workspace tabs from window state
-  async updateByWindowId(id: string, windowId: number | undefined): Promise<boolean> {
+  async updateByWindowId(id: string, windowId: number): Promise<boolean> {
     const workspace = this._map.get(id);
     if (!workspace || workspace.windowId !== windowId) {
       return false;
     }
     const browserTabs = await browser.tabs.query({ windowId });
-
-    // Clear existing tabs
-    workspace.tabs = [];
-
-    // Categorize tabs
-    for (let i = 0; i < browserTabs.length; i++) {
-      const browserTab = browserTabs[i];
-      workspace.tabs.push($createTabInfo(browserTab));
-    }
+    workspace.tabs = browserTabs.map($createTabInfo);
 
     return this.save();
   }
