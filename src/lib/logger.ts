@@ -8,7 +8,7 @@ export class logger extends null {
   static error(func: string, ...message: any[]) {
     console.log(`%c[__NAME__ error] ${func}:`, 'color:red', ...message);
   }
-  static debug(func: string, message: string) {
+  static debug(func: string, ...message: any[]) {
     console.log(`%c[__NAME__ debug] ${func}:`, 'color:purple', ...message);
   }
   static WorkspaceNotFound(func: string, id: string) {

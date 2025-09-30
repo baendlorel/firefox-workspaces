@@ -1,6 +1,7 @@
 import './lib/promise-ext.js';
 import { Action } from './lib/consts.js';
 import { $createTabInfo, $mergeTabInfo } from './lib/utils.js';
+import { logger } from './lib/logger.js';
 import { WorkspaceManager } from './manager.js';
 
 class WorkspaceBackground {
@@ -17,7 +18,7 @@ class WorkspaceBackground {
     // Restore sessions on startup
     return this.manager
       .restoreSessions()
-      .then(() => console.log('__NAME__ initialized in background'))
+      .then(() => logger.info('__func__', 'initialized in background'))
       .fallback('Failed to initialize');
   }
 
@@ -34,10 +35,11 @@ class WorkspaceBackground {
         return;
       }
 
-      console.log(`Workspace window closed: ${workspace.name}`);
+      logger.info('onRemoved', `Workspace window closed: ${workspace.name}`);
       // Skip processing if this workspace is being deleted
       if (this.manager.isDeleting(workspace.id)) {
-        console.log(`Workspace ${workspace.name} is being deleted, skipping window close handling`);
+        logger.debug('onRemoved', `Deleting '${workspace.name}', skip window close handling`);
+        return;
       }
 
       const tabs = await browser.tabs.query({ windowId });
@@ -47,7 +49,7 @@ class WorkspaceBackground {
       await this.manager.save();
 
       // fixme 没有自动保存tab
-      console.log(`Workspace ${workspace.name} removed from active list`);
+      logger.info('onRemoved', `Workspace ${workspace.name} removed from active list`);
     });
 
     // Track window focus changes to update workspace states
@@ -83,7 +85,7 @@ class WorkspaceBackground {
 
     // Save sessions before browser shuts down
     browser.runtime.onSuspend.addListener(async () => {
-      console.log('Saving workspace sessions before browser shutdown');
+      logger.info('onSuspend', 'Saving workspace sessions before browser shutdown');
       await this.manager.saveActiveSessions();
     });
 
@@ -153,7 +155,7 @@ class WorkspaceBackground {
     browser.runtime.onMessage.addListener(
       async (message: MessageRequest): Promise<MessageResponse> =>
         this.handlePopupMessage(message).catch((error) => {
-          console.error('[__NAME__] onMessage: Error handling message', error);
+          logger.error('onMessage', 'Error handling message', error);
           const errorResponse: ErrorResponse = { success: false, error: 'Error handling message.' };
           return errorResponse;
         })
@@ -274,34 +276,14 @@ class WorkspaceBackground {
   /**
    * Periodically save workspace states for active windows
    */
-  private periodicallySave() {
-    const callback = async () => {
-      console.log('Periodic save of active workspace sessions');
-
-      const workspaces = this.manager.workspaces;
-      for (let i = 0; i < workspaces.length; i++) {
-        const workspace = workspaces[i];
-        if (workspace.windowId === undefined) {
-          continue;
-        }
-
-        // Verify window still exists
-        const windows = await browser.windows.get(workspace.windowId).fallback('', null);
-
-        if (windows) {
-          await this.manager.updateByWindowId(workspace.id, workspace.windowId as number);
-          continue;
-        }
-
-        // Window was closed but event wasn't caught
-        workspace.windowId = undefined;
-        this.manager.deactivate(workspace.id);
-        await this.manager.save();
-      }
-
-      setTimeout(callback, 60000);
-    };
-    setTimeout(callback, 60000);
+  private async periodicallySave() {
+    setInterval(
+      async () => {
+        logger.debug('periodicallySave', 'Periodic save of active workspace sessions');
+        await this.manager.saveActiveSessions();
+      },
+      5 * 60 * 1000
+    ); // Every 5 minutes
   }
 }
 

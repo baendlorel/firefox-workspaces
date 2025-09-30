@@ -1,4 +1,5 @@
 import { Sym } from './consts.js';
+import { logger } from './logger.js';
 
 declare global {
   interface Promise<T> {
@@ -35,9 +36,9 @@ Promise.prototype.fallback = function <S = typeof Sym.Reject>(
 
   return Promise.prototype.catch.call(this, (error: unknown) => {
     if (message) {
-      console.debug('[__NAME__] ' + message, error);
+      logger.debug('fallback', message, error);
     } else {
-      console.debug(error);
+      logger.debug('fallback', error);
     }
     return value;
   });

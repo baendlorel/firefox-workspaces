@@ -1,6 +1,7 @@
 import '@/lib/promise-ext.js';
 import { btn, h } from '@/lib/dom.js';
 import { createDialog } from './index.js';
+import { logger } from '@/lib/logger.js';
 
 export default async (config: {
   title?: string;
@@ -10,7 +11,7 @@ export default async (config: {
   const { promise, resolve } = Promise.create<number | null>();
   const { title, message = '', options } = config;
   if (options.length === 0) {
-    console.warn('[__NAME__] __func__: No options provided for select dialog.');
+    logger.warn('selectDialog', 'No options provided for select dialog.');
     resolve(null);
     return promise;
   }

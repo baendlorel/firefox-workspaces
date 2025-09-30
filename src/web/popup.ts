@@ -6,6 +6,7 @@ import '@/lib/promise-ext.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action, Sym } from '@/lib/consts.js';
+import { logger } from '@/lib/logger.js';
 
 import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
@@ -69,7 +70,7 @@ class PopupPage {
   // Check if current window belongs to a workspace and update header
   async checkCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent().catch((error) => {
-      console.error('[__NAME__] __func__: Failed to check current window', error);
+      logger.error('checkCurrentWindow', 'Failed to check current window', error);
       return null;
     });
     if (currentWindow === null) {
@@ -151,7 +152,7 @@ class PopupPage {
       this.main.emit('close-editor');
     } else {
       info('Failed to save workspace, Please try again.');
-      console.log('[__NAME__] __func__: Save workspace failed', typeof response, response);
+      logger.error('save', 'Save workspace failed', response);
     }
   }
 

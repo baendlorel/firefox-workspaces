@@ -3,8 +3,8 @@ import { Color } from './lib/color.js';
 import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank } from './lib/ext-apis.js';
 import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
-import { logger } from './lib/logger.js';
 import { IndexedWorkspace, Workspace } from './lib/workspace.js';
+import { logger } from './lib/logger.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -28,7 +28,7 @@ export class WorkspaceManager {
   // Initialize the manager and load saved data
   async init() {
     await this.load();
-    console.log('__NAME__ initialized. Updated at __DATE_TIME__');
+    logger.info('init', 'initialized. Updated at __DATE_TIME__');
   }
 
   get workspaces() {
@@ -130,7 +130,9 @@ export class WorkspaceManager {
     if (target.windowId !== undefined) {
       await browser.windows
         .remove(target.windowId)
-        .then(() => console.log(`Closed window ${target.windowId} for workspace: ${target.name}`))
+        .then(() =>
+          logger.info('close', `Closed window ${target.windowId} for workspace: ${target.name}`)
+        )
         .fallback(__func__, `Window ${target.windowId} was already closed or doesn't exist:`);
 
       // Remove from active workspaces list
@@ -156,7 +158,7 @@ export class WorkspaceManager {
   async addTab(id: string, browserTab: browser.tabs.Tab) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      console.error(`[__NAME__] :__func__:addTab Workspace with id ${id} not found`);
+      logger.WorkspaceNotFound('addTab', id);
       return false;
     }
 
@@ -171,7 +173,7 @@ export class WorkspaceManager {
   async removeTab(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      console.warn('[__NAME__] __func__: Workspace not found, id: ' + id);
+      logger.WorkspaceNotFound('removeTab', id);
       return false;
     }
 
@@ -191,7 +193,7 @@ export class WorkspaceManager {
     // Find tab in source group
     const tab = from.tabs.find((t) => t.id === tabId);
     if (!tab) {
-      console.warn(`[__NAME__] __func__: Tab ${tabId} not found in workspace ${fromId}`);
+      logger.TabNotFoundInWorkspace('moveTabBetweenWorkspaces', fromId, tabId);
       return false;
     }
 
@@ -225,7 +227,7 @@ export class WorkspaceManager {
 
   setBadge(workspace: Workspace, windowId?: number) {
     if (!windowId) {
-      console.log('[__NAME__] __func__: Not setting badge, no windowId');
+      logger.debug('setBadge', 'Not setting badge, no windowId');
       return;
     }
 
@@ -377,9 +379,10 @@ export class WorkspaceManager {
         continue;
       }
 
+      // todo 这里能改成入参是workspace而不是.id吗
       const succ = await this.updateByWindowId(workspace.id, workspace.windowId);
       if (succ === false) {
-        console.error(`[__NAME__:__func__] failed: ${workspace.name}(${workspace.id})`);
+        logger.error('updateActiveWorkspaces', `failed: ${workspace.name}(${workspace.id})`);
       }
     }
   }
@@ -392,7 +395,10 @@ export class WorkspaceManager {
     // Clear active workspaces on startup
     this._activated.length = 0;
     await this.save();
-    console.log('Cleared stale window associations and active workspaces on startup');
+    logger.info(
+      'restoreSessions',
+      'Cleared stale window associations and active workspaces on startup'
+    );
   }
 
   // Get recently closed work groups
@@ -413,7 +419,7 @@ export class WorkspaceManager {
 
   async importData(data: ExportData): Promise<boolean> {
     if (!Array.isArray(data.workspaceses)) {
-      console.error(`[__NAME__] __func__: data.workspaceses must be Workspace[]`);
+      logger.error('importData', 'data.workspaceses must be Workspace[]', data);
       return false;
     }
 
