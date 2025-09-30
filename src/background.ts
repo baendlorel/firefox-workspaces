@@ -1,6 +1,6 @@
 import './lib/promise-ext.js';
 import { Action } from './lib/consts.js';
-import { $createTabInfo, $mergeTabInfo } from './lib/utils.js';
+import { $createTabInfo, $genId, $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
 class WorkspaceBackground {
@@ -103,6 +103,7 @@ class WorkspaceBackground {
 
     // Handle tab events
     browser.tabs.onCreated.addListener(async (tab) => {
+      logger.info('Tab created', tab.windowId, tab);
       if (tab.windowId === undefined) {
         browser.notifications.create({
           type: 'basic',

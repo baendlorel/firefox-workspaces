@@ -38,7 +38,7 @@ const createContextMenu = (bus: EventBus<WorkspaceEditorEventMap>) => {
       label: btn5,
       action: function (this) {
         this.close();
-        logger.debug(btn5.innerText);
+        bus.emit('open-about');
       },
     },
     'divider',
