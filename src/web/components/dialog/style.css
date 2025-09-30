@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+dialog,
+dialog:focus {
+  @apply outline-0;
+}
+
 .dialog-container .dialog-header {
   @apply flex text-center justify-between items-center border-b border-gray-200;
   padding: 8px 14px 10px 14px;

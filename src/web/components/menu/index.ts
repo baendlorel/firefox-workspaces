@@ -1,6 +1,6 @@
-import { popIn, popOut } from '../pop/index.js';
+import { autoPopOutDialog, popIn } from '../pop/index.js';
 import './style.css';
-import { div, h } from '@/lib/dom.js';
+import { h } from '@/lib/dom.js';
 
 interface MenuOption {
   label: string | HTMLElement;
@@ -8,10 +8,11 @@ interface MenuOption {
 }
 
 export class Menu {
-  private readonly dialog: HTMLDialogElement;
-  private readonly content: HTMLDivElement;
+  readonly dialog: HTMLDialogElement;
   private readonly ul: HTMLUListElement;
   private readonly lis: HTMLLIElement[];
+
+  private readonly popIn: () => void;
 
   constructor(options: MenuOption[]) {
     // # Elements
@@ -23,12 +24,12 @@ export class Menu {
     });
 
     this.ul = h('ul', 'menu-options', this.lis);
-    this.content = div('', [this.ul]);
-    this.dialog = h('dialog', 'menu', [this.content]);
+    this.dialog = h('dialog', 'menu', [this.ul]);
 
     // # register events
     // Handle backdrop click to close
-    this.dialog.addEventListener('click', (e) => e.target === this.dialog && this.close());
+    autoPopOutDialog(this.dialog);
+    this.popIn = popIn(this.dialog, () => this.dialog.showModal());
 
     // Add to document body
     document.body.appendChild(this.dialog);
@@ -42,14 +43,7 @@ export class Menu {
     // Ensure menu stays within viewport
     this.adjustPosition();
 
-    popIn(this.dialog, () => {
-      console.log('showing');
-      this.dialog.showModal();
-    });
-  }
-
-  close() {
-    popOut(this.dialog, undefined, () => this.dialog.close());
+    this.popIn();
   }
 
   private adjustPosition() {
@@ -86,5 +80,16 @@ export class Menu {
 
   destroy() {
     this.dialog.parentNode?.removeChild(this.dialog);
+  }
+
+  /**
+   * Calculate the bounding client rect of the menu dialog.
+   */
+  getBoundingClientRect() {
+    // & trigger calculation
+    this.dialog.show();
+    const drect = this.dialog.getBoundingClientRect();
+    this.dialog.close();
+    return drect;
   }
 }

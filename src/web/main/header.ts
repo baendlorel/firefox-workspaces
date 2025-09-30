@@ -3,7 +3,6 @@ import { btn, div, h } from '@/lib/dom.js';
 import { Consts } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 
-// import folderPlus from '@web/assets/folder-plus.svg?raw';
 import plusSvg from '@web/assets/workspace-plus.svg?raw';
 import listSvg from '@web/assets/list.svg?raw';
 import { Menu } from '../components/menu/index.js';
@@ -27,7 +26,13 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   ]);
 
   addBtn.addEventListener('click', () => bus.emit('edit', null));
-  moreBtn.addEventListener('click', (e) => contextMenu.show(e.clientX, e.clientY));
+  moreBtn.addEventListener('click', () => {
+    const rect = moreBtn.getBoundingClientRect();
+    const drect = contextMenu.getBoundingClientRect();
+    const x = rect.x - drect.width - 1;
+    const y = rect.y + rect.height - 1;
+    contextMenu.show(x, y);
+  });
 
   const title = h('h2', 'wb-header-title', 'Workspace');
   const header = div('wb-header', [title, addBtn, moreBtn]);
