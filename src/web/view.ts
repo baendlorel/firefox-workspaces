@@ -6,7 +6,6 @@ import header from './main/header.js';
 import list from './main/list.js';
 import emptyState from './main/empty-state.js';
 import editor from './main/editor.js';
-import tabs from './main/tabs.js';
 import version from './main/version.js';
 
 export function createView() {
@@ -28,18 +27,5 @@ export function createView() {
 
   $id('app').append(...children);
 
-  // only for registering the 'render-tab' event
-  tabs(bus);
-
-  return {
-    /**
-     * Emit internal events
-     */
-    emit,
-
-    /**
-     * Register internal events
-     */
-    on,
-  };
+  return { emit, on };
 }
