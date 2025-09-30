@@ -22,10 +22,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const colorSelector = colorPicker('workspace-color');
 
   const deleteBtnText = div('', 'Delete');
-  const deleteBtnSvg = div('py-1');
-  deleteBtnSvg.innerHTML = svg(trashSvg, 'var(--light)', 14, 14);
   const deleteBtn = btn({ class: 'btn btn-danger btn-with-icon', title: 'Delete the workspace' }, [
-    deleteBtnSvg,
+    svg(trashSvg, 'var(--light)', 14, 14),
     deleteBtnText,
   ]);
 
