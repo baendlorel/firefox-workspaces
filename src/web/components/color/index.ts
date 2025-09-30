@@ -1,5 +1,5 @@
 import { WORKSPACE_COLORS } from '@/lib/consts.js';
-import { div } from '@/lib/dom.js';
+import { div, h } from '@/lib/dom.js';
 import { popIn, popOut } from '../pop/index.js';
 import { createPicker } from './picker.js';
 
@@ -35,18 +35,10 @@ export default (id: string): HTMLColorSelectorElement => {
     picker.setter(color);
   };
 
-  const close = (e: PointerEvent) => {
-    const node = e.target as Node;
-    e.stopPropagation();
-    if (palette.contains(node) || picker.el.contains(node)) {
-      return;
-    }
-    closePicker();
-  };
   const closePicker = popOut(picker.el, undefined, () => (picker.el.style.display = 'none'));
 
-  document.removeEventListener('click', close);
-  document.addEventListener('click', close);
+  picker.el.addEventListener('click', (e) => e.target === picker.el && closePicker());
+
   palette.addEventListener(
     'click',
     popIn(picker.el, () => (picker.el.style.display = 'grid'))

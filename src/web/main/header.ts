@@ -6,6 +6,7 @@ import { Color } from '@/lib/color.js';
 // import folderPlus from '@web/assets/folder-plus.svg?raw';
 import plusSvg from '@web/assets/workspace-plus.svg?raw';
 import listSvg from '@web/assets/list.svg?raw';
+import { Menu } from '../components/menu/index.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const addBtn = btn('btn-text', '');
@@ -13,15 +14,23 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   addBtn.innerHTML = plusSvg.replaceAll('currentColor', '#fff');
   addBtn.style.width = '18px';
 
-  const listBtn = btn('btn-text', '');
-  listBtn.title = 'Create new workspace';
-  listBtn.innerHTML = listSvg.replaceAll('currentColor', '#fff');
-  listBtn.style.width = '18px';
+  const moreBtn = btn('btn-text', '');
+  moreBtn.title = 'More Actions';
+  moreBtn.innerHTML = listSvg.replaceAll('currentColor', '#fff');
+  moreBtn.style.width = '18px';
+
+  const contextMenu = new Menu([
+    { label: 'Add current tabs to a new Workspace', action: () => console.log('create') },
+    { label: 'Import', action: () => console.log('Import') },
+    { label: 'Export', action: () => console.log('Export') },
+    { label: 'Settings', action: () => console.log('Settings') },
+  ]);
 
   addBtn.addEventListener('click', () => bus.emit('edit', null));
+  moreBtn.addEventListener('click', (e) => contextMenu.show(e.clientX, e.clientY));
 
   const title = h('h2', 'wb-header-title', 'Workspace');
-  const header = div('wb-header', [title, addBtn]);
+  const header = div('wb-header', [title, addBtn, moreBtn]);
   bus.on('set-current', (workspace) => {
     title.textContent = workspace?.name ?? 'Workspace';
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);

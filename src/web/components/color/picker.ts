@@ -16,7 +16,7 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
   alpha.appendChild(alphaIndicator);
   hue.appendChild(hueIndicator);
 
-  const el = div({ class: 'palette-container', style: 'display:none' }, [
+  const el = h('dialog', { class: 'palette-container', style: 'display:none' }, [
     indicator,
     picker,
     alpha,

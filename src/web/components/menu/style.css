@@ -1,5 +1,13 @@
 @import 'tailwindcss';
 
-.dialog-menu {
-  @apply fixed m-0 p-3 transform-none;
+.menu {
+  @apply fixed m-0 p-3 transform-none border-0 rounded-md shadow-lg bg-white;
+}
+
+.menu::backdrop {
+  background-color: transparent;
+}
+
+.menu-option {
+  cursor: pointer;
 }

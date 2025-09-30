@@ -1,3 +1,4 @@
+import { popIn, popOut } from '../pop/index.js';
 import './style.css';
 import { div, h } from '@/lib/dom.js';
 
@@ -41,12 +42,14 @@ export class Menu {
     // Ensure menu stays within viewport
     this.adjustPosition();
 
-    // Show the dialog
-    this.dialog.showModal();
+    popIn(this.dialog, () => {
+      console.log('showing');
+      this.dialog.showModal();
+    });
   }
 
   close() {
-    this.dialog.close();
+    popOut(this.dialog, undefined, () => this.dialog.close());
   }
 
   private adjustPosition() {

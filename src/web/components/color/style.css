@@ -1,0 +1,186 @@
+@import 'tailwindcss';
+
+.color-selector {
+  @apply relative grid grid-cols-8 gap-1.5 mt-0;
+}
+
+.color-option {
+  @apply w-7 h-7 rounded-full cursor-pointer border-0 justify-self-center opacity-100;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  outline-style: solid;
+  outline-width: 4px;
+  outline-color: transparent;
+}
+
+.color-option:hover {
+  @apply scale-110;
+}
+
+.color-option.selected {
+  @apply scale-100;
+  outline-color: var(--primary-light);
+}
+
+.color-option.selected::after {
+  @apply absolute;
+  content: ''; /* ✓ */
+  top: 50%;
+  left: 50%;
+  width: 36%;
+  height: 36%;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  /* color: var(--light); */
+  background-color: var(--light);
+  font-weight: bold;
+  font-size: 14px;
+  /* text-shadow:
+    0px 0px 3px rgba(255, 255, 255, 1),
+    1px 0px 1px rgba(255, 255, 255, 1),
+    -1px 0px 1px rgba(255, 255, 255, 1),
+    0px -1px 1px rgba(255, 255, 255, 1),
+    -1px 0px 1px rgba(255, 255, 255, 1); */
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 1));
+  z-index: 10;
+}
+
+div.palette {
+  @apply relative border-4;
+  background: conic-gradient(
+    from 0deg,
+    #ff0000 0deg,
+    #ff8000 30deg,
+    #ffff00 60deg,
+    #80ff00 90deg,
+    #00ff00 120deg,
+    #00ff80 150deg,
+    #00ffff 180deg,
+    #0080ff 210deg,
+    #0000ff 240deg,
+    #8000ff 270deg,
+    #ff00ff 300deg,
+    #ff0080 330deg,
+    #ff0000 360deg
+  );
+  border-color: var(--palette-value);
+}
+
+input.palette {
+  margin: 0;
+  padding: 0;
+  width: 0;
+  height: 0;
+  border: 0;
+  outline: 0;
+}
+
+.palette-container {
+  @apply absolute grid gap-2 p-2 overflow-hidden bg-neutral-800 rounded-lg border-1 border-gray-300;
+  left: 30px;
+  top: -20px;
+  width: 210px;
+  height: 180px;
+  grid-template-areas:
+    'indicator indicator indicator'
+    'picker alpha hue';
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr auto auto;
+
+  box-shadow:
+    0 32px 64px -12px rgba(0, 0, 0, 0.25),
+    0 25px 35px -8px rgba(0, 0, 0, 0.15),
+    0 10px 15px -5px rgba(0, 0, 0, 0.1);
+  transform: scale(0.8) translateY(-30px) rotateX(10deg);
+  transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  overflow: hidden;
+  z-index: 10;
+}
+
+input.palette-indicator {
+  @apply text-center rounded-sm border-0;
+  grid-area: indicator;
+  height: 30px;
+}
+
+input.palette-indicator:focus {
+  @apply outline-0;
+}
+
+.palette-picker {
+  @apply rounded-sm relative;
+  grid-area: picker;
+  background: linear-gradient(to bottom, transparent, black), linear-gradient(to right, white, red);
+  cursor: crosshair;
+}
+
+.palette-alpha {
+  @apply rounded-sm relative;
+  grid-area: alpha;
+  width: 24px;
+  cursor: ns-resize;
+}
+
+.palette-hue {
+  @apply rounded-sm relative;
+  grid-area: hue;
+  width: 24px;
+  background: linear-gradient(
+    to bottom,
+    #ff0000 0%,
+    #ff8000 8.33%,
+    #ffff00 16.67%,
+    #80ff00 25%,
+    #00ff00 33.33%,
+    #00ff80 41.67%,
+    #00ffff 50%,
+    #0080ff 58.33%,
+    #0000ff 66.67%,
+    #8000ff 75%,
+    #ff00ff 83.33%,
+    #ff0080 91.67%,
+    #ff0000 100%
+  );
+  cursor: ns-resize;
+}
+
+/* Indicators for color picker */
+.picker-indicator {
+  @apply absolute rounded-full bg-white border-2 border-gray-800;
+  width: 12px;
+  height: 12px;
+  margin: -6px 0 0 -6px;
+  pointer-events: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.palette-container {
+  @apply fixed m-0 p-3 transform-none border-0 rounded-md shadow-lg bg-white;
+}
+
+.palette-container::backdrop {
+  background-color: transparent;
+}
+
+.palette-container[data-visible='true'] .picker-indicator {
+  opacity: 1;
+}
+
+.alpha-indicator,
+.hue-indicator {
+  @apply absolute w-full h-1 bg-white border-1 border-gray-800;
+  margin-top: -2px;
+  pointer-events: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.palette-container[data-visible='true'] .alpha-indicator,
+.palette-container[data-visible='true'] .hue-indicator {
+  opacity: 1;
+}
