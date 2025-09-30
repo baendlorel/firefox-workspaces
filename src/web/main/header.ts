@@ -6,16 +6,19 @@ import { logger } from '@/lib/logger.js';
 
 import plusSvg from '@web/assets/workspace-plus.svg?raw';
 import listSvg from '@web/assets/list.svg?raw';
-import { Menu } from '../components/menu/index.js';
+import { Menu } from '@web/components/menu/index.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const addBtn = btn({ class: 'btn-text', title: 'New workspace' }, [svg(plusSvg, '#fff', 18, 18)]);
   const moreBtn = btn({ class: 'btn-text', title: 'More Actions' }, [svg(listSvg, '#fff', 18, 18)]);
   const contextMenu = new Menu([
-    { label: 'Add current tabs to a new Workspace', action: () => logger.debug('header', 'Create new workspace action triggered') },
-    { label: 'Import', action: () => logger.debug('header', 'Import action triggered') },
-    { label: 'Export', action: () => logger.debug('header', 'Export action triggered') },
-    { label: 'Settings', action: () => logger.debug('header', 'Settings action triggered') },
+    {
+      label: 'Add current tabs to a new Workspace',
+      action: () => logger.debug(__func__, 'Create new workspace action triggered'),
+    },
+    { label: 'Import', action: () => logger.debug(__func__, 'Import action triggered') },
+    { label: 'Export', action: () => logger.debug(__func__, 'Export action triggered') },
+    { label: 'Settings', action: () => logger.debug(__func__, 'Settings action triggered') },
   ]);
   const title = h('h2', 'wb-header-title', 'Workspace');
   const header = div('wb-header', [title, addBtn, moreBtn]);

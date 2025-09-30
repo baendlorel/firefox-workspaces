@@ -36,9 +36,9 @@ Promise.prototype.fallback = function <S = typeof Sym.Reject>(
 
   return Promise.prototype.catch.call(this, (error: unknown) => {
     if (message) {
-      logger.debug('fallback', message, error);
+      logger.debug(__func__, message, error);
     } else {
-      logger.debug('fallback', error);
+      logger.debug(__func__, error);
     }
     return value;
   });

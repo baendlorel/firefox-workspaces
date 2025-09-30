@@ -70,7 +70,7 @@ class PopupPage {
   // Check if current window belongs to a workspace and update header
   async checkCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent().catch((error) => {
-      logger.error('checkCurrentWindow', 'Failed to check current window', error);
+      logger.error(__func__, 'Failed to check current window', error);
       return null;
     });
     if (currentWindow === null) {
@@ -152,7 +152,7 @@ class PopupPage {
       this.main.emit('close-editor');
     } else {
       info('Failed to save workspace, Please try again.');
-      logger.error('save', 'Save workspace failed', response);
+      logger.error(__func__, 'Save workspace failed', response);
     }
   }
 

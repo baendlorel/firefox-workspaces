@@ -11,7 +11,7 @@ export default async (config: {
   const { promise, resolve } = Promise.create<number | null>();
   const { title, message = '', options } = config;
   if (options.length === 0) {
-    logger.warn('selectDialog', 'No options provided for select dialog.');
+    logger.warn(__func__, 'No options provided for select dialog.');
     resolve(null);
     return promise;
   }
