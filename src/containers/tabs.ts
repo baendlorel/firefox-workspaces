@@ -30,4 +30,12 @@ export class TabContainer {
   get(windowId: number): Map<number, browser.tabs.Tab> | undefined {
     return this.map.get(windowId);
   }
+
+  clear(windowId: number) {
+    this.map.delete(windowId);
+  }
+
+  clearAll() {
+    this.map.clear();
+  }
 }

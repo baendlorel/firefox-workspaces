@@ -4,6 +4,8 @@ import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank } from './lib/ext-apis.js';
 import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 import { IndexedWorkspace, Workspace } from './lib/workspace.js';
+import { WorkspaceContainer } from './containers/workspaces.js';
+import { TabContainer } from './containers/tabs.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -17,42 +19,16 @@ export class WorkspaceManager {
   private static _instance: WorkspaceManager;
 
   // # containers
+  private readonly workspaces = new WorkspaceContainer();
+  private readonly tabs = new TabContainer();
 
   constructor() {
-    this.init();
-  }
-
-  // Initialize the manager and load saved data
-  async init() {
-    await this.load();
-    logger.info('Updated at __DATE_TIME__');
-  }
-
-  get workspaces() {
-    return this._arr;
+    this.load().then(() => logger.info('Updated at __DATE_TIME__'));
   }
 
   // Get currently active/opened workspaces
   get activeWorkspaces(): string[] {
-    return [...this._activated];
-  }
-
-  // Check if a workspace is currently active
-  isActive(id: string): boolean {
-    return this._activated.includes(id);
-  }
-
-  // Check if a workspace is currently being deleted
-  isDeleting(id: string): boolean {
-    return this._deleting.has(id);
-  }
-
-  // Remove workspace from active list when window is closed
-  deactivate(id: string) {
-    const index = this._activated.indexOf(id);
-    if (index !== -1) {
-      this._activated.splice(index, 1);
-    }
+    return this.workspaces.activated;
   }
 
   /**
@@ -69,12 +45,13 @@ export class WorkspaceManager {
     const len = workspaces.list.length;
 
     // prepare the containers
-    this._clear();
+    this.workspaces.clearAll();
+    this.tabs.clearAll();
 
     // initialize 2 containers
     for (let i = 0; i < len; i++) {
       const indexed = IndexedWorkspace.load(i, list[i]);
-      this._add(indexed);
+      this.workspaces.add(indexed);
     }
   }
 
@@ -83,7 +60,7 @@ export class WorkspaceManager {
    * - Won't throw
    */
   save(): Promise<boolean> {
-    const data: WorkspaceStoredData = { list: this._arr };
+    const data: WorkspaceStoredData = { list: this.workspaces.arr };
     return browser.storage.local
       .set(data)
       .then(() => true)
@@ -91,15 +68,13 @@ export class WorkspaceManager {
   }
 
   async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
-    const workspace = new IndexedWorkspace(this._arr.length, name, color);
-    this._add(workspace);
-
+    const workspace = this.workspaces.create(name, color);
     await this.save();
     return workspace;
   }
 
   async update(id: string, updates: Partial<Workspace>) {
-    const workspace = this._map.get(id);
+    const workspace = this.workspaces.get(id);
     if (!workspace) {
       return null;
     }
@@ -110,13 +85,13 @@ export class WorkspaceManager {
 
   // Delete a workspace
   async delete(id: string): Promise<boolean> {
-    const target = this._map.get(id);
+    const target = this.workspaces.get(id);
     if (!target) {
       return false;
     }
 
     // Mark this workspace as being deleted to avoid conflicts with window close events
-    this._deleting.add(id);
+    this.workspaces.addDeleting(id);
 
     // If workspace has an active window, close it before deletion
     if (target.windowId !== undefined) {
@@ -126,27 +101,17 @@ export class WorkspaceManager {
         .fallback(`Window ${target.windowId} was already closed or doesn't exist:`);
 
       // Remove from active workspaces list
-      this.deactivate(id);
+      this.workspaces.deactivate(id);
     }
 
-    this._map.delete(id);
-    this._arr.splice(target.index, 1);
-    for (let i = target.index; i < this._arr.length; i++) {
-      this._arr[i].index = i;
-    }
-
+    this.workspaces.remove(id);
     await this.save();
-    this._deleting.delete(id);
     return true;
-  }
-
-  get(id: string) {
-    return this._map.get(id);
   }
 
   // Add tab to workspace
   async addTab(id: string, browserTab: browser.tabs.Tab) {
-    const workspace = this._map.get(id);
+    const workspace = this.workspaces.get(id);
     if (!workspace) {
       logger.WorkspaceNotFound(id);
       return false;
@@ -161,7 +126,7 @@ export class WorkspaceManager {
   }
 
   async removeTab(id: string, tabId: number) {
-    const workspace = this._map.get(id);
+    const workspace = this.workspaces.get(id);
     if (!workspace) {
       logger.WorkspaceNotFound(id);
       return false;
@@ -173,8 +138,8 @@ export class WorkspaceManager {
 
   // Move tab between work groups
   async moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number): Promise<boolean> {
-    const from = this._map.get(fromId);
-    const to = this._map.get(toId);
+    const from = this.workspaces.get(fromId);
+    const to = this.workspaces.get(toId);
 
     if (!from || !to) {
       return false;
@@ -198,7 +163,7 @@ export class WorkspaceManager {
 
   // Toggle tab pinned status within a group
   async toggleTabPin(id: string, tabId: number) {
-    const workspace = this._map.get(id);
+    const workspace = this.workspaces.get(id);
     if (!workspace) {
       logger.WorkspaceNotFound(id);
       return false;
@@ -236,7 +201,7 @@ export class WorkspaceManager {
 
   // Open workspace in new window
   async open(id: string): Promise<{ id?: number } | null> {
-    const workspace = this._map.get(id);
+    const workspace = this.workspaces.get(id);
     if (!workspace) {
       logger.WorkspaceNotFound(id);
       return null;
@@ -256,7 +221,7 @@ export class WorkspaceManager {
 
       // Window doesn't exist anymore, clear the reference and remove from active list
       workspace.windowId = undefined;
-      this.deactivate(id);
+      this.workspaces.deactivate(id);
     }
 
     const tabs = workspace.tabs;
@@ -302,7 +267,7 @@ export class WorkspaceManager {
     workspace.setWindowId(window.id);
 
     // Add to active workspaces if not already there
-    !this.isActive(id) && this._activated.push(id);
+    this.workspaces.activate(id);
 
     await this.save();
 
@@ -311,7 +276,7 @@ export class WorkspaceManager {
 
   // Update workspace tabs from window state
   async updateByWindowId(id: string, windowId: number): Promise<boolean> {
-    const workspace = this._map.get(id);
+    const workspace = this.workspaces.get(id);
     if (!workspace || workspace.windowId !== windowId) {
       return false;
     }
@@ -337,16 +302,17 @@ export class WorkspaceManager {
    * 🤣 But we finally decided to keep an array for indexed access and ordering.
    */
   getByWindowId(windowId: number): Workspace | null {
-    for (let i = 0; i < this._arr.length; i++) {
-      if (this._arr[i].windowId === windowId) {
-        return this._arr[i];
+    const arr = this.workspaces.arr;
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].windowId === windowId) {
+        return arr[i];
       }
     }
     return null;
   }
 
   getStats(id: string): WorkspaceStats | null {
-    const workspace = this._map.get(id);
+    const workspace = this.workspaces.get(id);
     if (!workspace) {
       return null;
     }
@@ -363,8 +329,9 @@ export class WorkspaceManager {
 
   // Save current session for all active work groups
   async saveActiveSessions() {
-    for (let i = 0; i < this._arr.length; i++) {
-      const workspace = this._arr[i];
+    const arr = this.workspaces.arr;
+    for (let i = 0; i < arr.length; i++) {
+      const workspace = arr[i];
       if (workspace.windowId === undefined) {
         continue;
       }
@@ -379,18 +346,19 @@ export class WorkspaceManager {
 
   // Restore all workspace sessions on startup
   async restoreSessions() {
-    for (let i = 0; i < this._arr.length; i++) {
-      this._arr[i].windowId = undefined;
+    const arr = this.workspaces.arr;
+    for (let i = 0; i < arr.length; i++) {
+      arr[i].windowId = undefined;
     }
     // Clear active workspaces on startup
-    this._activated.length = 0;
+    this.workspaces.deactivateAll();
     await this.save();
     logger.info('Cleared stale window associations and active workspaces on startup');
   }
 
   // Get recently closed work groups
   getRecentlyClosed(limit: number = 5) {
-    return this._arr
+    return this.workspaces.arr
       .filter((workspace) => workspace.lastOpened && !workspace.windowId)
       .sort((a, b) => b.lastOpened - a.lastOpened)
       .slice(0, limit);
@@ -400,7 +368,7 @@ export class WorkspaceManager {
     return {
       version: '__VERSION__',
       exportDate: Date.now(),
-      workspaceses: this._arr,
+      workspaceses: this.workspaces.arr,
     };
   }
 
@@ -411,15 +379,14 @@ export class WorkspaceManager {
     }
 
     // Clear existing groups (with confirmation in UI)
-    this._map.clear();
-    this._arr.length = 0;
+    this.workspaces.clear();
 
     // Import groups
     for (let i = 0; i < data.workspaceses.length; i++) {
       const workspace = IndexedWorkspace.load(i, data.workspaceses[i]);
       // prevent ID conflicts
       workspace.id = $genId();
-      this._add(workspace);
+      this.workspaces.add(workspace);
     }
 
     return this.save();
