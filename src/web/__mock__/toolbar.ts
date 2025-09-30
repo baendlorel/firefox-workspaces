@@ -346,15 +346,6 @@ class MockBrowser {
           } as any;
         }
 
-        const tabFromRegular = fromWorkspace.tabs.find((tab) => tab.id === req.tabId);
-
-        let movedTab: TabInfo | undefined;
-
-        if (movedTab) {
-          toWorkspace.tabs.push(movedTab);
-          this.saveWorkspaces(workspaces);
-        }
-
         return {
           success: true,
         } as MoveTabResponse;

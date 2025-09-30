@@ -58,4 +58,8 @@ export const replaceLiteralOpts = {
   'logger.warn(': "console.log(`%c[__NAME__ info] __func__:`, 'color:orange',",
   'logger.error(': "console.log(`%c[__NAME__ info] __func__:`, 'color:red',",
   'logger.debug(': "console.log(`%c[__NAME__ info] __func__:`, 'color:purple',",
+  'logger.WorkspaceNotFound(':
+    "console.log(`%c[__NAME__ error] __func__:`, 'color:red','Workspace not found, id:',",
+  'logger.TabNotFoundInWorkspace(':
+    "console.log(`%c[__NAME__ error] __func__:`, 'color:red','Tab not found in workspace. tabid,workspaceid:',",
 };

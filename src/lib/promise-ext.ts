@@ -1,5 +1,4 @@
 import { Sym } from './consts.js';
-import { logger } from './logger.js';
 
 declare global {
   interface Promise<T> {

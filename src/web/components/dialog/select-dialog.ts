@@ -1,7 +1,6 @@
 import '@/lib/promise-ext.js';
 import { btn, h } from '@/lib/dom.js';
 import { createDialog } from './index.js';
-import { logger } from '@/lib/logger.js';
 
 export default async (config: {
   title?: string;

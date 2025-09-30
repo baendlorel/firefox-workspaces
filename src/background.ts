@@ -1,7 +1,6 @@
 import './lib/promise-ext.js';
 import { Action } from './lib/consts.js';
 import { $createTabInfo, $mergeTabInfo } from './lib/utils.js';
-import { logger } from './lib/logger.js';
 import { WorkspaceManager } from './manager.js';
 
 class WorkspaceBackground {

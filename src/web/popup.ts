@@ -6,7 +6,6 @@ import '@/lib/promise-ext.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action, Sym } from '@/lib/consts.js';
-import { logger } from '@/lib/logger.js';
 
 import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';

@@ -4,7 +4,6 @@ import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank } from './lib/ext-apis.js';
 import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 import { IndexedWorkspace, Workspace } from './lib/workspace.js';
-import { logger } from './lib/logger.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -28,7 +27,7 @@ export class WorkspaceManager {
   // Initialize the manager and load saved data
   async init() {
     await this.load();
-    logger.info('initialized. Updated at __DATE_TIME__');
+    logger.info('Updated at __DATE_TIME__');
   }
 
   get workspaces() {

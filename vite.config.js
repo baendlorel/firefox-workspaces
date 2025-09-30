@@ -19,6 +19,7 @@ export default defineConfig({
     typescript({ tsconfig }),
     replace(replaceOpts),
     replace({
+      preventAssignment: false,
       delimiters: ['', ''],
       // replace loggers
       values: replaceLiteralOpts,

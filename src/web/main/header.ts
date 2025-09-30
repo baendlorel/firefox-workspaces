@@ -2,7 +2,6 @@ import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
-import { logger } from '@/lib/logger.js';
 
 import plusSvg from '@web/assets/workspace-plus.svg?raw';
 import listSvg from '@web/assets/list.svg?raw';
