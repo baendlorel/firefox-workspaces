@@ -14,7 +14,6 @@ declare global {
     name: string;
     color: HexColor;
     tabs: TabInfo[];
-    pinnedTabs: TabInfo[];
     createdAt: number;
     lastOpened: number;
     windowId?: number; // Track associated window
@@ -34,6 +33,7 @@ declare global {
     title: string;
     url: string;
     favIconUrl: string;
+    pinned: boolean;
     addedAt: number;
   }
 

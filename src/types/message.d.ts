@@ -23,12 +23,6 @@ declare global {
     id: string;
   }
 
-  interface AddCurrentTabRequest {
-    action: Action.AddCurrentTab;
-    workspaceId: string;
-    pinned: boolean;
-  }
-
   interface RemoveTabRequest {
     action: Action.RemoveTab;
     workspaceId: string;
@@ -75,7 +69,6 @@ declare global {
     | CreateWorkspaceRequest
     | UpdateWorkspaceRequest
     | DeleteWorkspaceRequest
-    | AddCurrentTabRequest
     | RemoveTabRequest
     | TogglePinRequest
     | OpenWorkspaceRequest
@@ -165,7 +158,6 @@ declare global {
     [Action.CreateWorkspace]: CreateWorkspaceResponse;
     [Action.UpdateWorkspace]: UpdateWorkspaceResponse;
     [Action.DeleteWorkspace]: DeleteWorkspaceResponse;
-    [Action.AddCurrentTab]: AddCurrentTabResponse;
     [Action.RemoveTab]: RemoveTabResponse;
     [Action.TogglePin]: TogglePinResponse;
     [Action.OpenWorkspace]: OpenWorkspaceResponse;

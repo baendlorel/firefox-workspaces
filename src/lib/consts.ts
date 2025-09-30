@@ -30,7 +30,6 @@ export const enum Action {
   CreateWorkspace = 'CreateWorkspace',
   UpdateWorkspace = 'UpdateWorkspace',
   DeleteWorkspace = 'DeleteWorkspace',
-  AddCurrentTab = 'AddCurrentTab',
   RemoveTab = 'RemoveTab',
   TogglePin = 'TogglePin',
   OpenWorkspace = 'OpenWorkspace',

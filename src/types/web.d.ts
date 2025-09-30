@@ -31,7 +31,6 @@ type WorkspaceEditorEventMap = {
   open: (workspace: Workspace) => void;
 
   // tabs
-  'add-current-tab': () => void;
   'render-tab': (workspace: Workspace) => HTMLDivElement[];
   'move-tab': (fromId: string, toId: string, tabId: number) => void;
   'remove-tab': (workspaceId: string, tabId: number) => void;

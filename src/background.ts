@@ -1,6 +1,6 @@
 import './lib/promise-ext.js';
 import { Action } from './lib/consts.js';
-import { $mergeTabInfo } from './lib/utils.js';
+import { $createTabInfo, $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
 class WorkspaceBackground {
@@ -40,13 +40,8 @@ class WorkspaceBackground {
         console.log(`Workspace ${workspace.name} is being deleted, skipping window close handling`);
       }
 
-      // ?? First save the current state of tabs before clearing window association
-      await this.manager
-        .updateByWindowId(workspace.id, windowId)
-        .then(() => console.log(`Saved workspace session for: ${workspace.name}`))
-        .fallback(`Failed to save workspace session for: ${workspace.name}`);
-
-      // Clear window association and remove from active list
+      const tabs = await browser.tabs.query({ windowId });
+      workspace.tabs = tabs.map($createTabInfo);
       workspace.windowId = undefined;
       this.manager.deactivate(workspace.id);
       await this.manager.save();
@@ -149,18 +144,9 @@ class WorkspaceBackground {
       }
 
       // Update the specific tab in the workspace
-      // todo pinned tab是否要和tab分开？
-      const updateTab = (tabs: TabInfo[]) => {
-        const index = tabs.findIndex((t) => t.id === tabId);
-        if (index !== -1) {
-          $mergeTabInfo(tabs[index], browserTab);
-          return true;
-        }
-        return false;
-      };
-
-      const updated = updateTab(workspace.tabs) || updateTab(workspace.pinnedTabs);
-      if (updated) {
+      const index = workspace.tabs.findIndex((t) => t.id === tabId);
+      if (index !== -1) {
+        workspace.tabs[index] = $mergeTabInfo(workspace.tabs[index], browserTab);
         await this.manager.save();
       }
     });
@@ -230,22 +216,6 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.AddCurrentTab) {
-      const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
-
-      if (currentTab[0]) {
-        const added = await this.manager.addTab(message.workspaceId, currentTab[0], message.pinned);
-        const response: MessageResponseMap[typeof action] = { success: added };
-        return response;
-      } else {
-        const response: MessageResponseMap[typeof action] = {
-          success: false,
-          error: 'No active tab found',
-        };
-        return response;
-      }
-    }
-
     if (action === Action.RemoveTab) {
       const removed = await this.manager.removeTab(message.workspaceId, message.tabId);
       const response: MessageResponseMap[typeof action] = { success: removed };
@@ -289,19 +259,9 @@ class WorkspaceBackground {
     }
 
     if (action === Action.CheckPageInWorkspaces) {
-      const matched = this.manager.workspaces.filter((workspace) => {
-        for (let i = 0; i < workspace.pinnedTabs.length; i++) {
-          if (workspace.pinnedTabs[i].url === message.url) {
-            return true;
-          }
-        }
-        for (let i = 0; i < workspace.tabs.length; i++) {
-          if (workspace.tabs[i].url === message.url) {
-            return true;
-          }
-        }
-        return false;
-      });
+      const matched = this.manager.workspaces.filter((workspace) =>
+        workspace.tabs.some((tab) => tab.url === message.url)
+      );
       const response: MessageResponseMap[typeof action] = { success: true, data: matched };
       return response;
     }

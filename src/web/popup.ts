@@ -41,7 +41,6 @@ class PopupPage {
     this.main = createView();
 
     // tabs
-    this.main.on('add-current-tab', () => this.showAddTabMenu());
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
     this.main.on('remove-tab', (id: string, tabId: number) => this.removeTab(id, tabId));
     this.main.on('move-tab', (fromId: string, toId: string, tabId: number) =>
@@ -254,46 +253,6 @@ class PopupPage {
       this.render();
     } else {
       info('Failed to move tab, Please try again.');
-    }
-  }
-
-  // Show menu to add current tab to a group
-  async showAddTabMenu() {
-    if (this.workspaces.length === 0) {
-      info('Create a workspace first.');
-      return;
-    }
-
-    // Simple implementation - show a select dialog
-    const options = this.workspaces.map((w) => ({
-      label: listItem(w),
-      value: w.id,
-    }));
-
-    const selected = await selectDialog({
-      message: 'Add current tab to which workspace?',
-      options,
-    });
-
-    if (selected === null) {
-      return;
-    }
-
-    const response = await $send<AddCurrentTabRequest>({
-      action: Action.AddCurrentTab,
-      workspaceId: selected,
-      pinned: false,
-    }).fallbackWithDialog('__func__: Error adding tab to group', Sym.Reject);
-
-    if (response === Sym.Reject) {
-      return;
-    }
-
-    if (response.success) {
-      await this.load();
-      this.render();
-    } else {
-      info('Failed to add tab to group, Please try again.');
     }
   }
 }

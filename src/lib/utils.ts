@@ -38,6 +38,7 @@ export const $createTabInfo = (tab: browser.tabs.Tab): TabInfo => ({
   url: tab.url ?? '[No URL]',
   title: tab.title ?? '[No Title]',
   favIconUrl: tab.favIconUrl ?? '[No Favicon]',
+  pinned: tab.pinned,
   addedAt: Date.now(),
 });
 
@@ -53,5 +54,6 @@ export const $mergeTabInfo = (tab: TabInfo, browserTab: browser.tabs.Tab): TabIn
   url: browserTab.url ?? tab.url ?? '[No URL]',
   title: browserTab.title ?? tab.title ?? '[No Title]',
   favIconUrl: browserTab.favIconUrl ?? tab.favIconUrl ?? '[No Favicon]',
+  pinned: browserTab.pinned ?? tab.pinned,
   addedAt: tab.addedAt ?? Date.now(),
 });
