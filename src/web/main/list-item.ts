@@ -1,4 +1,5 @@
 import { div } from '@/lib/dom.js';
+import { Workspace } from '@/lib/workspace.js';
 import { wbicon } from './icon.js';
 
 export default (workspace: Workspace, actionBtns: HTMLElement[] = []) => {

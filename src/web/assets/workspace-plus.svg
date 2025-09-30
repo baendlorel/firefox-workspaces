@@ -6,7 +6,6 @@
          stroke-linecap="round" stroke="currentColor" stroke-width="3" fill="none" />
       <rect x="26" y="25" width="24" height="24" rx="4"
          stroke="currentColor" stroke-width="3" />
-
    </g>
    <g stroke="currentColor" stroke-width="3" stroke-linecap="round">
       <line x1="42" y1="37" x2="42" y2="47" />

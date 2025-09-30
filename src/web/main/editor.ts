@@ -2,6 +2,7 @@ import { EventBus } from 'minimal-event-bus';
 import { RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
+import { Workspace } from '@/lib/workspace.js';
 
 import { createDialog } from '../components/dialog/index.js';
 import { confirmation, danger, info } from '../components/dialog/alerts.js';
