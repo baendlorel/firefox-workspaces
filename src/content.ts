@@ -4,6 +4,7 @@ import './lib/promise-ext.js';
 import { Action, Consts } from './lib/consts.js';
 import { $query } from './lib/dom.js';
 import { $send } from './lib/ext-apis.js';
+import { Workspace } from './lib/workspace.js';
 
 (function () {
   'use strict';

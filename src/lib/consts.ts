@@ -76,5 +76,6 @@ export const RANDOM_NAME_PART2 = [
 ];
 
 export class Sym extends null {
-  static readonly Reject = Symbol('reject');
+  static readonly Reject = Symbol('Reject');
+  static readonly NotProvided = Symbol('NotProvided') as any;
 }

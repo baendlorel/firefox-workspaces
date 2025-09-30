@@ -62,7 +62,7 @@ class WorkspaceBackground {
       }
 
       // Update workspace's last accessed time
-      workspace.lastOpened = Date.now();
+      workspace.updateLastOpened();
       await this.manager.save();
 
       // Notify all popup windows about the focus change

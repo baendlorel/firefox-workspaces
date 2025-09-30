@@ -1,6 +1,7 @@
 import './toolbar.css';
 import { Action, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
+import { Workspace } from '@/lib/workspace.js';
 
 // # Mock browser API in dev mode
 
@@ -50,15 +51,7 @@ class MockBrowser {
     const randomName = names[Math.floor(Math.random() * names.length)];
     const randomColor = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
 
-    return {
-      id: `workspace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-      name: `${randomName} ${Math.floor(Math.random() * 100)}`,
-      color: randomColor,
-      tabs: [],
-      pinnedTabs: [],
-      createdAt: Date.now(),
-      lastOpened: Date.now(),
-    };
+    return new Workspace(randomName, randomColor);
   }
 
   private createSampleTab(): TabInfo {
@@ -83,6 +76,7 @@ class MockBrowser {
       title: sample.title,
       url: sample.url,
       favIconUrl: sample.favIconUrl,
+      pinned: false,
       addedAt: Date.now(),
     };
   }
@@ -175,32 +169,30 @@ class MockBrowser {
   }
 
   private triggerSetCurrent(): void {
+    const tabs = [
+      {
+        id: 1,
+        title: 'Fake Tab 1',
+        url: 'https://example.com',
+        favIconUrl: 'https://example.com/favicon.ico',
+        pinned: true,
+        addedAt: Date.now(),
+      },
+      {
+        id: 2,
+        title: 'Fake Tab 2',
+        url: 'https://github.com',
+        favIconUrl: 'https://github.com/favicon.ico',
+        pinned: false,
+        addedAt: Date.now(),
+      },
+    ];
     // Create a fake workspace
-    const fakeWorkspace: Workspace = {
-      id: `fake-workspace-${Date.now()}`,
-      name: `Fake Workspace ${new Date().toLocaleTimeString()}`,
-      color: WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)],
-      tabs: [
-        {
-          id: 1,
-          title: 'Fake Tab 1',
-          url: 'https://example.com',
-          favIconUrl: 'https://example.com/favicon.ico',
-          addedAt: Date.now(),
-        },
-        {
-          id: 2,
-          title: 'Fake Tab 2',
-          url: 'https://github.com',
-          favIconUrl: 'https://github.com/favicon.ico',
-          addedAt: Date.now(),
-        },
-      ],
-      pinnedTabs: [],
-      createdAt: Date.now(),
-      lastOpened: Date.now(),
-      windowId: 999, // Fake window ID
-    };
+    const name = `Fake Workspace ${new Date().toLocaleTimeString()}`;
+    const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
+    const fakeWorkspace: Workspace = new Workspace(name, color);
+    fakeWorkspace.tabs = tabs;
+    fakeWorkspace.windowId = 999;
 
     // Trigger set-current event through the global popup instance
     if (window.popup) {
@@ -237,15 +229,7 @@ class MockBrowser {
 
       case Action.CreateWorkspace: {
         const req = request as CreateWorkspaceRequest;
-        const newWorkspace: Workspace = {
-          id: `workspace-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-          name: req.name,
-          color: req.color,
-          tabs: [],
-          pinnedTabs: [],
-          createdAt: Date.now(),
-          lastOpened: Date.now(),
-        };
+        const newWorkspace = new Workspace(req.name, req.color);
 
         workspaces.push(newWorkspace);
         this.saveWorkspaces(workspaces);
@@ -286,32 +270,6 @@ class MockBrowser {
         } as DeleteWorkspaceResponse;
       }
 
-      case Action.AddCurrentTab: {
-        const req = request as AddCurrentTabRequest;
-        const workspace = workspaces.find((ws) => ws.id === req.workspaceId);
-
-        if (!workspace) {
-          return {
-            success: false,
-            error: 'Workspace not found',
-          } as AddCurrentTabResponse;
-        }
-
-        const newTab = this.createSampleTab();
-
-        if (req.pinned) {
-          workspace.pinnedTabs.push(newTab);
-        } else {
-          workspace.tabs.push(newTab);
-        }
-
-        this.saveWorkspaces(workspaces);
-
-        return {
-          success: true,
-        } as AddCurrentTabResponse;
-      }
-
       case Action.RemoveTab: {
         const req = request as RemoveTabRequest;
         const workspace = workspaces.find((ws) => ws.id === req.workspaceId);
@@ -324,7 +282,6 @@ class MockBrowser {
         }
 
         workspace.tabs = workspace.tabs.filter((tab) => tab.id !== req.tabId);
-        workspace.pinnedTabs = workspace.pinnedTabs.filter((tab) => tab.id !== req.tabId);
 
         this.saveWorkspaces(workspaces);
 
@@ -345,14 +302,8 @@ class MockBrowser {
         }
 
         const tabInRegular = workspace.tabs.find((tab) => tab.id === req.tabId);
-        const tabInPinned = workspace.pinnedTabs.find((tab) => tab.id === req.tabId);
-
         if (tabInRegular) {
-          workspace.tabs = workspace.tabs.filter((tab) => tab.id !== req.tabId);
-          workspace.pinnedTabs.push(tabInRegular);
-        } else if (tabInPinned) {
-          workspace.pinnedTabs = workspace.pinnedTabs.filter((tab) => tab.id !== req.tabId);
-          workspace.tabs.push(tabInPinned);
+          tabInRegular.pinned = !tabInRegular.pinned;
         }
 
         this.saveWorkspaces(workspaces);
@@ -374,7 +325,7 @@ class MockBrowser {
         }
 
         // Update last opened time
-        workspace.lastOpened = Date.now();
+        workspace.updateLastOpened();
         this.saveWorkspaces(workspaces);
 
         return {
@@ -396,17 +347,8 @@ class MockBrowser {
         }
 
         const tabFromRegular = fromWorkspace.tabs.find((tab) => tab.id === req.tabId);
-        const tabFromPinned = fromWorkspace.pinnedTabs.find((tab) => tab.id === req.tabId);
 
         let movedTab: TabInfo | undefined;
-
-        if (tabFromRegular) {
-          fromWorkspace.tabs = fromWorkspace.tabs.filter((tab) => tab.id !== req.tabId);
-          movedTab = tabFromRegular;
-        } else if (tabFromPinned) {
-          fromWorkspace.pinnedTabs = fromWorkspace.pinnedTabs.filter((tab) => tab.id !== req.tabId);
-          movedTab = tabFromPinned;
-        }
 
         if (movedTab) {
           toWorkspace.tabs.push(movedTab);

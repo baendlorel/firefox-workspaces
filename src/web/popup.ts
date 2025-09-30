@@ -8,10 +8,9 @@ import '@/lib/promise-ext.js';
 import { $send } from '@/lib/ext-apis.js';
 import { Action, Sym } from '@/lib/consts.js';
 
-import selectDialog from './components/dialog/select-dialog.js';
 import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
-import listItem from './main/list-item.js';
+import { Workspace } from '@/lib/workspace.js';
 
 Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
   this: Promise<any>,
@@ -127,7 +126,7 @@ class PopupPage {
   async save(formData: WorkspaceFormData) {
     let response;
     if (formData.id === undefined) {
-      // Create new group
+      // Create new workspace
       response = await $send<CreateWorkspaceRequest>({
         action: Action.CreateWorkspace,
         name: formData.name,

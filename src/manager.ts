@@ -4,6 +4,7 @@ import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank } from './lib/ext-apis.js';
 import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 import { logger } from './lib/logger.js';
+import { IndexedWorkspace, Workspace } from './lib/workspace.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -76,8 +77,8 @@ export class WorkspaceManager {
 
     // initialize 2 containers
     for (let i = 0; i < len; i++) {
-      const indexed = { ...list[i], index: i };
-      this._map.set(list[i].id, indexed);
+      const indexed = IndexedWorkspace.load(i, list[i]);
+      this._map.set(indexed.id, indexed);
       this._arr[i] = indexed;
     }
   }
@@ -96,16 +97,7 @@ export class WorkspaceManager {
 
   async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
     const id = $genId();
-    const workspace: IndexedWorkspace = {
-      index: this._arr.length,
-      id: id,
-      name: name,
-      color: color,
-      tabs: [],
-      createdAt: Date.now(),
-      lastOpened: NaN,
-      windowId: undefined, // Track associated window
-    };
+    const workspace = new IndexedWorkspace(this._arr.length, name, color);
 
     this._map.set(id, workspace);
     this._arr.push(workspace);
@@ -283,8 +275,7 @@ export class WorkspaceManager {
       // Create window with new tab page if no URLs
       const window = await $aboutBlank();
       this.setBadge(workspace, window.id);
-      workspace.windowId = window.id;
-      workspace.lastOpened = Date.now();
+      workspace.setWindowId(window.id);
       await this.save();
       return window;
     }
@@ -340,8 +331,7 @@ export class WorkspaceManager {
     }
 
     // Update group with window association and last opened time
-    workspace.windowId = window.id;
-    workspace.lastOpened = Date.now();
+    workspace.setWindowId(window.id);
 
     // Add to active workspaces if not already there
     !this._activated.includes(id) && this._activated.push(id);
@@ -466,16 +456,11 @@ export class WorkspaceManager {
 
     // Import groups
     for (let i = 0; i < data.workspaceses.length; i++) {
-      const workspace = data.workspaceses[i];
-      const newWorkspace: IndexedWorkspace = {
-        ...workspace,
-        index: i,
-        id: $genId(),
-        windowId: undefined,
-        lastOpened: NaN,
-      };
-      this._map.set(newWorkspace.id, newWorkspace);
-      this._arr.push(newWorkspace);
+      const workspace = IndexedWorkspace.load(i, data.workspaceses[i]);
+      // prevent ID conflicts
+      workspace.id = $genId();
+      this._map.set(workspace.id, workspace);
+      this._arr.push(workspace);
     }
 
     return this.save();

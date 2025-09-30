@@ -1,4 +1,5 @@
 import 'rollup-plugin-func-macro';
+import { Workspace } from './lib/workspace.ts';
 
 declare global {
   const __IS_DEV__: boolean;
@@ -8,21 +9,6 @@ declare global {
   type HTMLTag = keyof HTMLElementTagNameMap;
 
   type HexColor = `#${string}`;
-
-  interface Workspace {
-    id: string;
-    name: string;
-    color: HexColor;
-    tabs: TabInfo[];
-    createdAt: number;
-    lastOpened: number;
-    windowId?: number; // Track associated window
-  }
-
-  /**
-   * For quicker access to the workspace data with `_map` and `_arr` in `WorkspaceManager`
-   */
-  type IndexedWorkspace = Workspace & { index: number };
 
   interface WorkspaceStoredData {
     list: Workspace[];
