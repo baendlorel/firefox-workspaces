@@ -1,5 +1,6 @@
 import { Color } from '@/lib/color.js';
 import { h, div } from '@/lib/dom.js';
+import { autoPopOutDialog } from '../pop/index.js';
 
 export const createPicker = (id: string, onChange: (color: HexColor) => void) => {
   const indicator = h('input', { id, class: 'palette-indicator' });
@@ -16,12 +17,9 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
   alpha.appendChild(alphaIndicator);
   hue.appendChild(hueIndicator);
 
-  const el = h('dialog', { class: 'palette-container', style: 'display:none' }, [
-    indicator,
-    picker,
-    alpha,
-    hue,
-  ]);
+  const container = div('palette-container', [indicator, picker, alpha, hue]);
+  const el = h('dialog', 'palette-dialog', [container]);
+  el.close();
 
   // Color state
   let currentHue = 0; // 0-360
@@ -188,5 +186,14 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
     set: updateWithRgba,
   });
 
-  return { el, getter: () => indicator.value, setter: updateWithRgba };
+  // Add pop out effect to the dialog
+  autoPopOutDialog(el);
+
+  const showModal = (x: number, y: number) => {
+    el.style.left = `${x}px`;
+    el.style.top = `${y}px`;
+    el.showModal();
+  };
+
+  return { el, showModal, getter: () => indicator.value, setter: updateWithRgba };
 };

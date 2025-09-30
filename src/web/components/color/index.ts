@@ -1,6 +1,7 @@
+import './style.css';
 import { WORKSPACE_COLORS } from '@/lib/consts.js';
-import { div, h } from '@/lib/dom.js';
-import { popIn, popOut } from '../pop/index.js';
+import { div } from '@/lib/dom.js';
+import { popIn } from '../pop/index.js';
 import { createPicker } from './picker.js';
 
 type HTMLColorSelectorElement = HTMLDivElement & { value: HexColor };
@@ -35,13 +36,12 @@ export default (id: string): HTMLColorSelectorElement => {
     picker.setter(color);
   };
 
-  const closePicker = popOut(picker.el, undefined, () => (picker.el.style.display = 'none'));
-
-  picker.el.addEventListener('click', (e) => e.target === picker.el && closePicker());
-
   palette.addEventListener(
     'click',
-    popIn(picker.el, () => (picker.el.style.display = 'grid'))
+    popIn(picker.el, () => {
+      const rect = palette.getBoundingClientRect();
+      picker.showModal(rect.x + 30, rect.y - 15);
+    })
   );
 
   Object.defineProperty(el, 'value', {

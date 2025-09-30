@@ -75,27 +75,43 @@ input.palette {
   outline: 0;
 }
 
-.palette-container {
-  @apply absolute grid gap-2 p-2 overflow-hidden bg-neutral-800 rounded-lg border-1 border-gray-300;
-  left: 30px;
-  top: -20px;
+.palette-dialog {
+  @apply bg-neutral-800 rounded-lg border-0;
   width: 210px;
   height: 180px;
-  grid-template-areas:
-    'indicator indicator indicator'
-    'picker alpha hue';
-  grid-template-rows: auto 1fr;
-  grid-template-columns: 1fr auto auto;
-
   box-shadow:
     0 32px 64px -12px rgba(0, 0, 0, 0.25),
     0 25px 35px -8px rgba(0, 0, 0, 0.15),
     0 10px 15px -5px rgba(0, 0, 0, 0.1);
   transform: scale(0.8) translateY(-30px) rotateX(10deg);
   transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
-  overflow: hidden;
-  z-index: 10;
+.palette-container {
+  @apply grid gap-2 p-2;
+  width: 100%;
+  height: 100%;
+
+  grid-template-areas:
+    'indicator indicator indicator'
+    'picker alpha hue';
+  grid-template-rows: auto 1fr;
+  grid-template-columns: 1fr auto auto;
+}
+
+.palette-container::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px) saturate(1.2);
+  opacity: 0;
+  transition: all 0.35s ease-out;
+}
+/* .palette-container::backdrop {
+  @apply block;
+  background-color: transparent;
+} */
+
+.palette-container[data-visible='true'] .picker-indicator {
+  opacity: 1;
 }
 
 input.palette-indicator {
@@ -156,18 +172,6 @@ input.palette-indicator:focus {
   z-index: 1;
   opacity: 0;
   transition: opacity 0.2s ease;
-}
-
-.palette-container {
-  @apply fixed m-0 p-3 transform-none border-0 rounded-md shadow-lg bg-white;
-}
-
-.palette-container::backdrop {
-  background-color: transparent;
-}
-
-.palette-container[data-visible='true'] .picker-indicator {
-  opacity: 1;
 }
 
 .alpha-indicator,
