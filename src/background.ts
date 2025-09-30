@@ -1,5 +1,6 @@
+import './lib/promise-ext.js';
 import { Action } from './lib/consts.js';
-import { $mergeTabInfo, reject } from './lib/utils.js';
+import { $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
 // todo 是否改用定义class的方法来确保manager存在？
@@ -68,13 +69,6 @@ browser.windows.onFocusChanged.addListener(async (windowId) => {
   // Update workspace's last accessed time
   workspace.lastOpened = Date.now();
   await manager.save();
-
-  // & Already do this on creating the window
-  // const icon = await loadIcon(workspace.color);
-  // browser.action.setIcon({ imageData: icon });
-  // browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
-  // browser.action.setBadgeText({ text: workspace.name.slice(0, 2), windowId });
-  // browser.action.setBadgeTextColor({ color: 'white', windowId });
 
   // Notify all popup windows about the focus change
   const notification: WindowFocusChangedNotification = {

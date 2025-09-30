@@ -3,15 +3,15 @@ import './css/main.css';
 import './css/workspace.css';
 import './css/form.css';
 import './css/dialog.css';
+import '@/lib/promise-ext.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action, Sym } from '@/lib/consts.js';
 
 import selectDialog from './components/dialog/select-dialog.js';
-import { danger, info } from './components/dialog/alerts.js';
+import { info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
 import listItem from './main/list-item.js';
-import { reject, rejectWithDialog } from '@/lib/utils.js';
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
@@ -85,12 +85,14 @@ class PopupPage {
 
   // Load work groups from background
   async load() {
-    const fn = rejectWithDialog('Failed to load work groups', {
+    const response = await $send<GetWorkspacesRequest>({
+      action: Action.GetWorkspaces,
+    }).fallbackWithDialog('Failed to load work groups', {
       success: false,
       data: [],
       activeWorkspaces: [],
     });
-    const response = await $send<GetWorkspacesRequest>({ action: Action.GetWorkspaces }).catch(fn);
+
     if (!response.success) {
       return;
     }

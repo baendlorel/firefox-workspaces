@@ -1,5 +1,5 @@
 import { Color } from '@/lib/color.js';
-import { h, div, getTextColor } from '@/lib/dom.js';
+import { h, div } from '@/lib/dom.js';
 
 export const createPicker = (id: string, onChange: (color: HexColor) => void) => {
   const indicator = h('input', { id, class: 'palette-indicator' });

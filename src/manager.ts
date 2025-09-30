@@ -1,7 +1,8 @@
+import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank } from './lib/ext-apis.js';
-import { $createTabInfo, $genId, $sleep, reject } from './lib/utils.js';
+import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -377,7 +378,7 @@ export class WorkspaceManager {
       if (!pinned || !tab.id) {
         continue;
       }
-      await browser.tabs.update(tab.id, { pinned: true }).then(reject('Failed to pin tab:'));
+      await browser.tabs.update(tab.id, { pinned: true }).fallback('Failed to pin tab');
     }
 
     // Update group with window association and last opened time

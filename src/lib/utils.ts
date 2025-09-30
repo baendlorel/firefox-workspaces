@@ -1,6 +1,3 @@
-import { danger } from '@/web/components/dialog/alerts.js';
-import { Sym } from './consts.js';
-
 export const $randInt = (max: number) => Math.floor(Math.random() * max);
 
 const alphabets = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
@@ -58,41 +55,3 @@ export const $mergeTabInfo = (tab: TabInfo, browserTab: browser.tabs.Tab): TabIn
   favIconUrl: browserTab.favIconUrl ?? tab.favIconUrl ?? '[No Favicon]',
   addedAt: tab.addedAt ?? Date.now(),
 });
-
-export const createPromise = <T>() => {
-  let resolve: (value: T | PromiseLike<T>) => void = null as any;
-  let reject: (reason?: any) => void = null as any;
-  const promise = new Promise<T>((_resolve, _reject) => {
-    resolve = _resolve;
-    reject = _reject;
-  });
-
-  return {
-    promise,
-    resolve,
-    reject,
-  };
-};
-
-export const reject =
-  <T = typeof Sym.Reject>(message: string = '', returnValue: T = Sym.Reject as T) =>
-  (error: unknown): T => {
-    if (message) {
-      console.log('[__NAME__] ' + message, error);
-    } else {
-      console.log(error);
-    }
-    return returnValue;
-  };
-
-export const rejectWithDialog =
-  <T = typeof Sym.Reject>(message: string = '', returnValue: T = Sym.Reject as T) =>
-  (error: unknown): T => {
-    if (message) {
-      console.log('[__NAME__] ' + message, error);
-      danger(message);
-    } else {
-      console.log(error);
-    }
-    return returnValue;
-  };

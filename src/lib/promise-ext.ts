@@ -8,6 +8,14 @@ declare global {
     fallbackWithDialog<S>(message: string): Promise<T | typeof Sym.Reject>;
     fallbackWithDialog<S>(message: string, value: S | PromiseLike<S>): Promise<T | S>;
   }
+
+  interface PromiseConstructor {
+    create<T>(): {
+      promise: Promise<T>;
+      resolve: (value: T | PromiseLike<T>) => any;
+      reject: (reason?: any) => any;
+    };
+  }
 }
 
 Promise.prototype.fallback = function <S = typeof Sym.Reject>(
@@ -50,4 +58,19 @@ Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
     }
     return value;
   });
+};
+
+Promise.create = <T>() => {
+  let resolve: (value: T | PromiseLike<T>) => void = null as any;
+  let reject: (reason?: any) => void = null as any;
+  const promise = new Promise<T>((_resolve, _reject) => {
+    resolve = _resolve;
+    reject = _reject;
+  });
+
+  return {
+    promise,
+    resolve,
+    reject,
+  };
 };
