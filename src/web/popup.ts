@@ -35,6 +35,10 @@ class PopupPage {
 
   constructor() {
     this.main = createView();
+    logger.info('真的吗');
+    logger.warn('真的吗');
+    logger.error('真的吗');
+    logger.debug('真的吗');
 
     // tabs
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));

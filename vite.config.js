@@ -17,13 +17,13 @@ export default defineConfig({
   base: './',
   plugins: [
     typescript({ tsconfig }),
-    replace(replaceOpts),
     replace({
       preventAssignment: false,
       delimiters: ['', ''],
-      // replace loggers
+      // & replace loggers
       values: replaceLiteralOpts,
     }),
+    replace(replaceOpts),
     funcMacro(),
     tailwindcss(),
   ],

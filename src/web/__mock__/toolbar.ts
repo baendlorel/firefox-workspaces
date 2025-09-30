@@ -22,7 +22,19 @@ class MockBrowser {
   private getStoredWorkspaces(): Workspace[] {
     try {
       const stored = localStorage.getItem(this.storageKey);
-      return stored ? JSON.parse(stored) : [];
+      if (!stored) return [];
+
+      const parsedData = JSON.parse(stored);
+      // Convert plain objects back to Workspace instances
+      return parsedData.map((data: any) => {
+        const workspace = new Workspace(data.name, data.color);
+        workspace.id = data.id;
+        workspace.tabs = data.tabs || [];
+        workspace.createdAt = data.createdAt;
+        workspace.lastOpened = data.lastOpened;
+        workspace.windowId = data.windowId;
+        return workspace;
+      });
     } catch (error) {
       console.error('Failed to load workspaces from storage:', error);
       return [];
@@ -155,10 +167,9 @@ class MockBrowser {
       for (let j = 0; j < numTabs; j++) {
         const tab = this.createSampleTab();
         if (Math.random() > 0.7) {
-          workspace.pinnedTabs.push(tab);
-        } else {
-          workspace.tabs.push(tab);
+          tab.pinned = true; // Set pinned to true instead of pushing to pinnedTabs
         }
+        workspace.tabs.push(tab); // Always push to tabs array
       }
       workspaces.push(workspace);
     }
@@ -190,7 +201,7 @@ class MockBrowser {
     // Create a fake workspace
     const name = `Fake Workspace ${new Date().toLocaleTimeString()}`;
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
-    const fakeWorkspace: Workspace = new Workspace(name, color);
+    const fakeWorkspace = new Workspace(name, color);
     fakeWorkspace.tabs = tabs;
     fakeWorkspace.windowId = 999;
 
@@ -251,7 +262,8 @@ class MockBrowser {
           } as ErrorResponse;
         }
 
-        workspaces[index] = { ...workspaces[index], ...req.updates } as any;
+        // Update properties while keeping the Workspace instance
+        Object.assign(workspaces[index], req.updates);
         this.saveWorkspaces(workspaces);
 
         return {
