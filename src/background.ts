@@ -10,7 +10,6 @@ class WorkspaceBackground {
     // WorkspaceManager is already loaded via manifest scripts
     this.manager = WorkspaceManager.getInstance();
     this.init().then(() => this.registerListeners());
-    this.periodicallySave();
   }
 
   private init() {
@@ -165,7 +164,6 @@ class WorkspaceBackground {
       browser.contextMenus.create({
         id: 'addToWorkspace',
         title: 'Add to Workspaces',
-        contexts: ['page'],
       })
     );
 
@@ -276,13 +274,13 @@ class WorkspaceBackground {
    * Periodically save workspace states for active windows
    */
   private async periodicallySave() {
-    setInterval(
-      async () => {
-        logger.debug('Periodic save of active workspace sessions');
-        await this.manager.saveActiveSessions();
-      },
-      5 * 60 * 1000
-    ); // Every 5 minutes
+    const INTERVAL = 5 * 60 * 1000; // 5 minutes
+    const fn = async () => {
+      logger.debug('Periodic save of active workspace sessions');
+      await this.manager.saveActiveSessions();
+      setTimeout(fn, INTERVAL);
+    };
+    setTimeout(fn, INTERVAL);
   }
 }
 

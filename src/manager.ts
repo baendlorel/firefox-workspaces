@@ -248,7 +248,6 @@ export class WorkspaceManager {
     browser.action.setBadgeTextColor({ color: textColor, windowId });
   }
 
-  // fixme 找不到workspace但明明有？
   // Open workspace in new window
   async open(id: string): Promise<{ id?: number } | null> {
     const workspace = this._map.get(id);
