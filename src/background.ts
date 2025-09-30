@@ -10,6 +10,7 @@ class WorkspaceBackground {
     // WorkspaceManager is already loaded via manifest scripts
     this.manager = WorkspaceManager.getInstance();
     this.init().then(() => this.registerListeners());
+    this.periodicallySave();
   }
 
   private init() {
@@ -86,32 +87,6 @@ class WorkspaceBackground {
       });
     });
 
-    // todo 此处可能不需要这样
-    // Periodically save workspace states for active windows
-    setInterval(async () => {
-      const workspaces = this.manager.workspaces;
-      for (let i = 0; i < workspaces.length; i++) {
-        const workspace = workspaces[i];
-        if (workspace.windowId === undefined) {
-          continue;
-        }
-
-        // Verify window still exists
-        const windows = await browser.windows.getAll();
-        const windowExists = windows.some((w) => w.id === workspace.windowId);
-
-        if (windowExists) {
-          await this.manager.updateByWindowId(workspace.id, workspace.windowId);
-          continue;
-        }
-
-        // Window was closed but event wasn't caught
-        workspace.windowId = undefined;
-        this.manager.deactivate(workspace.id);
-        await this.manager.save();
-      }
-    }, 30000); // Save every 30 seconds
-
     // Save sessions before browser shuts down
     browser.runtime.onSuspend.addListener(async () => {
       console.log('Saving workspace sessions before browser shutdown');
@@ -173,7 +148,7 @@ class WorkspaceBackground {
       }
 
       // Update the specific tab in the workspace
-      // todo 提取为成员
+      // todo pinned tab是否要和tab分开？
       const updateTab = (tabs: TabInfo[]) => {
         const index = tabs.findIndex((t) => t.id === tabId);
         if (index !== -1) {
@@ -189,133 +164,10 @@ class WorkspaceBackground {
       }
     });
 
-    // todo 提取为成员
-    const handlePopupMessage = async (message: MessageRequest): Promise<MessageResponse> => {
-      const action = message.action;
-      if (action === Action.GetWorkspaces) {
-        const response: MessageResponseMap[typeof action] = {
-          success: true,
-          data: this.manager.workspaces,
-          activeWorkspaces: this.manager.activeWorkspaces,
-        };
-        return response;
-      }
-
-      if (action === Action.CreateWorkspace) {
-        const newWorkspace = await this.manager.create(message.name, message.color);
-        const response: MessageResponseMap[typeof action] = {
-          success: true,
-          data: newWorkspace,
-        };
-        return response;
-      }
-
-      if (action === Action.UpdateWorkspace) {
-        const updated = await this.manager.update(message.id, message.updates);
-        const response: MessageResponseMap[typeof action] = {
-          success: updated !== null,
-          data: updated,
-        };
-        return response;
-      }
-
-      if (action === Action.DeleteWorkspace) {
-        const deleted = await this.manager.delete(message.id);
-        const response: MessageResponseMap[typeof action] = { success: deleted };
-        return response;
-      }
-
-      if (action === Action.AddCurrentTab) {
-        const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
-
-        if (currentTab[0]) {
-          const added = await this.manager.addTab(
-            message.workspaceId,
-            currentTab[0],
-            message.pinned
-          );
-          const response: MessageResponseMap[typeof action] = { success: added };
-          return response;
-        } else {
-          const response: MessageResponseMap[typeof action] = {
-            success: false,
-            error: 'No active tab found',
-          };
-          return response;
-        }
-      }
-
-      if (action === Action.RemoveTab) {
-        const removed = await this.manager.removeTab(message.workspaceId, message.tabId);
-        const response: MessageResponseMap[typeof action] = { success: removed };
-        return response;
-      }
-
-      if (action === Action.TogglePin) {
-        const pinToggled = await this.manager.toggleTabPin(message.workspaceId, message.tabId);
-        const response: MessageResponseMap[typeof action] = { success: pinToggled };
-        return response;
-      }
-
-      if (action === Action.OpenWorkspace) {
-        const window = await this.manager
-          .open(message.workspaceId)
-          .fallback('Failed to open workspace in window:', null);
-        const response: MessageResponseMap[typeof action] = {
-          success: window !== null,
-          data: window,
-        };
-        return response;
-      }
-
-      if (action === Action.MoveTab) {
-        const moved = await this.manager.moveTabBetweenWorkspaces(
-          message.fromWorkspaceId,
-          message.toWorkspaceId,
-          message.tabId
-        );
-        const response: MessageResponseMap[typeof action] = { success: moved };
-        return response;
-      }
-
-      if (action === Action.GetStats) {
-        const stats = this.manager.getStats(message.workspaceId);
-        const response: MessageResponseMap[typeof action] = {
-          success: stats !== null,
-          data: stats,
-        };
-        return response;
-      }
-
-      if (action === Action.CheckPageInWorkspaces) {
-        const matched = this.manager.workspaces.filter((workspace) => {
-          for (let i = 0; i < workspace.pinnedTabs.length; i++) {
-            if (workspace.pinnedTabs[i].url === message.url) {
-              return true;
-            }
-          }
-          for (let i = 0; i < workspace.tabs.length; i++) {
-            if (workspace.tabs[i].url === message.url) {
-              return true;
-            }
-          }
-          return false;
-        });
-        const response: MessageResponseMap[typeof action] = { success: true, data: matched };
-        return response;
-      }
-
-      const errorResponse: ErrorResponse = {
-        success: false,
-        error: 'Unknown action: ' + String(action),
-      };
-      return errorResponse;
-    };
-
     // Handle messages from popup and content scripts
     browser.runtime.onMessage.addListener(
       async (message: MessageRequest): Promise<MessageResponse> =>
-        handlePopupMessage(message).catch((error) => {
+        this.handlePopupMessage(message).catch((error) => {
           console.error('[__NAME__] onMessage: Error handling message', error);
           const errorResponse: ErrorResponse = { success: false, error: 'Error handling message.' };
           return errorResponse;
@@ -340,5 +192,157 @@ class WorkspaceBackground {
         .create({ url: popupUrl, type: 'popup', width: 1000, height: 600 })
         .fallback();
     });
+  }
+
+  private async handlePopupMessage(message: MessageRequest): Promise<MessageResponse> {
+    const action = message.action;
+    if (action === Action.GetWorkspaces) {
+      const response: MessageResponseMap[typeof action] = {
+        success: true,
+        data: this.manager.workspaces,
+        activeWorkspaces: this.manager.activeWorkspaces,
+      };
+      return response;
+    }
+
+    if (action === Action.CreateWorkspace) {
+      const newWorkspace = await this.manager.create(message.name, message.color);
+      const response: MessageResponseMap[typeof action] = {
+        success: true,
+        data: newWorkspace,
+      };
+      return response;
+    }
+
+    if (action === Action.UpdateWorkspace) {
+      const updated = await this.manager.update(message.id, message.updates);
+      const response: MessageResponseMap[typeof action] = {
+        success: updated !== null,
+        data: updated,
+      };
+      return response;
+    }
+
+    if (action === Action.DeleteWorkspace) {
+      const deleted = await this.manager.delete(message.id);
+      const response: MessageResponseMap[typeof action] = { success: deleted };
+      return response;
+    }
+
+    if (action === Action.AddCurrentTab) {
+      const currentTab = await browser.tabs.query({ active: true, currentWindow: true });
+
+      if (currentTab[0]) {
+        const added = await this.manager.addTab(message.workspaceId, currentTab[0], message.pinned);
+        const response: MessageResponseMap[typeof action] = { success: added };
+        return response;
+      } else {
+        const response: MessageResponseMap[typeof action] = {
+          success: false,
+          error: 'No active tab found',
+        };
+        return response;
+      }
+    }
+
+    if (action === Action.RemoveTab) {
+      const removed = await this.manager.removeTab(message.workspaceId, message.tabId);
+      const response: MessageResponseMap[typeof action] = { success: removed };
+      return response;
+    }
+
+    if (action === Action.TogglePin) {
+      const pinToggled = await this.manager.toggleTabPin(message.workspaceId, message.tabId);
+      const response: MessageResponseMap[typeof action] = { success: pinToggled };
+      return response;
+    }
+
+    if (action === Action.OpenWorkspace) {
+      const window = await this.manager
+        .open(message.workspaceId)
+        .fallback('Failed to open workspace in window:', null);
+      const response: MessageResponseMap[typeof action] = {
+        success: window !== null,
+        data: window,
+      };
+      return response;
+    }
+
+    if (action === Action.MoveTab) {
+      const moved = await this.manager.moveTabBetweenWorkspaces(
+        message.fromWorkspaceId,
+        message.toWorkspaceId,
+        message.tabId
+      );
+      const response: MessageResponseMap[typeof action] = { success: moved };
+      return response;
+    }
+
+    if (action === Action.GetStats) {
+      const stats = this.manager.getStats(message.workspaceId);
+      const response: MessageResponseMap[typeof action] = {
+        success: stats !== null,
+        data: stats,
+      };
+      return response;
+    }
+
+    if (action === Action.CheckPageInWorkspaces) {
+      const matched = this.manager.workspaces.filter((workspace) => {
+        for (let i = 0; i < workspace.pinnedTabs.length; i++) {
+          if (workspace.pinnedTabs[i].url === message.url) {
+            return true;
+          }
+        }
+        for (let i = 0; i < workspace.tabs.length; i++) {
+          if (workspace.tabs[i].url === message.url) {
+            return true;
+          }
+        }
+        return false;
+      });
+      const response: MessageResponseMap[typeof action] = { success: true, data: matched };
+      return response;
+    }
+
+    const errorResponse: ErrorResponse = {
+      success: false,
+      error: 'Unknown action: ' + String(action),
+    };
+    return errorResponse;
+  }
+
+  /**
+   * Periodically save workspace states for active windows
+   */
+  private periodicallySave() {
+    const callback = async () => {
+      console.log('Periodic save of active workspace sessions');
+
+      const workspaces = this.manager.workspaces;
+      for (let i = 0; i < workspaces.length; i++) {
+        const workspace = workspaces[i];
+        if (workspace.windowId === undefined) {
+          continue;
+        }
+
+        // Verify window still exists
+        const windows = await browser.windows.getAll();
+        const windowExists = windows.some((w) => w.id === workspace.windowId);
+
+        if (windowExists) {
+          await this.manager.updateByWindowId(workspace.id, workspace.windowId);
+          continue;
+        }
+
+        // Window was closed but event wasn't caught
+        workspace.windowId = undefined;
+        this.manager.deactivate(workspace.id);
+        await this.manager.save();
+      }
+
+      setTimeout(callback, 60000);
+    };
+    setTimeout(callback, 60000);
   }
 }
