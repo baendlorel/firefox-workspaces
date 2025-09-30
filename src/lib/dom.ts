@@ -72,3 +72,13 @@ export const btn = (
   className: string | Record<string, string>,
   children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLButtonElement => h('button', className, children);
+
+export const initSvg = (
+  svg: string,
+  color: string = '#fff',
+  width: number = 16,
+  height: number = 16
+) =>
+  svg
+    .replace('<svg ', '<svg width="' + width + '" height="' + height + '" ')
+    .replaceAll('currentColor', color);
