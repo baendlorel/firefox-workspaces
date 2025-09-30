@@ -59,26 +59,28 @@ export const h = <T extends HTMLTag>(
 };
 
 export const div = (
-  className: string | Record<string, string>,
+  className: string | Record<string, string> = '',
   children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLDivElement => h('div', className, children);
 
 export const span = (
-  className: string | Record<string, string>,
+  className: string | Record<string, string> = '',
   children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLSpanElement => h('span', className, children);
 
 export const btn = (
-  className: string | Record<string, string>,
+  className: string | Record<string, string> = '',
   children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLButtonElement => h('button', className, children);
 
 export const initSvg = (
   svg: string,
-  color: string = '#fff',
+  color: string | undefined,
   width: number = 16,
   height: number = 16
-) =>
-  svg
+) => {
+  color = color ?? 'currentColor';
+  return svg
     .replace('<svg ', '<svg width="' + width + '" height="' + height + '" ')
     .replaceAll('currentColor', color);
+};

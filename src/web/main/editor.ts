@@ -1,12 +1,13 @@
 import { EventBus } from 'minimal-event-bus';
 import { RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
-import { btn, div, h } from '@/lib/dom.js';
+import { btn, div, h, initSvg } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
 import { Workspace } from '@/lib/workspace.js';
 
 import { createDialog } from '../components/dialog/index.js';
 import { confirmation, danger, info } from '../components/dialog/alerts.js';
 import colorPicker from '../components/color/index.js';
+import trashSvg from '@web/assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
@@ -20,8 +21,14 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const colorSelectorLabel = h('label', { for: 'workspace-color' }, 'Color');
   const colorSelector = colorPicker('workspace-color');
 
-  const deleteBtn = btn({ class: 'btn btn-danger mt-4 mb-3', type: 'button' }, 'Delete Workspace');
-  deleteBtn.title = 'Delete this workspace';
+  const deleteBtnText = div('', 'Delete');
+  const deleteBtnSvg = div('py-1');
+  deleteBtnSvg.innerHTML = initSvg(trashSvg, 'var(--light)', 14, 14);
+  const deleteBtn = btn({ class: 'btn btn-danger btn-with-icon', title: 'Delete the workspace' }, [
+    deleteBtnSvg,
+    deleteBtnText,
+  ]);
+
   const body = [
     div('form-group form-group-with-btn', [
       h('label', { for: 'workspace-name' }, 'Name'),
@@ -59,13 +66,13 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName.value = workspace.name;
       colorSelector.value = workspace.color;
       setTitle('Edit Workspace');
-      deleteBtn.style.display = 'block';
+      deleteBtn.classList.remove('hidden');
     } else {
       inputName.value = '';
       setTitle('New Workspace');
-      deleteBtn.style.display = 'none';
       // randomly pick a color
       colorSelector.value = WORKSPACE_COLORS[$randInt(WORKSPACE_COLORS.length)];
+      deleteBtn.classList.add('hidden');
     }
 
     dialog.bus.emit('show');

@@ -19,8 +19,7 @@
 }
 
 .form-group input {
-  @apply w-full px-3 py-1.5 border-2 border-gray-300 rounded-lg transition-all duration-200 box-border;
-  font-size: var(--font-size-normal);
+  @apply w-full px-2 py-1 text-sm border-2 border-gray-300 rounded-lg transition-all duration-200 box-border;
 }
 
 .form-group input:focus {

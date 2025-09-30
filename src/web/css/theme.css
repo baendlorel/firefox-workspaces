@@ -105,9 +105,13 @@
   filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
 }
 
+.btn-with-icon {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 5px;
+}
+
 .icon-btn {
-  width: 24px;
-  height: 24px;
   padding: 5px;
   border-radius: 4px;
   background-color: transparent;

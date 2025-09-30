@@ -1,5 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { btn, div, h } from '@/lib/dom.js';
+import { btn, div, h, initSvg } from '@/lib/dom.js';
 import { Consts } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 
@@ -8,15 +8,11 @@ import listSvg from '@web/assets/list.svg?raw';
 import { Menu } from '../components/menu/index.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const addBtn = btn('btn-text', '');
-  addBtn.title = 'Create new workspace';
-  addBtn.innerHTML = plusSvg.replaceAll('currentColor', '#fff');
-  addBtn.style.width = '18px';
+  const addBtn = btn({ class: 'btn-text', title: 'Create new workspace' });
+  addBtn.innerHTML = initSvg(plusSvg, '#fff', 18, 18);
 
-  const moreBtn = btn('btn-text', '');
-  moreBtn.title = 'More Actions';
-  moreBtn.innerHTML = listSvg.replaceAll('currentColor', '#fff');
-  moreBtn.style.width = '18px';
+  const moreBtn = btn({ class: 'btn-text', title: 'More Actions' });
+  moreBtn.innerHTML = initSvg(listSvg, '#fff', 18, 18);
 
   const contextMenu = new Menu([
     { label: 'Add current tabs to a new Workspace', action: () => console.log('create') },

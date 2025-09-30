@@ -6,7 +6,7 @@ dialog:focus {
 }
 
 .dialog-container .dialog-header {
-  @apply flex text-center justify-between items-center border-b border-gray-200;
+  @apply flex justify-between items-center border-b border-gray-200;
   padding: 8px 14px 10px 14px;
   background: var(--primary-gradient);
   color: var(--light);
@@ -103,19 +103,16 @@ dialog:focus {
   animation: backdropFadeOut 0.25s ease-in forwards;
 }
 
-.dialog-close-btn {
+.dialog-close {
   @apply me-1 mt-0.5;
-  --dialog-close-btn-size: 10px;
-  width: var(--dialog-close-btn-size);
-  height: var(--dialog-close-btn-size);
   opacity: 0.65;
 }
 
-.dialog-close-btn:hover {
+.dialog-close:hover {
   opacity: 0.9;
 }
 
-.dialog-close-btn:focus {
+.dialog-close:focus {
   opacity: 1;
 }
 
