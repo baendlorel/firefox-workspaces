@@ -35,7 +35,7 @@ class WorkspaceBackground {
 
       logger.info(`Workspace window closed: ${workspace.name}`);
       // Skip processing if this workspace is being deleted
-      if (this.manager.isDeleting(workspace.id)) {
+      if (this.manager.workspaces.isDeleting(workspace.id)) {
         logger.debug(`Deleting '${workspace.name}', skip window close handling`);
         return;
       }
@@ -43,7 +43,7 @@ class WorkspaceBackground {
       const tabs = await browser.tabs.query({ windowId });
       workspace.tabs = tabs.map($createTabInfo);
       workspace.windowId = undefined;
-      this.manager.deactivate(workspace.id);
+      this.manager.workspaces.deactivate(workspace.id);
       await this.manager.save();
 
       // fixme 没有自动保存tab
@@ -113,7 +113,7 @@ class WorkspaceBackground {
     browser.tabs.onUpdated.addListener((_tabId, changeInfo, browserTab) => {
       logger.info('onupdated!', changeInfo.status, browserTab);
       if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
-        this.manager.tempSaveTab(browserTab);
+        this.manager.tabs.save(browserTab);
       }
     });
 
@@ -151,7 +151,7 @@ class WorkspaceBackground {
     if (action === Action.GetWorkspaces) {
       const response: MessageResponseMap[typeof action] = {
         success: true,
-        data: this.manager.workspaces,
+        data: this.manager.workspaces.arr,
         activeWorkspaces: this.manager.activeWorkspaces,
       };
       return response;
@@ -224,7 +224,7 @@ class WorkspaceBackground {
     }
 
     if (action === Action.CheckPageInWorkspaces) {
-      const matched = this.manager.workspaces.filter((workspace) =>
+      const matched = this.manager.workspaces.arr.filter((workspace) =>
         workspace.tabs.some((tab) => tab.url === message.url)
       );
       const response: MessageResponseMap[typeof action] = { success: true, data: matched };

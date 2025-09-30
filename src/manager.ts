@@ -19,8 +19,8 @@ export class WorkspaceManager {
   private static _instance: WorkspaceManager;
 
   // # containers
-  private readonly workspaces = new WorkspaceContainer();
-  private readonly tabs = new TabContainer();
+  readonly workspaces = new WorkspaceContainer();
+  readonly tabs = new TabContainer();
 
   constructor() {
     this.load().then(() => logger.info('Updated at __DATE_TIME__'));
