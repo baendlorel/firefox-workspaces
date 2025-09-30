@@ -9,62 +9,34 @@ interface MenuOption {
 export class ContextMenu {
   private readonly dialog: HTMLDialogElement;
   private readonly content: HTMLDivElement;
+  private readonly ul: HTMLUListElement;
+  private readonly lis: HTMLLIElement[];
 
-  constructor() {
-    this.dialog = h('dialog', 'dialog-container');
-    this.content = div('dialog-content');
-    this.dialog.appendChild(this.content);
+  constructor(options: MenuOption[]) {
+    // # Elements
+    this.lis = options.map((o) => {
+      const opt = typeof o.label === 'string' ? o.label : [o.label];
+      const el = h('li', 'menu-option', opt);
+      el.addEventListener('click', o.action);
+      return el;
+    });
+
+    this.ul = h('ul', 'menu-options', this.lis);
+    this.content = div('', [this.ul]);
+    this.dialog = h('dialog', 'menu', [this.content]);
+
+    // # register events
+    // Handle backdrop click to close
+    this.dialog.addEventListener('click', (e) => e.target === this.dialog && this.close());
 
     // Add to document body
     document.body.appendChild(this.dialog);
-
-    // Handle backdrop click to close
-    this.dialog.addEventListener('click', (e) => {
-      if (e.target === this.dialog) {
-        this.close();
-      }
-    });
-
-    // Handle Escape key
-    this.dialog.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        this.close();
-      }
-    });
   }
 
-  show(x: number, y: number, options: MenuOption[]) {
-    // Clear previous content
-    this.content.innerHTML = '';
-
-    // Create menu list
-    const ul = h('ul', 'dialog-ul-options');
-
-    options.forEach((option) => {
-      const li = h('li', 'dialog-li-option');
-
-      if (typeof option.label === 'string') {
-        li.textContent = option.label;
-      } else {
-        li.appendChild(option.label);
-      }
-
-      li.addEventListener('click', () => {
-        option.action();
-        this.close();
-      });
-
-      ul.appendChild(li);
-    });
-
-    this.content.appendChild(ul);
-
+  show(x: number, y: number) {
     // Position the dialog
-    this.dialog.style.position = 'fixed';
     this.dialog.style.left = `${x}px`;
     this.dialog.style.top = `${y}px`;
-    this.dialog.style.margin = '0';
-    this.dialog.style.transform = 'none';
 
     // Ensure menu stays within viewport
     this.adjustPosition();

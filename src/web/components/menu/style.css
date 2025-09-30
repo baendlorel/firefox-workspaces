@@ -1,0 +1,5 @@
+@import 'tailwindcss';
+
+.dialog-menu {
+  @apply fixed m-0 p-3 transform-none;
+}
