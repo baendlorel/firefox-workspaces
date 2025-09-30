@@ -1,0 +1,15 @@
+<svg viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+   <g transform="scale(0.9,1) skewY(-20) translate(0,7)">
+      <path d="M8 6 H24 Q28 6 28 10 M8 6 Q4 6 4 10 V26 Q4 30 8 30"
+         stroke-linecap="round" stroke="currentColor" stroke-width="3" fill="none" />
+      <path d="M18 15 H34 Q38 15 38 19 M18 15 Q14 15 14 19 V35 Q14 39 18 39"
+         stroke-linecap="round" stroke="currentColor" stroke-width="3" fill="none" />
+      <rect x="26" y="25" width="24" height="24" rx="4"
+         stroke="currentColor" stroke-width="3" />
+
+   </g>
+   <g stroke="currentColor" stroke-width="3" stroke-linecap="round">
+      <line x1="42" y1="37" x2="42" y2="47" />
+      <line x1="37" y1="42" x2="47" y2="42" />
+   </g>
+</svg>

@@ -3,6 +3,7 @@ import { div, h } from '@/lib/dom.js';
 
 import editIcon from '@web/assets/3-dots.svg?raw';
 import listItem from './list-item.js';
+import { Workspace } from '@/lib/workspace.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'workspaces');

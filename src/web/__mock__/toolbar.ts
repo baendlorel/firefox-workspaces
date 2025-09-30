@@ -388,11 +388,8 @@ class MockBrowser {
 
       case Action.CheckPageInWorkspaces: {
         const req = request as CheckPageInWorkspacesRequest;
-        const matchingWorkspaces = workspaces.filter((workspace) =>
-          [...workspace.tabs, ...workspace.pinnedTabs].some(
-            (tab) => tab.url.includes(req.url) || req.url.includes(tab.url)
-          )
-        );
+        const matcher = (tab: TabInfo) => tab.url.includes(req.url) || req.url.includes(tab.url);
+        const matchingWorkspaces = workspaces.filter((workspace) => workspace.tabs.some(matcher));
 
         return {
           success: true,

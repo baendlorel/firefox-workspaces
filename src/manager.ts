@@ -267,11 +267,9 @@ export class WorkspaceManager {
       this.deactivate(id);
     }
 
-    // Collect all URLs (pinned first, then regular)
-    const urls: string[] = workspace.tabs.map((tab) => tab.url);
-    const pinnedUrls: string[] = [];
+    const tabs = workspace.tabs;
 
-    if (urls.length === 0) {
+    if (tabs.length === 0) {
       // Create window with new tab page if no URLs
       const window = await $aboutBlank();
       this.setBadge(workspace, window.id);
@@ -283,7 +281,7 @@ export class WorkspaceManager {
     // Create new window with first URL
     const window = await browser.windows
       .create({
-        url: urls[0],
+        url: tabs[0].url,
         type: 'normal',
       })
       .fallback('__func__: Fallback to about:blank because', $aboutBlank());
@@ -293,48 +291,26 @@ export class WorkspaceManager {
     await $sleep(500);
 
     // Open remaining URLs as tabs
-    const createdTabs: { tab: browser.tabs.Tab; pinned: boolean }[] = [];
-    for (let i = 1; i < urls.length; i++) {
+    for (let i = 1; i < tabs.length; i++) {
       const tab = await browser.tabs
         .create({
           windowId: window.id,
-          url: urls[i],
+          url: tabs[i].url,
           active: false,
+          pinned: tabs[i].pinned,
         })
-        .fallback(`__func__: Failed to create tab for URL: ${urls[i]}`, null);
+        .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`, null);
 
       if (tab === null) {
         continue;
       }
-      // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
-      const shouldPin = i < pinnedUrls.length;
-      createdTabs.push({ tab, pinned: shouldPin });
-    }
-
-    // Pin the first tab if it should be pinned
-    if (pinnedUrls.length > 0) {
-      const tabs = await browser.tabs.query({ windowId: window.id });
-      if (tabs.length > 0 && tabs[0].id) {
-        await browser.tabs
-          .update(tabs[0].id, { pinned: true })
-          .fallback('__func__: Failed to pin the first tab');
-      }
-    }
-
-    // Pin additional tabs that should be pinned
-    for (let i = 0; i < createdTabs.length; i++) {
-      const { tab, pinned } = createdTabs[i];
-      if (!pinned || !tab.id) {
-        continue;
-      }
-      await browser.tabs.update(tab.id, { pinned: true }).fallback('Failed to pin tab');
     }
 
     // Update group with window association and last opened time
     workspace.setWindowId(window.id);
 
     // Add to active workspaces if not already there
-    !this._activated.includes(id) && this._activated.push(id);
+    !this.isActive(id) && this._activated.push(id);
 
     await this.save();
 
