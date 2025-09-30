@@ -284,7 +284,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
   if (action === Action.OpenWorkspace) {
     const window = await manager
       .open(message.workspaceId)
-      .then(reject('Failed to open workspace in window:', null));
+      .catch(reject('Failed to open workspace in window:', null));
     const response: MessageResponseMap[typeof action] = {
       success: window !== null,
       data: window,

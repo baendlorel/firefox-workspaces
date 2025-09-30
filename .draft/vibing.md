@@ -154,3 +154,8 @@ invalid的value会变为白色
 1. 加载图片public/icon-128.png
 2. 用canvas把图片染成传入的颜色
 3. 把染色后的图片转换为 new ImageData(data: ImageDataArray, sw: number, sh?: number); 并返回。
+
+---
+
+我编写了promise-ext扩展，这个fallback的功能类似于当前的catch(reject(...))。
+请你扫描我使用了catch(reject(...))的地方，帮我改写成fallback(...)的形式。如果是在class方法中调用，那么则要使用带有functionName的定义（functionName统一传入参数为**func**，不需要硬编码方法名）
