@@ -529,8 +529,3 @@ export class WorkspaceManager {
     return this.save();
   }
 }
-
-// // Export for use in other scripts
-// if (typeof module !== 'undefined' && module.exports) {
-//   module.exports = WorkspaceManager;
-// }
