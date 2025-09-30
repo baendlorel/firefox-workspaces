@@ -10,7 +10,7 @@ import { Action, Sym } from '@/lib/consts.js';
 
 import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
-import { Workspace } from '@/lib/workspace.js';
+import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
 
 Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
   this: Promise<any>,
@@ -35,8 +35,6 @@ class PopupPage {
   private main: ReturnType<typeof createView>;
 
   constructor() {
-    console.log('__NAME__', 'Creating new popup page');
-
     this.main = createView();
 
     // tabs
@@ -113,7 +111,10 @@ class PopupPage {
 
     const loaded = response.data ?? [];
     this.workspaces.length = 0;
-    this.workspaces.push(...loaded);
+    for (let i = 0; i < loaded.length; i++) {
+      const w = loaded[i];
+      this.workspaces.push(IndexedWorkspace.load(NaN, w));
+    }
 
     // Update active workspaces
     this.activeWorkspaces.length = 0;
@@ -145,7 +146,7 @@ class PopupPage {
       return;
     }
 
-    if ((response as any).success) {
+    if (response.success) {
       await this.load();
       this.render();
       this.main.emit('close-editor');

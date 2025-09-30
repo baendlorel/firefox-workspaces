@@ -242,21 +242,21 @@ class MockBrowser {
 
       case Action.UpdateWorkspace: {
         const req = request as UpdateWorkspaceRequest;
-        const workspaceIndex = workspaces.findIndex((ws) => ws.id === req.id);
+        const index = workspaces.findIndex((ws) => ws.id === req.id);
 
-        if (workspaceIndex === -1) {
+        if (index === -1) {
           return {
             success: false,
             error: 'Workspace not found',
-          } as any;
+          } as ErrorResponse;
         }
 
-        workspaces[workspaceIndex] = { ...workspaces[workspaceIndex], ...req.updates };
+        workspaces[index] = { ...workspaces[index], ...req.updates } as any;
         this.saveWorkspaces(workspaces);
 
         return {
           success: true,
-          data: workspaces[workspaceIndex],
+          data: workspaces[index],
         } as UpdateWorkspaceResponse;
       }
 

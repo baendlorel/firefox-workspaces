@@ -1,4 +1,5 @@
-import { Action } from '../lib/consts.js';
+import { Workspace } from '@/lib/workspace.ts';
+import { Action } from '@/lib/consts.js';
 
 declare global {
   // #region Request

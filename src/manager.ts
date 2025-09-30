@@ -238,7 +238,6 @@ export class WorkspaceManager {
     browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
     browser.action.setBadgeText({ text: name + '12345', windowId });
     const color = Color.from(workspace.color);
-    console.log('color.brightness', color.brightness, color);
     const textColor = color.brightness < 128 ? '#F8F9FA' : '#212729';
     browser.action.setBadgeTextColor({ color: textColor, windowId });
   }
@@ -247,6 +246,7 @@ export class WorkspaceManager {
   async open(id: string): Promise<{ id?: number } | null> {
     const workspace = this._map.get(id);
     if (!workspace) {
+      logger.WorkspaceNotFound(__func__, id);
       return null;
     }
 
