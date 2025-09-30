@@ -159,3 +159,13 @@ invalid的value会变为白色
 
 我编写了promise-ext扩展，这个fallback的功能类似于当前的catch(reject(...))。
 请你扫描我使用了catch(reject(...))的地方，帮我改写成fallback(...)的形式。如果是在class方法中调用，那么则要使用带有functionName的定义（functionName统一传入参数为`__func__`，不需要硬编码方法名）
+
+---
+
+在这个文件中编写一个点击展开的菜单，不要改动别的文件，要求:
+
+1. 这个菜单用dialog写成，有阴影
+2. 可以点击backdrop关闭，这应该是最简单的做法，其他任何事件点击都会有副作用
+3. 这个菜单默认不显示
+4. 写一个函数show(x,y)来控制它在屏幕的某处展示
+5. 入参是一个options数组。数组里面是{label:string|HTMLElement,action:()=>void}

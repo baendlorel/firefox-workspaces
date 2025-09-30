@@ -1,7 +1,8 @@
+import './style.css';
 import { EventBus } from 'minimal-event-bus';
 import { h, div, btn } from '@/lib/dom.js';
 import closeSvg from '@web/assets/close.svg?raw';
-import { popIn, popOut } from '../pop/index.js';
+import { popIn, popOut } from '@web/components/pop/index.js';
 
 export function createDialog(header: HTMLPart | undefined, body: HTMLPart): Dialog;
 export function createDialog(
