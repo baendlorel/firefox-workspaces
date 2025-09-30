@@ -58,7 +58,7 @@ class PopupPage {
   // Check if current window belongs to a workspace and update header
   async checkCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent().catch((error) => {
-      console.error('[__NAME__: __func__] Failed to check current window', error);
+      console.error('[__NAME__] __func__: Failed to check current window', error);
       return null;
     });
     if (currentWindow === null) {
@@ -115,27 +115,27 @@ class PopupPage {
         action: Action.CreateWorkspace,
         name: formData.name,
         color: formData.color,
-      }).catch(rejectWithDialog('Failed saving workspace'));
+      }).fallbackWithDialog('__func__: Failed saving workspace', Sym.Reject);
     } else {
       // Update existing group
       response = await $send<UpdateWorkspaceRequest>({
         action: Action.UpdateWorkspace,
         id: formData.id,
         updates: formData,
-      }).catch(rejectWithDialog('Failed saving workspace'));
+      }).fallbackWithDialog('__func__: Failed saving workspace', Sym.Reject);
     }
 
     if (response === Sym.Reject) {
       return;
     }
 
-    if (response.success) {
+    if ((response as any).success) {
       await this.load();
       this.render();
       this.main.emit('close-editor');
     } else {
       info('Failed to save workspace, Please try again.');
-      console.log('[__NAME__: __func__] Save workspace failed', typeof response, response);
+      console.log('[__NAME__] __func__: Save workspace failed', typeof response, response);
     }
   }
 
@@ -144,7 +144,7 @@ class PopupPage {
     const response = await $send<DeleteWorkspaceRequest>({
       action: Action.DeleteWorkspace,
       id: workspace.id,
-    }).catch(rejectWithDialog('Error deleting workspace'));
+    }).fallbackWithDialog('__func__: Error deleting workspace', Sym.Reject);
 
     if (response === Sym.Reject) {
       return;
@@ -163,7 +163,7 @@ class PopupPage {
     const response = await $send<OpenWorkspaceRequest>({
       action: Action.OpenWorkspace,
       workspaceId: workspace.id,
-    }).catch(rejectWithDialog('Error opening workspace'));
+    }).fallbackWithDialog('__func__: Error opening workspace', Sym.Reject);
 
     if (response === Sym.Reject) {
       return;
@@ -184,7 +184,7 @@ class PopupPage {
       action: Action.RemoveTab,
       workspaceId,
       tabId,
-    }).catch(rejectWithDialog('Error removing tab'));
+    }).fallbackWithDialog('__func__: Error removing tab', Sym.Reject);
 
     if (response === Sym.Reject) {
       return;
@@ -204,7 +204,7 @@ class PopupPage {
       action: Action.TogglePin,
       workspaceId,
       tabId,
-    }).catch(rejectWithDialog('Error toggling pin'));
+    }).fallbackWithDialog('__func__: Error toggling pin', Sym.Reject);
 
     if (response === Sym.Reject) {
       return;
@@ -225,7 +225,7 @@ class PopupPage {
       fromWorkspaceId: fromId,
       toWorkspaceId: toId,
       tabId,
-    }).catch(rejectWithDialog('Error moving tab'));
+    }).fallbackWithDialog('__func__: Error moving tab', Sym.Reject);
 
     if (response === Sym.Reject) {
       return;
@@ -265,7 +265,7 @@ class PopupPage {
       action: Action.AddCurrentTab,
       workspaceId: selected,
       pinned: false,
-    }).catch(rejectWithDialog('Error adding tab to group'));
+    }).fallbackWithDialog('__func__: Error adding tab to group', Sym.Reject);
 
     if (response === Sym.Reject) {
       return;

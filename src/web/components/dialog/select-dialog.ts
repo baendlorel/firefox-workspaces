@@ -10,7 +10,7 @@ export default async (config: {
   const { promise, resolve } = createPromise<number | null>();
   const { title, message = '', options } = config;
   if (options.length === 0) {
-    console.warn('[__NAME__: __func__] No options provided for select dialog.');
+    console.warn('[__NAME__] __func__: No options provided for select dialog.');
     resolve(null);
     return promise;
   }

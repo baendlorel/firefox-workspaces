@@ -24,7 +24,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       e.preventDefault();
       block.classList.remove('drag-over');
       if (!e.dataTransfer) {
-        throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
+        throw new Error('[__NAME__] :__func__:setupDragAndDrop e.dataTransfer is null');
       }
 
       const data = JSON.parse(e.dataTransfer.getData('text/plain')) as DraggingData;
@@ -32,7 +32,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
       if (data.workspaceId !== workspaceId) {
         if (workspaceId === undefined) {
-          throw new Error('[__NAME__: __func__]setupDragAndDrop workspaceId is undefined.');
+          throw new Error('[__NAME__] :__func__:setupDragAndDrop workspaceId is undefined.');
         }
         bus.emit('move-tab', data.workspaceId, workspaceId, data.tabId);
         // await this.moveTab(data.workspaceId, workspaceId, data.tabId);

@@ -141,7 +141,7 @@ import { reject } from './lib/utils.js';
       const response = await $send<CheckPageInWorkspacesRequest>({
         action: Action.CheckPageInWorkspaces,
         url: window.location.href,
-      }).catch(reject('Could not check workspace membership:', { success: false, data: [] }));
+      }).fallback('__func__: Could not check workspace membership:', { success: false, data: [] });
 
       if (response.success && response.data.length > 0) {
         // Page belongs to work groups, show indicator

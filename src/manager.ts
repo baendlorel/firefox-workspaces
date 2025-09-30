@@ -89,7 +89,7 @@ export class WorkspaceManager {
     return browser.storage.local
       .set(data)
       .then(() => true)
-      .catch(reject('Saving failed', false));
+      .fallback('__func__: Saving failed', false);
   }
 
   async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
@@ -138,7 +138,7 @@ export class WorkspaceManager {
       await browser.windows
         .remove(target.windowId)
         .then(() => console.log(`Closed window ${target.windowId} for workspace: ${target.name}`))
-        .catch(reject(`Window ${target.windowId} was already closed or doesn't exist:`));
+        .fallback(__func__, `Window ${target.windowId} was already closed or doesn't exist:`);
 
       // Remove from active workspaces list
       this.deactivate(id);
@@ -163,7 +163,7 @@ export class WorkspaceManager {
   async addTab(id: string, browserTab: browser.tabs.Tab, pinned: boolean = false) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      console.error(`[__NAME__: __func__]addTab Workspace with id ${id} not found`);
+      console.error(`[__NAME__] :__func__:addTab Workspace with id ${id} not found`);
       return false;
     }
 
@@ -242,7 +242,7 @@ export class WorkspaceManager {
   async toggleTabPin(id: string, tabId: number) {
     const workspace = this._map.get(id);
     if (!workspace) {
-      console.error(`[__NAME__: __func__]toggleTabPin Workspace with id ${id} not found`);
+      console.error(`[__NAME__] __func__: toggleTabPin Workspace with id ${id} not found`);
       return false;
     }
 
@@ -292,7 +292,7 @@ export class WorkspaceManager {
       const result = await browser.windows
         .update(workspace.windowId, { focused: true })
         .then(() => ({ id: workspace.windowId }))
-        .catch(reject());
+        .fallback('__func__: Window update failed');
 
       if (result !== Sym.Reject) {
         return result;
@@ -336,7 +336,7 @@ export class WorkspaceManager {
         url: allUrls[0],
         type: 'normal',
       })
-      .catch(reject('Fallback to about:blank because', $aboutBlank()));
+      .fallback('__func__: Fallback to about:blank because', $aboutBlank());
     this.setBadge(workspace, window.id);
 
     // Wait a moment for window to be ready
@@ -351,9 +351,9 @@ export class WorkspaceManager {
           url: allUrls[i],
           active: false,
         })
-        .catch(reject(`Failed to create tab for URL: ${allUrls[i]}`));
+        .fallback(`__func__: Failed to create tab for URL: ${allUrls[i]}`, null);
 
-      if (tab === Sym.Reject) {
+      if (tab === null) {
         continue;
       }
       // ?? Check if this URL should be pinned (in the first pinnedUrls.length URLs)
@@ -367,7 +367,7 @@ export class WorkspaceManager {
       if (tabs.length > 0 && tabs[0].id) {
         await browser.tabs
           .update(tabs[0].id, { pinned: true })
-          .catch(reject('Failed to pin the first tab'));
+          .fallback('__func__: Failed to pin the first tab');
       }
     }
 
@@ -502,7 +502,7 @@ export class WorkspaceManager {
 
   async importData(data: ExportData): Promise<boolean> {
     if (!Array.isArray(data.workspaceses)) {
-      console.error(`[__NAME__: __func__] data.workspaceses must be Workspace[]`);
+      console.error(`[__NAME__] __func__: data.workspaceses must be Workspace[]`);
       return false;
     }
 

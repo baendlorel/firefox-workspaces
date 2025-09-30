@@ -19,7 +19,7 @@ async function init() {
   await manager
     .restoreSessions()
     .then(() => console.log('__NAME__ initialized in background'))
-    .catch(reject('Failed to initialize __NAME__:'));
+    .fallback('Failed to initialize');
 }
 
 // Handle window events for session management
@@ -44,7 +44,7 @@ browser.windows.onRemoved.addListener(async (windowId) => {
   await manager
     .updateByWindowId(workspace.id, windowId)
     .then(() => console.log(`Saved workspace session for: ${workspace.name}`))
-    .catch(reject(`Failed to save workspace session for: ${workspace.name}`));
+    .fallback(`Failed to save workspace session for: ${workspace.name}`);
 
   // Clear window association and remove from active list
   workspace.windowId = undefined;
@@ -168,7 +168,7 @@ browser.tabs.onCreated.addListener(async (tab) => {
   }
 
   if (tab.windowId === undefined) {
-    alert('[__NAME__: __func__] Tab created without windowId. ' + JSON.stringify(tab));
+    alert('[__NAME__] __func__: Tab created without windowId. ' + JSON.stringify(tab));
     return;
   }
 });
@@ -192,7 +192,7 @@ browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
   }
 
   if (browserTab.windowId === undefined) {
-    alert('[__NAME__: __func__] Tab created without windowId. ' + JSON.stringify(browserTab));
+    alert('[__NAME__] __func__: Tab created without windowId. ' + JSON.stringify(browserTab));
     return;
   }
 
@@ -284,7 +284,7 @@ const handlePopupMessage = async (message: MessageRequest): Promise<MessageRespo
   if (action === Action.OpenWorkspace) {
     const window = await manager
       .open(message.workspaceId)
-      .catch(reject('Failed to open workspace in window:', null));
+      .fallback('Failed to open workspace in window:', null);
     const response: MessageResponseMap[typeof action] = {
       success: window !== null,
       data: window,
@@ -340,7 +340,7 @@ browser.runtime.onMessage.addListener(async (message: MessageRequest): Promise<M
   }
 
   return handlePopupMessage(message).catch((error) => {
-    console.error('[__NAME__: __func__] Error handling message:', error);
+    console.error('[__NAME__] __func__: Error handling message:', error);
     const errorResponse: ErrorResponse = { success: false, error: 'Error handling message.' };
     return errorResponse;
   });
@@ -362,5 +362,5 @@ browser.contextMenus.onClicked.addListener(async (info: browser.contextMenus.OnC
   const popupUrl = browser.runtime.getURL('popup.html');
   await browser.windows
     .create({ url: popupUrl, type: 'popup', width: 1000, height: 600 })
-    .catch(reject(':'));
+    .fallback();
 });

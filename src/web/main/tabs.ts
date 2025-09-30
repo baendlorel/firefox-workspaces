@@ -8,7 +8,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     tab.draggable = true;
     tab.addEventListener('dragstart', (e) => {
       if (!e.dataTransfer) {
-        throw new Error('[__NAME__: __func__]setupDragAndDrop e.dataTransfer is null');
+        throw new Error('[__NAME__] :__func__:setupDragAndDrop e.dataTransfer is null');
       }
 
       const tabId = tab.dataset.tabId;
@@ -16,7 +16,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const tabUrl = tab.dataset.tabUrl;
 
       if (workspaceId === undefined) {
-        throw new Error(`[__NAME__: __func__]setupDragAndDrop tab.closest('.wb') is undefined.`);
+        throw new Error(`[__NAME__] :__func__:setupDragAndDrop tab.closest('.wb') is undefined.`);
       }
 
       e.dataTransfer.setData(
