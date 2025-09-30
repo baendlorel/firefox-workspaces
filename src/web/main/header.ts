@@ -14,8 +14,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
   newWorkspaceBtn.addEventListener('click', () => bus.emit('edit', null));
 
-  const title = h('h2', 'header-title', 'Workspace');
-  const header = div('header', [title, newWorkspaceBtn]);
+  const title = h('h2', 'wb-header-title', 'Workspace');
+  const header = div('wb-header', [title, newWorkspaceBtn]);
   bus.on('set-current', (workspace) => {
     title.textContent = workspace?.name ?? 'Workspace';
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);

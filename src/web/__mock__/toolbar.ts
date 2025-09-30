@@ -485,7 +485,7 @@ class MockBrowser {
         const key = path.join('.');
         console.log('apply:', key, ...args);
         if (key === 'runtime.sendMessage') {
-          return createResponse(args[0]);
+          return Promise.resolve(createResponse(args[0]));
         }
 
         return createProxy(path); // 调用后还能继续链式访问
