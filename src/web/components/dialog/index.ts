@@ -1,6 +1,6 @@
 import './style.css';
 import { EventBus } from 'minimal-event-bus';
-import { h, div, btn, initSvg } from '@/lib/dom.js';
+import { h, div, btn, svg } from '@/lib/dom.js';
 import closeSvg from '@web/assets/close.svg?raw';
 import { popIn, popOut } from '@web/components/pop/index.js';
 
@@ -48,7 +48,7 @@ export function createDialog(
   // # header
   const closeBtn = btn({ class: 'btn-text dialog-close', title: 'Close' });
   closeBtn.title = 'Close the dialog';
-  closeBtn.innerHTML = initSvg(closeSvg, undefined, 10, 10);
+  closeBtn.innerHTML = svg(closeSvg, undefined, 10, 10);
 
   const title = h('h2', 'wb-header-title', header ?? '');
   const headerInner = typeof header === 'string' ? [title, closeBtn] : (header ?? '');

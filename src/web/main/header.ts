@@ -1,5 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { btn, div, h, initSvg } from '@/lib/dom.js';
+import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 
@@ -8,18 +8,26 @@ import listSvg from '@web/assets/list.svg?raw';
 import { Menu } from '../components/menu/index.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const addBtn = btn({ class: 'btn-text', title: 'Create new workspace' });
-  addBtn.innerHTML = initSvg(plusSvg, '#fff', 18, 18);
-
-  const moreBtn = btn({ class: 'btn-text', title: 'More Actions' });
-  moreBtn.innerHTML = initSvg(listSvg, '#fff', 18, 18);
-
+  const addBtn = btn({ class: 'btn-text', title: 'New workspace' }, [svg(plusSvg, '#fff', 18, 18)]);
+  const moreBtn = btn({ class: 'btn-text', title: 'More Actions' }, [svg(listSvg, '#fff', 18, 18)]);
   const contextMenu = new Menu([
     { label: 'Add current tabs to a new Workspace', action: () => console.log('create') },
     { label: 'Import', action: () => console.log('Import') },
     { label: 'Export', action: () => console.log('Export') },
     { label: 'Settings', action: () => console.log('Settings') },
   ]);
+  const title = h('h2', 'wb-header-title', 'Workspace');
+  const header = div('wb-header', [title, addBtn, moreBtn]);
+
+  // # register events
+
+  bus.on('set-current', (workspace) => {
+    title.textContent = workspace?.name ?? 'Workspace';
+    const color = Color.from(workspace?.color ?? Consts.DefaultColor);
+    const darken = color.adjustBrightness(-0.36);
+    const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;
+    header.style.setProperty('--header-darken-gradient', gradient);
+  });
 
   addBtn.addEventListener('click', () => bus.emit('edit', null));
   moreBtn.addEventListener('click', () => {
@@ -28,16 +36,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     const x = rect.x - drect.width - 1;
     const y = rect.y + rect.height - 1;
     contextMenu.show(x, y);
-  });
-
-  const title = h('h2', 'wb-header-title', 'Workspace');
-  const header = div('wb-header', [title, addBtn, moreBtn]);
-  bus.on('set-current', (workspace) => {
-    title.textContent = workspace?.name ?? 'Workspace';
-    const color = Color.from(workspace?.color ?? Consts.DefaultColor);
-    const darken = color.adjustBrightness(-0.36);
-    const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;
-    header.style.setProperty('--header-darken-gradient', gradient);
   });
 
   return header;

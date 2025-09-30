@@ -1,5 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { div, h, initSvg } from '@/lib/dom.js';
+import { div, h, svg } from '@/lib/dom.js';
 
 import editIcon from '@web/assets/3-dots.svg?raw';
 import listItem from './list-item.js';
@@ -56,8 +56,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const isActive = activeWorkspaces.includes(workspace.id);
 
       // & wb means workspace-block
-      const editBtn = div('icon-btn text-muted ms-2');
-      editBtn.innerHTML = initSvg(editIcon, 'var(--dark)', 16, 16);
+      const editBtn = div('icon-btn text-muted ms-2', [svg(editIcon, 'var(--dark)', 16, 16)]);
       const wbli = listItem(workspace, [editBtn]);
 
       // Create workspace item with potential highlight

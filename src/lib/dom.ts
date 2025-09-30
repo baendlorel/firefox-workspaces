@@ -73,14 +73,16 @@ export const btn = (
   children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLButtonElement => h('button', className, children);
 
-export const initSvg = (
+const dummy = div();
+export const svg = (
   svg: string,
   color: string | undefined,
   width: number = 16,
   height: number = 16
-) => {
+): SVGElement => {
   color = color ?? 'currentColor';
-  return svg
+  dummy.innerHTML = svg
     .replace('<svg ', '<svg width="' + width + '" height="' + height + '" ')
     .replaceAll('currentColor', color);
+  return dummy.firstElementChild as SVGElement;
 };

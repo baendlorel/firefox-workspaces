@@ -1,6 +1,6 @@
 import { EventBus } from 'minimal-event-bus';
 import { RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
-import { btn, div, h, initSvg } from '@/lib/dom.js';
+import { btn, div, h, svg } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
 import { Workspace } from '@/lib/workspace.js';
 
@@ -23,7 +23,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   const deleteBtnText = div('', 'Delete');
   const deleteBtnSvg = div('py-1');
-  deleteBtnSvg.innerHTML = initSvg(trashSvg, 'var(--light)', 14, 14);
+  deleteBtnSvg.innerHTML = svg(trashSvg, 'var(--light)', 14, 14);
   const deleteBtn = btn({ class: 'btn btn-danger btn-with-icon', title: 'Delete the workspace' }, [
     deleteBtnSvg,
     deleteBtnText,
