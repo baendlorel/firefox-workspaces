@@ -26,6 +26,8 @@ declare global {
   type CreateMainPageArgs = WorkspaceModalArgs & ComponentControlsArgs;
 
   type WorkspaceEditorEventMap = {
+    debug: (...args: any[]) => void;
+
     // workspaces
     'set-current': (workspace?: Workspace) => void;
     'render-list': (workspaces: Workspace[], activeWorkspaces?: string[]) => void;

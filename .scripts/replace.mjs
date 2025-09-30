@@ -54,16 +54,12 @@ export const replaceOpts = {
 export const replaceLiteralOpts = {
   'declare const __IS_PROD__: boolean;\n': '',
   'const __IS_PROD__: boolean;\n': '',
-  'logger.info(':
-    "console.log(`%c[__NAME__  info] __func__:`, 'color:#fbf9fa;background-color:#007ACC',",
-  'logger.warn(':
-    "console.log(`%c[__NAME__  warn] __func__:`, 'color:#212729;background-color:#ce8d16',",
-  'logger.error(':
-    "console.log(`%c[__NAME__ error] __func__:`, 'color:#212729;background-color:#fb2c36',",
-  'logger.debug(':
-    "console.log(`%c[__NAME__ debug] __func__:`, 'color:#fbf9fa;background-color:#8617a5',",
+  'logger.info(': "console.log(`%cinfo - __func__:`, 'color:#007ACC',",
+  'logger.warn(': "console.log(`%cwarn - __func__:`, 'color:#ff9900',",
+  'logger.error(': "console.log(`%cerror - __func__:`, 'color:#fb2c36',",
+  'logger.debug(': "console.log(`%cdebug - __func__:`, 'color:#8617a5',",
   'logger.WorkspaceNotFound(':
-    "console.log(`%c[__NAME__ error] __func__:`, 'color:#fb2c36','Workspace not found, id:',",
+    "console.log(`%cerror - __func__:`, 'color:#fb2c36','Workspace not found, id:',",
   'logger.TabNotFoundInWorkspace(':
-    "console.log(`%c[__NAME__ error] __func__:`, 'color:#fb2c36','Tab not found in workspace. tabid,workspaceid:',",
+    "console.log(`%cerror - __func__:`, 'color:#fb2c36','Tab not found in workspace. tabid,workspaceid:',",
 };

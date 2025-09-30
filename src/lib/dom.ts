@@ -78,7 +78,7 @@ export const svg = (
   svg: string,
   color: string | undefined,
   width: number = 16,
-  height: number = 16
+  height: number = width
 ): SVGElement => {
   color = color ?? 'currentColor';
   dummy.innerHTML = svg

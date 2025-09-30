@@ -6,7 +6,7 @@ dialog:focus {
 }
 
 .menu {
-  @apply fixed m-0 p-3 transform-none border-0 rounded-md shadow-lg bg-white;
+  @apply fixed m-0 p-2 transform-none border-0 rounded-md shadow-lg bg-white;
 }
 
 .menu::backdrop {
@@ -14,6 +14,6 @@ dialog:focus {
 }
 
 .menu-option {
-  @apply px-3 py-2 rounded-md hover:bg-gray-100;
+  @apply px-2 py-1 rounded-md hover:bg-gray-100;
   cursor: pointer;
 }

@@ -10,20 +10,22 @@ interface MenuOption {
 export class Menu {
   readonly dialog: HTMLDialogElement;
   private readonly ul: HTMLUListElement;
-  private readonly lis: HTMLLIElement[];
-
   private readonly popIn: () => void;
 
-  constructor(options: MenuOption[]) {
+  constructor(options: (MenuOption | 'divider')[]) {
     // # Elements
-    this.lis = options.map((o) => {
+    const ulChilren = options.map((o) => {
+      if (o === 'divider') {
+        return h('hr');
+      }
+
       const opt = typeof o.label === 'string' ? o.label : [o.label];
       const el = h('li', 'menu-option', opt);
       el.addEventListener('click', o.action);
       return el;
     });
 
-    this.ul = h('ul', 'menu-options', this.lis);
+    this.ul = h('ul', 'menu-options', ulChilren);
     this.dialog = h('dialog', 'menu', [this.ul]);
 
     // # register events

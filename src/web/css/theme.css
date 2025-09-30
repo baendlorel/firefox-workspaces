@@ -108,7 +108,11 @@
 .btn-with-icon {
   display: grid;
   grid-template-columns: auto auto;
-  gap: 5px;
+  gap: 8px;
+}
+
+.btn-with-icon svg {
+  margin-top: 0.25rem;
 }
 
 .icon-btn {

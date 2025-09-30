@@ -10,6 +10,7 @@ import { Action, Sym } from '@/lib/consts.js';
 import { danger, info } from './components/dialog/alerts.js';
 import { createView } from './view.js';
 import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
+import debug from './main/debug.js';
 
 Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
   this: Promise<any>,
@@ -34,11 +35,9 @@ class PopupPage {
   private main: ReturnType<typeof createView>;
 
   constructor() {
+    debug(this.workspaces);
+
     this.main = createView();
-    logger.info('真的吗');
-    logger.warn('真的吗');
-    logger.error('真的吗');
-    logger.debug('真的吗');
 
     // tabs
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));

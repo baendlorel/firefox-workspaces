@@ -19,6 +19,15 @@ export class WorkspaceManager {
   private readonly _arr: IndexedWorkspace[] = [];
   private readonly _activated: string[] = []; // Track currently opened workspaces by ID
   private readonly _deleting = new Set<string>(); // Track workspaces being deleted to avoid conflicts
+  private _add(workspace: IndexedWorkspace) {
+    this._map.set(workspace.id, workspace);
+    this._arr.push(workspace);
+    workspace.index = this._arr.length - 1;
+  }
+  private _clear() {
+    this._map.clear();
+    this._arr.length = 0;
+  }
 
   constructor() {
     this.init();
@@ -71,14 +80,12 @@ export class WorkspaceManager {
     const len = workspaces.list.length;
 
     // prepare the containers
-    this._map.clear();
-    this._arr.length = len;
+    this._clear();
 
     // initialize 2 containers
     for (let i = 0; i < len; i++) {
       const indexed = IndexedWorkspace.load(i, list[i]);
-      this._map.set(indexed.id, indexed);
-      this._arr[i] = indexed;
+      this._add(indexed);
     }
   }
 
@@ -95,11 +102,8 @@ export class WorkspaceManager {
   }
 
   async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
-    const id = $genId();
     const workspace = new IndexedWorkspace(this._arr.length, name, color);
-
-    this._map.set(id, workspace);
-    this._arr.push(workspace);
+    this._add(workspace);
 
     await this.save();
     return workspace;
@@ -235,12 +239,13 @@ export class WorkspaceManager {
         : workspace.name[0] + workspace.name[spaceIndex + 1];
 
     browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
-    browser.action.setBadgeText({ text: name + '12345', windowId });
+    browser.action.setBadgeText({ text: name, windowId });
     const color = Color.from(workspace.color);
     const textColor = color.brightness < 128 ? '#F8F9FA' : '#212729';
     browser.action.setBadgeTextColor({ color: textColor, windowId });
   }
 
+  // fixme 找不到workspace但明明有？
   // Open workspace in new window
   async open(id: string): Promise<{ id?: number } | null> {
     const workspace = this._map.get(id);
@@ -426,8 +431,7 @@ export class WorkspaceManager {
       const workspace = IndexedWorkspace.load(i, data.workspaceses[i]);
       // prevent ID conflicts
       workspace.id = $genId();
-      this._map.set(workspace.id, workspace);
-      this._arr.push(workspace);
+      this._add(workspace);
     }
 
     return this.save();
