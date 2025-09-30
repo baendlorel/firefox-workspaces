@@ -4,13 +4,14 @@ import { h } from '@/lib/dom.js';
 
 interface MenuOption {
   label: string | HTMLElement;
-  action: () => void;
+  action: (this: Menu) => void;
 }
 
 export class Menu {
   readonly dialog: HTMLDialogElement;
   private readonly ul: HTMLUListElement;
   private readonly popIn: () => void;
+  close: () => void;
 
   constructor(options: (MenuOption | 'divider')[]) {
     // # Elements
@@ -21,16 +22,13 @@ export class Menu {
 
       const opt = typeof o.label === 'string' ? o.label : [o.label];
       const el = h('li', 'menu-option', opt);
-      el.addEventListener('click', () => {
-        o.action();
-        close();
-      });
+      el.addEventListener('click', () => o.action.call(this));
       return el;
     });
 
     this.ul = h('ul', 'menu-options', ulChilren);
     this.dialog = h('dialog', 'menu', [this.ul]);
-    const close = popOut(this.dialog, undefined, () => this.dialog.close());
+    this.close = popOut(this.dialog, undefined, () => this.dialog.close());
 
     // # register events
     // Handle backdrop click to close
