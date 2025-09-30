@@ -1,5 +1,5 @@
 import './lib/promise-ext.js';
-import { Action } from './lib/consts.js';
+import { Action, OnUpdatedChangeInfoStatus } from './lib/consts.js';
 import { $createTabInfo, $genId, $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
@@ -87,6 +87,7 @@ class WorkspaceBackground {
       await this.manager.saveActiveSessions();
     });
 
+    // # Handle tab events
     type OnTachedInfo = browser.tabs._OnAttachedAttachInfo | browser.tabs._OnDetachedDetachInfo;
     const onTached = async (_tabId: number, info: OnTachedInfo) => {
       const windowId = 'newWindowId' in info ? info.newWindowId : info.oldWindowId;
@@ -97,21 +98,8 @@ class WorkspaceBackground {
       }
     };
 
-    // Save workspace sessions periodically and on important events
     browser.tabs.onAttached.addListener(onTached);
     browser.tabs.onDetached.addListener(onTached);
-
-    // Handle tab events
-    browser.tabs.onCreated.addListener(async (tab) => {
-      logger.info('Tab created', tab.windowId, tab);
-      if (tab.windowId === undefined) {
-        browser.notifications.create({
-          type: 'basic',
-          title: '[__NAME__] onCreated',
-          message: 'Tab created without windowId. ' + JSON.stringify(tab),
-        });
-      }
-    });
 
     browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
       // Update work groups if tab was removed from a workspace window
@@ -122,31 +110,10 @@ class WorkspaceBackground {
       }
     });
 
-    browser.tabs.onUpdated.addListener(async (tabId, changeInfo, browserTab) => {
-      if (browserTab.windowId === undefined) {
-        browser.notifications.create({
-          type: 'basic',
-          title: '[__NAME__] onUpdated',
-          message: 'Tab created without windowId. ' + JSON.stringify(browserTab),
-        });
-        return;
-      }
-
-      // Update workspace if tab URL or title changed in a workspace window
-      if (!changeInfo.url && !changeInfo.title) {
-        return;
-      }
-
-      const workspace = this.manager.getByWindowId(browserTab.windowId);
-      if (!workspace) {
-        return;
-      }
-
-      // Update the specific tab in the workspace
-      const index = workspace.tabs.findIndex((t) => t.id === tabId);
-      if (index !== -1) {
-        workspace.tabs[index] = $mergeTabInfo(workspace.tabs[index], browserTab);
-        await this.manager.save();
+    browser.tabs.onUpdated.addListener((_tabId, changeInfo, browserTab) => {
+      logger.info('onupdated!', changeInfo.status, browserTab);
+      if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
+        this.manager.tempSaveTab(browserTab);
       }
     });
 

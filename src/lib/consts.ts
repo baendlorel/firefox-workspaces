@@ -25,6 +25,11 @@ export const WORKSPACE_COLORS: HexColor[] = [
   '#e32649',
 ];
 
+export const enum OnUpdatedChangeInfoStatus {
+  Complete = 'complete',
+  Loading = 'loading',
+}
+
 export const enum Action {
   GetWorkspaces = 'GetWorkspaces',
   CreateWorkspace = 'CreateWorkspace',
