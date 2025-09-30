@@ -6,7 +6,7 @@ interface MenuOption {
   action: () => void;
 }
 
-export class ContextMenu {
+export class Menu {
   private readonly dialog: HTMLDialogElement;
   private readonly content: HTMLDivElement;
   private readonly ul: HTMLUListElement;
