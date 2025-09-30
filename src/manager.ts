@@ -15,10 +15,13 @@ export class WorkspaceManager {
   }
 
   private static _instance: WorkspaceManager;
-  private readonly _map = new Map<string, IndexedWorkspace>();
-  private readonly _arr: IndexedWorkspace[] = [];
   private readonly _activated: string[] = []; // Track currently opened workspaces by ID
   private readonly _deleting = new Set<string>(); // Track workspaces being deleted to avoid conflicts
+
+  // # workspace containers
+  // both useful, map use 16 times and arr use 20 times
+  private readonly _map = new Map<string, IndexedWorkspace>();
+  private readonly _arr: IndexedWorkspace[] = [];
   private _add(workspace: IndexedWorkspace) {
     this._map.set(workspace.id, workspace);
     this._arr.push(workspace);

@@ -1,35 +1,24 @@
 import { $id, btn } from '@/lib/dom.js';
 
-export default (...args: any[]) => {
-  const show = btn('btn btn-primary absolute', 'show');
-  show.style.zIndex = '1000';
+export const stringify = (a: any): any => {
+  if (a === null) {
+    return null;
+  }
+  if (typeof a !== 'object') {
+    return a;
+  }
 
-  $id('app').prepend(show);
+  if (Array.isArray(a)) {
+    return a.map(stringify);
+  }
 
-  const stringify = (a: any): any => {
-    if (a === null) {
-      return null;
+  const res: string[] = [];
+  for (const key in a) {
+    if (!Object.hasOwn(a, key)) {
+      continue;
     }
-    if (typeof a !== 'object') {
-      return a;
-    }
+    res.push(`${key}: ${stringify(a[key])}`);
+  }
 
-    if (Array.isArray(a)) {
-      return a.map(stringify);
-    }
-
-    const res: string[] = [];
-    for (const key in a) {
-      if (!Object.hasOwn(a, key)) {
-        continue;
-      }
-      res.push(`${key}: ${stringify(a[key])}`);
-    }
-
-    return '{' + res.join(', ') + '}';
-  };
-
-  show.addEventListener('click', () => {
-    logger.debug(...args.map(stringify));
-  });
+  return '{' + res.join(', ') + '}';
 };

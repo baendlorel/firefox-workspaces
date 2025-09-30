@@ -6,11 +6,11 @@ import '@/lib/promise-ext.js';
 
 import { $send } from '@/lib/ext-apis.js';
 import { Action, Sym } from '@/lib/consts.js';
+import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
 
 import { danger, info } from './components/dialog/alerts.js';
+import { stringify } from './main/debug.js';
 import { createView } from './view.js';
-import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
-import debug from './main/debug.js';
 
 Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
   this: Promise<any>,
@@ -35,9 +35,10 @@ class PopupPage {
   private main: ReturnType<typeof createView>;
 
   constructor() {
-    debug(this.workspaces);
-
     this.main = createView();
+    this.main.on('debug', () => {
+      logger.debug(stringify(this.workspaces));
+    });
 
     // tabs
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));

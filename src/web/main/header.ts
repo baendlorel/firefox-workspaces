@@ -11,7 +11,7 @@ import boxArrowUpSvg from '@web/assets/box-arrow-up.svg?raw';
 import bugSvg from '@web/assets/bug.svg?raw';
 import gearSvg from '@web/assets/gear.svg?raw';
 
-const createContextMenu = () => {
+const createContextMenu = (bus: EventBus<WorkspaceEditorEventMap>) => {
   const SIZE = 18;
   const COLOR = '#737a84';
   const s2 = svg(boxArrowDownSvg, COLOR, SIZE);
@@ -36,7 +36,7 @@ const createContextMenu = () => {
     { label: btn4, action: () => logger.debug(btn4.innerText) },
     { label: btn5, action: () => logger.debug(btn5.innerText) },
     'divider',
-    { label: btn6, action: () => logger.debug(btn6.innerText) },
+    { label: btn6, action: () => bus.emit('debug') },
   ]);
 
   return contextMenu;
@@ -45,7 +45,7 @@ const createContextMenu = () => {
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const addBtn = btn({ class: 'btn-text', title: 'New workspace' }, [svg(plusSvg, '#fff', 18, 18)]);
   const moreBtn = btn({ class: 'btn-text', title: 'More Actions' }, [svg(listSvg, '#fff', 18, 18)]);
-  const contextMenu = createContextMenu();
+  const contextMenu = createContextMenu(bus);
 
   const title = h('h2', 'wb-header-title', 'Workspace');
   const header = div('wb-header', [title, addBtn, moreBtn]);

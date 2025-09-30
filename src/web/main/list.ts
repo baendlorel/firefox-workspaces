@@ -4,6 +4,7 @@ import { div, h, svg } from '@/lib/dom.js';
 import editIcon from '@web/assets/3-dots.svg?raw';
 import listItem from './list-item.js';
 import { Workspace } from '@/lib/workspace.js';
+import { Color } from '@/lib/color.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'workspaces');
@@ -63,8 +64,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const item = h('li', { class: 'my-2', 'data-workspace-id': workspace.id }, [wbli]);
 
       // Add highlight effect for active workspaces
+      // fixme 貌似无效果
       if (isActive) {
-        wbli.style.backgroundColor = `${workspace.color}33`;
+        const c = Color.from(workspace.color);
+        wbli.style.border = `3px solid ${c.adjustBrightness(-0.2).toHex()}`;
       }
 
       // # register events

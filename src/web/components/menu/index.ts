@@ -21,7 +21,10 @@ export class Menu {
 
       const opt = typeof o.label === 'string' ? o.label : [o.label];
       const el = h('li', 'menu-option', opt);
-      el.addEventListener('click', o.action);
+      el.addEventListener('click', ()=>{
+        o.action() ;
+        this.
+      });
       return el;
     });
 
