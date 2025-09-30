@@ -1,4 +1,4 @@
-import { autoPopOutDialog, popIn } from '../pop/index.js';
+import { autoPopOutDialog, popIn, popOut } from '../pop/index.js';
 import './style.css';
 import { h } from '@/lib/dom.js';
 
@@ -21,15 +21,16 @@ export class Menu {
 
       const opt = typeof o.label === 'string' ? o.label : [o.label];
       const el = h('li', 'menu-option', opt);
-      el.addEventListener('click', ()=>{
-        o.action() ;
-        this.
+      el.addEventListener('click', () => {
+        o.action();
+        close();
       });
       return el;
     });
 
     this.ul = h('ul', 'menu-options', ulChilren);
     this.dialog = h('dialog', 'menu', [this.ul]);
+    const close = popOut(this.dialog, undefined, () => this.dialog.close());
 
     // # register events
     // Handle backdrop click to close
