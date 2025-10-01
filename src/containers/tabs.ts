@@ -57,6 +57,13 @@ export class TabContainer {
     return this.arr.find((t) => t.id === tabId);
   }
 
+  update(tabId: number, changeInfo: any) {
+    const tab = this.get(tabId);
+    if (tab) {
+      tab.update(changeInfo);
+    }
+  }
+
   clearAll() {
     this.arr.length = 0;
   }

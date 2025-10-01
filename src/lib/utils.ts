@@ -1,10 +1,15 @@
 export const $randInt = (max: number) => Math.floor(Math.random() * max);
 
-const alphabets = '0123456789abcdefghijklmnopqrstuvwxyz' as const;
+export const $randChar = () => {
+  const r = $randInt(36);
+  // use ascii to save the memory of '0-9a-z' string
+  return r < 10 ? String.fromCharCode(48 + r) : String.fromCharCode(97 + (r - 10));
+};
+
 export const $genId = () => {
-  const digits: string[] = ['kskb_', String(Date.now())];
+  const digits: string[] = ['kskb_', String(Date.now()), '_'];
   for (let i = 0; i < 16; i++) {
-    digits.push(alphabets[$randInt(36)]);
+    digits.push($randChar());
   }
   return digits.join('');
 };

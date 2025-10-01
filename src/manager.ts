@@ -22,6 +22,7 @@ export class WorkspaceManager {
   // # containers
   readonly workspaces = new WorkspaceContainer();
   readonly tabs = new TabContainer();
+  readonly needPin = new Set<number>();
 
   constructor() {
     this.load().then(() => {
@@ -244,15 +245,19 @@ export class WorkspaceManager {
 
     // Create new window with first URL
     const window = await browser.windows
-      .create({
-        url: tabs[0].url,
-        type: 'normal',
-      })
+      .create({ url: tabs[0].url, type: 'normal' })
       .fallback('__func__: Fallback to about:blank because', $aboutBlank);
     this.setBadge(workspace, window.id);
 
     // Wait a moment for window to be ready
     await $sleep(500);
+
+    logger.debug('tabs', tabs);
+
+    const firstTabId = window.tabs?.[0].id;
+    if (tabs[0].pinned && firstTabId !== undefined) {
+      this.needPin.add(firstTabId);
+    }
 
     // Open remaining URLs as tabs
     for (let i = 1; i < tabs.length; i++) {
@@ -261,15 +266,20 @@ export class WorkspaceManager {
           windowId: window.id,
           url: tabs[i].url,
           active: false,
-          pinned: tabs[i].pinned,
           index: tabs[i].index,
         })
-        .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`, null);
+        .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`);
 
-      if (tab === null) {
+      if (tab === Sym.Reject) {
         continue;
       }
+
+      if (tabs[i].pinned && tab.id !== undefined) {
+        this.needPin.add(tab.id);
+      }
     }
+
+    // * Pin tabs are handled in OnUpdated listener
 
     // Update group with window association and last opened time
     workspace.setWindowId(window.id);
@@ -340,7 +350,6 @@ export class WorkspaceManager {
         continue;
       }
 
-      // todo 能改成入参是workspace而不是.id吗。这个是需要的因为会回收内存
       const succ = await this.updateTabsOfWorkspace(workspace);
       if (succ === false) {
         logger.error(`failed: ${workspace.name}(${workspace.id})`);

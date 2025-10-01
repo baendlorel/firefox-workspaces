@@ -118,19 +118,30 @@ class WorkspaceBackground {
       this.refreshTabContainerOfWindow(windowId);
     });
 
+    // todo 因为关闭窗口会触发onremoved，且iswindowclosing为true。
     browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
       if (!removeInfo.isWindowClosing) {
+        logger.warn('refresh Tab Container Of Window');
         this.refreshTabContainerOfWindow(removeInfo.windowId);
       }
     });
 
-    browser.tabs.onUpdated.addListener((_, changeInfo, browserTab) => {
-      // & This is the time that all data WorkspaceTab needs are ready
-      // Waiting for 'complete' status takes to much time
-      // @see WorkspaceTab comments
-      if (changeInfo.status === OnUpdatedChangeInfoStatus.Loading && changeInfo.url) {
-        logger.info('Tab data ready, saving', browserTab.id, browserTab.url);
-        this.manager.tabs.save(browserTab);
+    browser.tabs.onCreated.addListener((tab) => this.manager.tabs.save(tab));
+
+    browser.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
+      if (changeInfo.status === OnUpdatedChangeInfoStatus.Loading) {
+        this.manager.tabs.update(tabId, changeInfo);
+        return;
+      }
+
+      if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
+        if (!this.manager.needPin.has(tabId)) {
+          return;
+        }
+
+        this.manager.needPin.delete(tabId);
+        await browser.tabs.update(tabId, { pinned: true });
+        this.manager.tabs.update(tabId, { pinned: true });
       }
     });
   }
@@ -183,29 +194,9 @@ class WorkspaceBackground {
     }
 
     if (action === Action.OpenWorkspace) {
-      const workspace = this.manager.workspaces.get(message.workspaceId);
-      const workspaceName = workspace?.name || 'Unknown Workspace';
-
       const window = await this.manager
         .open(message.workspaceId)
         .fallback('Failed to open workspace in window:', null);
-
-      // Send notification about the result since popup may have closed
-      if (window !== null) {
-        browser.notifications.create(`workspace-opened-${message.workspaceId}`, {
-          type: 'basic',
-          iconUrl: browser.runtime.getURL('dist/icon-128.png'),
-          title: 'Workspace Opened',
-          message: `"${workspaceName}" has been opened in a new window.`,
-        });
-      } else {
-        browser.notifications.create(`workspace-failed-${message.workspaceId}`, {
-          type: 'basic',
-          iconUrl: browser.runtime.getURL('dist/icon-128.png'),
-          title: 'Workspace Failed to Open',
-          message: `Failed to open "${workspaceName}". Please try again.`,
-        });
-      }
 
       const response: MessageResponseMap[typeof action] = {
         success: window !== null,
