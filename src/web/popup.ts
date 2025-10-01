@@ -40,6 +40,7 @@ class PopupPage {
   private main: ReturnType<typeof createView>;
 
   constructor() {
+    logger.verbose('PopupPage initializing');
     this.main = createView();
     this.main.on('debug', () => logger.debug(stringify(this.workspaces)));
 
