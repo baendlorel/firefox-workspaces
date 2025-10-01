@@ -183,12 +183,33 @@ class WorkspaceBackground {
     }
 
     if (action === Action.OpenWorkspace) {
+      const workspace = this.manager.workspaces.get(message.workspaceId);
+      const workspaceName = workspace?.name || 'Unknown Workspace';
+
       const window = await this.manager
         .open(message.workspaceId)
         .fallback('Failed to open workspace in window:', null);
+
+      // Send notification about the result since popup may have closed
+      if (window !== null) {
+        browser.notifications.create(`workspace-opened-${message.workspaceId}`, {
+          type: 'basic',
+          iconUrl: browser.runtime.getURL('dist/icon-128.png'),
+          title: 'Workspace Opened',
+          message: `"${workspaceName}" has been opened in a new window.`,
+        });
+      } else {
+        browser.notifications.create(`workspace-failed-${message.workspaceId}`, {
+          type: 'basic',
+          iconUrl: browser.runtime.getURL('dist/icon-128.png'),
+          title: 'Workspace Failed to Open',
+          message: `Failed to open "${workspaceName}". Please try again.`,
+        });
+      }
+
       const response: MessageResponseMap[typeof action] = {
         success: window !== null,
-        data: window,
+        data: window === null ? { id: NaN } : { id: window.id },
       };
       return response;
     }
