@@ -125,8 +125,11 @@ class WorkspaceBackground {
     });
 
     browser.tabs.onUpdated.addListener((_, changeInfo, browserTab) => {
-      if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
-        logger.info('completed tabId', _);
+      // & This is the time that all data WorkspaceTab needs are ready
+      // Waiting for 'complete' status takes to much time
+      // @see WorkspaceTab comments
+      if (changeInfo.status === OnUpdatedChangeInfoStatus.Loading && changeInfo.url) {
+        logger.info('Tab data ready, saving', browserTab.id, browserTab.url);
         this.manager.tabs.save(browserTab);
       }
     });

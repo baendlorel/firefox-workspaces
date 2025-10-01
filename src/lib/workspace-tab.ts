@@ -3,13 +3,12 @@ export class WorkspaceTab {
     return new WorkspaceTab().assign(tab);
   }
 
-  id: number = browser.tabs.TAB_ID_NONE;
-  index: number = NaN;
-  title: string = '';
-  url: string = '';
-  favIconUrl: string = '';
-  pinned: boolean = false;
-  windowId: number = browser.windows.WINDOW_ID_NONE;
+  id: number = browser.tabs.TAB_ID_NONE; // OnCreated
+  index: number = NaN; // OnCreated
+  title: string = ''; // OnCreated
+  url: string = ''; // OnUpdated, changeInfo.url
+  pinned: boolean = false; // OnCreated
+  windowId: number = browser.windows.WINDOW_ID_NONE; // OnCreated
 
   assign(tab: browser.tabs.Tab): this {
     const keys = Object.keys(this) as (keyof this)[];
