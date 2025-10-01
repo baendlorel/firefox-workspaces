@@ -5,6 +5,10 @@ export class WorkspaceTab {
     return new WorkspaceTab().assign(tab);
   }
 
+  static hasRelatedChange(changeInfo: any) {
+    return keys.some((k) => k in changeInfo);
+  }
+
   id: number = browser.tabs.TAB_ID_NONE; // OnCreated
   index: number = NaN; // OnCreated
   title: string = ''; // OnCreated

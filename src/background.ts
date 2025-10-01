@@ -1,6 +1,7 @@
 import './lib/promise-ext.js';
 import { Action, OnUpdatedChangeInfoStatus } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
+import { WorkspaceTab } from './lib/workspace-tab.js';
 
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
@@ -80,7 +81,6 @@ class WorkspaceBackground {
         return;
       }
 
-      logger.info(`Workspace window closed: ${workspace.name}`);
       // Skip processing if this workspace is being deleted
       if (this.manager.workspaces.isDeleting(workspace.id)) {
         logger.debug(`WindowOnRemoved: Deleting '${workspace.name}', skip`);
@@ -98,7 +98,7 @@ class WorkspaceBackground {
       this.manager.workspaces.deactivate(workspace.id);
 
       await this.manager.save();
-      const urls = workspace.tabs.map((t) => t.url).join(', ');
+      const urls = workspace.tabs.map((t) => (t.pinned ? '📌' + t.url : t.url)).join(', ');
       logger.info(`WindowOnRemoved: '${workspace.name}' removed. tabs are saved:`, urls);
     });
   }
@@ -129,11 +129,6 @@ class WorkspaceBackground {
     browser.tabs.onCreated.addListener((tab) => this.manager.tabs.save(tab));
 
     browser.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
-      if (changeInfo.status === OnUpdatedChangeInfoStatus.Loading) {
-        this.manager.tabs.update(tabId, changeInfo);
-        return;
-      }
-
       if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
         if (!this.manager.needPin.has(tabId)) {
           return;
@@ -142,6 +137,12 @@ class WorkspaceBackground {
         this.manager.needPin.delete(tabId);
         await browser.tabs.update(tabId, { pinned: true });
         this.manager.tabs.update(tabId, { pinned: true });
+        return;
+      }
+
+      if (WorkspaceTab.hasRelatedChange(changeInfo)) {
+        logger.debug('Tab changed', tabId, changeInfo);
+        this.manager.tabs.update(tabId, changeInfo);
       }
     });
   }
