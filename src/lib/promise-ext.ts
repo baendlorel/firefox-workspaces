@@ -1,11 +1,13 @@
 import { Sym } from './consts.js';
 
+type ValueGetter<V> = V | PromiseLike<V> | (() => V | PromiseLike<V>);
+
 declare global {
   interface Promise<T> {
     fallback<S>(message?: string): Promise<T | typeof Sym.Reject>;
-    fallback<S>(message: string, value: S | PromiseLike<S>): Promise<T | S>;
+    fallback<S>(message: string, value: ValueGetter<S>): Promise<T | S>;
     fallbackWithDialog<S>(message: string): Promise<T | typeof Sym.Reject>;
-    fallbackWithDialog<S>(message: string, value: S | PromiseLike<S>): Promise<T | S>;
+    fallbackWithDialog<S>(message: string, value: ValueGetter<S>): Promise<T | S>;
   }
 
   interface PromiseConstructor {
@@ -22,7 +24,7 @@ Promise.prototype.fallback = function <S = typeof Sym.Reject>(
   ...args: any[]
 ): Promise<S> {
   let message: string = '';
-  let value = Sym.Reject;
+  let value: any = Sym.Reject;
 
   if (args.length === 1) {
     message = args[0] as string;
@@ -39,7 +41,7 @@ Promise.prototype.fallback = function <S = typeof Sym.Reject>(
     } else {
       logger.debug(error);
     }
-    return value;
+    return typeof value === 'function' ? value() : value;
   });
 };
 

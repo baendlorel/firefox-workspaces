@@ -15,7 +15,7 @@ import { createView } from './view.js';
 Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
   this: Promise<any>,
   message: string,
-  value = Sym.Reject
+  value: any = Sym.Reject
 ): Promise<S> {
   return Promise.prototype.catch.call(this, (error: unknown) => {
     if (message) {
@@ -24,7 +24,7 @@ Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
     } else {
       logger.debug(error);
     }
-    return value;
+    return typeof value === 'function' ? value() : value;
   });
 };
 

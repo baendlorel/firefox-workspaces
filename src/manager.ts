@@ -241,7 +241,7 @@ export class WorkspaceManager {
         url: tabs[0].url,
         type: 'normal',
       })
-      .fallback('__func__: Fallback to about:blank because', $aboutBlank());
+      .fallback('__func__: Fallback to about:blank because', $aboutBlank);
     this.setBadge(workspace, window.id);
 
     // Wait a moment for window to be ready
