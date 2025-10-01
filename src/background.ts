@@ -133,8 +133,8 @@ class WorkspaceBackground {
       this.manager.tabs.delete(tab);
     });
 
-    browser.tabs.onUpdated.addListener((_tabId, changeInfo, browserTab) => {
-      logger.info('onupdated! tabid', _tabId, 'status', changeInfo.status);
+    browser.tabs.onUpdated.addListener((_, changeInfo, browserTab) => {
+      logger.info('tabid', _, changeInfo.favIconUrl ? 'favicon' : changeInfo);
       if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
         this.manager.tabs.save(browserTab);
       }
