@@ -4,6 +4,7 @@ export class WorkspaceTab {
   }
 
   id: number = browser.tabs.TAB_ID_NONE;
+  index: number = NaN;
   title: string = '';
   url: string = '';
   favIconUrl: string = '';

@@ -119,9 +119,18 @@ class WorkspaceBackground {
       }
     });
 
+    browser.tabs.onMoved.addListener((tabId, moveInfo) => {
+      const tab = this.manager.tabs.get(tabId);
+      if (!tab) {
+        return;
+      }
+      tab.index = moveInfo.toIndex;
+      logger.debug('Tab moved', tabId, 'from', moveInfo.fromIndex, 'to', moveInfo.toIndex);
+      logger.debug(this.manager.tabs.arr);
+    });
+
     browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
       if (removeInfo.isWindowClosing) {
-        logger.info(`Window is closing, skip tab(${tabId}) removal handling`);
         return;
       }
 

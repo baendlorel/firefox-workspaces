@@ -231,7 +231,7 @@ export class WorkspaceManager {
       this.workspaces.deactivate(id);
     }
 
-    const tabs = workspace.tabs;
+    const tabs = workspace.tabs.sort((a, b) => a.index - b.index);
 
     if (tabs.length === 0) {
       // Create window with new tab page if no URLs
@@ -262,6 +262,7 @@ export class WorkspaceManager {
           url: tabs[i].url,
           active: false,
           pinned: tabs[i].pinned,
+          index: tabs[i].index,
         })
         .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`, null);
 

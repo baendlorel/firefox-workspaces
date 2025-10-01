@@ -12,11 +12,13 @@ export class TabContainer {
       return;
     }
 
-    const tab = WorkspaceTab.from(browserTab);
-
-    if (!this.has(tab)) {
-      this.arr.push(tab);
+    const exist = this.get(browserTab.id);
+    if (exist) {
+      exist.assign(browserTab);
+      return;
     }
+
+    this.arr.push(WorkspaceTab.from(browserTab));
   }
 
   has(tab: WorkspaceTab): boolean {
