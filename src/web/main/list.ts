@@ -34,7 +34,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const li = h('li', 'my-2', [wbli]) as WorkspaceLi;
       li.workspaceId = workspace.id;
       // todo 激活颜色
-      li.activatedColor = Color.from(workspace.color).adjustBrightness(-0.2).toHex();
+      li.activatedColor = Color.from(workspace.color).adjustBrightness(+0.4).toHex();
 
       // # register events
       li.addEventListener('click', () => bus.emit('open', workspace));
@@ -54,7 +54,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       if (activated.includes(li.workspaceId)) {
         li.style.backgroundColor = li.activatedColor;
       } else {
-        li.style.backgroundColor = 'transparent';
+        li.style.backgroundColor = '';
       }
     }
   };

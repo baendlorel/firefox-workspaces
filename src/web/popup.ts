@@ -41,9 +41,7 @@ class PopupPage {
 
   constructor() {
     this.main = createView();
-    this.main.on('debug', () => {
-      logger.debug(stringify(this.workspaces));
-    });
+    this.main.on('debug', () => logger.debug(stringify(this.workspaces)));
 
     // tabs
     this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
@@ -57,9 +55,6 @@ class PopupPage {
     this.main.on('save', (formData: WorkspaceFormData) => this.save(formData));
     this.main.on('delete', (workspace: Workspace) => this.delete(workspace));
 
-    // Add page lifecycle event listeners for debugging popup closure
-    this.setupPageLifecycleListeners();
-
     this.main.emit('set-current');
 
     if (__IS_DEV__) {
@@ -67,32 +62,6 @@ class PopupPage {
       return;
     }
     this.init();
-  }
-
-  // Setup page lifecycle event listeners to detect popup closure
-  private setupPageLifecycleListeners() {
-    // Listen for various events that indicate popup is about to close
-    window.addEventListener('beforeunload', () => {
-      logger.debug('Popup beforeunload event triggered');
-    });
-
-    window.addEventListener('pagehide', () => {
-      logger.debug('Popup pagehide event triggered');
-    });
-
-    window.addEventListener('unload', () => {
-      logger.debug('Popup unload event triggered');
-    });
-
-    // Listen for visibility changes
-    document.addEventListener('visibilitychange', () => {
-      logger.debug(`Popup visibility changed: ${document.visibilityState}`);
-    });
-
-    // Listen for focus loss
-    window.addEventListener('blur', () => {
-      logger.debug('Popup lost focus (blur event)');
-    });
   }
 
   // Initialize popup
@@ -207,67 +176,20 @@ class PopupPage {
     }
   }
 
-  // Open workspace in new window
-  async open(workspace: Workspace) {
-    logger.debug(`Workspace opening.`, workspace);
-
-    try {
-      // Optimistically update the UI first for immediate feedback
-      this.activeWorkspaces.push(workspace.id);
-      this.main.emit('toggle-li-activated', this.activeWorkspaces);
-      logger.succ(`Opening workspace "${workspace.name}"...`);
-
-      // Send the request - use a fire-and-forget approach since popup may close
-      const openPromise = $send<OpenWorkspaceRequest>({
-        action: Action.OpenWorkspace,
-        workspaceId: workspace.id,
-      });
-
-      logger.debug('Open workspace request sent');
-
-      // Try to wait for response, but with a short timeout
-      // If popup closes, this will be interrupted
-      const response = await Promise.race([
-        openPromise,
-        new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Timeout - popup may have closed')), 2000);
-        }),
-      ]).catch((error) => {
-        logger.debug('Open workspace response handling interrupted:', error);
-        // Don't revert UI state since the operation might still succeed
-        return null;
-      });
-
-      if (response && typeof response === 'object' && 'success' in response) {
-        logger.debug(`Workspace opened with response:`, response);
-        if (response.success) {
-          logger.succ(`Workspace "${workspace.name}" opened successfully.`);
-        } else {
-          logger.error('Workspace opening failed according to response');
-          // Revert optimistic update only on confirmed failure
-          const index = this.activeWorkspaces.indexOf(workspace.id);
-          if (index > -1) {
-            this.activeWorkspaces.splice(index, 1);
-            this.main.emit('toggle-li-activated', this.activeWorkspaces);
-          }
-          info('Failed to open workspace, Please try again.');
-        }
-      } else {
-        logger.debug(
-          'No response received (popup likely closed), but operation may have succeeded'
-        );
-        // Keep optimistic state since we don't know the actual result
-      }
-    } catch (error) {
-      logger.error('Workspace opening failed:', error);
-      // Revert optimistic update
-      const index = this.activeWorkspaces.indexOf(workspace.id);
-      if (index > -1) {
-        this.activeWorkspaces.splice(index, 1);
-        this.main.emit('toggle-li-activated', this.activeWorkspaces);
-      }
-      info('Failed to open workspace, Please try again.');
-    }
+  /**
+   * ## Warn
+   * !! Codes below `$send` are not accessible.
+   *
+   * ## Reason
+   * 1. New window causes popup page to be unfocused.
+   * 2. Unfocused popup is basically deleted.
+   * 3. Click plugin button again creates a new popup page.
+   */
+  open(workspace: Workspace): Promise<OpenWorkspaceResponse> {
+    return $send<OpenWorkspaceRequest>({
+      action: Action.OpenWorkspace,
+      workspaceId: workspace.id,
+    });
   }
 
   // Remove tab from group
