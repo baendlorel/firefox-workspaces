@@ -1,8 +1,8 @@
 import { WorkspaceTab } from '@/lib/workspace-tab.js';
 
 export class TabContainer {
-  private readonly map = new Map<number, Map<number, WorkspaceTab>>();
-  private readonly idMap = new Map<number, WorkspaceTab>(); // tabId -> tab
+  readonly map = new Map<number, Map<number, WorkspaceTab>>();
+  readonly idMap = new Map<number, WorkspaceTab>(); // tabId -> tab
 
   /**
    * Temporarily insert/update a tab in the internal tracking map

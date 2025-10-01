@@ -106,11 +106,6 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    // todo 这里要完成转移逻辑
-    const onTached = async (tabId: number, info: OnTachedInfo) => {
-      const windowId = 'newWindowId' in info ? info.newWindowId : info.oldWindowId;
-    };
-
     browser.tabs.onAttached.addListener((tabId, info) => {
       logger.info('Attached', info);
       this.manager.tabs.attach(info.newWindowId, tabId);
