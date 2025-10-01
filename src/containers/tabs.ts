@@ -57,47 +57,7 @@ export class TabContainer {
     return this.arr.find((t) => t.id === tabId);
   }
 
-  clear(windowId: number) {
-    const filtered = this.arr.filter((t) => t.windowId !== windowId);
-    this.arr.length = 0;
-    this.arr.push(...filtered);
-  }
-
   clearAll() {
     this.arr.length = 0;
-  }
-
-  /**
-   * Only do the adding, deleting is handled in `detach`
-   * [INFO] Only workspace window will enter this method
-   */
-  attach(windowId: number, tabId: number) {
-    // todo 这一行应该是不需要了
-    const targetWindowTabs = this.getTabsOfWindow(windowId);
-    if (targetWindowTabs.length === 0) {
-      logger.info('Not a workspace window, skip attach. windowId', windowId, 'tabId', tabId);
-      return;
-    }
-
-    const index = this.arr.findIndex((t) => t.id === tabId);
-    if (index === -1) {
-      logger.error('TabId not found, cannot attach. windowId', windowId, 'tabId', tabId);
-      return;
-    }
-
-    this.arr[index].windowId = windowId;
-  }
-
-  /**
-   * Only do the deleting, adding is handled in `attach`
-   * [INFO] Only workspace window will enter this method
-   */
-  detach(windowId: number, tabId: number) {
-    const tab = this.arr.find((t) => t.id === tabId && t.windowId === windowId);
-    if (!tab) {
-      logger.warn('Tab not found. windowId', windowId, 'tabId', tabId);
-      return;
-    }
-    tab.windowId = browser.windows.WINDOW_ID_NONE;
   }
 }
