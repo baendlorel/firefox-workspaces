@@ -1,6 +1,5 @@
 import './lib/promise-ext.js';
 import { Action, OnUpdatedChangeInfoStatus } from './lib/consts.js';
-import { $createTabInfo, $genId, $mergeTabInfo } from './lib/utils.js';
 import { WorkspaceManager } from './manager.js';
 
 class WorkspaceBackground {
@@ -94,7 +93,7 @@ class WorkspaceBackground {
         return;
       }
 
-      workspace.tabs = Array.from(tabs.values(), $createTabInfo);
+      workspace.tabs = Array.from(tabs.values());
       workspace.windowId = undefined;
       this.manager.workspaces.deactivate(workspace.id);
       await this.manager.save();
@@ -107,15 +106,19 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    type OnTachedInfo = browser.tabs._OnAttachedAttachInfo | browser.tabs._OnDetachedDetachInfo;
     // todo 这里要完成转移逻辑
-    const onTached = async (_tabId: number, info: OnTachedInfo) => {
+    const onTached = async (tabId: number, info: OnTachedInfo) => {
       const windowId = 'newWindowId' in info ? info.newWindowId : info.oldWindowId;
-      logger.info('ontached!', info, windowId);
     };
 
-    browser.tabs.onAttached.addListener(onTached);
-    browser.tabs.onDetached.addListener(onTached);
+    browser.tabs.onAttached.addListener((tabId, info) => {
+      logger.info('Attached', info);
+      this.manager.tabs.attach(info.newWindowId, tabId);
+    });
+    browser.tabs.onDetached.addListener((tabId, info) => {
+      logger.info('Detached', info);
+      this.manager.tabs.detach(info.oldWindowId, tabId);
+    });
 
     browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
       logger.debug(

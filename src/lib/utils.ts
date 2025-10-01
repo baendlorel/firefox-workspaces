@@ -25,35 +25,3 @@ export const $escapeHtml = (text: string) => {
   div.textContent = text;
   return div.innerHTML;
 };
-
-//{
-//   id: tab.id ?? NaN,
-//   url: browserTab.url ?? '',
-//   title: browserTab.title ?? '',
-//   favIconUrl: browserTab.favIconUrl ?? '',
-//   addedAt: Date.now(),
-//};
-export const $createTabInfo = (tab: browser.tabs.Tab): TabInfo => ({
-  id: tab.id ?? NaN,
-  url: tab.url ?? '[No URL]',
-  title: tab.title ?? '[No Title]',
-  favIconUrl: tab.favIconUrl ?? '[No Favicon]',
-  pinned: tab.pinned,
-  addedAt: Date.now(),
-});
-
-// Update workspace if tab URL or title changed in a workspace window
-// tabs[index] = {
-//   ...tabs[index],
-//   url: browserTab.url ?? '',
-//   title: browserTab.title ?? '',
-//   favIconUrl: browserTab.favIconUrl ?? '',
-// };
-export const $mergeTabInfo = (tab: TabInfo, browserTab: browser.tabs.Tab): TabInfo => ({
-  id: tab.id ?? browserTab.id ?? NaN,
-  url: browserTab.url ?? tab.url ?? '[No URL]',
-  title: browserTab.title ?? tab.title ?? '[No Title]',
-  favIconUrl: browserTab.favIconUrl ?? tab.favIconUrl ?? '[No Favicon]',
-  pinned: browserTab.pinned ?? tab.pinned,
-  addedAt: tab.addedAt ?? Date.now(),
-});

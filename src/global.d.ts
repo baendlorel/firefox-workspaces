@@ -14,15 +14,6 @@ declare global {
     list: Workspace[];
   }
 
-  interface TabInfo {
-    id: number;
-    title: string;
-    url: string;
-    favIconUrl: string;
-    pinned: boolean;
-    addedAt: number;
-  }
-
   interface WorkspaceStats {
     totalTabs: number;
     pinnedTabs: number;

@@ -2,7 +2,8 @@ import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank } from './lib/ext-apis.js';
-import { $createTabInfo, $genId, $sleep } from './lib/utils.js';
+import { $genId, $sleep } from './lib/utils.js';
+import { WorkspaceTab } from './lib/workspace-tab.js';
 import { IndexedWorkspace, Workspace } from './lib/workspace.js';
 import { WorkspaceContainer } from './containers/workspaces.js';
 import { TabContainer } from './containers/tabs.js';
@@ -117,7 +118,7 @@ export class WorkspaceManager {
       return false;
     }
 
-    const tab: TabInfo = $createTabInfo(browserTab);
+    const tab = WorkspaceTab.from(browserTab);
     if (!workspace.tabs.some((t) => t.id === browserTab.id)) {
       workspace.tabs.push(tab);
     }
@@ -281,7 +282,7 @@ export class WorkspaceManager {
       return false;
     }
     const browserTabs = await browser.tabs.query({ windowId });
-    workspace.tabs = browserTabs.map($createTabInfo);
+    workspace.tabs = browserTabs.map(WorkspaceTab.from);
 
     return this.save();
   }
@@ -336,7 +337,7 @@ export class WorkspaceManager {
         continue;
       }
 
-      // todo 这里能改成入参是workspace而不是.id吗
+      // todo 能改成入参是workspace而不是.id吗。这个是需要的因为会回收内存
       const succ = await this.updateByWindowId(workspace.id, workspace.windowId);
       if (succ === false) {
         logger.error(`failed: ${workspace.name}(${workspace.id})`);

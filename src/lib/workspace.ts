@@ -1,11 +1,12 @@
 import { Sym } from './consts.js';
 import { $genId } from './utils.js';
+import { WorkspaceTab } from './workspace-tab.js';
 
 export class Workspace {
   id: string;
   name: string;
   color: HexColor;
-  tabs: TabInfo[];
+  tabs: WorkspaceTab[];
   createdAt: number;
   lastOpened: number;
   windowId?: number;
@@ -16,11 +17,11 @@ export class Workspace {
     this.color = color;
     this.tabs = [];
     this.createdAt = Date.now();
-    this.lastOpened = NaN;
+    this.lastOpened = 0;
     this.windowId = undefined;
   }
 
-  get pinnedTabs(): TabInfo[] {
+  get pinnedTabs(): WorkspaceTab[] {
     return this.tabs.filter((tab) => tab.pinned);
   }
 
