@@ -1,6 +1,7 @@
 import './toolbar.css';
 import { Action, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
+import { WorkspaceTab } from '@/lib/workspace-tab.js';
 import { Workspace } from '@/lib/workspace.js';
 
 // # Mock browser API in dev mode
@@ -66,7 +67,7 @@ class MockBrowser {
     return new Workspace(randomName, randomColor);
   }
 
-  private createSampleTab(): TabInfo {
+  private createSampleTab(): WorkspaceTab {
     const sampleTabs = [
       { title: 'GitHub', url: 'https://github.com', favIconUrl: 'https://github.com/favicon.ico' },
       {
@@ -83,14 +84,13 @@ class MockBrowser {
     ];
 
     const sample = sampleTabs[Math.floor(Math.random() * sampleTabs.length)];
-    return {
+    return WorkspaceTab.from({
       id: Math.floor(Math.random() * 100000),
       title: sample.title,
       url: sample.url,
       favIconUrl: sample.favIconUrl,
       pinned: false,
-      addedAt: Date.now(),
-    };
+    } as any);
   }
 
   private createToolbar(): void {
@@ -181,22 +181,22 @@ class MockBrowser {
 
   private triggerSetCurrent(): void {
     const tabs = [
-      {
+      WorkspaceTab.from({
         id: 1,
         title: 'Fake Tab 1',
         url: 'https://example.com',
         favIconUrl: 'https://example.com/favicon.ico',
         pinned: true,
         addedAt: Date.now(),
-      },
-      {
+      } as any),
+      WorkspaceTab.from({
         id: 2,
         title: 'Fake Tab 2',
         url: 'https://github.com',
         favIconUrl: 'https://github.com/favicon.ico',
         pinned: false,
         addedAt: Date.now(),
-      },
+      } as any),
     ];
     // Create a fake workspace
     const name = `Fake Workspace ${new Date().toLocaleTimeString()}`;
@@ -377,7 +377,8 @@ class MockBrowser {
 
       case Action.CheckPageInWorkspaces: {
         const req = request as CheckPageInWorkspacesRequest;
-        const matcher = (tab: TabInfo) => tab.url.includes(req.url) || req.url.includes(tab.url);
+        const matcher = (tab: WorkspaceTab) =>
+          tab.url.includes(req.url) || req.url.includes(tab.url);
         const matchingWorkspaces = workspaces.filter((workspace) => workspace.tabs.some(matcher));
 
         return {
