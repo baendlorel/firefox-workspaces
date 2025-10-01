@@ -118,7 +118,6 @@ class WorkspaceBackground {
       this.refreshTabContainerOfWindow(windowId);
     });
 
-    // todo 因为关闭窗口会触发onremoved，且iswindowclosing为true。
     browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
       if (!removeInfo.isWindowClosing) {
         logger.warn('refresh Tab Container Of Window');
@@ -128,7 +127,7 @@ class WorkspaceBackground {
 
     browser.tabs.onCreated.addListener((tab) => this.manager.tabs.save(tab));
 
-    browser.tabs.onUpdated.addListener(async (tabId, changeInfo) => {
+    browser.tabs.onUpdated.addListener(async (tabId, changeInfo, _tab) => {
       if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
         if (!this.manager.needPin.has(tabId)) {
           return;
@@ -138,11 +137,8 @@ class WorkspaceBackground {
         await browser.tabs.update(tabId, { pinned: true });
         this.manager.tabs.update(tabId, { pinned: true });
         return;
-      }
-
-      if (WorkspaceTab.hasRelatedChange(changeInfo)) {
-        logger.debug('Tab changed', tabId, changeInfo);
-        this.manager.tabs.update(tabId, changeInfo);
+      } else {
+        await this.refreshTabContainerOfAllWindows();
       }
     });
   }
@@ -243,6 +239,16 @@ class WorkspaceBackground {
   private async refreshTabContainerOfWindow(windowId: number) {
     const browserTabs = await browser.tabs.query({ windowId: windowId });
     this.manager.tabs.refreshWindow(windowId, browserTabs);
+  }
+
+  private async refreshTabContainerOfAllWindows() {
+    const windows = await browser.windows.getAll({ populate: true });
+    for (const window of windows) {
+      if (window.id === undefined || window.tabs === undefined) {
+        continue;
+      }
+      this.manager.tabs.refreshWindow(window.id, window.tabs);
+    }
   }
 
   /**
