@@ -134,11 +134,30 @@ class WorkspaceBackground {
         }
         this.manager.needPin.delete(tabId);
         this.manager.tabs.update(tabId, { pinned: true });
-        await browser.tabs.update(tabId, { pinned: true });
+        await this.recursivePin(tabId, 3);
       } else {
         await this.refreshTabContainer();
       }
     });
+  }
+
+  /**
+   * [INFO] Raise the possibility of successfully pin a tab under desperation
+   * - the browser seems to be unreliable in pinning a tab, even if the API call
+   *   succeeds, the tab may still not be pinned.
+   * - pinning multiple times in quick succession increases the chance of success.
+   */
+  private async recursivePin(tabId: number, attempts: number) {
+    if (attempts <= 0) {
+      return;
+    }
+
+    await browser.tabs.update(tabId, { pinned: true });
+    const result = await browser.tabs.query({ pinned: false });
+    if (result.every((t) => t.id !== tabId)) {
+      return;
+    }
+    await this.recursivePin(tabId, attempts - 1);
   }
 
   private async handlePopupMessage(message: MessageRequest): Promise<MessageResponse> {
