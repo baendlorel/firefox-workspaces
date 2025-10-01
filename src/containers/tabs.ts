@@ -21,10 +21,6 @@ export class TabContainer {
     this.arr.push(WorkspaceTab.from(browserTab));
   }
 
-  has(tab: WorkspaceTab): boolean {
-    return this.arr.some((t) => t.id === tab.id);
-  }
-
   hasById(id: number): boolean {
     return this.arr.some((t) => t.id === id);
   }
@@ -41,6 +37,13 @@ export class TabContainer {
     if (index !== -1) {
       this.arr.splice(index, 1);
     }
+  }
+
+  refreshWindow(windowId: number, tabs: browser.tabs.Tab[]) {
+    const filtered = this.arr.filter((t) => t.windowId !== windowId);
+    const newTabs = tabs.map((t) => WorkspaceTab.from(t));
+    this.arr.length = 0;
+    this.arr.push(...filtered, ...newTabs);
   }
 
   /**

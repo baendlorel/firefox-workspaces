@@ -104,43 +104,24 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    browser.tabs.onAttached.addListener((tabId, info) => {
-      logger.info('Attached', info);
-      if (this.manager.workspaces.isWorkspaceWindow(info.newWindowId)) {
-        this.manager.tabs.attach(info.newWindowId, tabId);
-      }
+    browser.tabs.onAttached.addListener((_tabId, info) => {
+      logger.info('Attached', info.newWindowId, _tabId);
+      this.refreshTabContainerOfWindow(info.newWindowId);
     });
 
-    // todo 从其他地方拖动tab到workspace页面是对的。从workspace页面拖走的还在
-    browser.tabs.onDetached.addListener((tabId, info) => {
-      logger.info('Detached', info);
-      if (this.manager.workspaces.isWorkspaceWindow(info.oldWindowId)) {
-        this.manager.tabs.detach(info.oldWindowId, tabId);
-      }
+    browser.tabs.onDetached.addListener((_tabId, info) => {
+      logger.info('Detached', info.oldWindowId, _tabId);
+      this.refreshTabContainerOfWindow(info.oldWindowId);
     });
 
-    browser.tabs.onMoved.addListener((tabId, moveInfo) => {
-      const tab = this.manager.tabs.get(tabId);
-      if (!tab) {
-        return;
-      }
-      tab.index = moveInfo.toIndex;
-      logger.debug('Tab moved', tabId, 'from', moveInfo.fromIndex, 'to', moveInfo.toIndex);
-      logger.debug(this.manager.tabs.arr);
+    browser.tabs.onMoved.addListener(async (_tabId, { windowId }) => {
+      this.refreshTabContainerOfWindow(windowId);
     });
 
-    browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
-      if (removeInfo.isWindowClosing) {
-        return;
+    browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
+      if (!removeInfo.isWindowClosing) {
+        this.refreshTabContainerOfWindow(removeInfo.windowId);
       }
-
-      logger.debug(`closing tab(${tabId}), window(${removeInfo.windowId})`);
-
-      if (!this.manager.tabs.hasById(tabId)) {
-        logger.warn(`Tab(${tabId}) not found in internal map, cannot remove from workspace`);
-        return;
-      }
-      this.manager.tabs.deleteById(tabId);
     });
 
     browser.tabs.onUpdated.addListener((_, changeInfo, browserTab) => {
@@ -241,6 +222,11 @@ class WorkspaceBackground {
       error: 'Unknown action: ' + String(action),
     };
     return errorResponse;
+  }
+
+  private async refreshTabContainerOfWindow(windowId: number) {
+    const browserTabs = await browser.tabs.query({ windowId: windowId });
+    this.manager.tabs.refreshWindow(windowId, browserTabs);
   }
 
   /**
