@@ -30,6 +30,11 @@ Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
+  get isWorkspacePopupPage() {
+    return true;
+  }
+
+  // todo 此处的workspaces和background用的不同步，得想办法
   private readonly workspaces: Workspace[] = [];
   private readonly activeWorkspaces: string[] = []; // Track active workspace IDs
   private main: ReturnType<typeof createView>;
@@ -87,11 +92,6 @@ class PopupPage {
       this.main.emit('set-current', workspace);
       return true;
     });
-  }
-
-  // Handle window focus change notification from background
-  onWindowFocusChanged(notification: WindowFocusChangedNotification) {
-    this.main.emit('set-current', notification.workspace);
   }
 
   render() {

@@ -104,7 +104,7 @@ export class WorkspaceManager {
       this.workspaces.deactivate(id);
     }
 
-    this.workspaces.remove(id);
+    this.workspaces.delete(id);
     await this.save();
     return true;
   }

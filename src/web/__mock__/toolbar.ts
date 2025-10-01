@@ -204,20 +204,6 @@ class MockBrowser {
     const fakeWorkspace = new Workspace(name, color);
     fakeWorkspace.tabs = tabs;
     fakeWorkspace.windowId = 999;
-
-    // Trigger set-current event through the global popup instance
-    if (window.popup) {
-      window.popup.onWindowFocusChanged({
-        workspace: fakeWorkspace,
-        windowId: NaN,
-        action: Action.WindowFocusChanged,
-      });
-      console.log('Triggered set-current event with fake workspace:', fakeWorkspace);
-      alert(`Set current workspace to: ${fakeWorkspace.name}`);
-    } else {
-      console.error('Popup instance not found on window object');
-      alert('Error: Could not access popup instance');
-    }
   }
 
   private createResponse(request: MessageRequest): MessageResponse {

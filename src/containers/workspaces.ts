@@ -20,9 +20,9 @@ export class WorkspaceContainer {
   }
 
   /**
-   * Remove the workspace from all internal tracking structures
+   * Delete the workspace from all internal tracking structures
    */
-  remove(id: string) {
+  delete(id: string) {
     const workspace = this.map.get(id);
     if (!workspace) {
       return;

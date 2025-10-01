@@ -20,101 +20,37 @@ class WorkspaceBackground {
       .fallback('Failed to initialize');
   }
 
+  private getPopup(windowId: number) {
+    return browser.extension
+      .getViews({ type: 'popup', windowId })
+      .find((v) => typeof v.popup.isWorkspacePopupPage);
+  }
+
   private registerListeners() {
+    this.runtimeListeners();
+    this.tabListeners();
+    this.windowListeners();
+
+    browser.contextMenus.onClicked.addListener(async (info: browser.contextMenus.OnClickData) => {
+      if (info.menuItemId !== 'addToWorkspace') {
+        return;
+      }
+      const popupUrl = browser.runtime.getURL('popup.html');
+      await browser.windows
+        .create({ url: popupUrl, type: 'popup', width: 1000, height: 600 })
+        .fallback();
+    });
+  }
+
+  private runtimeListeners() {
     // Initialize when extension starts
     browser.runtime.onStartup.addListener(() => this.init());
     browser.runtime.onInstalled.addListener(() => this.init());
-
-    // Handle window events for session management
-    browser.windows.onRemoved.addListener(async (windowId) => {
-      // Check if this window belongs to a workspace
-      const workspace = this.manager.getByWindowId(windowId);
-      if (!workspace) {
-        return;
-      }
-
-      logger.info(`Workspace window closed: ${workspace.name}`);
-      // Skip processing if this workspace is being deleted
-      if (this.manager.workspaces.isDeleting(workspace.id)) {
-        logger.debug(`Deleting '${workspace.name}', skip window close handling`);
-        return;
-      }
-
-      const tabs = await browser.tabs.query({ windowId });
-      workspace.tabs = tabs.map($createTabInfo);
-      workspace.windowId = undefined;
-      this.manager.workspaces.deactivate(workspace.id);
-      await this.manager.save();
-
-      // fixme 没有自动保存tab
-      logger.info(`Workspace ${workspace.name} removed from active list`);
-    });
-
-    // Track window focus changes to update workspace states
-    browser.windows.onFocusChanged.addListener(async (windowId) => {
-      if (windowId === browser.windows.WINDOW_ID_NONE) {
-        return;
-      }
-
-      const workspace = this.manager.getByWindowId(windowId);
-      if (!workspace) {
-        return;
-      }
-
-      // Update workspace's last accessed time
-      workspace.updateLastOpened();
-      await this.manager.save();
-
-      // Notify all popup windows about the focus change
-      const notification: WindowFocusChangedNotification = {
-        action: Action.WindowFocusChanged,
-        windowId,
-        workspace,
-      };
-
-      // Send message to all extension pages (popup, options, etc.)
-      const popupPage = browser.extension
-        .getViews({ type: 'popup' })
-        .find((v) => typeof v.popup.onWindowFocusChanged === 'function');
-      if (popupPage) {
-        popupPage.popup.onWindowFocusChanged(notification);
-      }
-    });
 
     // Save sessions before browser shuts down
     browser.runtime.onSuspend.addListener(async () => {
       logger.info('Saving workspace sessions before browser shutdown');
       await this.manager.saveActiveSessions();
-    });
-
-    // # Handle tab events
-    type OnTachedInfo = browser.tabs._OnAttachedAttachInfo | browser.tabs._OnDetachedDetachInfo;
-    const onTached = async (_tabId: number, info: OnTachedInfo) => {
-      const windowId = 'newWindowId' in info ? info.newWindowId : info.oldWindowId;
-      const workspace = this.manager.getByWindowId(windowId);
-      if (workspace) {
-        // Tab was moved to a workspace window
-        setTimeout(() => this.manager.updateByWindowId(workspace.id, windowId), 1000);
-      }
-    };
-
-    browser.tabs.onAttached.addListener(onTached);
-    browser.tabs.onDetached.addListener(onTached);
-
-    browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
-      // Update work groups if tab was removed from a workspace window
-      const workspace = this.manager.getByWindowId(removeInfo.windowId);
-      if (workspace && !removeInfo.isWindowClosing) {
-        // Update workspace state immediately when individual tab is closed
-        await this.manager.updateByWindowId(workspace.id, removeInfo.windowId);
-      }
-    });
-
-    browser.tabs.onUpdated.addListener((_tabId, changeInfo, browserTab) => {
-      logger.info('onupdated!', changeInfo.status, browserTab);
-      if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
-        this.manager.tabs.save(browserTab);
-      }
     });
 
     // Handle messages from popup and content scripts
@@ -134,15 +70,74 @@ class WorkspaceBackground {
         title: 'Add to Workspaces',
       })
     );
+  }
 
-    browser.contextMenus.onClicked.addListener(async (info: browser.contextMenus.OnClickData) => {
-      if (info.menuItemId !== 'addToWorkspace') {
+  private windowListeners() {
+    // Handle window events for session management
+    browser.windows.onRemoved.addListener(async (windowId) => {
+      // Check if this window belongs to a workspace
+      const workspace = this.manager.getByWindowId(windowId);
+      if (!workspace) {
         return;
       }
-      const popupUrl = browser.runtime.getURL('popup.html');
-      await browser.windows
-        .create({ url: popupUrl, type: 'popup', width: 1000, height: 600 })
-        .fallback();
+
+      logger.info(`Workspace window closed: ${workspace.name}`);
+      // Skip processing if this workspace is being deleted
+      if (this.manager.workspaces.isDeleting(workspace.id)) {
+        logger.debug(`Deleting '${workspace.name}', skip window close handling`);
+        return;
+      }
+
+      const tabs = await this.manager.tabs.get(windowId);
+      if (!tabs) {
+        logger.error('Cannot get tabs of window id:', windowId);
+        return;
+      }
+
+      workspace.tabs = Array.from(tabs.values(), $createTabInfo);
+      workspace.windowId = undefined;
+      this.manager.workspaces.deactivate(workspace.id);
+      await this.manager.save();
+
+      logger.info(
+        `Workspace ${workspace.name} removed from active list. tabs are saved:`,
+        workspace.tabs.map((t) => t.url).join(', ')
+      );
+    });
+  }
+
+  private tabListeners() {
+    type OnTachedInfo = browser.tabs._OnAttachedAttachInfo | browser.tabs._OnDetachedDetachInfo;
+    // todo 这里要完成转移逻辑
+    const onTached = async (_tabId: number, info: OnTachedInfo) => {
+      const windowId = 'newWindowId' in info ? info.newWindowId : info.oldWindowId;
+      logger.info('ontached!', info, windowId);
+    };
+
+    browser.tabs.onAttached.addListener(onTached);
+    browser.tabs.onDetached.addListener(onTached);
+
+    browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+      logger.debug(
+        `closing _tabId:${tabId}, windowid:${removeInfo.windowId} isWindowClosing:${removeInfo.isWindowClosing}`
+      );
+      if (removeInfo.isWindowClosing) {
+        logger.info('Window is closing, skip tab removal handling');
+        return;
+      }
+      const tab = this.manager.tabs.getTab(removeInfo.windowId, tabId);
+      if (!tab) {
+        logger.warn('Tab not found in internal map, cannot remove from workspace:', tabId);
+        return;
+      }
+      this.manager.tabs.delete(tab);
+    });
+
+    browser.tabs.onUpdated.addListener((_tabId, changeInfo, browserTab) => {
+      logger.info('onupdated! tabid', _tabId, 'status', changeInfo.status);
+      if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
+        this.manager.tabs.save(browserTab);
+      }
     });
   }
 
