@@ -24,7 +24,13 @@ export class WorkspaceManager {
   readonly tabs = new TabContainer();
 
   constructor() {
-    this.load().then(() => logger.info('Updated at __DATE_TIME__'));
+    this.load().then(() => {
+      const updatedAt = new Date('__DATE_TIME__');
+      const delta = Date.now() - updatedAt.getTime();
+      const min = Math.floor(delta / 60000);
+      const time = min < 1 ? 'just now' : `${min} minute(s) ago`;
+      logger.info('Updated before ' + time);
+    });
   }
 
   // Get currently active/opened workspaces

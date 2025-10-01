@@ -12,7 +12,6 @@ export class WorkspaceTab {
 
   assign(tab: browser.tabs.Tab): this {
     const keys = Object.keys(this) as (keyof this)[];
-    console.log('assigning keys', keys);
     for (let i = 0; i < keys.length; i++) {
       const k = keys[i];
       this[k] = (tab as any)[k] ?? this[k];

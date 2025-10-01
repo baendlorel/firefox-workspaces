@@ -83,57 +83,60 @@ class WorkspaceBackground {
       logger.info(`Workspace window closed: ${workspace.name}`);
       // Skip processing if this workspace is being deleted
       if (this.manager.workspaces.isDeleting(workspace.id)) {
-        logger.debug(`Deleting '${workspace.name}', skip window close handling`);
+        logger.debug(`WindowOnRemoved: Deleting '${workspace.name}', skip`);
         return;
       }
 
-      const tabs = await this.manager.tabs.get(windowId);
-      if (!tabs) {
-        logger.error('Cannot get tabs of window id:', windowId);
+      const tabs = await this.manager.tabs.getTabsOfWindow(windowId);
+      if (tabs.length === 0) {
+        logger.error('WindowOnRemoved: Cannot get tabs. window id =', windowId);
         return;
       }
 
-      workspace.tabs = Array.from(tabs.values());
+      workspace.tabs = tabs;
       workspace.windowId = undefined;
       this.manager.workspaces.deactivate(workspace.id);
-      await this.manager.save();
 
-      logger.info(
-        `Workspace ${workspace.name} removed from active list. tabs are saved:`,
-        workspace.tabs.map((t) => t.url).join(', ')
-      );
+      await this.manager.save();
+      const urls = workspace.tabs.map((t) => t.url).join(', ');
+      logger.info(`WindowOnRemoved: '${workspace.name}' removed. tabs are saved:`, urls);
     });
   }
 
   private tabListeners() {
     browser.tabs.onAttached.addListener((tabId, info) => {
       logger.info('Attached', info);
-      this.manager.tabs.attach(info.newWindowId, tabId);
+      if (this.manager.workspaces.isWorkspaceWindow(info.newWindowId)) {
+        this.manager.tabs.attach(info.newWindowId, tabId);
+      }
     });
+
+    // todo 从其他地方拖动tab到workspace页面是对的。从workspace页面拖走的还在
     browser.tabs.onDetached.addListener((tabId, info) => {
       logger.info('Detached', info);
-      this.manager.tabs.detach(info.oldWindowId, tabId);
+      if (this.manager.workspaces.isWorkspaceWindow(info.oldWindowId)) {
+        this.manager.tabs.detach(info.oldWindowId, tabId);
+      }
     });
 
     browser.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
-      logger.debug(
-        `closing _tabId:${tabId}, windowid:${removeInfo.windowId} isWindowClosing:${removeInfo.isWindowClosing}`
-      );
       if (removeInfo.isWindowClosing) {
-        logger.info('Window is closing, skip tab removal handling');
+        logger.info(`Window is closing, skip tab(${tabId}) removal handling`);
         return;
       }
-      const tab = this.manager.tabs.getTab(removeInfo.windowId, tabId);
-      if (!tab) {
-        logger.warn('Tab not found in internal map, cannot remove from workspace:', tabId);
+
+      logger.debug(`closing tab(${tabId}), window(${removeInfo.windowId})`);
+
+      if (!this.manager.tabs.hasById(tabId)) {
+        logger.warn(`Tab(${tabId}) not found in internal map, cannot remove from workspace`);
         return;
       }
-      this.manager.tabs.delete(tab);
+      this.manager.tabs.deleteById(tabId);
     });
 
     browser.tabs.onUpdated.addListener((_, changeInfo, browserTab) => {
-      logger.info('tabid', _, changeInfo.favIconUrl ? 'favicon' : changeInfo);
       if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
+        logger.info('completed tabId', _);
         this.manager.tabs.save(browserTab);
       }
     });
