@@ -34,7 +34,6 @@ class PopupPage {
     return true;
   }
 
-  // todo 此处的workspaces和background用的不同步，得想办法
   private readonly workspaces: Workspace[] = [];
   private readonly activeWorkspaces: string[] = []; // Track active workspace IDs
   private main: ReturnType<typeof createView>;
@@ -43,13 +42,6 @@ class PopupPage {
     logger.verbose('PopupPage initializing');
     this.main = createView();
     this.main.on('debug', () => logger.debug(stringify(this.workspaces)));
-
-    // tabs
-    this.main.on('toggle-tab-pin', (id: string, tabId: number) => this.toggleTabPin(id, tabId));
-    this.main.on('remove-tab', (id: string, tabId: number) => this.removeTab(id, tabId));
-    this.main.on('move-tab', (fromId: string, toId: string, tabId: number) =>
-      this.moveTab(fromId, toId, tabId)
-    );
 
     // form modal
     this.main.on('open', (workspace: Workspace) => this.open(workspace));
@@ -76,21 +68,12 @@ class PopupPage {
 
   // Check if current window belongs to a workspace and update header
   async checkCurrentWindow() {
-    const currentWindow = await browser.windows.getCurrent().catch((error) => {
-      logger.error('Failed to check current window', error);
-      return null;
-    });
-    if (currentWindow === null) {
-      return;
-    }
+    const currentWindow = await browser.windows.getCurrent();
 
-    this.workspaces.some((workspace) => {
-      if (workspace.windowId !== currentWindow.id) {
-        return false;
-      }
+    const workspace = this.workspaces.find((w) => w.windowId === currentWindow.id);
+    if (workspace) {
       this.main.emit('set-current', workspace);
-      return true;
-    });
+    }
   }
 
   render() {
@@ -134,14 +117,14 @@ class PopupPage {
         action: Action.CreateWorkspace,
         name: formData.name,
         color: formData.color,
-      }).fallbackWithDialog('__func__: Failed saving workspace', Sym.Reject);
+      }).fallbackWithDialog('__func__: Failed saving workspace');
     } else {
       // Update existing group
       response = await $send<UpdateWorkspaceRequest>({
         action: Action.UpdateWorkspace,
         id: formData.id,
         updates: formData,
-      }).fallbackWithDialog('__func__: Failed saving workspace', Sym.Reject);
+      }).fallbackWithDialog('__func__: Failed saving workspace');
     }
 
     if (response === Sym.Reject) {
@@ -163,7 +146,7 @@ class PopupPage {
     const response = await $send<DeleteWorkspaceRequest>({
       action: Action.DeleteWorkspace,
       id: workspace.id,
-    }).fallbackWithDialog('__func__: Error deleting workspace', Sym.Reject);
+    }).fallbackWithDialog('__func__: Error deleting workspace');
 
     if (response === Sym.Reject) {
       return;
@@ -199,7 +182,7 @@ class PopupPage {
       action: Action.RemoveTab,
       workspaceId,
       tabId,
-    }).fallbackWithDialog('__func__: Error removing tab', Sym.Reject);
+    }).fallbackWithDialog('__func__: Error removing tab');
 
     if (response === Sym.Reject) {
       return;
@@ -213,26 +196,6 @@ class PopupPage {
     }
   }
 
-  // Toggle tab pin status
-  async toggleTabPin(workspaceId: string, tabId: number) {
-    const response = await $send<TogglePinRequest>({
-      action: Action.TogglePin,
-      workspaceId,
-      tabId,
-    }).fallbackWithDialog('__func__: Error toggling pin', Sym.Reject);
-
-    if (response === Sym.Reject) {
-      return;
-    }
-
-    if (response.success) {
-      await this.load();
-      this.render();
-    } else {
-      info('Failed to toggle pin, Please try again.');
-    }
-  }
-
   // Move tab between groups
   async moveTab(fromId: string, toId: string, tabId: number) {
     const response = await $send<MoveTabRequest>({
@@ -240,7 +203,7 @@ class PopupPage {
       fromWorkspaceId: fromId,
       toWorkspaceId: toId,
       tabId,
-    }).fallbackWithDialog('__func__: Error moving tab', Sym.Reject);
+    }).fallbackWithDialog('__func__: Error moving tab');
 
     if (response === Sym.Reject) {
       return;

@@ -5,24 +5,20 @@ export const enum Consts {
 }
 
 export const WORKSPACE_COLORS: HexColor[] = [
-  '#212529',
-  '#f8f9fa',
+  '#00b7c3',
+  '#0078d4',
   '#0d546a',
-  '#2da191',
-  '#43e97b',
-  '#84cc16',
-  '#a8edea',
-  '#098cff',
-  '#007acc',
-  '#667eea',
-  '#8b5cf6',
-  '#f093fb',
-  '#ffecd2',
-  '#ffc107',
-  '#ffa726',
-  '#fa709a',
-  '#ff6b35',
-  '#e32649',
+  '#107c10',
+  '#498205',
+  '#8661c5',
+  '#881798',
+  '#b4009e',
+  '#c90919',
+  '#ff8c00',
+  '#c84f39',
+  '#505050',
+  '#212529',
+  '#004e8c',
 ];
 
 export const enum OnUpdatedChangeInfoStatus {

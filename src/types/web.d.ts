@@ -37,12 +37,6 @@ declare global {
     delete: (workspace: Workspace) => void;
     open: (workspace: Workspace) => void;
 
-    // tabs
-    'render-tab': (workspace: Workspace) => HTMLDivElement[];
-    'move-tab': (fromId: string, toId: string, tabId: number) => void;
-    'remove-tab': (workspaceId: string, tabId: number) => void;
-    'toggle-tab-pin': (workspaceId: string, tabId: number) => void;
-
     // form
     'close-editor': () => void;
     save: (formData: WorkspaceFormData) => void;

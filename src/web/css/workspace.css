@@ -1,11 +1,25 @@
 @import 'tailwindcss';
 
-.workspaces {
+.wb-header {
+  @apply relative flex gap-2.5 px-5 py-2.5;
+  color: var(--light);
+  background: var(--header-darken-gradient);
+}
+
+.wb-header-title {
+  @apply font-medium text-shadow-lg/10 flex-1;
+}
+
+.wb-ul {
   @apply m-0 p-0 max-h-96 overflow-y-auto;
 }
 
-.wb-list-item {
-  @apply grid gap-2.5 px-2 py-3 rounded-md items-center cursor-pointer;
+.wb-li {
+  @apply m-1;
+}
+
+.wb-item {
+  @apply grid gap-2.5 px-3 py-2 rounded-md items-center cursor-pointer;
   grid-template-columns: auto 1fr auto;
   border-left: 3px solid transparent;
   border-bottom: 1px solid var(--color-slate-200);
@@ -13,22 +27,24 @@
   transition: all var(--transition-duration);
 }
 
-.wb-list-item.with-action-btns {
+.wb-item.with-action-btns {
   grid-template-columns: auto 1fr auto auto;
 }
 
-.wb-list-item:hover {
-  background-color: var(--wb-list-item-hover-bg);
+.wb-item.activated,
+.wb-item:hover {
+  background-color: var(--wb-item-hover-bg);
 }
 
-.selected .wb-list-item,
-.selected.wb-list-item,
-.wb-list-item:active {
-  background-color: var(--wb-list-item-active-bg);
+.selected .wb-item,
+.selected.wb-item,
+.wb-item:active {
+  background-color: var(--wb-item-active-bg);
 }
 
 .wb-icon {
   @apply w-5 h-5;
+  border-radius: 6px;
 }
 
 .wb-title {

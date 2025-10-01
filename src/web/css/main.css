@@ -14,16 +14,6 @@ body {
   border-radius: var(--border-radius);
 }
 
-.wb-header {
-  @apply relative flex gap-2.5 px-5 py-2.5;
-  color: var(--light);
-  background: var(--header-darken-gradient);
-}
-
-.wb-header-title {
-  @apply font-medium text-shadow-lg/10 flex-1;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

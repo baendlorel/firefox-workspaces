@@ -4,12 +4,11 @@ import { div, h, svg } from '@/lib/dom.js';
 import editIcon from '@web/assets/3-dots.svg?raw';
 import listItem from './list-item.js';
 import { Workspace } from '@/lib/workspace.js';
-import { Color } from '@/lib/color.js';
 
-type WorkspaceLi = HTMLLIElement & { workspaceId: string; activatedColor: HexColor };
+type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const container = h('ul', 'workspaces');
+  const container = h('ul', 'wb-ul');
   const lis: WorkspaceLi[] = [];
 
   const renderList = (workspaces: Workspace[]) => {
@@ -31,10 +30,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const wbli = listItem(workspace, [editBtn]);
 
       // Create workspace item with potential highlight
-      const li = h('li', 'my-2', [wbli]) as WorkspaceLi;
-      li.workspaceId = workspace.id;
-      // todo 激活颜色
-      li.activatedColor = Color.from(workspace.color).adjustBrightness(+0.4).toHex();
+      const li = h('li', 'wb-li', [wbli]) as WorkspaceLi;
+      li.dataset.id = workspace.id;
 
       // # register events
       li.addEventListener('click', () => bus.emit('open', workspace));
@@ -51,10 +48,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const activateHighlight = (activated: string[]) => {
     for (let i = 0; i < lis.length; i++) {
       const li = lis[i];
-      if (activated.includes(li.workspaceId)) {
-        li.style.backgroundColor = li.activatedColor;
+      if (activated.includes(li.dataset.id)) {
+        li.classList.add('activated');
       } else {
-        li.style.backgroundColor = '';
+        li.classList.remove('activated');
       }
     }
   };

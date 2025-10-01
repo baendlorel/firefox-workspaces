@@ -7,8 +7,8 @@ export default (workspace: Workspace, actionBtns: HTMLElement[] = []) => {
   const pinnedCount = workspace.pinnedTabs.length;
   const count = `${totalTabs} tabs${pinnedCount > 0 ? ` (${pinnedCount} pinned)` : ''}`;
 
-  const style = `border-left-color:${workspace.color};--wb-list-item-hover-bg:${workspace.color}24;--wb-list-item-active-bg:${workspace.color}46`;
-  const el = div({ class: 'wb-list-item', style }, [
+  const style = `border-left-color:${workspace.color};--wb-item-hover-bg:${workspace.color}24;--wb-item-active-bg:${workspace.color}46`;
+  const el = div({ class: 'wb-item', style }, [
     wbicon(workspace.color),
     div('wb-title', workspace.name),
     div('wb-count', count),
