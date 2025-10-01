@@ -283,12 +283,8 @@ export class WorkspaceManager {
   }
 
   // Update workspace tabs from window state
-  async updateByWindowId(id: string, windowId: number): Promise<boolean> {
-    const workspace = this.workspaces.get(id);
-    if (!workspace || workspace.windowId !== windowId) {
-      return false;
-    }
-    const browserTabs = await browser.tabs.query({ windowId });
+  async updateTabsOfWorkspace(workspace: Workspace): Promise<boolean> {
+    const browserTabs = await browser.tabs.query({ windowId: workspace.windowId });
     workspace.tabs = browserTabs.map(WorkspaceTab.from);
 
     return this.save();
@@ -345,7 +341,7 @@ export class WorkspaceManager {
       }
 
       // todo 能改成入参是workspace而不是.id吗。这个是需要的因为会回收内存
-      const succ = await this.updateByWindowId(workspace.id, workspace.windowId);
+      const succ = await this.updateTabsOfWorkspace(workspace);
       if (succ === false) {
         logger.error(`failed: ${workspace.name}(${workspace.id})`);
       }
