@@ -1,7 +1,6 @@
 import './lib/promise-ext.js';
 import { Action, OnUpdatedChangeInfoStatus } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
-import { WorkspaceTab } from './lib/workspace-tab.js';
 
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
@@ -104,41 +103,40 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    browser.tabs.onAttached.addListener((_tabId, info) => {
-      logger.info('Attached', info.newWindowId, _tabId);
-      this.refreshTabContainerOfWindow(info.newWindowId);
+    browser.tabs.onAttached.addListener(() => {
+      logger.info('Attached');
+      this.refreshTabContainer();
     });
 
-    browser.tabs.onDetached.addListener((_tabId, info) => {
-      logger.info('Detached', info.oldWindowId, _tabId);
-      this.refreshTabContainerOfWindow(info.oldWindowId);
+    browser.tabs.onDetached.addListener(() => {
+      logger.info('Detached');
+      this.refreshTabContainer();
     });
 
-    browser.tabs.onMoved.addListener(async (_tabId, { windowId }) => {
-      this.refreshTabContainerOfWindow(windowId);
+    browser.tabs.onMoved.addListener(() => {
+      this.refreshTabContainer();
     });
 
     browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
       if (!removeInfo.isWindowClosing) {
-        logger.warn('refresh Tab Container Of Window');
-        this.refreshTabContainerOfWindow(removeInfo.windowId);
+        this.refreshTabContainer();
       }
     });
 
-    browser.tabs.onCreated.addListener((tab) => this.manager.tabs.save(tab));
+    browser.tabs.onCreated.addListener(async (tab) => {
+      this.manager.tabs.save(tab);
+    });
 
     browser.tabs.onUpdated.addListener(async (tabId, changeInfo, _tab) => {
       if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
         if (!this.manager.needPin.has(tabId)) {
           return;
         }
-
         this.manager.needPin.delete(tabId);
-        await browser.tabs.update(tabId, { pinned: true });
         this.manager.tabs.update(tabId, { pinned: true });
-        return;
+        await browser.tabs.update(tabId, { pinned: true });
       } else {
-        await this.refreshTabContainerOfAllWindows();
+        await this.refreshTabContainer();
       }
     });
   }
@@ -236,19 +234,9 @@ class WorkspaceBackground {
     return errorResponse;
   }
 
-  private async refreshTabContainerOfWindow(windowId: number) {
-    const browserTabs = await browser.tabs.query({ windowId: windowId });
-    this.manager.tabs.refreshWindow(windowId, browserTabs);
-  }
-
-  private async refreshTabContainerOfAllWindows() {
-    const windows = await browser.windows.getAll({ populate: true });
-    for (const window of windows) {
-      if (window.id === undefined || window.tabs === undefined) {
-        continue;
-      }
-      this.manager.tabs.refreshWindow(window.id, window.tabs);
-    }
+  private async refreshTabContainer() {
+    const browserTabs = await browser.tabs.query({});
+    this.manager.tabs.rebuild(browserTabs);
   }
 
   /**

@@ -46,6 +46,16 @@ export class TabContainer {
     this.arr.push(...filtered, ...newTabs);
   }
 
+  rebuild(tabs: browser.tabs.Tab[]) {
+    this.arr.length = 0;
+    for (let i = 0; i < tabs.length; i++) {
+      const t = tabs[i];
+      if (t.id !== undefined && t.windowId !== undefined) {
+        this.arr.push(WorkspaceTab.from(t));
+      }
+    }
+  }
+
   /**
    * Get all tabs of the given windowId
    */

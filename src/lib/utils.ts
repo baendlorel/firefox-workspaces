@@ -25,8 +25,12 @@ export const $truncate = (s: string, maxLen = 50) => {
   return s.substring(0, maxLen - 3) + '...';
 };
 
-export const $escapeHtml = (text: string) => {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
+export const $debounce = <T extends (...a: any[]) => any>(fn: T, thisArg: any, delay: number) => {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+  return function (...args: Parameters<T>): void {
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => fn.apply(thisArg, args), delay);
+  };
 };
