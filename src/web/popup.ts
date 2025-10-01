@@ -180,19 +180,22 @@ class PopupPage {
 
   // Open workspace in new window
   async open(workspace: Workspace) {
+    logger.debug(`Workspace opening.`, workspace);
     const response = await $send<OpenWorkspaceRequest>({
       action: Action.OpenWorkspace,
       workspaceId: workspace.id,
-    }).fallbackWithDialog('__func__: Error opening workspace', Sym.Reject);
+    }).fallback('Error opening workspace');
 
+    // fixme 这一段没触发？
+    logger.debug(`Workspace opened.`, response);
     if (response === Sym.Reject) {
       return;
     }
 
     if (response.success) {
-      // Close popup after opening group
-      // !NO don't close!
-      // window.close();
+      this.activeWorkspaces.push(workspace.id);
+      logger.succ(`Workspace "${workspace.name}" opened in new window.`);
+      this.main.emit('toggle-li-activated', this.activeWorkspaces);
     } else {
       info('Failed to open workspace, Please try again.');
     }

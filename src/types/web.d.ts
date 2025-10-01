@@ -32,7 +32,7 @@ declare global {
     // workspaces
     'set-current': (workspace?: Workspace) => void;
     'toggle-li-activated': (activated: string[]) => void;
-    'render-list': (workspaces: Workspace[]) => void;
+    'render-list': (workspaces: Workspace[], activated: string[]) => void;
     edit: (workspace: Workspace | null) => void;
     delete: (workspace: Workspace) => void;
     open: (workspace: Workspace) => void;

@@ -48,15 +48,22 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     }
   };
 
-  bus.on('render-list', renderList);
-  bus.on('toggle-li-activated', (activated) => {
+  const activateHighlight = (activated: string[]) => {
     for (let i = 0; i < lis.length; i++) {
       const li = lis[i];
       if (activated.includes(li.workspaceId)) {
         li.style.backgroundColor = li.activatedColor;
+      } else {
+        li.style.backgroundColor = 'transparent';
       }
     }
+  };
+
+  bus.on('render-list', (workspace, activated) => {
+    renderList(workspace);
+    activateHighlight(activated);
   });
+  bus.on('toggle-li-activated', activateHighlight);
 
   return container;
 };
