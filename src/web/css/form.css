@@ -33,7 +33,7 @@
 }
 
 .radio {
-  --size: 21px;
+  --size: 14px;
 }
 
 .radio label {
@@ -47,17 +47,19 @@
 .radio label::before {
   @apply absolute block;
   content: '';
-  margin-left: calc(0px - var(--size));
+  margin-top: 4px;
+  margin-left: calc(-5px - var(--size));
+  padding-right: 8px;
   width: var(--size);
   height: var(--size);
 }
 
 .radio input[type='radio'] + label::before {
-  background: url('assets/circle.svg');
+  background: no-repeat url('assets/radio.svg');
 }
 
 .radio input[type='radio']:checked + label::before {
-  background: url('assets/check-circle-fill.svg');
+  background: no-repeat url('assets/radio-checked.svg');
 }
 
 .radio input[type='radio'] {
