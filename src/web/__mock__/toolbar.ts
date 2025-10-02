@@ -268,49 +268,6 @@ class MockBrowser {
         } as DeleteResponse;
       }
 
-      case Action.RemoveTab: {
-        const req = request as RemoveTabRequest;
-        const workspace = workspaces.find((ws) => ws.id === req.workspaceId);
-
-        if (!workspace) {
-          return {
-            success: false,
-            error: 'Workspace not found',
-          } as any;
-        }
-
-        workspace.tabs = workspace.tabs.filter((tab) => tab.id !== req.tabId);
-
-        this.saveWorkspaces(workspaces);
-
-        return {
-          success: true,
-        } as RemoveTabResponse;
-      }
-
-      case Action.TogglePin: {
-        const req = request as TogglePinRequest;
-        const workspace = workspaces.find((ws) => ws.id === req.workspaceId);
-
-        if (!workspace) {
-          return {
-            success: false,
-            error: 'Workspace not found',
-          } as any;
-        }
-
-        const tabInRegular = workspace.tabs.find((tab) => tab.id === req.tabId);
-        if (tabInRegular) {
-          tabInRegular.pinned = !tabInRegular.pinned;
-        }
-
-        this.saveWorkspaces(workspaces);
-
-        return {
-          success: true,
-        } as TogglePinResponse;
-      }
-
       case Action.Open: {
         const req = request as OpenRequest;
         const workspace = workspaces.find((ws) => ws.id === req.workspaceId);

@@ -31,9 +31,6 @@ export const enum Action {
   Create = 'Create',
   Update = 'Update',
   Delete = 'Delete',
-  // todo 删除这两个
-  RemoveTab = 'RemoveTab',
-  TogglePin = 'TogglePin',
   Open = 'Open',
   MoveTab = 'MoveTab',
   GetStats = 'GetStats',

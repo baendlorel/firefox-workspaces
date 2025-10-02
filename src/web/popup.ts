@@ -191,26 +191,6 @@ class PopupPage {
     });
   }
 
-  // Remove tab from group
-  async removeTab(workspaceId: string, tabId: number) {
-    const response = await $send<RemoveTabRequest>({
-      action: Action.RemoveTab,
-      workspaceId,
-      tabId,
-    }).fallbackWithDialog('__func__: Error removing tab');
-
-    if (response === Sym.Reject) {
-      return;
-    }
-
-    if (response.success) {
-      await this.load();
-      this.render();
-    } else {
-      info('Failed to remove tab, Please try again.');
-    }
-  }
-
   // Move tab between groups
   async moveTab(fromId: string, toId: string, tabId: number) {
     const response = await $send<MoveTabRequest>({

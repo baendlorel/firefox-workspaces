@@ -26,18 +26,6 @@ declare global {
     id: string;
   }
 
-  interface RemoveTabRequest {
-    action: Action.RemoveTab;
-    workspaceId: string;
-    tabId: number;
-  }
-
-  interface TogglePinRequest {
-    action: Action.TogglePin;
-    workspaceId: string;
-    tabId: number;
-  }
-
   interface OpenRequest {
     action: Action.Open;
     workspaceId: string;
@@ -81,8 +69,6 @@ declare global {
     | CreateRequest
     | UpdateRequest
     | DeleteRequest
-    | RemoveTabRequest
-    | TogglePinRequest
     | OpenRequest
     | MoveTabRequest
     | GetStatsRequest
@@ -115,14 +101,6 @@ declare global {
   interface AddCurrentTabResponse {
     success: boolean;
     error?: string;
-  }
-
-  interface RemoveTabResponse {
-    success: boolean;
-  }
-
-  interface TogglePinResponse {
-    success: boolean;
   }
 
   interface OpenResponse {
@@ -169,8 +147,6 @@ declare global {
     | UpdateResponse
     | DeleteResponse
     | AddCurrentTabResponse
-    | RemoveTabResponse
-    | TogglePinResponse
     | OpenResponse
     | MoveTabResponse
     | GetStatsResponse
@@ -184,8 +160,6 @@ declare global {
     [Action.Create]: CreateResponse;
     [Action.Update]: UpdateResponse;
     [Action.Delete]: DeleteResponse;
-    [Action.RemoveTab]: RemoveTabResponse;
-    [Action.TogglePin]: TogglePinResponse;
     [Action.Open]: OpenResponse;
     [Action.MoveTab]: MoveTabResponse;
     [Action.GetStats]: GetStatsResponse;

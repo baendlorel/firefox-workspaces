@@ -195,18 +195,6 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.RemoveTab) {
-      const removed = await this.manager.removeTab(message.workspaceId, message.tabId);
-      const response: MessageResponseMap[typeof action] = { success: removed };
-      return response;
-    }
-
-    if (action === Action.TogglePin) {
-      const pinToggled = await this.manager.toggleTabPin(message.workspaceId, message.tabId);
-      const response: MessageResponseMap[typeof action] = { success: pinToggled };
-      return response;
-    }
-
     if (action === Action.Open) {
       const window = await this.manager
         .open(message.workspaceId)
