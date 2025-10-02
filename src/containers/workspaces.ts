@@ -1,5 +1,4 @@
 import { IndexedWorkspace } from '@/lib/workspace.js';
-import { WorkspaceTab } from '@/lib/workspace-tab.js';
 
 export class WorkspaceContainer {
   // both useful, map use 16 times and arr use 20 times
@@ -11,9 +10,9 @@ export class WorkspaceContainer {
   readonly activated: string[] = []; // Track currently opened workspaces by ID
   readonly deleting = new Set<string>(); // Track workspaces being deleted to avoid conflicts
 
-  create(name: string, color: HexColor, tabs: WorkspaceTab[] = []) {
-    const workspace = new IndexedWorkspace(this.arr.length, name, color);
-    workspace.tabs = tabs;
+  create(raw: WorkspaceFormData) {
+    const workspace = new IndexedWorkspace(this.arr.length, raw);
+    workspace.tabs = raw.tabs;
     this.map.set(workspace.id, workspace);
     this.arr.push(workspace);
     return workspace;

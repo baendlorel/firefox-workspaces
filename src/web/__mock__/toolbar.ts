@@ -28,7 +28,7 @@ class MockBrowser {
       const parsedData = JSON.parse(stored);
       // Convert plain objects back to Workspace instances
       return parsedData.map((data: any) => {
-        const workspace = new Workspace(data.name, data.color);
+        const workspace = new Workspace(data);
         workspace.id = data.id;
         workspace.tabs = data.tabs || [];
         workspace.createdAt = data.createdAt;
@@ -61,10 +61,10 @@ class MockBrowser {
       'Social',
       'Entertainment',
     ];
-    const randomName = names[Math.floor(Math.random() * names.length)];
-    const randomColor = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
+    const name = names[Math.floor(Math.random() * names.length)];
+    const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
 
-    return new Workspace(randomName, randomColor);
+    return new Workspace({ id: null, name, color, tabs: [] });
   }
 
   private createSampleTab(): WorkspaceTab {
@@ -201,7 +201,7 @@ class MockBrowser {
     // Create a fake workspace
     const name = `Fake Workspace ${new Date().toLocaleTimeString()}`;
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
-    const fakeWorkspace = new Workspace(name, color);
+    const fakeWorkspace = new Workspace({ id: null, name, color, tabs: [] });
     fakeWorkspace.tabs = tabs;
     fakeWorkspace.windowId = 999;
   }
@@ -224,9 +224,9 @@ class MockBrowser {
           data: workspaces,
         } as GetResponse;
 
-      case Action.Create: {
-        const req = request as CreateRequest;
-        const newWorkspace = new Workspace(req.name, req.color);
+      case Action.Save: {
+        const req = request as SaveRequest;
+        const newWorkspace = new Workspace(req.data);
 
         workspaces.push(newWorkspace);
         this.saveWorkspaces(workspaces);
@@ -234,28 +234,7 @@ class MockBrowser {
         return {
           success: true,
           data: newWorkspace,
-        } as CreateResponse;
-      }
-
-      case Action.Update: {
-        const req = request as UpdateRequest;
-        const index = workspaces.findIndex((ws) => ws.id === req.id);
-
-        if (index === -1) {
-          return {
-            success: false,
-            error: 'Workspace not found',
-          } as ErrorResponse;
-        }
-
-        // Update properties while keeping the Workspace instance
-        Object.assign(workspaces[index], req.updates);
-        this.saveWorkspaces(workspaces);
-
-        return {
-          success: true,
-          data: workspaces[index],
-        } as UpdateResponse;
+        } as SaveResponse;
       }
 
       case Action.Delete: {
@@ -287,23 +266,6 @@ class MockBrowser {
           success: true,
           data: { id: Math.floor(Math.random() * 100000) },
         } as OpenResponse;
-      }
-
-      case Action.MoveTab: {
-        const req = request as MoveTabRequest;
-        const fromWorkspace = workspaces.find((ws) => ws.id === req.fromWorkspaceId);
-        const toWorkspace = workspaces.find((ws) => ws.id === req.toWorkspaceId);
-
-        if (!fromWorkspace || !toWorkspace) {
-          return {
-            success: false,
-            error: 'Workspace not found',
-          } as any;
-        }
-
-        return {
-          success: true,
-        } as MoveTabResponse;
       }
 
       case Action.GetStats: {

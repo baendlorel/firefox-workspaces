@@ -8,17 +8,9 @@ declare global {
     action: Action.Get;
   }
 
-  interface CreateRequest {
-    action: Action.Create;
-    name: string;
-    color: HexColor;
-    tabs: WorkspaceTab[];
-  }
-
-  interface UpdateRequest {
-    action: Action.Update;
-    id: string;
-    updates: Partial<Workspace>;
+  interface SaveRequest {
+    action: Action.Save;
+    data: WorkspaceFormData;
   }
 
   interface DeleteRequest {
@@ -29,13 +21,6 @@ declare global {
   interface OpenRequest {
     action: Action.Open;
     workspaceId: string;
-  }
-
-  interface MoveTabRequest {
-    action: Action.MoveTab;
-    fromWorkspaceId: string;
-    toWorkspaceId: string;
-    tabId: number;
   }
 
   interface GetStatsRequest {
@@ -66,11 +51,9 @@ declare global {
   // Union type for all possible requests
   type MessageRequest =
     | GetRequest
-    | CreateRequest
-    | UpdateRequest
+    | SaveRequest
     | DeleteRequest
     | OpenRequest
-    | MoveTabRequest
     | GetStatsRequest
     | CheckPageInWorkspacesRequest
     | ExportRequest
@@ -81,17 +64,12 @@ declare global {
   interface GetResponse {
     success: boolean;
     data: Workspace[];
-    activeWorkspaces?: string[]; // Array of active workspace IDs
+    activated?: string[]; // Array of active workspace IDs
   }
 
-  interface CreateResponse {
+  interface SaveResponse {
     success: boolean;
     data: Workspace;
-  }
-
-  interface UpdateResponse {
-    success: boolean;
-    data: Workspace | null;
   }
 
   interface DeleteResponse {
@@ -109,10 +87,6 @@ declare global {
       // ? 这里不要紧吗？
       id?: number | undefined;
     } | null;
-  }
-
-  interface MoveTabResponse {
-    success: boolean;
   }
 
   interface GetStatsResponse {
@@ -143,12 +117,10 @@ declare global {
   // Union type for all possible responses
   type MessageResponse =
     | GetResponse
-    | CreateResponse
-    | UpdateResponse
+    | SaveResponse
     | DeleteResponse
     | AddCurrentTabResponse
     | OpenResponse
-    | MoveTabResponse
     | GetStatsResponse
     | CheckPageInWorkspacesResponse
     | ExportResponse
@@ -157,11 +129,9 @@ declare global {
 
   interface MessageResponseMap {
     [Action.Get]: GetResponse;
-    [Action.Create]: CreateResponse;
-    [Action.Update]: UpdateResponse;
+    [Action.Save]: SaveResponse;
     [Action.Delete]: DeleteResponse;
     [Action.Open]: OpenResponse;
-    [Action.MoveTab]: MoveTabResponse;
     [Action.GetStats]: GetStatsResponse;
     [Action.CheckPageInWorkspaces]: CheckPageInWorkspacesResponse;
     [Action.Export]: ExportResponse;

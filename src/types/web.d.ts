@@ -14,7 +14,7 @@ declare global {
   }
 
   interface WorkspaceFormData {
-    id: string | undefined;
+    id: string | null;
     name: string;
     color: HexColor;
     tabs: WorkspaceTab[];

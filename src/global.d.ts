@@ -1,6 +1,7 @@
 import 'rollup-plugin-func-macro';
 import { Workspace } from './lib/workspace.ts';
 import { Theme } from './lib/consts.ts';
+import { WorkspaceTab } from './lib/workspace-tab.ts';
 
 declare global {
   const __IS_DEV__: boolean;
@@ -10,6 +11,13 @@ declare global {
   type HTMLTag = keyof HTMLElementTagNameMap;
 
   type HexColor = `#${string}`;
+
+  interface WorkspaceFormData {
+    id: string | null;
+    name: string;
+    color: HexColor;
+    tabs: WorkspaceTab[];
+  }
 
   interface WorkspaceSettings {
     theme: Theme;

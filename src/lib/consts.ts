@@ -32,17 +32,16 @@ export const enum Theme {
 }
 
 export const enum Action {
-  Get = 'Get',
-  Create = 'Create',
-  Update = 'Update',
-  Delete = 'Delete',
-  Open = 'Open',
-  MoveTab = 'MoveTab',
-  GetStats = 'GetStats',
-  CheckPageInWorkspaces = 'CheckPageInWorkspaces',
-  WindowFocusChanged = 'WindowFocusChanged',
-  Export = 'Export',
-  Import = 'Import',
+  Get,
+  Save,
+  Update,
+  Delete,
+  Open,
+  GetStats,
+  CheckPageInWorkspaces,
+  WindowFocusChanged,
+  Export,
+  Import,
 }
 
 // Prefix parts for randomly generated workspace names. Single-word, capitalized.

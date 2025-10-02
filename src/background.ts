@@ -166,25 +166,16 @@ class WorkspaceBackground {
       const response: MessageResponseMap[typeof action] = {
         success: true,
         data: this.manager.workspaces.arr,
-        activeWorkspaces: this.manager.activeWorkspaces,
+        activated: this.manager.activeWorkspaces,
       };
       return response;
     }
 
-    if (action === Action.Create) {
-      const newWorkspace = await this.manager.create(message.name, message.color, message.tabs);
+    if (action === Action.Save) {
+      const newWorkspace = await this.manager.create(message.data);
       const response: MessageResponseMap[typeof action] = {
         success: true,
         data: newWorkspace,
-      };
-      return response;
-    }
-
-    if (action === Action.Update) {
-      const updated = await this.manager.update(message.id, message.updates);
-      const response: MessageResponseMap[typeof action] = {
-        success: updated !== null,
-        data: updated,
       };
       return response;
     }
@@ -204,16 +195,6 @@ class WorkspaceBackground {
         success: window !== null,
         data: window === null ? { id: NaN } : { id: window.id },
       };
-      return response;
-    }
-
-    if (action === Action.MoveTab) {
-      const moved = await this.manager.moveTabBetweenWorkspaces(
-        message.fromWorkspaceId,
-        message.toWorkspaceId,
-        message.tabId
-      );
-      const response: MessageResponseMap[typeof action] = { success: moved };
       return response;
     }
 
@@ -247,7 +228,7 @@ class WorkspaceBackground {
       try {
         for (const workspace of message.data) {
           // Create workspace with its tabs
-          await this.manager.create(workspace.name, workspace.color, []);
+          await this.manager.create(workspace); // ?? 这里也是import来的，谨慎
           // Get the last created workspace
           const created = this.manager.workspaces.arr[this.manager.workspaces.arr.length - 1];
           // Assign the original tabs and other properties

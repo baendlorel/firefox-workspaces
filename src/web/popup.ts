@@ -33,9 +33,6 @@ class PopupPage {
   get isWorkspacePopupPage() {
     return true;
   }
-
-  private readonly workspaces: Workspace[] = [];
-  private readonly activeWorkspaces: string[] = []; // Track active workspace IDs
   private main: ReturnType<typeof createView>;
 
   constructor() {
@@ -67,149 +64,9 @@ class PopupPage {
   }
 
   // Check if current window belongs to a workspace and update header
-  async checkCurrentWindow() {
-    const currentWindow = await browser.windows.getCurrent();
-
-    const workspace = this.workspaces.find((w) => w.windowId === currentWindow.id);
-    if (workspace) {
-      this.main.emit('set-current', workspace);
-    }
-  }
 
   render() {
     this.main.emit('render-list', this.workspaces, this.activeWorkspaces);
-  }
-
-  // Load work groups from background
-  async load() {
-    const response = await $send<GetRequest>({
-      action: Action.Get,
-    }).fallbackWithDialog('Failed to load work groups', {
-      success: false,
-      data: [],
-      activeWorkspaces: [],
-    });
-
-    if (!response.success) {
-      return;
-    }
-
-    const loaded = response.data ?? [];
-    this.workspaces.length = 0;
-    for (let i = 0; i < loaded.length; i++) {
-      const w = loaded[i];
-      this.workspaces.push(IndexedWorkspace.load(NaN, w));
-    }
-
-    // Update active workspaces
-    this.activeWorkspaces.length = 0;
-    if (response.activeWorkspaces) {
-      this.activeWorkspaces.push(...response.activeWorkspaces);
-    }
-  }
-
-  // Save workspace (create or update)
-  async save(formData: WorkspaceFormData) {
-    let response;
-    if (formData.id === undefined) {
-      // Create new workspace
-      response = await $send<CreateRequest>({
-        action: Action.Create,
-        name: formData.name,
-        color: formData.color,
-        tabs: formData.tabs,
-      }).fallbackWithDialog('__func__: Failed saving workspace');
-    } else {
-      // Update existing group
-      const updates: Partial<Workspace> = {
-        name: formData.name,
-        color: formData.color,
-      };
-      response = await $send<UpdateRequest>({
-        action: Action.Update,
-        id: formData.id,
-        updates: updates,
-      }).fallbackWithDialog('__func__: Failed saving workspace');
-    }
-
-    if (response === Sym.Reject) {
-      return;
-    }
-
-    if (response.success) {
-      await this.load();
-      this.render();
-      this.main.emit('close-editor');
-
-      // If creating a workspace with tabs, open it automatically
-      if (
-        formData.id === undefined &&
-        formData.tabs &&
-        formData.tabs.length > 0 &&
-        'data' in response
-      ) {
-        this.open(response.data as Workspace);
-      }
-    } else {
-      info('Failed to save workspace, Please try again.');
-      logger.error('Save workspace failed', response);
-    }
-  }
-
-  // Delete workspace
-  async delete(workspace: Workspace) {
-    const response = await $send<DeleteRequest>({
-      action: Action.Delete,
-      id: workspace.id,
-    }).fallbackWithDialog('__func__: Error deleting workspace');
-
-    if (response === Sym.Reject) {
-      return;
-    }
-
-    if (response.success) {
-      await this.load();
-      this.render();
-    } else {
-      info('Failed to delete workspace, Please try again.');
-    }
-  }
-
-  /**
-   * ## Warn
-   * !! Codes below `$send` are not accessible.
-   *
-   * ## Reason
-   * 1. New window causes popup page to be unfocused.
-   * 2. Unfocused popup is basically deleted.
-   * 3. Click plugin button again creates a new popup page.
-   */
-  open(workspace: Workspace): Promise<OpenResponse> {
-    return $send<OpenRequest>({
-      action: Action.Open,
-      workspaceId: workspace.id,
-    });
-  }
-
-  // Move tab between groupt
-  async moveTab(fromId: string, toId: string, tabId: number) {
-    const response = await $send<MoveTabRequest>({
-      action: Action.MoveTab,
-      fromWorkspaceId: fromId,
-      toWorkspaceId: toId,
-      tabId,
-    }).fallbackWithDialog('__func__: Error moving tab');
-
-    if (response === Sym.Reject) {
-      return;
-    }
-
-    if (response.success) {
-      await this.load();
-      this.render();
-    } else {
-      info('Failed to move tab, Please try again.');
-    }
   }
 }
 

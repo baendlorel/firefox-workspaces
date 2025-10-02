@@ -11,20 +11,18 @@ export class Workspace {
   lastOpened: number;
   windowId?: number;
 
-  constructor(name: string, color: HexColor) {
+  constructor(raw: WorkspaceFormData) {
     this.id = $genId();
-    this.name = name;
-    this.color = color;
-    this.tabs = [];
+    this.name = raw.name;
+    this.color = raw.color;
+    this.tabs = raw.tabs;
     this.createdAt = Date.now();
     this.lastOpened = 0;
     this.windowId = undefined;
   }
 
-  static from(name: string, color: HexColor, tabs: browser.tabs.Tab[] = []): Workspace {
-    const workspace = new Workspace(name, color);
-    workspace.tabs = tabs.map(tab => WorkspaceTab.from(tab));
-    return workspace;
+  static from(raw: WorkspaceFormData): Workspace {
+    return new Workspace(raw);
   }
 
   get pinnedTabs(): WorkspaceTab[] {
@@ -48,11 +46,11 @@ export class Workspace {
  */
 export class IndexedWorkspace extends Workspace {
   static load(index: number, data: Workspace) {
-    const workspace = new IndexedWorkspace(index, data.name, data.color);
+    const workspace = new IndexedWorkspace(index, data);
     workspace.id = data.id;
     workspace.name = data.name;
     workspace.color = data.color;
-    workspace.tabs = data.tabs;
+    workspace.tabs = data.tabs; // ?? 这里可能是plainobject而不是真正的WorkspaceTab实例
     workspace.createdAt = data.createdAt;
     workspace.lastOpened = data.lastOpened;
     workspace.windowId = data.windowId;
@@ -60,8 +58,8 @@ export class IndexedWorkspace extends Workspace {
   }
 
   index: number;
-  constructor(index: number, name: string, color: HexColor) {
-    super(name, color);
+  constructor(index: number, raw: WorkspaceFormData) {
+    super(raw);
     this.index = index;
   }
 }
