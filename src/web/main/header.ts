@@ -4,6 +4,7 @@ import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { $send } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
+import { stringify } from './debug.js';
 
 import { Menu } from '@web/components/menu/index.js';
 import about from '@web/components/about.js';
@@ -20,7 +21,7 @@ import heartSvg from '@web/assets/heart.svg?raw';
 import gearSvg from '@web/assets/gear.svg?raw';
 import workspaceSvg from '@web/assets/workspace.svg?raw';
 
-const createContextMenu = (bus: EventBus<WorkspaceEditorEventMap>) => {
+function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const SIZE = 18;
   const COLOR = '#283343';
 
@@ -104,7 +105,12 @@ const createContextMenu = (bus: EventBus<WorkspaceEditorEventMap>) => {
       },
     },
     Menu.Divider,
-    { label: item(bugSvg, 'Debug Info'), action: () => bus.emit('debug') },
+    {
+      label: item(bugSvg, 'Debug Info'),
+      action: () => {
+        logger.debug('workspaces', stringify(popupService.workspaces));
+      },
+    },
     { label: item(gearSvg, 'Settings'), action: () => settingsDialog.bus.emit('show') },
     Menu.Divider,
     {
@@ -121,7 +127,7 @@ const createContextMenu = (bus: EventBus<WorkspaceEditorEventMap>) => {
   ]);
 
   return contextMenu;
-};
+}
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const addBtn = btn({ class: 'btn-text', title: 'New workspace' }, [svg(plusSvg, '#fff', 18, 18)]);

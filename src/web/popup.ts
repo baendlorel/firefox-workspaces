@@ -4,59 +4,28 @@ import './css/workspace.css';
 import './css/form.css';
 import '@/lib/promise-ext.js';
 
-import { $send } from '@/lib/ext-apis.js';
-import { Action, Sym } from '@/lib/consts.js';
-import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
-
-import { danger, info } from './components/dialog/alerts.js';
-import { stringify } from './main/debug.js';
 import { createView } from './view.js';
+import popupService from './popup.service.js';
 
-Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
-  this: Promise<any>,
-  message: string,
-  value: any = Sym.Reject
-): Promise<S> {
-  return Promise.prototype.catch.call(this, (error: unknown) => {
-    if (message) {
-      logger.debug(message, error);
-      danger(message);
-    } else {
-      logger.debug(error);
-    }
-    return typeof value === 'function' ? value() : value;
-  });
-};
+import { danger } from './components/dialog/alerts.js';
+
+Promise.dialogDanger = danger;
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
   get isWorkspacePopupPage() {
     return true;
   }
-  private main: ReturnType<typeof createView>;
 
   constructor() {
     logger.verbose('PopupPage initializing');
-    this.main = createView();
-    this.main.on('debug', () => logger.debug(stringify(this.workspaces)));
-
-    // form modal
-    this.main.on('open', (workspace: Workspace) => this.open(workspace));
+    const main = createView();
+    popupService.load().then(() => main.emit('render-list'));
 
     if (__IS_DEV__) {
-      import('./__mock__/toolbar.js').then(() => this.init());
+      import('./__mock__/toolbar.js');
       return;
     }
-    this.init();
-  }
-
-  // Initialize popup
-  async init() {
-    await this.load();
-    this.render();
-
-    // Check current window on initialization
-    await this.checkCurrentWindow();
   }
 }
 

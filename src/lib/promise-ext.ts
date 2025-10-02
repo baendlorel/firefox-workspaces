@@ -16,6 +16,8 @@ declare global {
       resolve: (value: T | PromiseLike<T>) => any;
       reject: (reason?: any) => any;
     };
+
+    dialogDanger: (message: string, title?: string) => Promise<void>;
   }
 }
 
@@ -58,4 +60,20 @@ Promise.create = <T>() => {
     resolve,
     reject,
   };
+};
+
+Promise.prototype.fallbackWithDialog = function <S = typeof Sym.Reject>(
+  this: Promise<any>,
+  message: string,
+  value: any = Sym.Reject
+): Promise<S> {
+  return Promise.prototype.catch.call(this, (error: unknown) => {
+    if (message) {
+      logger.debug(message, error);
+      Promise.dialogDanger(message);
+    } else {
+      logger.debug(error);
+    }
+    return typeof value === 'function' ? value() : value;
+  });
 };
