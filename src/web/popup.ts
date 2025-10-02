@@ -20,7 +20,7 @@ class PopupPage {
   constructor() {
     logger.verbose('PopupPage initializing');
     if (__IS_DEV__) {
-      import('./__mock__/toolbar.js').then(() => this.init());
+      import('../__mock__/toolbar.js').then(() => this.init());
       return;
     }
     this.init();
