@@ -191,7 +191,7 @@ class PopupPage {
     });
   }
 
-  // Move tab between groups
+  // Move tab between groupt
   async moveTab(fromId: string, toId: string, tabId: number) {
     const response = await $send<MoveTabRequest>({
       action: Action.MoveTab,

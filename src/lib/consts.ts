@@ -25,6 +25,11 @@ export const enum OnUpdatedChangeInfoStatus {
   Complete = 'complete',
   Loading = 'loading',
 }
+export const enum Theme {
+  Auto = 'auto',
+  Light = 'light',
+  Dark = 'dark',
+}
 
 export const enum Action {
   Get = 'Get',
