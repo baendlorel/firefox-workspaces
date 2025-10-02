@@ -30,21 +30,25 @@ export const enum Theme {
   Dark = 'dark',
 }
 
+export const enum RandomNameLanguage {
+  Auto = 'auto',
+  Zh = 'zh',
+  En = 'en',
+}
+
 export const enum Action {
   Get,
   Save,
-  Update,
   Delete,
   Open,
   GetStats,
   CheckPageInWorkspaces,
-  WindowFocusChanged,
   Export,
   Import,
 }
 
 // Prefix parts for randomly generated workspace names. Single-word, capitalized.
-export const RANDOM_NAME_PART1 = [
+export const RANDOM_NAME_EN_A = [
   'Crimson',
   'Azure',
   'Golden',
@@ -62,7 +66,7 @@ export const RANDOM_NAME_PART1 = [
 ];
 
 // Suffix parts for randomly generated workspace names. Single-word, capitalized.
-export const RANDOM_NAME_PART2 = [
+export const RANDOM_NAME_EN_B = [
   'Haven',
   'Harbor',
   'Oasis',
@@ -77,6 +81,42 @@ export const RANDOM_NAME_PART2 = [
   'Forge',
   'Nexus',
   'Realm',
+];
+
+// Prefix parts for randomly generated workspace names. Single-word, capitalized.
+export const RANDOM_NAME_ZH_A = [
+  '赤焰',
+  '碧蓝',
+  '金辉',
+  '银月',
+  '翠影',
+  '午夜',
+  '静谧',
+  '隐秘',
+  '明亮',
+  '流浪',
+  '孤独',
+  '疾风',
+  '安静',
+  '勇敢',
+];
+
+// Suffix parts for randomly generated workspace names. Single-word, capitalized.
+export const RANDOM_NAME_ZH_B = [
+  '港湾',
+  '避风港',
+  '绿洲',
+  '圣地',
+  '宝库',
+  '花园',
+  '树林',
+  '码头',
+  '车站',
+  '传送门',
+  '枢纽',
+  '熔炉',
+  '连接点',
+  '领域',
 ];
 
 export class Sym extends null {

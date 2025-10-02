@@ -33,12 +33,6 @@ declare global {
     url: string;
   }
 
-  interface WindowFocusChangedNotification {
-    action: Action.WindowFocusChanged;
-    windowId: number;
-    workspace: Workspace;
-  }
-
   interface ExportRequest {
     action: Action.Export;
   }
@@ -64,7 +58,7 @@ declare global {
   interface GetResponse {
     success: boolean;
     data: Workspace[];
-    activated?: string[]; // Array of active workspace IDs
+    activated: string[]; // Array of active workspace IDs
   }
 
   interface SaveResponse {
@@ -83,10 +77,7 @@ declare global {
 
   interface OpenResponse {
     success: boolean;
-    data: {
-      // ? 这里不要紧吗？
-      id?: number | undefined;
-    } | null;
+    data: { id?: number | undefined } | null;
   }
 
   interface GetStatsResponse {
@@ -113,19 +104,6 @@ declare global {
     success: false;
     error: string;
   }
-
-  // Union type for all possible responses
-  type MessageResponse =
-    | GetResponse
-    | SaveResponse
-    | DeleteResponse
-    | AddCurrentTabResponse
-    | OpenResponse
-    | GetStatsResponse
-    | CheckPageInWorkspacesResponse
-    | ExportResponse
-    | ImportResponse
-    | ErrorResponse;
 
   interface MessageResponseMap {
     [Action.Get]: GetResponse;

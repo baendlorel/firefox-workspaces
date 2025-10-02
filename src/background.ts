@@ -55,7 +55,7 @@ class WorkspaceBackground {
 
     // Handle messages from popup and content scripts
     browser.runtime.onMessage.addListener(
-      async (message: MessageRequest): Promise<MessageResponse> =>
+      async (message: MessageRequest): Promise<MessageResponseMap[Action]> =>
         this.handlePopupMessage(message).catch((error) => {
           logger.error('Error handling message', error);
           const errorResponse: ErrorResponse = { success: false, error: 'Error handling message.' };
@@ -161,7 +161,7 @@ class WorkspaceBackground {
     await this.recursivePin(tabId, attempts - 1);
   }
 
-  private async handlePopupMessage(message: MessageRequest): Promise<MessageResponse> {
+  private async handlePopupMessage(message: MessageRequest): Promise<MessageResponseMap[Action]> {
     const action = message.action;
     if (action === Action.Get) {
       const response: MessageResponseMap[typeof action] = {

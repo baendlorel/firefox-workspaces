@@ -1,6 +1,6 @@
 import 'rollup-plugin-func-macro';
 import { Workspace } from './lib/workspace.ts';
-import { Theme } from './lib/consts.ts';
+import { RandomNameLanguage, Theme } from './lib/consts.ts';
 import { WorkspaceTab } from './lib/workspace-tab.ts';
 import type I18NEnMessage from '../_locales/en/messages.json';
 import type I18NZhMessage from '../_locales/zh_CN/messages.json';
@@ -29,12 +29,15 @@ declare global {
   }
 
   interface WorkspaceSettings {
+    randomNameLanguage: RandomNameLanguage;
     theme: Theme;
   }
 
-  interface WorkspaceStoredData {
+  interface WorkspaceStore {
     list: Workspace[];
   }
+
+  type WorkspaceState = WorkspaceStore & WorkspaceSettings & { hash: string };
 
   interface WorkspaceStats {
     totalTabs: number;

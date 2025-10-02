@@ -207,7 +207,7 @@ export class MockBrowser {
     fakeWorkspace.windowId = 999;
   }
 
-  private createResponse(request: MessageRequest): MessageResponse {
+  private createResponse(request: MessageRequest): MessageResponseMap[Action] {
     if (!this.shouldSucceed) {
       return {
         success: false,
