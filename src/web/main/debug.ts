@@ -1,5 +1,3 @@
-import { $id, btn } from '@/lib/dom.js';
-
 export const stringify = (a: any): any => {
   if (a === null) {
     return null;

@@ -4,25 +4,27 @@ import { h } from '@/lib/dom.js';
 
 interface MenuOption {
   label: string | HTMLElement;
-  action: (this: Menu) => void;
+  action: (this: Menu, li: HTMLElement) => void;
 }
 
 export class Menu {
+  static readonly Divider = Symbol();
+
   readonly dialog: HTMLDialogElement;
   private readonly ul: HTMLUListElement;
   private readonly popIn: () => void;
   close: () => void;
 
-  constructor(options: (MenuOption | 'divider')[]) {
+  constructor(options: (MenuOption | typeof Menu.Divider)[]) {
     // # Elements
     const ulChilren = options.map((o) => {
-      if (o === 'divider') {
+      if (o === Menu.Divider) {
         return h('hr');
       }
 
       const opt = typeof o.label === 'string' ? o.label : [o.label];
       const el = h('li', 'menu-option', opt);
-      el.addEventListener('click', () => o.action.call(this));
+      el.addEventListener('click', () => o.action.call(this, el));
       return el;
     });
 

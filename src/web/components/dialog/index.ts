@@ -84,13 +84,18 @@ export function createDialog(
   if (!footer) {
     const yesBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Yes');
     yesBtn.title = 'Yes';
-    content.append(headerDiv, bodyDiv, div('dialog-footer', [yesBtn]));
+
+    const footerDiv = div('dialog-footer', [yesBtn]);
+    content.append(headerDiv, bodyDiv, footerDiv);
     dialog.appendChild(content);
 
     yesBtn.addEventListener('click', close);
 
     return {
       dialog,
+      header: headerDiv,
+      body: bodyDiv,
+      footer: footerDiv,
       closeBtn,
       yesBtn,
       setTitle,
@@ -99,11 +104,15 @@ export function createDialog(
 
   // # footer provided
   const footerInner = typeof footer === 'string' ? [div('', footer)] : [...footer];
-  content.append(headerDiv, bodyDiv, div('dialog-footer', footerInner));
+  const footerDiv = div('dialog-footer', footerInner);
+  content.append(headerDiv, bodyDiv, footerDiv);
   dialog.appendChild(content);
 
   return {
     dialog,
+    header: headerDiv,
+    body: bodyDiv,
+    footer: footerDiv,
     closeBtn,
     setTitle,
   };

@@ -1,4 +1,3 @@
-import { EventBus } from 'minimal-event-bus';
 import { createDialog } from './dialog/index.js';
 import { h } from '@/lib/dom.js';
 
@@ -7,25 +6,24 @@ import { h } from '@/lib/dom.js';
  * About dialog component
  * Uses the project's dialog utilities and dom helpers to match style
  */
-export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
-  const body = [
-    h('p', 'about-text', `Firefox Workspaces — Manage and restore groups of tabs with ease.`),
-    h('p', 'about-version', `Version: __VERSION__`),
-    h('p', 'about-links', [
-      h('a', 'about-link', 'Repository'),
-      h('span', 'about-sep', ' • '),
-      h('a', 'about-link', 'Changelog'),
-    ]),
-    h('p', 'about-copy', '© Your Name. Licensed under MIT.'),
+export default (): HTMLDialogElement => {
+  const href = 'https://github.com/baendlorel/firefox-workspaces';
+
+  const rawBody = [
+    h('p', '', `__NAME__ v__VERSION__ `),
+    h('p', '', `A simple workspace manager.`),
+    h('p', '', [h('a', { href }, 'Repository')]),
+    h('p', '', '© __AUTHOR_NAME__ Licensed under MIT.'),
+    h('p', '', 'Contact __AUTHOR_EMAIL__'),
   ];
 
-  const { dialog, closeBtn } = createDialog('About', body);
+  const { dialog, body, closeBtn } = createDialog('About', rawBody);
+  body.style.fontFamily = 'monospace';
 
   // small accessibility/title tweaks
   dialog.setAttribute('aria-label', 'About Firefox Workspaces');
   closeBtn.title = 'Close about dialog';
 
-  bus.on('open-about', () => dialog.bus.emit('show'));
-
+  document.body.appendChild(dialog);
   return dialog;
 };

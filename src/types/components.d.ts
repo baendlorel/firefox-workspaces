@@ -5,6 +5,9 @@ declare global {
 
   interface Dialog {
     dialog: HTMLDialogElement;
+    header: HTMLDivElement;
+    body: HTMLDivElement;
+    footer: HTMLDivElement;
     closeBtn: HTMLButtonElement;
     yesBtn: HTMLButtonElement;
     setTitle: (text: string) => void;

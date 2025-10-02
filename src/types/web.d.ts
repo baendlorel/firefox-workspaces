@@ -27,7 +27,6 @@ declare global {
 
   type WorkspaceEditorEventMap = {
     debug: (...args: any[]) => void;
-    'open-about': () => void;
 
     // workspaces
     'set-current': (workspace?: Workspace) => void;

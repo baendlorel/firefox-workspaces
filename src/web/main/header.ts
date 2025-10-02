@@ -3,46 +3,51 @@ import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { Menu } from '@web/components/menu/index.js';
+import about from '@web/components/about.js';
+import donate from '@web/components/donate.js';
 
 import plusSvg from '@web/assets/workspace-plus.svg?raw';
 import listSvg from '@web/assets/list.svg?raw';
+import bookmarkPlusSvg from '@web/assets/bookmark-plus.svg?raw';
 import boxArrowDownSvg from '@web/assets/box-arrow-down.svg?raw';
 import boxArrowUpSvg from '@web/assets/box-arrow-up.svg?raw';
 import bugSvg from '@web/assets/bug.svg?raw';
+import heartSvg from '@web/assets/heart.svg?raw';
 import gearSvg from '@web/assets/gear.svg?raw';
+import workspaceSvg from '@web/assets/workspace.svg?raw';
 
 const createContextMenu = (bus: EventBus<WorkspaceEditorEventMap>) => {
   const SIZE = 18;
-  const COLOR = '#737a84';
-  const s2 = svg(boxArrowDownSvg, COLOR, SIZE);
-  const s3 = svg(boxArrowUpSvg, COLOR, SIZE);
-  const s4 = svg(gearSvg, COLOR, SIZE);
-  const s5 = svg(bugSvg, COLOR, SIZE);
-  const s6 = svg(bugSvg, COLOR, SIZE);
-  const btn2 = btn('btn-with-icon', [s2, 'Import']);
-  const btn3 = btn('btn-with-icon', [s3, 'Export']);
-  const btn4 = btn('btn-with-icon', [s4, 'Settings']);
-  const btn5 = btn('btn-with-icon', [s5, 'About']);
-  const btn6 = btn('btn-with-icon', [s6, 'Debug Info']);
+  const COLOR = '#283343';
+
+  const item = (svgStr: string, label: string) =>
+    btn('btn-with-icon', [svg(svgStr, COLOR, SIZE), label]);
+
+  const aboutDialog = about();
+  const donateDialog = donate();
 
   const contextMenu = new Menu([
     {
-      label: 'Create with current tabs',
+      label: item(bookmarkPlusSvg, 'Create with current tabs'),
       action: () => logger.debug('Create new workspace action triggered'),
     },
-    { label: btn2, action: () => logger.debug(btn2.innerText) },
-    { label: btn3, action: () => logger.debug(btn3.innerText) },
-    'divider',
-    { label: btn4, action: () => logger.debug(btn4.innerText) },
+    { label: item(boxArrowDownSvg, 'Import'), action: () => logger.debug() },
+    { label: item(boxArrowUpSvg, 'Export'), action: () => logger.debug() },
+    Menu.Divider,
+    { label: item(bugSvg, 'Debug Info'), action: () => bus.emit('debug') },
+    { label: item(gearSvg, 'Settings'), action: () => logger.debug() },
+    Menu.Divider,
     {
-      label: btn5,
+      label: item(heartSvg, 'Donate'),
+      action: () => donateDialog.bus.emit('show'),
+    },
+    {
+      label: item(workspaceSvg, 'About'),
       action: function (this) {
         this.close();
-        bus.emit('open-about');
+        aboutDialog.bus.emit('show');
       },
     },
-    'divider',
-    { label: btn6, action: () => bus.emit('debug') },
   ]);
 
   return contextMenu;

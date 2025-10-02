@@ -124,6 +124,7 @@
 
 .icon-btn:hover {
   background-color: var(--light);
+  cursor: pointer;
 }
 
 .icon-btn:active {

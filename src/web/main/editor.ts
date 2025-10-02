@@ -4,8 +4,8 @@ import { btn, div, h, svg } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
 import { Workspace } from '@/lib/workspace.js';
 
-import { createDialog } from '../components/dialog/index.js';
 import { confirmation, danger, info } from '../components/dialog/alerts.js';
+import { createDialog } from '../components/dialog/index.js';
 import colorPicker from '../components/color/index.js';
 import trashSvg from '@web/assets/trash.svg?raw';
 
