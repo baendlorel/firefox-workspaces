@@ -45,12 +45,12 @@ export class WorkspaceManager {
    */
   async load() {
     const workspaces = (await browser.storage.local.get(Consts.StorageKey)) as WorkspaceState;
-    if (!workspaces.list) {
+    if (!workspaces.workspaces) {
       return;
     }
 
-    const list = workspaces.list;
-    const len = workspaces.list.length;
+    const list = workspaces.workspaces;
+    const len = workspaces.workspaces.length;
 
     // prepare the containers
     this.workspaces.clearAll();
@@ -68,7 +68,7 @@ export class WorkspaceManager {
    * - Won't throw
    */
   save(): Promise<boolean> {
-    const data: WorkspaceStore = { list: this.workspaces.arr };
+    const data: WorkspaceStore = { workspaces: this.workspaces.arr };
     return browser.storage.local
       .set(data)
       .then(() => true)

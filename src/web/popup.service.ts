@@ -32,8 +32,8 @@ class PopupService {
 
     const loaded = response.data ?? [];
     this.workspaces.length = 0;
-    for (let i = 0; i < loaded.list.length; i++) {
-      const w = loaded.list[i];
+    for (let i = 0; i < loaded.workspaces.length; i++) {
+      const w = loaded.workspaces[i];
       this.workspaces.push(IndexedWorkspace.load(NaN, w));
     }
   }

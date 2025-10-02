@@ -33,11 +33,13 @@ declare global {
     theme: Theme;
   }
 
-  interface WorkspaceStore {
-    list: Workspace[];
+  interface WorkspaceState {
+    hash: string;
+    workspaces: Workspace[];
+    settings: WorkspaceSettings;
   }
 
-  type WorkspaceState = WorkspaceStore & WorkspaceSettings & { hash: string };
+  type WorkspaceStateKey = keyof WorkspaceState;
 
   interface WorkspaceStats {
     totalTabs: number;
