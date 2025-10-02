@@ -13,6 +13,10 @@ class PopupService {
     return this.workspaces.find((w) => w.windowId === currentWindow.id);
   }
 
+  get isNoWorkspace() {
+    return this.workspaces.length === 0;
+  }
+
   // Load work groups from background
   async load() {
     const response = await $send<GetRequest>({
@@ -54,8 +58,6 @@ class PopupService {
     }
 
     await this.load();
-    // ?? this.render();
-    // ?? this.main.emit('close-editor');
 
     // If creating a workspace with tabs, open it automatically
     if (formData.id === null && formData.tabs.length > 0) {
@@ -100,4 +102,5 @@ class PopupService {
   }
 }
 
-export default new PopupService();
+const popupService = new PopupService();
+export default popupService;

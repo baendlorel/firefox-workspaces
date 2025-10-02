@@ -9,6 +9,7 @@ import { confirmation, danger, info } from '@web/components/dialog/alerts.js';
 import { createDialog } from '@web/components/dialog/index.js';
 import colorPicker from '@web/components/color/index.js';
 import trashSvg from '@web/assets/trash.svg?raw';
+import popupService from '@web/popup.service.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
@@ -53,8 +54,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   // # define handlers
   const close = () => {
+    editingWorkspace = null;
     dialog.bus.emit('close');
-    dialog.bus.on('closed', () => (editingWorkspace = null));
   };
 
   // # register events
@@ -79,8 +80,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     dialog.bus.on('shown', () => inputName.focus());
   });
 
-  bus.on('close-editor', close);
-
   randomNameBtn.addEventListener('click', () => {
     const part1 = RANDOM_NAME_PART1[$randInt(RANDOM_NAME_PART1.length)];
     const part2 = RANDOM_NAME_PART2[$randInt(RANDOM_NAME_PART2.length)];
@@ -89,21 +88,26 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   closeBtn.addEventListener('click', close);
   cancelBtn.addEventListener('click', close);
-  saveBtn.addEventListener('click', () => {
+  saveBtn.addEventListener('click', async () => {
     // validate
     const name = inputName.value.trim();
     if (!name) {
       info('Please enter a group name');
       return;
     }
+    if (!/^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(colorSelector.value)) {
+      info('Color must be like #RRGGBB or #RRGGBBAA');
+      return;
+    }
 
-    // emit save event
-    bus.emit('save', {
-      id: editingWorkspace === null ? undefined : editingWorkspace.id,
-      name: inputName.value,
+    await popupService.save({
+      id: editingWorkspace === null ? null : editingWorkspace.id,
+      name: name,
       color: colorSelector.value,
       tabs: currentTabs,
     });
+
+    bus.emit('render-list');
 
     // close the modal
     close();
@@ -119,7 +123,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     if (!yes) {
       return;
     }
-    bus.emit('delete', editingWorkspace as Workspace);
+    await popupService.delete(editingWorkspace);
     close();
   });
 

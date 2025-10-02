@@ -33,13 +33,9 @@ declare global {
     // workspaces
     'set-current': (workspace?: Workspace) => void;
     'toggle-li-activated': (activated: string[]) => void;
-    'render-list': (workspaces: Workspace[], activated: string[]) => void;
+    'render-list': () => void;
     edit: (workspace: Workspace | null, tabs?: browser.tabs.Tab[]) => void;
     delete: (workspace: Workspace) => void;
     open: (workspace: Workspace) => void;
-
-    // form
-    'close-editor': () => void;
-    save: (formData: WorkspaceFormData) => void;
   };
 }

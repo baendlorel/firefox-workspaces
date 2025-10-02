@@ -1,0 +1,292 @@
+{
+  "extensionName": {
+    "message": "Firefox Workspaces",
+    "description": "Extension name"
+  },
+  "extensionDescription": {
+    "message": "A powerful workspace manager for Firefox",
+    "description": "Extension description"
+  },
+  "workspace": {
+    "message": "Workspace",
+    "description": "Header title"
+  },
+  "newWorkspace": {
+    "message": "New workspace",
+    "description": "New workspace button tooltip"
+  },
+  "moreActions": {
+    "message": "More Actions",
+    "description": "More actions button tooltip"
+  },
+  "noWorkspacesYet": {
+    "message": "No workspaces yet.",
+    "description": "Empty state message"
+  },
+  "createWorkspaceToGetStarted": {
+    "message": "Create a new workspace to get started!",
+    "description": "Empty state call to action"
+  },
+  "createWithCurrentTabs": {
+    "message": "Create with current tabs",
+    "description": "Context menu item"
+  },
+  "import": {
+    "message": "Import",
+    "description": "Context menu item"
+  },
+  "export": {
+    "message": "Export",
+    "description": "Context menu item"
+  },
+  "debugInfo": {
+    "message": "Debug Info",
+    "description": "Context menu item"
+  },
+  "settings": {
+    "message": "Settings",
+    "description": "Context menu item"
+  },
+  "donate": {
+    "message": "Donate",
+    "description": "Context menu item"
+  },
+  "about": {
+    "message": "About",
+    "description": "Context menu item"
+  },
+  "editWorkspace": {
+    "message": "Edit Workspace",
+    "description": "Edit workspace dialog title"
+  },
+  "newWorkspaceWithTabs": {
+    "message": "New Workspace with tabs",
+    "description": "New workspace with tabs dialog title"
+  },
+  "name": {
+    "message": "Name",
+    "description": "Name label"
+  },
+  "color": {
+    "message": "Color",
+    "description": "Color label"
+  },
+  "random": {
+    "message": "Random",
+    "description": "Random name button"
+  },
+  "generateRandomName": {
+    "message": "Generate a random name",
+    "description": "Random name button tooltip"
+  },
+  "delete": {
+    "message": "Delete",
+    "description": "Delete button"
+  },
+  "deleteWorkspace": {
+    "message": "Delete the workspace",
+    "description": "Delete button tooltip"
+  },
+  "cancel": {
+    "message": "Cancel",
+    "description": "Cancel button"
+  },
+  "cancelAndClose": {
+    "message": "Cancel and close dialog",
+    "description": "Cancel button tooltip"
+  },
+  "save": {
+    "message": "Save",
+    "description": "Save button"
+  },
+  "saveWorkspace": {
+    "message": "Save workspace",
+    "description": "Save button tooltip"
+  },
+  "pleaseEnterGroupName": {
+    "message": "Please enter a group name",
+    "description": "Validation message"
+  },
+  "confirmDeleteWorkspace": {
+    "message": "Are you sure you want to delete \"{name}\"?",
+    "description": "Delete confirmation message",
+    "placeholders": {
+      "name": {
+        "content": "$1",
+        "example": "My Workspace"
+      }
+    }
+  },
+  "theme": {
+    "message": "Theme",
+    "description": "Theme setting label"
+  },
+  "autoSystem": {
+    "message": "Auto (System)",
+    "description": "Auto theme option"
+  },
+  "light": {
+    "message": "Light",
+    "description": "Light theme option"
+  },
+  "dark": {
+    "message": "Dark",
+    "description": "Dark theme option"
+  },
+  "reset": {
+    "message": "Reset",
+    "description": "Reset button"
+  },
+  "firefoxWorkspacesSettings": {
+    "message": "Firefox Workspaces Settings",
+    "description": "Settings dialog aria label"
+  },
+  "closeSettingsDialog": {
+    "message": "Close settings dialog",
+    "description": "Close settings dialog tooltip"
+  },
+  "resetSettings": {
+    "message": "Reset Settings",
+    "description": "Reset settings confirmation title"
+  },
+  "areYouSure": {
+    "message": "Are you sure?",
+    "description": "General confirmation message"
+  },
+  "aboutFirefoxWorkspaces": {
+    "message": "About Firefox Workspaces",
+    "description": "About dialog title"
+  },
+  "organizeTabs": {
+    "message": "Organize your tabs like a pro ✨",
+    "description": "About dialog subtitle"
+  },
+  "lightningFast": {
+    "message": "Lightning fast workspace switching",
+    "description": "Feature description"
+  },
+  "beautifulColorCoded": {
+    "message": "Beautiful color-coded organization",
+    "description": "Feature description"
+  },
+  "importExport": {
+    "message": "Import/Export your workspaces",
+    "description": "Feature description"
+  },
+  "createFromTabs": {
+    "message": "Create workspaces from current tabs",
+    "description": "Feature description"
+  },
+  "repository": {
+    "message": "Repository",
+    "description": "Repository link text"
+  },
+  "reportIssues": {
+    "message": "Report Issues",
+    "description": "Report issues link text"
+  },
+  "changelog": {
+    "message": "Changelog",
+    "description": "Changelog link text"
+  },
+  "closeAboutDialog": {
+    "message": "Close about dialog",
+    "description": "Close about dialog tooltip"
+  },
+  "information": {
+    "message": "Information",
+    "description": "Information dialog title"
+  },
+  "warning": {
+    "message": "Warning",
+    "description": "Warning dialog title"
+  },
+  "danger": {
+    "message": "Danger",
+    "description": "Danger dialog title"
+  },
+  "confirm": {
+    "message": "Confirm",
+    "description": "Confirmation dialog title"
+  },
+  "yes": {
+    "message": "Yes",
+    "description": "Yes button"
+  },
+  "no": {
+    "message": "No",
+    "description": "No button"
+  },
+  "importSuccessful": {
+    "message": "Import successful!",
+    "description": "Import success message"
+  },
+  "importFailed": {
+    "message": "Import failed",
+    "description": "Import failed message"
+  },
+  "exportFailed": {
+    "message": "Export failed",
+    "description": "Export failed message"
+  },
+  "failedToParseFile": {
+    "message": "Failed to parse file: {error}",
+    "description": "File parse error message",
+    "placeholders": {
+      "error": {
+        "content": "$1",
+        "example": "Invalid JSON"
+      }
+    }
+  },
+  "failedToLoadWorkGroups": {
+    "message": "Failed to load work groups",
+    "description": "Load error message"
+  },
+  "failedToSaveWorkspace": {
+    "message": "Failed to save workspace, Please try again.",
+    "description": "Save error message"
+  },
+  "failedToDeleteWorkspace": {
+    "message": "Failed to delete workspace, Please try again.",
+    "description": "Delete error message"
+  },
+  "addToWorkspaces": {
+    "message": "Add to Workspaces",
+    "description": "Browser context menu item"
+  },
+  "justNow": {
+    "message": "just now",
+    "description": "Time indicator"
+  },
+  "minutesAgo": {
+    "message": "{minutes} minute(s) ago",
+    "description": "Time indicator",
+    "placeholders": {
+      "minutes": {
+        "content": "$1",
+        "example": "5"
+      }
+    }
+  },
+  "clearCache": {
+    "message": "Clear Cache",
+    "description": "Debug: clear cache button"
+  },
+  "clearAllMockData": {
+    "message": "Clear all mock workspace data from localStorage",
+    "description": "Debug: clear cache tooltip"
+  },
+  "randomWorkspaces": {
+    "message": "Random 3 WS",
+    "description": "Debug: create random workspaces button"
+  },
+  "setCurrent": {
+    "message": "Set Current",
+    "description": "Debug: set current button"
+  },
+  "success": {
+    "message": "Success",
+    "description": "Debug: success checkbox label"
+  }
+}

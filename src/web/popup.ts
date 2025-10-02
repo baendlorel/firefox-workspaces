@@ -62,12 +62,6 @@ class PopupPage {
     // Check current window on initialization
     await this.checkCurrentWindow();
   }
-
-  // Check if current window belongs to a workspace and update header
-
-  render() {
-    this.main.emit('render-list', this.workspaces, this.activeWorkspaces);
-  }
 }
 
 // Initialize popup when DOM is loaded

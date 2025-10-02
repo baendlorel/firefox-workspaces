@@ -105,6 +105,7 @@
 
 .empty-state {
   @apply text-center py-10 px-5;
+  display: none;
   color: var(--secondary-light);
 }
 
