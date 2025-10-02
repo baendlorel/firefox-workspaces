@@ -1,10 +1,14 @@
-import { Action, Sym } from '@/lib/consts.js';
+import { Action, RandomNameLanguage, Sym, Theme } from '@/lib/consts.js';
 import { $send, i } from '@/lib/ext-apis.js';
 import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
 
 import { info } from './components/dialog/alerts.js';
 
 class PopupService {
+  readonly settings: WorkspaceSettings = {
+    randomNameLanguage: RandomNameLanguage.Auto,
+    theme: Theme.Auto,
+  };
   readonly workspaces: Workspace[] = [];
   readonly activated: string[] = []; // Track active workspace IDs
 

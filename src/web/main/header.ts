@@ -91,18 +91,20 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
           action: Action.Export,
         }).fallbackWithDialog(i('exportFailed'), { success: false, data: [] });
 
-        if (response.success) {
-          // Create and download JSON file
-          const blob = new Blob([JSON.stringify(response.data, null, 2)], {
-            type: 'application/json',
-          });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `firefox-workspaces-${new Date().toISOString().split('T')[0]}.json`;
-          a.click();
-          URL.revokeObjectURL(url);
+        if (!response.success) {
+          return;
         }
+
+        // Create and download JSON file
+        const blob = new Blob([JSON.stringify(response.data, null, 2)], {
+          type: 'application/json',
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `firefox-workspaces-${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
       },
     },
     Menu.Divider,
