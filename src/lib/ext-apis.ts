@@ -1,5 +1,5 @@
 import { MockBrowser } from '@/__mock__/toolbar.js';
-import { Sym } from './consts.js';
+import { RandomNameLanguage, Sym, Theme } from './consts.js';
 
 if (__IS_DEV__) {
   new MockBrowser();
@@ -16,14 +16,31 @@ export const $aboutBlank = () =>
     type: 'normal',
   });
 
+const DEFAULT = {
+  workspaces: [],
+  settings: { randomNameLanguage: RandomNameLanguage.Auto, theme: Theme.Auto },
+  activatedMap: new Map(), // windowId -> workspaceId
+};
 export function $lsget(): Promise<WorkspaceState>;
 export function $lsget<T extends WorkspaceStateKey>(key: T): Promise<WorkspaceState[T]>;
 export function $lsget(defaultState: WorkspaceState): Promise<WorkspaceState>;
 export function $lsget(arg = Sym.NotProvided): Promise<any> {
   if (arg === Sym.NotProvided) {
-    return browser.storage.local.get();
+    return browser.storage.local.get(DEFAULT);
   }
-  return browser.storage.local.get(arg);
+
+  const key = arg as WorkspaceStateKey;
+  switch (key) {
+    case 'workspaces':
+      return browser.storage.local.get({ workspaces: DEFAULT.workspaces });
+    case 'settings':
+      return browser.storage.local.get({ settings: DEFAULT.settings });
+    case 'activatedMap':
+      return browser.storage.local.get({ activatedMap: DEFAULT.activatedMap });
+    default:
+      key satisfies never;
+  }
+  return browser.storage.local.get(DEFAULT);
 }
 
 export const $lsset = (state: Partial<WorkspaceState>): Promise<void> =>

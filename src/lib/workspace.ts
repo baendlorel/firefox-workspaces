@@ -1,8 +1,20 @@
-import { Sym } from './consts.js';
 import { $genId } from './utils.js';
 import { WorkspaceTab } from './workspace-tab.js';
 
+export const createWorkspacePlain = (formData: WorkspaceFormData): WorkspacePlain => ({
+  id: $genId(),
+  name: formData.name,
+  color: formData.color,
+  tabs: formData.tabs,
+  createdAt: Date.now(),
+  lastOpened: 0,
+});
+
 export class Workspace implements WorkspacePlain {
+  static create(raw: WorkspaceFormData): Workspace {
+    return new Workspace(raw);
+  }
+
   static from(raw: WorkspaceFormData): Workspace {
     return new Workspace(raw);
   }
@@ -13,7 +25,6 @@ export class Workspace implements WorkspacePlain {
   tabs: WorkspaceTab[];
   createdAt: number;
   lastOpened: number;
-  windowId?: number;
 
   constructor(raw: WorkspaceFormData) {
     this.id = $genId();
@@ -22,22 +33,10 @@ export class Workspace implements WorkspacePlain {
     this.tabs = raw.tabs;
     this.createdAt = Date.now();
     this.lastOpened = 0;
-    this.windowId = undefined;
   }
 
   get pinnedTabs(): WorkspaceTab[] {
     return this.tabs.filter((tab) => tab.pinned);
-  }
-
-  setWindowId(windowId: number = Sym.NotProvided) {
-    this.updateLastOpened();
-    if (windowId !== Sym.NotProvided) {
-      this.windowId = windowId;
-    }
-  }
-
-  updateLastOpened() {
-    this.lastOpened = Date.now();
   }
 }
 
@@ -53,7 +52,6 @@ export class IndexedWorkspace extends Workspace {
     workspace.tabs = data.tabs; // ?? 这里可能是plainobject而不是真正的WorkspaceTab实例
     workspace.createdAt = data.createdAt;
     workspace.lastOpened = data.lastOpened;
-    workspace.windowId = data.windowId;
     return workspace;
   }
 

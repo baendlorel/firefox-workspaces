@@ -4,7 +4,6 @@ import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { $lsget, $send, i } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
-import { stringify } from './debug.js';
 
 import { Menu } from '@web/components/menu/index.js';
 import about from '@web/components/about.js';
@@ -20,6 +19,8 @@ import bugSvg from '@web/assets/bug.svg?raw';
 import heartSvg from '@web/assets/heart.svg?raw';
 import gearSvg from '@web/assets/gear.svg?raw';
 import workspaceSvg from '@web/assets/workspace.svg?raw';
+
+import { stringify } from './debug.js';
 
 function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const SIZE = 18;
@@ -87,7 +88,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: item(boxArrowUpSvg, i('export')),
       action: async function (this) {
-        const state = await $lsget();
+        const state = await popupService.getExportData();
 
         // Create and download JSON file
         const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -148,15 +149,13 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const header = div('wb-header', [title, addBtn, moreBtn]);
 
   // # register events
-  const init = (workspace?: WorkspacePlain) => {
+  popupService.getWorkspaceOfCurrentWindow().then((workspace) => {
     title.textContent = workspace?.name ?? i('workspace');
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);
     const darken = color.adjustBrightness(-0.36);
     const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;
     header.style.setProperty('--header-darken-gradient', gradient);
-  };
-
-  popupService.getWorkspaceOfCurrentWindow().then(init);
+  });
 
   addBtn.addEventListener('click', () => bus.emit('edit', null));
   moreBtn.addEventListener('click', () => {

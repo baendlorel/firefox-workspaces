@@ -1,6 +1,6 @@
 import '@/lib/promise-ext.js';
-import { i } from '@/lib/ext-apis.js';
-import { Action, OnUpdatedChangeInfoStatus } from './lib/consts.js';
+import { $lsset, i } from '@/lib/ext-apis.js';
+import { Action, OnUpdatedChangeInfoStatus, RandomNameLanguage, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
 
 class WorkspaceBackground {
@@ -9,15 +9,27 @@ class WorkspaceBackground {
   constructor() {
     // !! "dist/manager.js" is removed from manifest.background.scripts
     this.manager = WorkspaceManager.getInstance();
-    this.init().then(() => this.registerListeners());
+    this.init();
   }
 
-  private init() {
-    // Restore sessions on startup
-    return this.manager
-      .restoreSessions()
-      .then(() => logger.info('initialized in background'))
-      .fallback(i('failedToInitialize'));
+  private async init() {
+    // # init storage
+    const state = (await browser.storage.local.get(null)) as WorkspaceState;
+    const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = state;
+
+    if (workspaces === Sym.NotProvided) {
+      await $lsset({ workspaces: [] });
+    }
+
+    if (settings === Sym.NotProvided) {
+      await $lsset({
+        settings: { theme: Theme.Auto, randomNameLanguage: RandomNameLanguage.Auto },
+      });
+    }
+
+    // Always clear activatedMap because it contains runtime data
+    await $lsset({ activatedMap: new Map() });
+    await this.registerListeners();
   }
 
   private getPopup(windowId: number) {

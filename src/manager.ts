@@ -2,7 +2,7 @@ import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Consts, Sym } from './lib/consts.js';
 import { $aboutBlank, i } from './lib/ext-apis.js';
-import { $genId, $sleep } from './lib/utils.js';
+import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { IndexedWorkspace, Workspace } from './lib/workspace.js';
 import { WorkspaceContainer } from './containers/workspaces.js';
@@ -237,16 +237,7 @@ export class WorkspaceManager {
 
   // todo 貌似session可以访问到最近关闭的标签页。是否可以用这个办法来保存标签页呢？
   // Restore all workspace sessions on startup
-  async restoreSessions() {
-    const arr = this.workspaces.arr;
-    for (let i = 0; i < arr.length; i++) {
-      arr[i].windowId = undefined;
-    }
-    // Clear active workspaces on startup
-    this.workspaces.deactivateAll();
-    await this.save();
-    logger.info('Cleared stale window associations and active workspaces on startup');
-  }
+  async restoreSessions() {}
 
   // Get recently closed work groups
   getRecentlyClosed(limit: number = 5) {
@@ -256,31 +247,12 @@ export class WorkspaceManager {
       .slice(0, limit);
   }
 
-  exportData(): ExportData {
-    return {
-      version: '__VERSION__',
-      exportDate: Date.now(),
-      workspaceses: this.workspaces.arr,
-    };
-  }
-
-  async importData(data: ExportData): Promise<boolean> {
-    if (!Array.isArray(data.workspaceses)) {
-      logger.error('data.workspaceses must be Workspace[]', data);
-      return false;
+  async importData(state: WorkspaceState) {
+    if (!Array.isArray(state.workspaces)) {
+      logger.error('data.workspaceses must be Workspace[]', state);
+      return;
     }
 
-    // Clear existing groups (with confirmation in UI)
-    this.workspaces.clear();
-
-    // Import groups
-    for (let i = 0; i < data.workspaceses.length; i++) {
-      const workspace = IndexedWorkspace.load(i, data.workspaceses[i]);
-      // prevent ID conflicts
-      workspace.id = $genId();
-      this.workspaces.add(workspace);
-    }
-
-    return this.save();
+    // todo 校验
   }
 }

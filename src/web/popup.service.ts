@@ -1,12 +1,17 @@
 import { Action } from '@/lib/consts.js';
 import { $lsget, $lsset, $send } from '@/lib/ext-apis.js';
-import { Workspace } from '@/lib/workspace.js';
+import { createWorkspacePlain } from '@/lib/workspace.js';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent();
     const workspaces = await $lsget('workspaces');
-    return workspaces.find((w) => w.windowId === currentWindow.id);
+    const activatedMap = await $lsget('activatedMap');
+    if (currentWindow.id === undefined) {
+      return undefined;
+    }
+    const workspaceId = activatedMap.get(currentWindow.id);
+    return workspaces.find((w) => w.id === workspaceId);
   }
 
   /**
@@ -15,7 +20,7 @@ class PopupService {
   async save(formData: WorkspaceFormData) {
     const workspaces = await $lsget('workspaces');
 
-    const newWorkspace = Workspace.from(formData);
+    const newWorkspace = createWorkspacePlain(formData);
     if (workspaces.every((w) => w.id !== newWorkspace.id)) {
       workspaces.push(newWorkspace);
     }
@@ -51,6 +56,12 @@ class PopupService {
       action: Action.Open,
       workspace,
     });
+  }
+
+  async getExportData(): Promise<WorkspaceStateWithHash> {
+    const state = await $lsget();
+    // todo 采取一个哈希算法
+    return { ...state, hash: 'ddd' };
   }
 }
 

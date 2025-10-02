@@ -30,7 +30,6 @@ declare global {
     tabs: WorkspaceTab[];
     createdAt: number;
     lastOpened: number;
-    windowId?: number;
   }
 
   interface WorkspaceFormData {
@@ -46,10 +45,12 @@ declare global {
   }
 
   interface WorkspaceState {
-    hash: string;
     workspaces: WorkspacePlain[];
     settings: WorkspaceSettings;
+    activatedMap: Map<number, string>; // windowId -> workspaceId
   }
+
+  type WorkspaceStateWithHash = WorkspaceState & { hash: string };
 
   type WorkspaceStateKey = keyof WorkspaceState;
 
