@@ -8,3 +8,6 @@ export const $aboutBlank = () =>
     url: 'about:blank',
     type: 'normal',
   });
+
+true satisfies IsSameType<I18NEnKey, I18NZhKey>;
+export const i = browser.i18n.getMessage as (messageName: I18NKey, substitutions?: any) => string;
