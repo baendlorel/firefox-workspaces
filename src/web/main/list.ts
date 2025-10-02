@@ -1,7 +1,6 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, h, svg } from '@/lib/dom.js';
 import { $lsget } from '@/lib/ext-apis.js';
-import { Workspace } from '@/lib/workspace.js';
 import popupService from '@web/popup.service.js';
 
 import editIcon from '@web/assets/3-dots.svg?raw';
@@ -13,7 +12,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'wb-ul');
   const lis: WorkspaceLi[] = [];
 
-  const renderList = (workspaces: Workspace[]) => {
+  const renderList = (workspaces: WorkspacePlain[]) => {
     // clear all children
     container.textContent = '';
     lis.length = 0;
@@ -49,6 +48,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     }
   };
 
+  // * reserved
   const activateHighlight = (activated: string[]) => {
     for (let i = 0; i < lis.length; i++) {
       const li = lis[i];

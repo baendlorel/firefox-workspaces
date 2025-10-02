@@ -3,7 +3,6 @@ import { RANDOM_NAME_EN_A, RANDOM_NAME_EN_B, WORKSPACE_COLORS } from '@/lib/cons
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
 import { i } from '@/lib/ext-apis.js';
-import { Workspace } from '@/lib/workspace.js';
 import { WorkspaceTab } from '@/lib/workspace-tab.js';
 
 import { confirmation, danger, info } from '@web/components/dialog/alerts.js';
@@ -14,7 +13,7 @@ import popupService from '@web/popup.service.js';
 import trashSvg from '@web/assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
-  let editingWorkspace: Workspace | null = null;
+  let editingWorkspace: WorkspacePlain | null = null;
   let currentTabs: WorkspaceTab[] = [];
 
   // # body
@@ -62,7 +61,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   };
 
   // # register events
-  bus.on('edit', (workspace: Workspace | null = null, tabs: browser.tabs.Tab[] = []) => {
+  bus.on('edit', (workspace: WorkspacePlain | null = null, tabs: browser.tabs.Tab[] = []) => {
     editingWorkspace = workspace;
     currentTabs = tabs.map(WorkspaceTab.from);
 

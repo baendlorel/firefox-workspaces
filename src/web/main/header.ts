@@ -1,10 +1,9 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
-import { Consts, Action, Sym } from '@/lib/consts.js';
+import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { $lsget, $send, i } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
-import { Workspace } from '@/lib/workspace.js';
 import { stringify } from './debug.js';
 
 import { Menu } from '@web/components/menu/index.js';
@@ -65,7 +64,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
 
               const response = await $send<ImportRequest>({
                 action: Action.Import,
-                data: data,
+                data,
               });
 
               if (response.succ) {
@@ -149,7 +148,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const header = div('wb-header', [title, addBtn, moreBtn]);
 
   // # register events
-  const init = (workspace?: Workspace) => {
+  const init = (workspace?: WorkspacePlain) => {
     title.textContent = workspace?.name ?? i('workspace');
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);
     const darken = color.adjustBrightness(-0.36);

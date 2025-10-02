@@ -1,8 +1,7 @@
 import { Action } from '@/lib/consts.js';
-import { Workspace } from '@/lib/workspace.ts';
 
 declare global {
-  // #region Request
+  // # requests
   interface GetStateRequest {
     action: Action.GetState;
   }
@@ -13,7 +12,7 @@ declare global {
 
   interface OpenRequest {
     action: Action.Open;
-    workspace: Workspace;
+    workspace: WorkspacePlain;
   }
 
   interface CheckPageInWorkspacesRequest {
@@ -23,7 +22,7 @@ declare global {
 
   interface ImportRequest {
     action: Action.Import;
-    data: Workspace[];
+    data: WorkspaceState;
   }
 
   // Union type for all possible requests
@@ -33,9 +32,8 @@ declare global {
     | OpenRequest
     | CheckPageInWorkspacesRequest
     | ImportRequest;
-  // #endregion
 
-  // #region Response
+  // # responses
   interface BaseResponse {
     succ: boolean;
   }
@@ -45,7 +43,7 @@ declare global {
   }
 
   interface GetResponse extends BaseResponse {
-    data: Workspace[];
+    data: WorkspacePlain[];
     activated: string[]; // Array of active workspace IDs
   }
 
@@ -58,7 +56,7 @@ declare global {
   }
 
   interface CheckPageInWorkspacesResponse extends BaseResponse {
-    data: Workspace[];
+    data: WorkspacePlain[];
   }
 
   interface ImportResponse extends BaseResponse {
@@ -76,6 +74,4 @@ declare global {
     [Action.CheckPageInWorkspaces]: CheckPageInWorkspacesResponse;
     [Action.Import]: ImportResponse;
   }
-
-  // #endregion
 }

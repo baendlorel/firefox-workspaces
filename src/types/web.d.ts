@@ -1,5 +1,4 @@
 import { WorkspaceTab } from '@/lib/workspace-tab.ts';
-import { Workspace } from '@/lib/workspace.ts';
 
 declare global {
   interface ComponentControlsArgs {
@@ -32,7 +31,7 @@ declare global {
 
     'render-list': () => void;
     'toggle-empty-state': (visible: boolean) => void;
-    edit: (workspace: Workspace | null, tabs?: browser.tabs.Tab[]) => void;
-    open: (workspace: Workspace) => void;
+    edit: (workspace: WorkspacePlain | null, tabs?: browser.tabs.Tab[]) => void;
+    open: (workspace: WorkspacePlain) => void;
   };
 }

@@ -14,7 +14,6 @@
   ],
   "background": {
     "scripts": [
-      "dist/manager.js",
       "dist/background.js"
     ],
     "type": "module"

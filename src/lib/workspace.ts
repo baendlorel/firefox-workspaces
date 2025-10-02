@@ -2,7 +2,11 @@ import { Sym } from './consts.js';
 import { $genId } from './utils.js';
 import { WorkspaceTab } from './workspace-tab.js';
 
-export class Workspace {
+export class Workspace implements WorkspacePlain {
+  static from(raw: WorkspaceFormData): Workspace {
+    return new Workspace(raw);
+  }
+
   id: string;
   name: string;
   color: HexColor;
@@ -19,10 +23,6 @@ export class Workspace {
     this.createdAt = Date.now();
     this.lastOpened = 0;
     this.windowId = undefined;
-  }
-
-  static from(raw: WorkspaceFormData): Workspace {
-    return new Workspace(raw);
   }
 
   get pinnedTabs(): WorkspaceTab[] {

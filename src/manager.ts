@@ -9,6 +9,7 @@ import { WorkspaceContainer } from './containers/workspaces.js';
 import { TabContainer } from './containers/tabs.js';
 
 // Workspace Data Model and Storage Manager
+// todo 准备删除不需要的containers类，转为使用数组或数组衍生类
 export class WorkspaceManager {
   static getInstance() {
     if (!this._instance) {
@@ -63,132 +64,13 @@ export class WorkspaceManager {
     }
   }
 
-  /**
-   * Save workspace data
-   * - Won't throw
-   */
-  save(): Promise<boolean> {
-    const data: WorkspaceStore = { workspaces: this.workspaces.arr };
-    return browser.storage.local
-      .set(data)
-      .then(() => true)
-      .fallback('__func__: Saving failed', false);
-  }
-
   async create(raw: WorkspaceFormData): Promise<IndexedWorkspace> {
     const workspace = this.workspaces.create(raw);
     await this.save();
     return workspace;
   }
 
-  async update(id: string, updates: Partial<Workspace>) {
-    const workspace = this.workspaces.get(id);
-    if (!workspace) {
-      return null;
-    }
-    Object.assign(workspace, updates);
-    await this.save();
-    return workspace;
-  }
-
-  // Delete a workspace
-  async delete(id: string): Promise<boolean> {
-    const target = this.workspaces.get(id);
-    if (!target) {
-      return false;
-    }
-
-    // Mark this workspace as being deleted to avoid conflicts with window close events
-    this.workspaces.addDeleting(id);
-
-    // If workspace has an active window, close it before deletion
-    if (target.windowId !== undefined) {
-      await browser.windows
-        .remove(target.windowId)
-        .then(() => logger.info(`Closed window ${target.windowId} for workspace: ${target.name}`))
-        .fallback(`Window ${target.windowId} was already closed or doesn't exist:`);
-
-      // Remove from active workspaces list
-      this.workspaces.deactivate(id);
-    }
-
-    this.workspaces.delete(id);
-    await this.save();
-    return true;
-  }
-
-  // Add tab to workspace
-  async addTab(id: string, browserTab: browser.tabs.Tab) {
-    const workspace = this.workspaces.get(id);
-    if (!workspace) {
-      logger.WorkspaceNotFound(id);
-      return false;
-    }
-
-    const tab = WorkspaceTab.from(browserTab);
-    if (!workspace.tabs.some((t) => t.id === browserTab.id)) {
-      workspace.tabs.push(tab);
-    }
-
-    return this.save();
-  }
-
-  async removeTab(id: string, tabId: number) {
-    const workspace = this.workspaces.get(id);
-    if (!workspace) {
-      logger.WorkspaceNotFound(id);
-      return false;
-    }
-
-    workspace.tabs = workspace.tabs.filter((t) => t.id !== tabId);
-    return this.save();
-  }
-
-  // Move tab between work groups
-  async moveTabBetweenWorkspaces(fromId: string, toId: string, tabId: number): Promise<boolean> {
-    const from = this.workspaces.get(fromId);
-    const to = this.workspaces.get(toId);
-
-    if (!from || !to) {
-      return false;
-    }
-
-    // Find tab in source group
-    const tab = from.tabs.find((t) => t.id === tabId);
-    if (!tab) {
-      logger.TabNotFoundInWorkspace(fromId, tabId);
-      return false;
-    }
-
-    // Remove from source group
-    await this.removeTab(fromId, tabId);
-
-    // Add to destination group
-    to.tabs.push(tab);
-
-    return this.save();
-  }
-
-  // Toggle tab pinned status within a group
-  async toggleTabPin(id: string, tabId: number) {
-    const workspace = this.workspaces.get(id);
-    if (!workspace) {
-      logger.WorkspaceNotFound(id);
-      return false;
-    }
-
-    // Check if tab is in regular tabs
-    const tab = workspace.tabs.find((t) => t.id === tabId);
-    if (!tab) {
-      logger.TabNotFoundInWorkspace(id, tabId);
-      return false;
-    }
-
-    tab.pinned = !tab.pinned;
-    return this.save();
-  }
-
-  setBadge(workspace: Workspace, windowId?: number) {
+  setBadge(workspace: WorkspacePlain, windowId?: number) {
     if (!windowId) {
       logger.debug('Not setting badge, no windowId');
       return;

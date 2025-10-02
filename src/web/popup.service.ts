@@ -28,7 +28,7 @@ class PopupService {
   }
 
   // Delete workspace
-  async delete(workspace: Workspace) {
+  async delete(workspace: WorkspacePlain) {
     const workspaces = await $lsget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     if (index === -1) {
@@ -46,7 +46,7 @@ class PopupService {
    * 2. Unfocused popup is basically deleted.
    * 3. Click plugin button again creates a new popup page.
    */
-  open(workspace: Workspace): Promise<OpenResponse> {
+  open(workspace: WorkspacePlain): Promise<OpenResponse> {
     return $send<OpenRequest>({
       action: Action.Open,
       workspace,

@@ -1,5 +1,4 @@
 import 'rollup-plugin-func-macro';
-import { Workspace } from './lib/workspace.ts';
 import { RandomNameLanguage, Theme } from './lib/consts.ts';
 import { WorkspaceTab } from './lib/workspace-tab.ts';
 import type I18NEnMessage from '../_locales/en/messages.json';
@@ -21,6 +20,19 @@ declare global {
 
   type HexColor = `#${string}`;
 
+  /**
+   * Plain Object of workspace
+   */
+  interface WorkspacePlain {
+    id: string;
+    name: string;
+    color: HexColor;
+    tabs: WorkspaceTab[];
+    createdAt: number;
+    lastOpened: number;
+    windowId?: number;
+  }
+
   interface WorkspaceFormData {
     id: string | null;
     name: string;
@@ -35,7 +47,7 @@ declare global {
 
   interface WorkspaceState {
     hash: string;
-    workspaces: Workspace[];
+    workspaces: WorkspacePlain[];
     settings: WorkspaceSettings;
   }
 
@@ -48,12 +60,6 @@ declare global {
     lastOpened: number;
     createdAt: number;
     isActive: boolean;
-  }
-
-  interface ExportData {
-    version: string;
-    exportDate: number;
-    workspaceses: Workspace[];
   }
 
   interface DraggingData {

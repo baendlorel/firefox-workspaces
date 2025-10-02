@@ -7,7 +7,7 @@ class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
 
   constructor() {
-    // WorkspaceManager is already loaded via manifest scripts
+    // !! "dist/manager.js" is removed from manifest.background.scripts
     this.manager = WorkspaceManager.getInstance();
     this.init().then(() => this.registerListeners());
   }
@@ -21,9 +21,7 @@ class WorkspaceBackground {
   }
 
   private getPopup(windowId: number) {
-    return browser.extension
-      .getViews({ type: 'popup', windowId })
-      .find((v) => typeof v.popup.isWorkspacePopupPage);
+    return browser.extension.getViews({ type: 'popup', windowId }).find((v) => typeof v.popup);
   }
 
   private registerListeners() {

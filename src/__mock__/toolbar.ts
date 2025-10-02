@@ -21,7 +21,7 @@ export class MockBrowser {
     }
   }
 
-  private getStoredWorkspaces(): Workspace[] {
+  private getStoredWorkspaces(): WorkspacePlain[] {
     try {
       const stored = localStorage.getItem(this.storageKey);
       if (!stored) return [];
@@ -43,7 +43,7 @@ export class MockBrowser {
     }
   }
 
-  private saveWorkspaces(workspaces: Workspace[]): void {
+  private saveWorkspaces(workspaces: WorkspacePlain[]): void {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(workspaces));
     } catch (error) {
@@ -237,7 +237,7 @@ export class MockBrowser {
         }
 
         // Update last opened time
-        workspace.updateLastOpened();
+        workspace.lastOpened = Date.now();
         this.saveWorkspaces(workspaces);
 
         return {

@@ -12,10 +12,6 @@ Promise.dialogDanger = danger;
 
 // Popup JavaScript for Workspaces Manager
 class PopupPage {
-  get isWorkspacePopupPage() {
-    return true;
-  }
-
   constructor() {
     logger.info('PopupPage Created');
     const main = createView();
