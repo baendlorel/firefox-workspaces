@@ -31,3 +31,43 @@
 .form-group input:invalid {
   border-color: var(--danger);
 }
+
+.radio {
+  --size: 21px;
+}
+
+.radio label {
+  padding-left: calc(5px + var(--size));
+}
+
+.radio label:hover {
+  @apply cursor-pointer;
+}
+
+.radio label::before {
+  @apply absolute block;
+  content: '';
+  margin-left: calc(0px - var(--size));
+  width: var(--size);
+  height: var(--size);
+}
+
+.radio input[type='radio'] + label::before {
+  background: url('assets/circle.svg');
+}
+
+.radio input[type='radio']:checked + label::before {
+  background: url('assets/check-circle-fill.svg');
+}
+
+.radio input[type='radio'] {
+  position: absolute;
+  appearance: none;
+  width: 0;
+  height: 0;
+  border: 0;
+  outline: 0;
+  margin: 0;
+  padding: 0;
+  opacity: 0;
+}

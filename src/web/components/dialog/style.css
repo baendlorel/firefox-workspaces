@@ -104,8 +104,12 @@ dialog:focus {
 }
 
 .dialog-close {
-  @apply me-1 mt-0.5;
+  @apply me-1 mt-0.5 w-5 h-5;
   opacity: 0.65;
+}
+
+.dialog-close svg {
+  @apply m-auto;
 }
 
 .dialog-close:hover {
