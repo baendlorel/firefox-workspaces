@@ -1,6 +1,5 @@
 export const enum Consts {
   StorageKey = 'kasukabe_tsumugi:workspaces',
-  InjectionFlag = 'kasukabe_tsumugi_workspaces_content_loaded',
   DefaultColor = '#2da191',
 }
 
@@ -83,4 +82,5 @@ export const RANDOM_NAME_PART2 = [
 export class Sym extends null {
   static readonly Reject = Symbol('Reject');
   static readonly NotProvided = Symbol('NotProvided') as any;
+  static readonly InjectionFlag = Symbol('KasukabeWorkspace');
 }
