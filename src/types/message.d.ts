@@ -4,6 +4,10 @@ import { WorkspaceTab } from '@/lib/workspace-tab.ts';
 
 declare global {
   // #region Request
+  interface GetStateRequest {
+    action: Action.GetState;
+  }
+
   interface GetRequest {
     action: Action.Get;
   }
@@ -33,10 +37,6 @@ declare global {
     url: string;
   }
 
-  interface ExportRequest {
-    action: Action.Export;
-  }
-
   interface ImportRequest {
     action: Action.Import;
     data: Workspace[];
@@ -44,75 +44,70 @@ declare global {
 
   // Union type for all possible requests
   type MessageRequest =
+    | GetStateRequest
     | GetRequest
     | SaveRequest
     | DeleteRequest
     | OpenRequest
     | GetStatsRequest
     | CheckPageInWorkspacesRequest
-    | ExportRequest
     | ImportRequest;
   // #endregion
 
   // #region Response
-  interface GetResponse {
-    success: boolean;
+  interface BaseResponse {
+    succ: boolean;
+  }
+
+  interface GetStateResponse extends BaseResponse {
+    data: WorkspaceState;
+  }
+
+  interface GetResponse extends BaseResponse {
     data: Workspace[];
     activated: string[]; // Array of active workspace IDs
   }
 
-  interface SaveResponse {
-    success: boolean;
+  interface SaveResponse extends BaseResponse {
     data: Workspace;
   }
 
-  interface DeleteResponse {
-    success: boolean;
-  }
+  interface DeleteResponse extends BaseResponse {}
 
-  interface AddCurrentTabResponse {
-    success: boolean;
+  interface AddCurrentTabResponse extends BaseResponse {
     error?: string;
   }
 
-  interface OpenResponse {
-    success: boolean;
+  interface OpenResponse extends BaseResponse {
     data: { id?: number | undefined } | null;
   }
 
-  interface GetStatsResponse {
-    success: boolean;
+  interface GetStatsResponse extends BaseResponse {
     data?: WorkspaceStats | null;
   }
 
-  interface CheckPageInWorkspacesResponse {
-    success: boolean;
+  interface CheckPageInWorkspacesResponse extends BaseResponse {
     data: Workspace[];
   }
 
-  interface ExportResponse {
-    success: boolean;
-    data: Workspace[];
-  }
+  interface ExportResponse extends BaseResponse {}
 
-  interface ImportResponse {
-    success: boolean;
+  interface ImportResponse extends BaseResponse {
     message?: string;
   }
 
-  interface ErrorResponse {
-    success: false;
+  interface ErrorResponse extends BaseResponse {
     error: string;
   }
 
   interface MessageResponseMap {
+    [Action.GetState]: GetStateResponse;
     [Action.Get]: GetResponse;
     [Action.Save]: SaveResponse;
     [Action.Delete]: DeleteResponse;
     [Action.Open]: OpenResponse;
     [Action.GetStats]: GetStatsResponse;
     [Action.CheckPageInWorkspaces]: CheckPageInWorkspacesResponse;
-    [Action.Export]: ExportResponse;
     [Action.Import]: ImportResponse;
   }
 

@@ -37,13 +37,13 @@ export const enum RandomNameLanguage {
 }
 
 export const enum Action {
+  GetState,
   Get,
   Save,
   Delete,
   Open,
   GetStats,
   CheckPageInWorkspaces,
-  Export,
   Import,
 }
 

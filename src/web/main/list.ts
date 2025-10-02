@@ -59,9 +59,9 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     }
   };
 
-  bus.on('render-list', () => {
-    renderList(popupService.workspaces);
-    activateHighlight(popupService.activated);
+  bus.on('render-list', (workspaces, activated) => {
+    renderList(workspaces);
+    activateHighlight(activated);
   });
 
   return container;

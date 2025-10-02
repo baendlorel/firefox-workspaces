@@ -299,5 +299,9 @@
   },
   "lastUpdatedAt": {
     "message": "last updated at"
+  },
+  "failedToLoadState": {
+    "message": "Failed to load plugin state data",
+    "description": "Load state error message"
   }
 }

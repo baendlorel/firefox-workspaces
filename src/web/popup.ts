@@ -18,19 +18,21 @@ class PopupPage {
   }
 
   constructor() {
-    logger.verbose('PopupPage initializing');
-    this.init();
+    logger.info('PopupPage Created');
   }
 
-  private async init() {
+  async init() {
     const main = createView();
     await popupService.load();
-    main.emit('render-list');
+    main.emit('render-list', popupService.workspaces, popupService.activated);
   }
 }
 
 // Initialize popup when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => (window.popup = new PopupPage()));
+document.addEventListener('DOMContentLoaded', () => {
+  window.popup = new PopupPage();
+  window.popup.init();
+});
 
 declare global {
   interface Window {

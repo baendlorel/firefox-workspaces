@@ -299,5 +299,9 @@
   },
   "lastUpdatedAt": {
     "message": "最近更新于"
+  },
+  "failedToLoadState": {
+    "message": "加载插件数据失败",
+    "description": "Load state error message"
   }
 }

@@ -1,6 +1,6 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
-import { Consts, Action } from '@/lib/consts.js';
+import { Consts, Action, Sym } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { $send, i } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
@@ -67,7 +67,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
                 data: data,
               });
 
-              if (response.success) {
+              if (response.succ) {
                 alert(response.message || i('importSuccessful'));
                 // Refresh the workspace list
                 window.location.reload();
@@ -87,11 +87,11 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: item(boxArrowUpSvg, i('export')),
       action: async () => {
-        const response = await $send<ExportRequest>({
-          action: Action.Export,
-        }).fallbackWithDialog(i('exportFailed'), { success: false, data: [] });
+        const response = await $send<GetRequest>({
+          action: Action.Get,
+        }).fallbackWithDialog(i('exportFailed'));
 
-        if (!response.success) {
+        if (response === Sym.Reject || !response.succ) {
           return;
         }
 

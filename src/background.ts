@@ -58,7 +58,7 @@ class WorkspaceBackground {
       async (message: MessageRequest): Promise<MessageResponseMap[Action]> =>
         this.handlePopupMessage(message).catch((error) => {
           logger.error('Error handling message', error);
-          const errorResponse: ErrorResponse = { success: false, error: 'Error handling message.' };
+          const errorResponse: ErrorResponse = { succ: false, error: 'Error handling message.' };
           return errorResponse;
         })
     );
@@ -163,9 +163,15 @@ class WorkspaceBackground {
 
   private async handlePopupMessage(message: MessageRequest): Promise<MessageResponseMap[Action]> {
     const action = message.action;
+    if (action === Action.GetState) {
+      const state = (await browser.storage.local.get()) as WorkspaceState;
+      const response: MessageResponseMap[typeof action] = { succ: true, data: state };
+      return response;
+    }
+
     if (action === Action.Get) {
       const response: MessageResponseMap[typeof action] = {
-        success: true,
+        succ: true,
         data: this.manager.workspaces.arr,
         activated: this.manager.activeWorkspaces,
       };
@@ -175,7 +181,7 @@ class WorkspaceBackground {
     if (action === Action.Save) {
       const newWorkspace = await this.manager.create(message.data);
       const response: MessageResponseMap[typeof action] = {
-        success: true,
+        succ: true,
         data: newWorkspace,
       };
       return response;
@@ -183,7 +189,7 @@ class WorkspaceBackground {
 
     if (action === Action.Delete) {
       const deleted = await this.manager.delete(message.id);
-      const response: MessageResponseMap[typeof action] = { success: deleted };
+      const response: MessageResponseMap[typeof action] = { succ: deleted };
       return response;
     }
 
@@ -193,7 +199,7 @@ class WorkspaceBackground {
         .fallback('Failed to open workspace in window:', null);
 
       const response: MessageResponseMap[typeof action] = {
-        success: window !== null,
+        succ: window !== null,
         data: window === null ? { id: NaN } : { id: window.id },
       };
       return response;
@@ -202,7 +208,7 @@ class WorkspaceBackground {
     if (action === Action.GetStats) {
       const stats = this.manager.getStats(message.workspaceId);
       const response: MessageResponseMap[typeof action] = {
-        success: stats !== null,
+        succ: stats !== null,
         data: stats,
       };
       return response;
@@ -212,16 +218,7 @@ class WorkspaceBackground {
       const matched = this.manager.workspaces.arr.filter((workspace) =>
         workspace.tabs.some((tab) => tab.url === message.url)
       );
-      const response: MessageResponseMap[typeof action] = { success: true, data: matched };
-      return response;
-    }
-
-    if (action === Action.Export) {
-      const workspaces = this.manager.workspaces.arr;
-      const response: MessageResponseMap[typeof action] = {
-        success: true,
-        data: workspaces,
-      };
+      const response: MessageResponseMap[typeof action] = { succ: true, data: matched };
       return response;
     }
 
@@ -239,22 +236,24 @@ class WorkspaceBackground {
         }
         await this.manager.save();
         const response: MessageResponseMap[typeof action] = {
-          success: true,
+          succ: true,
           message: `Successfully imported ${message.data.length} workspaces`,
         };
         return response;
       } catch (error) {
         const response: MessageResponseMap[typeof action] = {
-          success: false,
+          succ: false,
           message: `Failed to import workspaces: ${error}`,
         };
         return response;
       }
     }
 
+    action satisfies never;
+
     // Error
     const errorResponse: ErrorResponse = {
-      success: false,
+      succ: false,
       error: 'Unknown action: ' + String(action),
     };
     return errorResponse;

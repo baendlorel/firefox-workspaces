@@ -21,13 +21,30 @@ class PopupService {
     return this.workspaces.length === 0;
   }
 
+  async loadState() {
+    const response = await $send<GetStateRequest>({
+      action: Action.GetState,
+    }).fallbackWithDialog(i('failedToLoadState'));
+
+    if (response === Sym.Reject || !response.succ) {
+      return;
+    }
+
+    const loaded = response.data ?? [];
+    this.workspaces.length = 0;
+    for (let i = 0; i < loaded.list.length; i++) {
+      const w = loaded.list[i];
+      this.workspaces.push(IndexedWorkspace.load(NaN, w));
+    }
+  }
+
   // Load work groups from background
   async load() {
     const response = await $send<GetRequest>({
       action: Action.Get,
     }).fallbackWithDialog(i('failedToLoadWorkGroups'));
 
-    if (response === Sym.Reject || !response.success) {
+    if (response === Sym.Reject || !response.succ) {
       return;
     }
 
@@ -45,7 +62,11 @@ class PopupService {
     }
   }
 
-  // Save workspace (create or update)
+  /**
+   * Save workspace (create or update)
+   *
+   * [WARN] **Should manally call `load` to refresh data!**
+   */
   async save(formData: WorkspaceFormData) {
     const response = await $send<SaveRequest>({
       action: Action.Save,
@@ -56,12 +77,10 @@ class PopupService {
       return;
     }
 
-    if (!response.success) {
+    if (!response.succ) {
       info(i('failedToSaveWorkspace'));
       logger.error('Save workspace failed', response);
     }
-
-    await this.load();
 
     // If creating a workspace with tabs, open it automatically
     if (formData.id === null && formData.tabs.length > 0) {
@@ -80,7 +99,7 @@ class PopupService {
       return;
     }
 
-    if (!response.success) {
+    if (!response.succ) {
       info(i('failedToDeleteWorkspace'));
       return;
     }

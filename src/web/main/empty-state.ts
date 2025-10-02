@@ -14,6 +14,9 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     h('p', '', i('createWorkspaceToGetStarted')),
   ]);
 
-  bus.on('render-list', () => (el.style.display = popupService.isEmpty ? 'block' : 'none'));
+  bus.on(
+    'render-list',
+    (workspaces) => (el.style.display = workspaces.length === 0 ? 'block' : 'none')
+  );
   return el;
 };

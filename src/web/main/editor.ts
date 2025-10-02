@@ -109,9 +109,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       tabs: currentTabs,
     });
 
-    bus.emit('render-list');
+    await popupService.load();
 
-    // close the modal
+    // use latest data to render the list
+    bus.emit('render-list', popupService.workspaces, popupService.activated);
+
     close();
   });
 

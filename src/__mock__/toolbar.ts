@@ -221,7 +221,7 @@ export class MockBrowser {
     switch (action) {
       case Action.Get:
         return {
-          success: true,
+          succ: true,
           data: workspaces,
         } as GetResponse;
 
@@ -233,7 +233,7 @@ export class MockBrowser {
         this.saveWorkspaces(workspaces);
 
         return {
-          success: true,
+          succ: true,
           data: newWorkspace,
         } as SaveResponse;
       }
@@ -244,7 +244,7 @@ export class MockBrowser {
         this.saveWorkspaces(filteredWorkspaces);
 
         return {
-          success: true,
+          succ: true,
         } as DeleteResponse;
       }
 
@@ -264,7 +264,7 @@ export class MockBrowser {
         this.saveWorkspaces(workspaces);
 
         return {
-          success: true,
+          succ: true,
           data: { id: Math.floor(Math.random() * 100000) },
         } as OpenResponse;
       }
@@ -290,7 +290,7 @@ export class MockBrowser {
         };
 
         return {
-          success: true,
+          succ: true,
           data: stats,
         } as GetStatsResponse;
       }
@@ -302,14 +302,14 @@ export class MockBrowser {
         const matchingWorkspaces = workspaces.filter((workspace) => workspace.tabs.some(matcher));
 
         return {
-          success: true,
+          succ: true,
           data: matchingWorkspaces,
         } as CheckPageInWorkspacesResponse;
       }
 
       default:
         return {
-          success: false,
+          succ: false,
           error: `Unknown action: ${action}`,
         } as ErrorResponse;
     }
