@@ -3,10 +3,11 @@ import { Action, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
 import { WorkspaceTab } from '@/lib/workspace-tab.js';
 import { Workspace } from '@/lib/workspace.js';
+import locale from '../../_locales/en/messages.json' with { type: 'json' };
 
 // # Mock browser API in dev mode
 
-class MockBrowser {
+export class MockBrowser {
   private shouldSucceed: boolean = true;
   private storageKey = 'mock_workspaces_data';
 
@@ -318,6 +319,10 @@ class MockBrowser {
     const createProxy: typeof this.createProxy = (...args) => this.createProxy(...args);
     const createResponse: typeof this.createResponse = (...args) => this.createResponse(...args);
 
+    const mocki = (s: I18NKey) => {
+      return locale[s].message;
+    };
+
     return new Proxy(function () {}, {
       get(_, key) {
         const newPath = [...path, key];
@@ -335,9 +340,11 @@ class MockBrowser {
         if (key === 'runtime.sendMessage') {
           return Promise.resolve(createResponse(args[0]));
         }
+        if (key === 'windows.getCurrent') {
+          return Promise.resolve([]);
+        }
         if (key === 'i18n.getMessage') {
-          const i18nKey = args[0];
-          return i18nKey.replace(/([A-Z])/g, ' $1').toLowerCase();
+          return mocki(args[0]);
         }
 
         return createProxy(path); // 调用后还能继续链式访问
@@ -345,4 +352,3 @@ class MockBrowser {
     });
   }
 }
-export default new MockBrowser();

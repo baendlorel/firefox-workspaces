@@ -4,6 +4,7 @@ import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { $send, i } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
+import { Workspace } from '@/lib/workspace.js';
 import { stringify } from './debug.js';
 
 import { Menu } from '@web/components/menu/index.js';
@@ -142,14 +143,15 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const header = div('wb-header', [title, addBtn, moreBtn]);
 
   // # register events
-
-  popupService.getWorkspaceOfCurrentWindow().then((workspace) => {
+  const init = (workspace?: Workspace) => {
     title.textContent = workspace?.name ?? i('workspace');
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);
     const darken = color.adjustBrightness(-0.36);
     const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;
     header.style.setProperty('--header-darken-gradient', gradient);
-  });
+  };
+
+  popupService.getWorkspaceOfCurrentWindow().then(init);
 
   addBtn.addEventListener('click', () => bus.emit('edit', null));
   moreBtn.addEventListener('click', () => {

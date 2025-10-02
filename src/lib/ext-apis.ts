@@ -1,3 +1,9 @@
+import { MockBrowser } from '@/__mock__/toolbar.js';
+
+if (__IS_DEV__) {
+  new MockBrowser();
+}
+
 // # Extension APIs
 export const $send = <M extends MessageRequest, R = MessageResponseMap[M['action']]>(
   message: M
