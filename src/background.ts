@@ -178,21 +178,6 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.Save) {
-      const newWorkspace = await this.manager.create(message.data);
-      const response: MessageResponseMap[typeof action] = {
-        succ: true,
-        data: newWorkspace,
-      };
-      return response;
-    }
-
-    if (action === Action.Delete) {
-      const deleted = await this.manager.delete(message.id);
-      const response: MessageResponseMap[typeof action] = { succ: deleted };
-      return response;
-    }
-
     if (action === Action.Open) {
       const window = await this.manager
         .open(message.workspace)

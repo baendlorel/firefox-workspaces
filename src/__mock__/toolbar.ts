@@ -225,32 +225,9 @@ export class MockBrowser {
           data: workspaces,
         } as GetResponse;
 
-      case Action.Save: {
-        const req = request as SaveRequest;
-        const newWorkspace = new Workspace(req.data);
-
-        workspaces.push(newWorkspace);
-        this.saveWorkspaces(workspaces);
-
-        return {
-          succ: true,
-          data: newWorkspace,
-        } as SaveResponse;
-      }
-
-      case Action.Delete: {
-        const req = request as DeleteRequest;
-        const filteredWorkspaces = workspaces.filter((ws) => ws.id !== req.id);
-        this.saveWorkspaces(filteredWorkspaces);
-
-        return {
-          succ: true,
-        } as DeleteResponse;
-      }
-
       case Action.Open: {
         const req = request as OpenRequest;
-        const workspace = workspaces.find((ws) => ws.id === req.workspaceId);
+        const workspace = workspaces.find((ws) => ws.id === req.workspace.id);
 
         if (!workspace) {
           return {

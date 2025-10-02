@@ -353,6 +353,7 @@ export class WorkspaceManager {
     }
   }
 
+  // todo 貌似session可以访问到最近关闭的标签页。是否可以用这个办法来保存标签页呢？
   // Restore all workspace sessions on startup
   async restoreSessions() {
     const arr = this.workspaces.arr;
