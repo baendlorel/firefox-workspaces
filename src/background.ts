@@ -162,7 +162,7 @@ class WorkspaceBackground {
 
   private async handlePopupMessage(message: MessageRequest): Promise<MessageResponse> {
     const action = message.action;
-    if (action === Action.GetWorkspaces) {
+    if (action === Action.Get) {
       const response: MessageResponseMap[typeof action] = {
         success: true,
         data: this.manager.workspaces.arr,
@@ -171,8 +171,8 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.CreateWorkspace) {
-      const newWorkspace = await this.manager.create(message.name, message.color);
+    if (action === Action.Create) {
+      const newWorkspace = await this.manager.create(message.name, message.color, message.tabs);
       const response: MessageResponseMap[typeof action] = {
         success: true,
         data: newWorkspace,
@@ -180,7 +180,7 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.UpdateWorkspace) {
+    if (action === Action.Update) {
       const updated = await this.manager.update(message.id, message.updates);
       const response: MessageResponseMap[typeof action] = {
         success: updated !== null,
@@ -189,7 +189,7 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.DeleteWorkspace) {
+    if (action === Action.Delete) {
       const deleted = await this.manager.delete(message.id);
       const response: MessageResponseMap[typeof action] = { success: deleted };
       return response;
@@ -207,7 +207,7 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.OpenWorkspace) {
+    if (action === Action.Open) {
       const window = await this.manager
         .open(message.workspaceId)
         .fallback('Failed to open workspace in window:', null);
@@ -246,6 +246,43 @@ class WorkspaceBackground {
       return response;
     }
 
+    if (action === Action.Export) {
+      const workspaces = this.manager.workspaces.arr;
+      const response: MessageResponseMap[typeof action] = {
+        success: true,
+        data: workspaces,
+      };
+      return response;
+    }
+
+    if (action === Action.Import) {
+      try {
+        for (const workspace of message.data) {
+          // Create workspace with its tabs
+          await this.manager.create(workspace.name, workspace.color, []);
+          // Get the last created workspace
+          const created = this.manager.workspaces.arr[this.manager.workspaces.arr.length - 1];
+          // Assign the original tabs and other properties
+          created.tabs = workspace.tabs || [];
+          created.createdAt = workspace.createdAt || Date.now();
+          created.lastOpened = workspace.lastOpened || 0;
+        }
+        await this.manager.save();
+        const response: MessageResponseMap[typeof action] = {
+          success: true,
+          message: `Successfully imported ${message.data.length} workspaces`,
+        };
+        return response;
+      } catch (error) {
+        const response: MessageResponseMap[typeof action] = {
+          success: false,
+          message: `Failed to import workspaces: ${error}`,
+        };
+        return response;
+      }
+    }
+
+    // Error
     const errorResponse: ErrorResponse = {
       success: false,
       error: 'Unknown action: ' + String(action),

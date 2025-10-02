@@ -1,26 +1,28 @@
-import { Workspace } from '@/lib/workspace.ts';
 import { Action } from '@/lib/consts.js';
+import { Workspace } from '@/lib/workspace.ts';
+import { WorkspaceTab } from '@/lib/workspace-tab.ts';
 
 declare global {
   // #region Request
-  interface GetWorkspacesRequest {
-    action: Action.GetWorkspaces;
+  interface GetRequest {
+    action: Action.Get;
   }
 
-  interface CreateWorkspaceRequest {
-    action: Action.CreateWorkspace;
+  interface CreateRequest {
+    action: Action.Create;
     name: string;
     color: HexColor;
+    tabs: WorkspaceTab[];
   }
 
-  interface UpdateWorkspaceRequest {
-    action: Action.UpdateWorkspace;
+  interface UpdateRequest {
+    action: Action.Update;
     id: string;
     updates: Partial<Workspace>;
   }
 
-  interface DeleteWorkspaceRequest {
-    action: Action.DeleteWorkspace;
+  interface DeleteRequest {
+    action: Action.Delete;
     id: string;
   }
 
@@ -36,8 +38,8 @@ declare global {
     tabId: number;
   }
 
-  interface OpenWorkspaceRequest {
-    action: Action.OpenWorkspace;
+  interface OpenRequest {
+    action: Action.Open;
     workspaceId: string;
   }
 
@@ -64,38 +66,49 @@ declare global {
     workspace: Workspace;
   }
 
+  interface ExportRequest {
+    action: Action.Export;
+  }
+
+  interface ImportRequest {
+    action: Action.Import;
+    data: Workspace[];
+  }
+
   // Union type for all possible requests
   type MessageRequest =
-    | GetWorkspacesRequest
-    | CreateWorkspaceRequest
-    | UpdateWorkspaceRequest
-    | DeleteWorkspaceRequest
+    | GetRequest
+    | CreateRequest
+    | UpdateRequest
+    | DeleteRequest
     | RemoveTabRequest
     | TogglePinRequest
-    | OpenWorkspaceRequest
+    | OpenRequest
     | MoveTabRequest
     | GetStatsRequest
-    | CheckPageInWorkspacesRequest;
+    | CheckPageInWorkspacesRequest
+    | ExportRequest
+    | ImportRequest;
   // #endregion
 
   // #region Response
-  interface GetWorkspacesResponse {
+  interface GetResponse {
     success: boolean;
     data: Workspace[];
     activeWorkspaces?: string[]; // Array of active workspace IDs
   }
 
-  interface CreateWorkspaceResponse {
+  interface CreateResponse {
     success: boolean;
     data: Workspace;
   }
 
-  interface UpdateWorkspaceResponse {
+  interface UpdateResponse {
     success: boolean;
     data: Workspace | null;
   }
 
-  interface DeleteWorkspaceResponse {
+  interface DeleteResponse {
     success: boolean;
   }
 
@@ -112,7 +125,7 @@ declare global {
     success: boolean;
   }
 
-  interface OpenWorkspaceResponse {
+  interface OpenResponse {
     success: boolean;
     data: {
       // ? 这里不要紧吗？
@@ -134,6 +147,16 @@ declare global {
     data: Workspace[];
   }
 
+  interface ExportResponse {
+    success: boolean;
+    data: Workspace[];
+  }
+
+  interface ImportResponse {
+    success: boolean;
+    message?: string;
+  }
+
   interface ErrorResponse {
     success: false;
     error: string;
@@ -141,30 +164,34 @@ declare global {
 
   // Union type for all possible responses
   type MessageResponse =
-    | GetWorkspacesResponse
-    | CreateWorkspaceResponse
-    | UpdateWorkspaceResponse
-    | DeleteWorkspaceResponse
+    | GetResponse
+    | CreateResponse
+    | UpdateResponse
+    | DeleteResponse
     | AddCurrentTabResponse
     | RemoveTabResponse
     | TogglePinResponse
-    | OpenWorkspaceResponse
+    | OpenResponse
     | MoveTabResponse
     | GetStatsResponse
     | CheckPageInWorkspacesResponse
+    | ExportResponse
+    | ImportResponse
     | ErrorResponse;
 
   interface MessageResponseMap {
-    [Action.GetWorkspaces]: GetWorkspacesResponse;
-    [Action.CreateWorkspace]: CreateWorkspaceResponse;
-    [Action.UpdateWorkspace]: UpdateWorkspaceResponse;
-    [Action.DeleteWorkspace]: DeleteWorkspaceResponse;
+    [Action.Get]: GetResponse;
+    [Action.Create]: CreateResponse;
+    [Action.Update]: UpdateResponse;
+    [Action.Delete]: DeleteResponse;
     [Action.RemoveTab]: RemoveTabResponse;
     [Action.TogglePin]: TogglePinResponse;
-    [Action.OpenWorkspace]: OpenWorkspaceResponse;
+    [Action.Open]: OpenResponse;
     [Action.MoveTab]: MoveTabResponse;
     [Action.GetStats]: GetStatsResponse;
     [Action.CheckPageInWorkspaces]: CheckPageInWorkspacesResponse;
+    [Action.Export]: ExportResponse;
+    [Action.Import]: ImportResponse;
   }
 
   // #endregion

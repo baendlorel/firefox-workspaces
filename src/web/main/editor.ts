@@ -3,14 +3,16 @@ import { RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/co
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
 import { Workspace } from '@/lib/workspace.js';
+import { WorkspaceTab } from '@/lib/workspace-tab.js';
 
-import { confirmation, danger, info } from '../components/dialog/alerts.js';
-import { createDialog } from '../components/dialog/index.js';
-import colorPicker from '../components/color/index.js';
+import { confirmation, danger, info } from '@web/components/dialog/alerts.js';
+import { createDialog } from '@web/components/dialog/index.js';
+import colorPicker from '@web/components/color/index.js';
 import trashSvg from '@web/assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
+  let currentTabs: WorkspaceTab[] = [];
 
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });
@@ -56,8 +58,9 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   };
 
   // # register events
-  bus.on('edit', (workspace: Workspace | null = null) => {
+  bus.on('edit', (workspace: Workspace | null = null, tabs: browser.tabs.Tab[] = []) => {
     editingWorkspace = workspace;
+    currentTabs = tabs.map(WorkspaceTab.from);
 
     if (workspace) {
       inputName.value = workspace.name;
@@ -66,7 +69,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       deleteBtn.style.display = '';
     } else {
       inputName.value = '';
-      setTitle('New Workspace');
+      setTitle(tabs.length > 0 ? 'New Workspace with tabs' : 'New Workspace');
       // randomly pick a color
       colorSelector.value = WORKSPACE_COLORS[$randInt(WORKSPACE_COLORS.length)];
       deleteBtn.style.display = 'none';
@@ -99,6 +102,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       id: editingWorkspace === null ? undefined : editingWorkspace.id,
       name: inputName.value,
       color: colorSelector.value,
+      tabs: currentTabs,
     });
 
     // close the modal

@@ -82,8 +82,8 @@ class PopupPage {
 
   // Load work groups from background
   async load() {
-    const response = await $send<GetWorkspacesRequest>({
-      action: Action.GetWorkspaces,
+    const response = await $send<GetRequest>({
+      action: Action.Get,
     }).fallbackWithDialog('Failed to load work groups', {
       success: false,
       data: [],
@@ -113,17 +113,22 @@ class PopupPage {
     let response;
     if (formData.id === undefined) {
       // Create new workspace
-      response = await $send<CreateWorkspaceRequest>({
-        action: Action.CreateWorkspace,
+      response = await $send<CreateRequest>({
+        action: Action.Create,
         name: formData.name,
         color: formData.color,
+        tabs: formData.tabs,
       }).fallbackWithDialog('__func__: Failed saving workspace');
     } else {
       // Update existing group
-      response = await $send<UpdateWorkspaceRequest>({
-        action: Action.UpdateWorkspace,
+      const updates: Partial<Workspace> = {
+        name: formData.name,
+        color: formData.color,
+      };
+      response = await $send<UpdateRequest>({
+        action: Action.Update,
         id: formData.id,
-        updates: formData,
+        updates: updates,
       }).fallbackWithDialog('__func__: Failed saving workspace');
     }
 
@@ -135,6 +140,16 @@ class PopupPage {
       await this.load();
       this.render();
       this.main.emit('close-editor');
+
+      // If creating a workspace with tabs, open it automatically
+      if (
+        formData.id === undefined &&
+        formData.tabs &&
+        formData.tabs.length > 0 &&
+        'data' in response
+      ) {
+        this.open(response.data as Workspace);
+      }
     } else {
       info('Failed to save workspace, Please try again.');
       logger.error('Save workspace failed', response);
@@ -143,8 +158,8 @@ class PopupPage {
 
   // Delete workspace
   async delete(workspace: Workspace) {
-    const response = await $send<DeleteWorkspaceRequest>({
-      action: Action.DeleteWorkspace,
+    const response = await $send<DeleteRequest>({
+      action: Action.Delete,
       id: workspace.id,
     }).fallbackWithDialog('__func__: Error deleting workspace');
 
@@ -169,9 +184,9 @@ class PopupPage {
    * 2. Unfocused popup is basically deleted.
    * 3. Click plugin button again creates a new popup page.
    */
-  open(workspace: Workspace): Promise<OpenWorkspaceResponse> {
-    return $send<OpenWorkspaceRequest>({
-      action: Action.OpenWorkspace,
+  open(workspace: Workspace): Promise<OpenResponse> {
+    return $send<OpenRequest>({
+      action: Action.Open,
       workspaceId: workspace.id,
     });
   }

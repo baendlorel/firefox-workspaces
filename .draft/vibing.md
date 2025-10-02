@@ -173,3 +173,15 @@ invalid的value会变为白色
 ---
 
 刚才的open函数调试问题我已经解决，但这也让我意识到，插件为了减少开销，popup页面会因为失去焦点关闭而直接被销毁，每次都是新的。这一样一来，我的很多数据同步操作都没有必要了。请你根据这个来扫描src下的代码，评估可以缩减的同步操作，不要改动代码，而是把评估结果输出到.draft/evaluation.md。
+
+---
+
+帮我完成：
+
+1. 菜单中的导入导出；
+2. 设置界面，添加几个你认为可行的设置；
+3. 完成Create with current tabs，功能是用当前窗口的标签页创建新workspace：
+   - 点击后缓存当前window的所有tab，以Workspace.from处理它们，并弹出新建窗口，新建完成后将tabs全都纳入其中；
+   - 可以将Create事件扩展为可以传输tabs数组，已有的触发createworkspace事件的地方对tabs传入空数组；
+   - 创建workspace完成后将其打开；
+4. 美化about.ts，要美观、简洁、酷炫、层次分明

@@ -27,17 +27,20 @@ export const enum OnUpdatedChangeInfoStatus {
 }
 
 export const enum Action {
-  GetWorkspaces = 'GetWorkspaces',
-  CreateWorkspace = 'CreateWorkspace',
-  UpdateWorkspace = 'UpdateWorkspace',
-  DeleteWorkspace = 'DeleteWorkspace',
+  Get = 'Get',
+  Create = 'Create',
+  Update = 'Update',
+  Delete = 'Delete',
+  // todo 删除这两个
   RemoveTab = 'RemoveTab',
   TogglePin = 'TogglePin',
-  OpenWorkspace = 'OpenWorkspace',
+  Open = 'Open',
   MoveTab = 'MoveTab',
   GetStats = 'GetStats',
   CheckPageInWorkspaces = 'CheckPageInWorkspaces',
   WindowFocusChanged = 'WindowFocusChanged',
+  Export = 'Export',
+  Import = 'Import',
 }
 
 // Prefix parts for randomly generated workspace names. Single-word, capitalized.

@@ -218,14 +218,14 @@ class MockBrowser {
     const workspaces = this.getStoredWorkspaces();
 
     switch (action) {
-      case Action.GetWorkspaces:
+      case Action.Get:
         return {
           success: true,
           data: workspaces,
-        } as GetWorkspacesResponse;
+        } as GetResponse;
 
-      case Action.CreateWorkspace: {
-        const req = request as CreateWorkspaceRequest;
+      case Action.Create: {
+        const req = request as CreateRequest;
         const newWorkspace = new Workspace(req.name, req.color);
 
         workspaces.push(newWorkspace);
@@ -234,11 +234,11 @@ class MockBrowser {
         return {
           success: true,
           data: newWorkspace,
-        } as CreateWorkspaceResponse;
+        } as CreateResponse;
       }
 
-      case Action.UpdateWorkspace: {
-        const req = request as UpdateWorkspaceRequest;
+      case Action.Update: {
+        const req = request as UpdateRequest;
         const index = workspaces.findIndex((ws) => ws.id === req.id);
 
         if (index === -1) {
@@ -255,17 +255,17 @@ class MockBrowser {
         return {
           success: true,
           data: workspaces[index],
-        } as UpdateWorkspaceResponse;
+        } as UpdateResponse;
       }
 
-      case Action.DeleteWorkspace: {
-        const req = request as DeleteWorkspaceRequest;
+      case Action.Delete: {
+        const req = request as DeleteRequest;
         const filteredWorkspaces = workspaces.filter((ws) => ws.id !== req.id);
         this.saveWorkspaces(filteredWorkspaces);
 
         return {
           success: true,
-        } as DeleteWorkspaceResponse;
+        } as DeleteResponse;
       }
 
       case Action.RemoveTab: {
@@ -311,8 +311,8 @@ class MockBrowser {
         } as TogglePinResponse;
       }
 
-      case Action.OpenWorkspace: {
-        const req = request as OpenWorkspaceRequest;
+      case Action.Open: {
+        const req = request as OpenRequest;
         const workspace = workspaces.find((ws) => ws.id === req.workspaceId);
 
         if (!workspace) {
@@ -329,7 +329,7 @@ class MockBrowser {
         return {
           success: true,
           data: { id: Math.floor(Math.random() * 100000) },
-        } as OpenWorkspaceResponse;
+        } as OpenResponse;
       }
 
       case Action.MoveTab: {

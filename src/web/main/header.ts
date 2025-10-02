@@ -1,10 +1,12 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
-import { Consts } from '@/lib/consts.js';
+import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
+import { $send } from '@/lib/ext-apis.js';
 import { Menu } from '@web/components/menu/index.js';
 import about from '@web/components/about.js';
 import donate from '@web/components/donate.js';
+import settings from '@web/components/settings.js';
 
 import plusSvg from '@web/assets/workspace-plus.svg?raw';
 import listSvg from '@web/assets/list.svg?raw';
@@ -25,17 +27,83 @@ const createContextMenu = (bus: EventBus<WorkspaceEditorEventMap>) => {
 
   const aboutDialog = about();
   const donateDialog = donate();
+  const settingsDialog = settings();
 
   const contextMenu = new Menu([
     {
       label: item(bookmarkPlusSvg, 'Create with current tabs'),
-      action: () => logger.debug('Create new workspace action triggered'),
+      action: async () => {
+        // Get current window tabs
+        const currentWindow = await browser.windows.getCurrent();
+        const tabs = await browser.tabs.query({ windowId: currentWindow.id });
+
+        // Emit edit event with tabs
+        bus.emit('edit', null, tabs);
+      },
     },
-    { label: item(boxArrowDownSvg, 'Import'), action: () => logger.debug() },
-    { label: item(boxArrowUpSvg, 'Export'), action: () => logger.debug() },
+    {
+      label: item(boxArrowDownSvg, 'Import'),
+      action: async () => {
+        try {
+          // Create file input to select JSON file
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = '.json';
+          input.onchange = async () => {
+            const file = input.files?.[0];
+            if (!file) {
+              return;
+            }
+            try {
+              const text = await file.text();
+              const data = JSON.parse(text);
+
+              const response = await $send<ImportRequest>({
+                action: Action.Import,
+                data: data,
+              });
+
+              if (response.success) {
+                alert(response.message || 'Import successful!');
+                // Refresh the workspace list
+                window.location.reload();
+              } else {
+                alert(response.message || 'Import failed');
+              }
+            } catch (error) {
+              alert('Failed to parse file: ' + error);
+            }
+          };
+          input.click();
+        } catch (error) {
+          logger.error('Import failed:', error);
+        }
+      },
+    },
+    {
+      label: item(boxArrowUpSvg, 'Export'),
+      action: async () => {
+        const response = await $send<ExportRequest>({
+          action: Action.Export,
+        }).fallbackWithDialog('Export failed', { success: false, data: [] });
+
+        if (response.success) {
+          // Create and download JSON file
+          const blob = new Blob([JSON.stringify(response.data, null, 2)], {
+            type: 'application/json',
+          });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `firefox-workspaces-${new Date().toISOString().split('T')[0]}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      },
+    },
     Menu.Divider,
     { label: item(bugSvg, 'Debug Info'), action: () => bus.emit('debug') },
-    { label: item(gearSvg, 'Settings'), action: () => logger.debug() },
+    { label: item(gearSvg, 'Settings'), action: () => settingsDialog.bus.emit('show') },
     Menu.Divider,
     {
       label: item(heartSvg, 'Donate'),

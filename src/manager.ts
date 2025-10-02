@@ -75,8 +75,12 @@ export class WorkspaceManager {
       .fallback('__func__: Saving failed', false);
   }
 
-  async create(name: string, color: HexColor): Promise<IndexedWorkspace> {
-    const workspace = this.workspaces.create(name, color);
+  async create(
+    name: string,
+    color: HexColor,
+    tabs: WorkspaceTab[] = []
+  ): Promise<IndexedWorkspace> {
+    const workspace = this.workspaces.create(name, color, tabs);
     await this.save();
     return workspace;
   }

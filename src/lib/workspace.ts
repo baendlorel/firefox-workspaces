@@ -21,6 +21,12 @@ export class Workspace {
     this.windowId = undefined;
   }
 
+  static from(name: string, color: HexColor, tabs: browser.tabs.Tab[] = []): Workspace {
+    const workspace = new Workspace(name, color);
+    workspace.tabs = tabs.map(tab => WorkspaceTab.from(tab));
+    return workspace;
+  }
+
   get pinnedTabs(): WorkspaceTab[] {
     return this.tabs.filter((tab) => tab.pinned);
   }
