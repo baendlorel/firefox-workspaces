@@ -1,5 +1,6 @@
 import '@/lib/promise-ext.js';
 import { btn, h } from '@/lib/dom.js';
+import { i } from '@/lib/ext-apis.js';
 import { createDialog } from './index.js';
 
 export default async (config: {
@@ -32,10 +33,10 @@ export default async (config: {
   const ul = h('ul', 'dialog-ul-options', selection);
   ul.classList.toggle('use-element', useElement);
 
-  const confirmBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Confirm');
-  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
-  confirmBtn.title = 'Confirm selection';
-  cancelBtn.title = 'Cancel and close dialog';
+  const confirmBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, i('confirm'));
+  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, i('cancel'));
+  confirmBtn.title = i('confirmSelection');
+  cancelBtn.title = i('cancelAndClose');
 
   const { dialog } = createDialog(title, [msg, ul], [cancelBtn, confirmBtn]);
   dialog.bus.on('closed', () => resolve(value));

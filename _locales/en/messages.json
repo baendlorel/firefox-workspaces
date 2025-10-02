@@ -288,5 +288,13 @@
   "success": {
     "message": "Success",
     "description": "Debug: success checkbox label"
+  },
+  "failedToInitialize": {
+    "message": "Failed to initialize",
+    "description": "Initialization error message"
+  },
+  "confirmSelection": {
+    "message": "Confirm selection",
+    "description": "Confirm selection tooltip"
   }
 }

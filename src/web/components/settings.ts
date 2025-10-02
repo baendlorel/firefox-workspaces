@@ -1,4 +1,5 @@
 import { Theme } from '@/lib/consts.js';
+import { i } from '@/lib/ext-apis.js';
 import { confirmation } from './dialog/alerts.js';
 import { createDialog } from './dialog/index.js';
 import { h, div, btn } from '@/lib/dom.js';
@@ -16,18 +17,18 @@ const radio = (name: string, value: string, label: string) =>
 export default () => {
   // Theme selection
   const themeSelect = div('flex gap-2', [
-    radio('theme', Theme.Auto, 'Auto (System)'),
-    radio('theme', Theme.Light, 'Light'),
-    radio('theme', Theme.Dark, 'Dark'),
+    radio('theme', Theme.Auto, i('autoSystem')),
+    radio('theme', Theme.Light, i('light')),
+    radio('theme', Theme.Dark, i('dark')),
   ]);
 
-  const form = div('form-group', [h('label', { for: 'theme' }, 'Theme'), themeSelect]);
-  const resetBtn = btn('btn btn-secondary', 'Reset');
-  const saveBtn = btn('btn btn-primary ms-2', 'Save');
+  const form = div('form-group', [h('label', { for: 'theme' }, i('theme')), themeSelect]);
+  const resetBtn = btn('btn btn-secondary', i('reset'));
+  const saveBtn = btn('btn btn-primary ms-2', i('save'));
 
-  const { dialog, closeBtn } = createDialog('Settings', [form], [resetBtn, saveBtn]);
-  dialog.setAttribute('aria-label', 'Firefox Workspaces Settings');
-  closeBtn.title = 'Close settings dialog';
+  const { dialog, closeBtn } = createDialog(i('settings'), [form], [resetBtn, saveBtn]);
+  dialog.setAttribute('aria-label', i('firefoxWorkspacesSettings'));
+  closeBtn.title = i('closeSettingsDialog');
 
   // # register events
   const selectTheme = (value: Theme) => {
@@ -50,7 +51,7 @@ export default () => {
   });
 
   resetBtn.addEventListener('click', async () => {
-    const yes = await confirmation('Reset Settings', 'Are you sure?');
+    const yes = await confirmation(i('resetSettings'), i('areYouSure'));
     if (yes) {
       selectTheme(Theme.Auto);
       applyTheme('auto');

@@ -2,7 +2,7 @@ import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
-import { $send } from '@/lib/ext-apis.js';
+import { $send, i } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
 import { stringify } from './debug.js';
 
@@ -34,7 +34,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
 
   const contextMenu = new Menu([
     {
-      label: item(bookmarkPlusSvg, 'Create with current tabs'),
+      label: item(bookmarkPlusSvg, i('createWithCurrentTabs')),
       action: async () => {
         // Get current window tabs
         const currentWindow = await browser.windows.getCurrent();
@@ -45,7 +45,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
       },
     },
     {
-      label: item(boxArrowDownSvg, 'Import'),
+      label: item(boxArrowDownSvg, i('import')),
       action: async () => {
         try {
           // Create file input to select JSON file
@@ -67,14 +67,14 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
               });
 
               if (response.success) {
-                alert(response.message || 'Import successful!');
+                alert(response.message || i('importSuccessful'));
                 // Refresh the workspace list
                 window.location.reload();
               } else {
-                alert(response.message || 'Import failed');
+                alert(response.message || i('importFailed'));
               }
             } catch (error) {
-              alert('Failed to parse file: ' + error);
+              alert(i('failedToParseFile', error));
             }
           };
           input.click();
@@ -84,11 +84,11 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
       },
     },
     {
-      label: item(boxArrowUpSvg, 'Export'),
+      label: item(boxArrowUpSvg, i('export')),
       action: async () => {
         const response = await $send<ExportRequest>({
           action: Action.Export,
-        }).fallbackWithDialog('Export failed', { success: false, data: [] });
+        }).fallbackWithDialog(i('exportFailed'), { success: false, data: [] });
 
         if (response.success) {
           // Create and download JSON file
@@ -106,19 +106,19 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     },
     Menu.Divider,
     {
-      label: item(bugSvg, 'Debug Info'),
+      label: item(bugSvg, i('debugInfo')),
       action: () => {
         logger.debug('workspaces', stringify(popupService.workspaces));
       },
     },
-    { label: item(gearSvg, 'Settings'), action: () => settingsDialog.bus.emit('show') },
+    { label: item(gearSvg, i('settings')), action: () => settingsDialog.bus.emit('show') },
     Menu.Divider,
     {
-      label: item(heartSvg, 'Donate'),
+      label: item(heartSvg, i('donate')),
       action: () => donateDialog.bus.emit('show'),
     },
     {
-      label: item(workspaceSvg, 'About'),
+      label: item(workspaceSvg, i('about')),
       action: function (this) {
         this.close();
         aboutDialog.bus.emit('show');
@@ -130,17 +130,21 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
 }
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const addBtn = btn({ class: 'btn-text', title: 'New workspace' }, [svg(plusSvg, '#fff', 18, 18)]);
-  const moreBtn = btn({ class: 'btn-text', title: 'More Actions' }, [svg(listSvg, '#fff', 18, 18)]);
+  const addBtn = btn({ class: 'btn-text', title: i('newWorkspace') }, [
+    svg(plusSvg, '#fff', 18, 18),
+  ]);
+  const moreBtn = btn({ class: 'btn-text', title: i('moreActions') }, [
+    svg(listSvg, '#fff', 18, 18),
+  ]);
   const contextMenu = createContextMenu(bus);
 
-  const title = h('h2', 'wb-header-title', 'Workspace');
+  const title = h('h2', 'wb-header-title', i('workspace'));
   const header = div('wb-header', [title, addBtn, moreBtn]);
 
   // # register events
 
   popupService.getWorkspaceOfCurrentWindow().then((workspace) => {
-    title.textContent = workspace?.name ?? 'Workspace';
+    title.textContent = workspace?.name ?? i('workspace');
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);
     const darken = color.adjustBrightness(-0.36);
     const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;

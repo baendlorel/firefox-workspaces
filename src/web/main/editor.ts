@@ -2,6 +2,7 @@ import { EventBus } from 'minimal-event-bus';
 import { RANDOM_NAME_PART1, RANDOM_NAME_PART2, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { $randInt } from '@/lib/utils.js';
+import { i } from '@/lib/ext-apis.js';
 import { Workspace } from '@/lib/workspace.js';
 import { WorkspaceTab } from '@/lib/workspace-tab.js';
 
@@ -18,21 +19,21 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });
   const randomNameBtn = btn(
-    { class: 'btn btn-primary ms-2', title: 'Generate a random name' },
-    'Random'
+    { class: 'btn btn-primary ms-2', title: i('generateRandomName') },
+    i('random')
   );
-  const colorSelectorLabel = h('label', { for: 'workspace-color' }, 'Color');
+  const colorSelectorLabel = h('label', { for: 'workspace-color' }, i('color'));
   const colorSelector = colorPicker('workspace-color');
 
   const deleteBtn = btn('btn btn-danger btn-with-icon', [
     svg(trashSvg, 'var(--light)', 14),
-    'Delete',
+    i('delete'),
   ]);
-  deleteBtn.title = 'Delete the workspace';
+  deleteBtn.title = i('deleteWorkspace');
 
   const body = [
     div('form-group form-group-with-btn', [
-      h('label', { for: 'workspace-name' }, 'Name'),
+      h('label', { for: 'workspace-name' }, i('name')),
       inputName,
       randomNameBtn,
     ]),
@@ -41,15 +42,15 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   ];
 
   // # footer
-  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, 'Cancel');
-  const saveBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, 'Save');
-  cancelBtn.title = 'Cancel and close dialog';
-  saveBtn.title = 'Save workspace';
+  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, i('cancel'));
+  const saveBtn = btn({ class: 'btn btn-primary ms-2', type: 'button' }, i('save'));
+  cancelBtn.title = i('cancelAndClose');
+  saveBtn.title = i('saveWorkspace');
 
   const footer = [cancelBtn, saveBtn];
 
   // # Editor dialog
-  const { dialog, closeBtn, setTitle } = createDialog('Workspace', body, footer);
+  const { dialog, closeBtn, setTitle } = createDialog(i('workspace'), body, footer);
   dialog.backdropClosable = true;
   dialog.escClosable = true;
 
@@ -67,11 +68,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     if (workspace) {
       inputName.value = workspace.name;
       colorSelector.value = workspace.color;
-      setTitle('Edit Workspace');
+      setTitle(i('editWorkspace'));
       deleteBtn.style.display = '';
     } else {
       inputName.value = '';
-      setTitle(tabs.length > 0 ? 'New Workspace with tabs' : 'New Workspace');
+      setTitle(tabs.length > 0 ? i('newWorkspaceWithTabs') : i('newWorkspace'));
       // randomly pick a color
       colorSelector.value = WORKSPACE_COLORS[$randInt(WORKSPACE_COLORS.length)];
       deleteBtn.style.display = 'none';
@@ -93,7 +94,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     // validate
     const name = inputName.value.trim();
     if (!name) {
-      info('Please enter a group name');
+      info(i('pleaseEnterGroupName'));
       return;
     }
     if (!/^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(colorSelector.value)) {
@@ -120,7 +121,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       return;
     }
 
-    const yes = await confirmation(`Are you sure you want to delete "${editingWorkspace.name}"?`);
+    const yes = await confirmation(i('confirmDeleteWorkspace', editingWorkspace.name));
     if (!yes) {
       return;
     }

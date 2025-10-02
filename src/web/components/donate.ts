@@ -1,4 +1,5 @@
 import { createDialog } from './dialog/index.js';
+import { i } from '@/lib/ext-apis.js';
 import { div, h } from '@/lib/dom.js';
 import donateEnPng from '@web/assets/donate-small.png';
 
@@ -7,7 +8,7 @@ import donateEnPng from '@web/assets/donate-small.png';
  * Uses the project's dialog utilities and dom helpers to match style
  */
 export default (): HTMLDialogElement => {
-  const { dialog } = createDialog('Donate', [
+  const { dialog } = createDialog(i('donate'), [
     div('mb-4', 'Your supportYour support motivates me to keep creating 🌟'),
     h('img', { class: 'donate-img', src: donateEnPng }),
   ]);

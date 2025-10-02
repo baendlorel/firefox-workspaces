@@ -1,7 +1,7 @@
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Consts, Sym } from './lib/consts.js';
-import { $aboutBlank } from './lib/ext-apis.js';
+import { $aboutBlank, i } from './lib/ext-apis.js';
 import { $genId, $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { IndexedWorkspace, Workspace } from './lib/workspace.js';
@@ -29,7 +29,7 @@ export class WorkspaceManager {
       const updatedAt = new Date('__DATE_TIME__');
       const delta = Date.now() - updatedAt.getTime();
       const min = Math.floor(delta / 60000);
-      const time = min < 1 ? 'just now' : `${min} minute(s) ago`;
+      const time = min < 1 ? i('justNow') : i('minutesAgo', min);
       logger.info('Updated before ' + time);
     });
   }

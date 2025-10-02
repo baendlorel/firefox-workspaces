@@ -335,6 +335,10 @@ class MockBrowser {
         if (key === 'runtime.sendMessage') {
           return Promise.resolve(createResponse(args[0]));
         }
+        if (key === 'i18n.getMessage') {
+          const i18nKey = args[0];
+          return i18nKey.replace(/([A-Z])/g, ' $1').toLowerCase();
+        }
 
         return createProxy(path); // 调用后还能继续链式访问
       },

@@ -1,7 +1,8 @@
 import { btn } from '@/lib/dom.js';
+import { i } from '@/lib/ext-apis.js';
 import { createDialog } from './index.js';
 
-export const info = (message: string, title: string = 'Information') => {
+export const info = (message: string, title: string = i('information')) => {
   return new Promise<void>((resolve) => {
     const dialog = createDialog(title, message).dialog;
     dialog.bus.on('closed', resolve);
@@ -10,7 +11,7 @@ export const info = (message: string, title: string = 'Information') => {
   });
 };
 
-export const warning = (message: string, title: string = 'Warning') => {
+export const warning = (message: string, title: string = i('warning')) => {
   return new Promise<void>((resolve) => {
     const dialog = createDialog(title, message).dialog;
     dialog.bus.on('closed', resolve);
@@ -20,7 +21,7 @@ export const warning = (message: string, title: string = 'Warning') => {
   });
 };
 
-export const danger = (message: string, title: string = 'Danger') => {
+export const danger = (message: string, title: string = i('danger')) => {
   return new Promise<void>((resolve) => {
     const dialog = createDialog(title, message).dialog;
     dialog.bus.on('closed', resolve);
@@ -33,12 +34,12 @@ export const danger = (message: string, title: string = 'Danger') => {
 /**
  * Since `confirm` is taken
  */
-export const confirmation = (message: string, title: string = 'Confirm') => {
+export const confirmation = (message: string, title: string = i('confirm')) => {
   return new Promise<boolean>((resolve) => {
-    const yesBtn = btn('btn btn-primary ms-2', 'Yes');
-    yesBtn.title = 'Yes';
-    const noBtn = btn('btn btn-secondary', 'No');
-    yesBtn.title = 'No';
+    const yesBtn = btn('btn btn-primary ms-2', i('yes'));
+    yesBtn.title = i('yes');
+    const noBtn = btn('btn btn-secondary', i('no'));
+    yesBtn.title = i('no');
     const dialog = createDialog(title, message, [noBtn, yesBtn]).dialog;
 
     yesBtn.onclick = () => {

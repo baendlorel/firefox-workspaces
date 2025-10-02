@@ -1,5 +1,5 @@
 import { Action, Sym } from '@/lib/consts.js';
-import { $send } from '@/lib/ext-apis.js';
+import { $send, i } from '@/lib/ext-apis.js';
 import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
 
 import { info } from './components/dialog/alerts.js';
@@ -21,7 +21,7 @@ class PopupService {
   async load() {
     const response = await $send<GetRequest>({
       action: Action.Get,
-    }).fallbackWithDialog('Failed to load work groups');
+    }).fallbackWithDialog(i('failedToLoadWorkGroups'));
 
     if (response === Sym.Reject || !response.success) {
       return;
@@ -53,7 +53,7 @@ class PopupService {
     }
 
     if (!response.success) {
-      info('Failed to save workspace, Please try again.');
+      info(i('failedToSaveWorkspace'));
       logger.error('Save workspace failed', response);
     }
 
@@ -77,7 +77,7 @@ class PopupService {
     }
 
     if (!response.success) {
-      info('Failed to delete workspace, Please try again.');
+      info(i('failedToDeleteWorkspace'));
       return;
     }
 

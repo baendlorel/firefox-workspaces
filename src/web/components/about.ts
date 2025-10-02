@@ -1,5 +1,6 @@
 import { createDialog } from './dialog/index.js';
 import { h, div } from '@/lib/dom.js';
+import { i } from '@/lib/ext-apis.js';
 
 /**
  * About dialog component
@@ -16,41 +17,41 @@ export default (): HTMLDialogElement => {
     ]),
 
     div('about-description', [
-      h('p', 'about-tagline', 'A powerful workspace manager for Firefox'),
-      h('p', 'about-subtitle', 'Organize your tabs like a pro ✨'),
+      h('p', 'about-tagline', i('extensionDescription')),
+      h('p', 'about-subtitle', i('organizeTabs')),
     ]),
 
     div('about-features', [
       h('div', 'feature-item', [
         h('span', 'feature-icon', '🚀'),
-        h('span', 'feature-text', 'Lightning fast workspace switching'),
+        h('span', 'feature-text', i('lightningFast')),
       ]),
       h('div', 'feature-item', [
         h('span', 'feature-icon', '🎨'),
-        h('span', 'feature-text', 'Beautiful color-coded organization'),
+        h('span', 'feature-text', i('beautifulColorCoded')),
       ]),
       h('div', 'feature-item', [
         h('span', 'feature-icon', '💾'),
-        h('span', 'feature-text', 'Import/Export your workspaces'),
+        h('span', 'feature-text', i('importExport')),
       ]),
       h('div', 'feature-item', [
         h('span', 'feature-icon', '⚡'),
-        h('span', 'feature-text', 'Create workspaces from current tabs'),
+        h('span', 'feature-text', i('createFromTabs')),
       ]),
     ]),
 
     div('about-links', [
       h('a', { href, class: 'about-link repo-link' }, [
         h('span', 'link-icon', '📁'),
-        h('span', 'link-text', 'Repository'),
+        h('span', 'link-text', i('repository')),
       ]),
       h('a', { href: href + '/issues', class: 'about-link' }, [
         h('span', 'link-icon', '🐛'),
-        h('span', 'link-text', 'Report Issues'),
+        h('span', 'link-text', i('reportIssues')),
       ]),
       h('a', { href: href + '/releases', class: 'about-link' }, [
         h('span', 'link-icon', '📋'),
-        h('span', 'link-text', 'Changelog'),
+        h('span', 'link-text', i('changelog')),
       ]),
     ]),
 
@@ -60,7 +61,7 @@ export default (): HTMLDialogElement => {
     ]),
   ];
 
-  const { dialog, body, closeBtn } = createDialog('About Firefox Workspaces', rawBody);
+  const { dialog, body, closeBtn } = createDialog(i('aboutFirefoxWorkspaces'), rawBody);
 
   // Apply custom styles
   body.style.cssText = `
@@ -239,9 +240,9 @@ export default (): HTMLDialogElement => {
   });
 
   // Accessibility enhancements
-  dialog.setAttribute('aria-label', 'About Firefox Workspaces - Application Information');
-  closeBtn.title = 'Close about dialog';
-  closeBtn.setAttribute('aria-label', 'Close about dialog');
+  dialog.setAttribute('aria-label', i('aboutFirefoxWorkspaces') + ' - Application Information');
+  closeBtn.title = i('closeAboutDialog');
+  closeBtn.setAttribute('aria-label', i('closeAboutDialog'));
 
   document.body.appendChild(dialog);
   return dialog;

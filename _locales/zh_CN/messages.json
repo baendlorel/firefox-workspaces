@@ -288,5 +288,13 @@
   "success": {
     "message": "成功",
     "description": "Debug: success checkbox label"
+  },
+  "failedToInitialize": {
+    "message": "初始化失败",
+    "description": "Initialization error message"
+  },
+  "confirmSelection": {
+    "message": "确认选择",
+    "description": "Confirm selection tooltip"
   }
 }

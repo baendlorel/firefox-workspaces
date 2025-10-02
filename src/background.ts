@@ -1,4 +1,5 @@
-import './lib/promise-ext.js';
+import '@/lib/promise-ext.js';
+import { i } from '@/lib/ext-apis.js';
 import { Action, OnUpdatedChangeInfoStatus } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
 
@@ -16,7 +17,7 @@ class WorkspaceBackground {
     return this.manager
       .restoreSessions()
       .then(() => logger.info('initialized in background'))
-      .fallback('Failed to initialize');
+      .fallback(i('failedToInitialize'));
   }
 
   private getPopup(windowId: number) {
@@ -66,7 +67,7 @@ class WorkspaceBackground {
     browser.runtime.onInstalled.addListener(() =>
       browser.contextMenus.create({
         id: 'addToWorkspace',
-        title: 'Add to Workspaces',
+        title: i('addToWorkspaces'),
       })
     );
   }

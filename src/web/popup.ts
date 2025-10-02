@@ -19,13 +19,17 @@ class PopupPage {
 
   constructor() {
     logger.verbose('PopupPage initializing');
-    const main = createView();
-    popupService.load().then(() => main.emit('render-list'));
-
     if (__IS_DEV__) {
-      import('./__mock__/toolbar.js');
+      import('./__mock__/toolbar.js').then(() => this.init());
       return;
     }
+    this.init();
+  }
+
+  private async init() {
+    const main = createView();
+    await popupService.load();
+    main.emit('render-list');
   }
 }
 

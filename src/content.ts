@@ -1,6 +1,7 @@
-// Content script for Workspaces extension
+//Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
-import './lib/promise-ext.js';
+import '@/lib/promise-ext.js';
+import { i } from '@/lib/ext-apis.js';
 import { Action, Consts } from './lib/consts.js';
 import { $query } from './lib/dom.js';
 import { $send } from './lib/ext-apis.js';
@@ -122,7 +123,7 @@ import { Workspace } from './lib/workspace.js';
       const indicator = document.createElement('div');
       indicator.className = 'wb-indicator';
       indicator.style.setProperty('--wg-color', color);
-      indicator.textContent = 'Workspaces';
+      indicator.textContent = i('workspace');
       document.body.appendChild(indicator);
 
       // Auto-remove after delay
