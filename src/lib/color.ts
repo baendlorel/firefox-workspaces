@@ -2,18 +2,6 @@
  * Color utility class for handling color conversions and manipulations
  */
 export class Color {
-  r: number;
-  g: number;
-  b: number;
-  a: number;
-
-  constructor(r: number, g: number, b: number, a: number = 255) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-    this.a = a;
-  }
-
   /**
    * Create a Color instance from HSV values
    * @param h - Hue (0-360)
@@ -35,6 +23,22 @@ export class Color {
   static from(hex: string): Color {
     const [r, g, b, a] = Color.hexToRgba(hex);
     return new Color(r, g, b, a);
+  }
+
+  static valid(color: string): color is HexColor {
+    return /^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(color);
+  }
+
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+
+  constructor(r: number, g: number, b: number, a: number = 255) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
+    this.a = a;
   }
 
   get brightness(): number {

@@ -38,7 +38,6 @@ declare global {
     title: string; // OnCreated
     url: string; // OnUpdated, changeInfo.url
     pinned: boolean; // OnCreated
-    windowId: number; // OnCreated
   }
 
   interface WorkspaceFormData {

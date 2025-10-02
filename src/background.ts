@@ -3,6 +3,7 @@ import { $lsget, $lsset, i } from '@/lib/ext-apis.js';
 import { Action, OnUpdatedChangeInfoStatus, RandomNameLanguage, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
+import { Workspace } from './lib/workspace.js';
 
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
@@ -18,12 +19,32 @@ class WorkspaceBackground {
     const state = (await browser.storage.local.get(null)) as WorkspaceState;
     const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = state;
 
-    // todo 可以做更细致的检测
+    // * Init empty data
     if (workspaces === Sym.NotProvided) {
+      logger.info('No workspaces found, initializing empty array');
       await $lsset({ workspaces: [] });
     }
 
     if (settings === Sym.NotProvided) {
+      logger.info('No settings found, initializing default settings');
+      await $lsset({
+        settings: { theme: Theme.Auto, randomNameLanguage: RandomNameLanguage.Auto },
+      });
+    }
+
+    // & Reset invalid data
+    if (!Array.isArray(workspaces) || workspaces.some((w) => !Workspace.valid(w))) {
+      logger.warn('Invalid workspaces data found, resetting to empty array');
+      await $lsset({ workspaces: [] });
+    }
+
+    if (
+      typeof settings !== 'object' ||
+      settings === null ||
+      typeof settings.theme !== 'string' ||
+      typeof settings.randomNameLanguage !== 'string'
+    ) {
+      logger.warn('Invalid settings data found, resetting to default settings');
       await $lsset({
         settings: { theme: Theme.Auto, randomNameLanguage: RandomNameLanguage.Auto },
       });
@@ -35,7 +56,7 @@ class WorkspaceBackground {
   }
 
   private getPopup(windowId: number) {
-    return browser.extension.getViews({ type: 'popup', windowId }).find((v) => typeof v.popup);
+    return browser.extension.getViews({ type: 'popup', windowId }).find((v) => v.popup);
   }
 
   private registerListeners() {

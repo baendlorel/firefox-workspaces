@@ -173,7 +173,7 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
   // Allow direct editing of indicator input
   indicator.addEventListener('input', () => {
     const value = indicator.value;
-    if (/^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(value)) {
+    if (Color.valid(value)) {
       updateWithRgba(value);
     }
   });

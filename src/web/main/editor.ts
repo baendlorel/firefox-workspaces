@@ -1,6 +1,7 @@
 import { EventBus } from 'minimal-event-bus';
 import { RANDOM_NAME_EN_A, RANDOM_NAME_EN_B, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h, svg } from '@/lib/dom.js';
+import { Color } from '@/lib/color.js';
 import { $randInt } from '@/lib/utils.js';
 import { i } from '@/lib/ext-apis.js';
 import { WorkspaceTab } from '@/lib/workspace-tab.js';
@@ -97,7 +98,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       info(i('pleaseEnterGroupName'));
       return;
     }
-    if (!/^#[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$/.test(colorSelector.value)) {
+    if (!Color.valid(colorSelector.value)) {
       info('Color must be like #RRGGBB or #RRGGBBAA');
       return;
     }
