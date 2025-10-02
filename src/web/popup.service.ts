@@ -1,111 +1,40 @@
-import { Action, RandomNameLanguage, Sym, Theme } from '@/lib/consts.js';
-import { $send, i } from '@/lib/ext-apis.js';
-import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
-
-import { info } from './components/dialog/alerts.js';
+import { Action } from '@/lib/consts.js';
+import { $lsget, $lsset, $send } from '@/lib/ext-apis.js';
+import { Workspace } from '@/lib/workspace.js';
 
 class PopupService {
-  readonly settings: WorkspaceSettings = {
-    randomNameLanguage: RandomNameLanguage.Auto,
-    theme: Theme.Auto,
-  };
-  readonly workspaces: Workspace[] = [];
-  readonly activated: string[] = []; // Track active workspace IDs
-
   async getWorkspaceOfCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent();
-    return this.workspaces.find((w) => w.windowId === currentWindow.id);
-  }
-
-  get isEmpty() {
-    return this.workspaces.length === 0;
-  }
-
-  async loadState() {
-    const response = await $send<GetStateRequest>({
-      action: Action.GetState,
-    }).fallbackWithDialog(i('failedToLoadState'));
-
-    if (response === Sym.Reject || !response.succ) {
-      return;
-    }
-
-    const loaded = response.data ?? [];
-    this.workspaces.length = 0;
-    for (let i = 0; i < loaded.workspaces.length; i++) {
-      const w = loaded.workspaces[i];
-      this.workspaces.push(IndexedWorkspace.load(NaN, w));
-    }
-  }
-
-  // Load work groups from background
-  async load() {
-    const response = await $send<GetRequest>({
-      action: Action.Get,
-    }).fallbackWithDialog(i('failedToLoadWorkGroups'));
-
-    if (response === Sym.Reject || !response.succ) {
-      return;
-    }
-
-    const loaded = response.data ?? [];
-    this.workspaces.length = 0;
-    for (let i = 0; i < loaded.length; i++) {
-      const w = loaded[i];
-      this.workspaces.push(IndexedWorkspace.load(NaN, w));
-    }
-
-    // Update active workspaces
-    this.activated.length = 0;
-    if (response.activated) {
-      this.activated.push(...response.activated);
-    }
+    const workspaces = await $lsget('workspaces');
+    return workspaces.find((w) => w.windowId === currentWindow.id);
   }
 
   /**
    * Save workspace (create or update)
-   *
-   * [WARN] **Should manally call `load` to refresh data!**
    */
   async save(formData: WorkspaceFormData) {
-    const response = await $send<SaveRequest>({
-      action: Action.Save,
-      data: { id: formData.id, name: formData.name, color: formData.color, tabs: formData.tabs },
-    }).fallbackWithDialog('__func__: Failed saving workspace');
+    const workspaces = await $lsget('workspaces');
 
-    if (response === Sym.Reject) {
-      return;
+    const newWorkspace = Workspace.from(formData);
+    if (workspaces.every((w) => w.id !== newWorkspace.id)) {
+      workspaces.push(newWorkspace);
     }
 
-    if (!response.succ) {
-      info(i('failedToSaveWorkspace'));
-      logger.error('Save workspace failed', response);
-    }
+    await $lsset({ workspaces });
 
-    // If creating a workspace with tabs, open it automatically
     if (formData.id === null && formData.tabs.length > 0) {
-      await this.open(response.data);
+      await this.open(newWorkspace);
     }
   }
 
   // Delete workspace
   async delete(workspace: Workspace) {
-    const response = await $send<DeleteRequest>({
-      action: Action.Delete,
-      id: workspace.id,
-    }).fallbackWithDialog('__func__: Error deleting workspace');
-
-    if (response === Sym.Reject) {
-      return;
+    const workspaces = await $lsget('workspaces');
+    const index = workspaces.findIndex((w) => w.id === workspace.id);
+    if (index === -1) {
+      workspaces.splice(index, 1);
     }
-
-    if (!response.succ) {
-      info(i('failedToDeleteWorkspace'));
-      return;
-    }
-
-    await this.load();
-    // ?? this.render();
+    await $lsset({ workspaces });
   }
 
   /**
@@ -120,7 +49,7 @@ class PopupService {
   open(workspace: Workspace): Promise<OpenResponse> {
     return $send<OpenRequest>({
       action: Action.Open,
-      workspaceId: workspace.id,
+      workspace,
     });
   }
 }

@@ -8,12 +8,9 @@
   "description": "Manage tabs in workspaces similar to Microsoft Edge's Workspace feature",
   "permissions": [
     "tabs",
+    "windows",
     "storage",
-    "sessions",
-    "activeTab",
-    "contextMenus",
-    "notifications",
-    "scripting"
+    "notifications"
   ],
   "background": {
     "scripts": [

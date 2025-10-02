@@ -9,8 +9,9 @@ import { WorkspaceTab } from '@/lib/workspace-tab.js';
 import { confirmation, danger, info } from '@web/components/dialog/alerts.js';
 import { createDialog } from '@web/components/dialog/index.js';
 import colorPicker from '@web/components/color/index.js';
-import trashSvg from '@web/assets/trash.svg?raw';
 import popupService from '@web/popup.service.js';
+
+import trashSvg from '@web/assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
@@ -109,8 +110,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       tabs: currentTabs,
     });
 
-    await popupService.load();
-
     // use latest data to render the list
     bus.emit('render-list');
 
@@ -127,7 +126,9 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     if (!yes) {
       return;
     }
+
     await popupService.delete(editingWorkspace);
+
     close();
   });
 

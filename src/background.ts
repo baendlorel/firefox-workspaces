@@ -195,7 +195,7 @@ class WorkspaceBackground {
 
     if (action === Action.Open) {
       const window = await this.manager
-        .open(message.workspaceId)
+        .open(message.workspace)
         .fallback('Failed to open workspace in window:', null);
 
       const response: MessageResponseMap[typeof action] = {

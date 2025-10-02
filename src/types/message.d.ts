@@ -24,7 +24,7 @@ declare global {
 
   interface OpenRequest {
     action: Action.Open;
-    workspaceId: string;
+    workspace: Workspace;
   }
 
   interface GetStatsRequest {

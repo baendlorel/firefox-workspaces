@@ -208,28 +208,22 @@ export class WorkspaceManager {
   }
 
   // Open workspace in new window
-  async open(id: string): Promise<{ id?: number } | null> {
-    const workspace = this.workspaces.get(id);
-    if (!workspace) {
-      logger.WorkspaceNotFound(id);
-      return null;
-    }
-
+  async open(workspace: Workspace): Promise<{ id: number } | null> {
     // If group already has an active window, focus it
-    if (workspace.windowId) {
+    const windowId = workspace.windowId;
+    if (windowId) {
       // Check if window still exists
       const result = await browser.windows
-        .update(workspace.windowId, { focused: true })
-        .then(() => ({ id: workspace.windowId }))
+        .update(windowId, { focused: true })
         .fallback('__func__: Window update failed');
 
       if (result !== Sym.Reject) {
-        return result;
+        return { id: windowId };
       }
 
       // Window doesn't exist anymore, clear the reference and remove from active list
       workspace.windowId = undefined;
-      this.workspaces.deactivate(id);
+      this.workspaces.deactivate(workspace.id);
     }
 
     const tabs = workspace.tabs.sort((a, b) => a.index - b.index);
@@ -240,7 +234,9 @@ export class WorkspaceManager {
       this.setBadge(workspace, window.id);
       workspace.setWindowId(window.id);
       await this.save();
-      return window;
+
+      // & should not be NaN
+      return { id: window.id ?? NaN };
     }
 
     // Create new window with first URL
