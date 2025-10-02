@@ -36,13 +36,14 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const contextMenu = new Menu([
     {
       label: item(bookmarkPlusSvg, i('createWithCurrentTabs')),
-      action: async () => {
+      action: async function (this) {
         // Get current window tabs
         const currentWindow = await browser.windows.getCurrent();
         const tabs = await browser.tabs.query({ windowId: currentWindow.id });
 
         // Emit edit event with tabs
         bus.emit('edit', null, tabs);
+        this.close();
       },
     },
     {
@@ -86,7 +87,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     },
     {
       label: item(boxArrowUpSvg, i('export')),
-      action: async () => {
+      action: async function (this) {
         const state = await $lsget();
 
         // Create and download JSON file
@@ -97,26 +98,37 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
         a.download = `firefox-workspaces-${new Date().toISOString().split('T')[0]}.json`;
         a.click();
         URL.revokeObjectURL(url);
+        this.close();
       },
     },
     Menu.Divider,
     {
       label: item(bugSvg, i('debugInfo')),
-      action: () => {
-        logger.debug('workspaces', stringify(popupService.workspaces));
+      action: async () => {
+        const workspaces = await $lsget('workspaces');
+        logger.debug('workspaces', stringify(workspaces));
       },
     },
-    { label: item(gearSvg, i('settings')), action: () => settingsDialog.bus.emit('show') },
+    {
+      label: item(gearSvg, i('settings')),
+      action: function (this) {
+        settingsDialog.bus.emit('show');
+        this.close();
+      },
+    },
     Menu.Divider,
     {
       label: item(heartSvg, i('donate')),
-      action: () => donateDialog.bus.emit('show'),
+      action: function (this) {
+        donateDialog.bus.emit('show');
+        this.close();
+      },
     },
     {
       label: item(workspaceSvg, i('about')),
       action: function (this) {
-        this.close();
         aboutDialog.bus.emit('show');
+        this.close();
       },
     },
   ]);
