@@ -3,7 +3,7 @@ import { Workspace } from './lib/workspace.ts';
 import { Theme } from './lib/consts.ts';
 import { WorkspaceTab } from './lib/workspace-tab.ts';
 import type I18NEnMessage from '../_locales/en/messages.json';
-import type I18NZhMessage from '../_locales/en/messages.json';
+import type I18NZhMessage from '../_locales/zh_CN/messages.json';
 
 declare global {
   const __IS_DEV__: boolean;

@@ -296,5 +296,8 @@
   "confirmSelection": {
     "message": "确认选择",
     "description": "Confirm selection tooltip"
+  },
+  "lastUpdatedAt": {
+    "message": "最近更新于"
   }
 }

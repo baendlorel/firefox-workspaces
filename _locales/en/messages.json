@@ -296,5 +296,8 @@
   "confirmSelection": {
     "message": "Confirm selection",
     "description": "Confirm selection tooltip"
+  },
+  "lastUpdatedAt": {
+    "message": "last updated at"
   }
 }

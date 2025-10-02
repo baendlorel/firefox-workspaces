@@ -37,6 +37,7 @@
 		"test": "clear & vitest",
 		"lint": "oxlint .",
 		"exlint": "web-ext lint",
+		"check": "tsc --noEmit",
 		"cover": "clear & vitest --coverage"
 	},
 	"license": "MIT",
