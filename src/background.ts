@@ -114,13 +114,6 @@ class WorkspaceBackground {
         return;
       }
 
-      // & now we do not close the window of the deleted workspace, this is no longer needed
-      // Skip processing if this workspace is being deleted
-      // if (this.manager.workspaces.isDeleting(workspace.id)) {
-      //   logger.debug(`WindowOnRemoved: Deleting '${workspace.name}', skip`);
-      //   return;
-      // }
-
       const tabs = await browser.tabs.query({ windowId });
       if (tabs.length === 0) {
         logger.error('WindowOnRemoved: Cannot get tabs. window id =', windowId);
@@ -131,10 +124,8 @@ class WorkspaceBackground {
       const activatedMap = await $lsget('activatedMap');
       delete activatedMap[windowId];
       await $lsset({ activatedMap });
-      this.manager.workspaces.deactivate(workspace.id);
 
-      await this.manager.save();
-      const urls = workspace.tabs.map((t) => (t.pinned ? '📌' + t.url : t.url)).join(', ');
+      const urls = workspace.tabs.map((t) => (t.pinned ? '📌' + t.url : t.url)).join(', \n');
       logger.info(`WindowOnRemoved: '${workspace.name}' removed. tabs are saved:`, urls);
     });
   }

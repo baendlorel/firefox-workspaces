@@ -1,7 +1,7 @@
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Consts, Sym } from './lib/consts.js';
-import { $aboutBlank, i } from './lib/ext-apis.js';
+import { $aboutBlank, $lsget, i } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { IndexedWorkspace, Workspace } from './lib/workspace.js';
@@ -90,9 +90,12 @@ export class WorkspaceManager {
   }
 
   // Open workspace in new window
-  async open(workspace: Workspace): Promise<{ id: number } | null> {
+  async open(workspace: WorkspacePlain): Promise<{ id: number } | null> {
     // If group already has an active window, focus it
-    const windowId = workspace.windowId;
+    const activatedMap = await $lsget('activatedMap');
+
+    // todo 应该找到一个辅助方法来做这件事
+    const windowId = workspace.id;
     if (windowId) {
       // Check if window still exists
       const result = await browser.windows
