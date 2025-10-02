@@ -190,15 +190,6 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.GetStats) {
-      const stats = this.manager.getStats(message.workspaceId);
-      const response: MessageResponseMap[typeof action] = {
-        succ: stats !== null,
-        data: stats,
-      };
-      return response;
-    }
-
     if (action === Action.CheckPageInWorkspaces) {
       const matched = this.manager.workspaces.arr.filter((workspace) =>
         workspace.tabs.some((tab) => tab.url === message.url)

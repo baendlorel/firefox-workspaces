@@ -16,11 +16,6 @@ declare global {
     workspace: Workspace;
   }
 
-  interface GetStatsRequest {
-    action: Action.GetStats;
-    workspaceId: string;
-  }
-
   interface CheckPageInWorkspacesRequest {
     action: Action.CheckPageInWorkspaces;
     url: string;
@@ -36,7 +31,6 @@ declare global {
     | GetStateRequest
     | GetRequest
     | OpenRequest
-    | GetStatsRequest
     | CheckPageInWorkspacesRequest
     | ImportRequest;
   // #endregion
@@ -63,10 +57,6 @@ declare global {
     data: { id: number } | null;
   }
 
-  interface GetStatsResponse extends BaseResponse {
-    data?: WorkspaceStats | null;
-  }
-
   interface CheckPageInWorkspacesResponse extends BaseResponse {
     data: Workspace[];
   }
@@ -83,7 +73,6 @@ declare global {
     [Action.GetState]: GetStateResponse;
     [Action.Get]: GetResponse;
     [Action.Open]: OpenResponse;
-    [Action.GetStats]: GetStatsResponse;
     [Action.CheckPageInWorkspaces]: CheckPageInWorkspacesResponse;
     [Action.Import]: ImportResponse;
   }

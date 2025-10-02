@@ -40,7 +40,6 @@ export const enum Action {
   GetState,
   Get,
   Open,
-  GetStats,
   CheckPageInWorkspaces,
   Import,
 }

@@ -246,32 +246,6 @@ export class MockBrowser {
         } as OpenResponse;
       }
 
-      case Action.GetStats: {
-        const req = request as GetStatsRequest;
-        const workspace = workspaces.find((ws) => ws.id === req.workspaceId);
-
-        if (!workspace) {
-          return {
-            success: false,
-            error: 'Workspace not found',
-          } as any;
-        }
-
-        const stats: WorkspaceStats = {
-          totalTabs: workspace.tabs.length + workspace.pinnedTabs.length,
-          pinnedTabs: workspace.pinnedTabs.length,
-          regularTabs: workspace.tabs.length,
-          lastOpened: workspace.lastOpened,
-          createdAt: workspace.createdAt,
-          isActive: Date.now() - workspace.lastOpened < 300000, // Active if opened within 5 minutes
-        };
-
-        return {
-          succ: true,
-          data: stats,
-        } as GetStatsResponse;
-      }
-
       case Action.CheckPageInWorkspaces: {
         const req = request as CheckPageInWorkspacesRequest;
         const matcher = (tab: WorkspaceTab) =>
