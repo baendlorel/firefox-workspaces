@@ -13,6 +13,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     h('p', '', 'Create a new workspace to get started!'),
   ]);
 
-  bus.on('render-list', () => (el.style.display = popupService.isNoWorkspace ? 'block' : 'none'));
+  bus.on('render-list', () => (el.style.display = popupService.isEmpty ? 'block' : 'none'));
   return el;
 };

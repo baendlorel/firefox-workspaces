@@ -30,12 +30,8 @@ declare global {
   type WorkspaceEditorEventMap = {
     debug: (...args: any[]) => void;
 
-    // workspaces
-    'set-current': (workspace?: Workspace) => void;
-    'toggle-li-activated': (activated: string[]) => void;
     'render-list': () => void;
     edit: (workspace: Workspace | null, tabs?: browser.tabs.Tab[]) => void;
-    delete: (workspace: Workspace) => void;
     open: (workspace: Workspace) => void;
   };
 }

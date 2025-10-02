@@ -4,6 +4,7 @@ import { btn, h, svg } from '@/lib/dom.js';
 import editIcon from '@web/assets/3-dots.svg?raw';
 import listItem from './list-item.js';
 import { Workspace } from '@/lib/workspace.js';
+import popupService from '../popup.service.js';
 
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
@@ -34,8 +35,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       li.dataset.id = workspace.id;
 
       // # register events
-      li.addEventListener('click', () => bus.emit('open', workspace));
+      li.addEventListener('click', () => popupService.open(workspace));
+
       editBtn.addEventListener('click', (e) => {
+        // Prevent triggering li click event, which opens the workspace
         e.stopPropagation();
         bus.emit('edit', workspace);
       });
@@ -56,11 +59,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     }
   };
 
-  bus.on('render-list', (workspace, activated) => {
-    renderList(workspace);
-    activateHighlight(activated);
+  bus.on('render-list', () => {
+    renderList(popupService.workspaces);
+    activateHighlight(popupService.activated);
   });
-  bus.on('toggle-li-activated', activateHighlight);
 
   return container;
 };

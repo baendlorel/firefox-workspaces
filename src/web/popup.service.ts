@@ -5,15 +5,15 @@ import { IndexedWorkspace, Workspace } from '@/lib/workspace.js';
 import { info } from './components/dialog/alerts.js';
 
 class PopupService {
-  private readonly workspaces: Workspace[] = [];
-  private readonly activated: string[] = []; // Track active workspace IDs
+  readonly workspaces: Workspace[] = [];
+  readonly activated: string[] = []; // Track active workspace IDs
 
-  async checkCurrentWindow() {
+  async getWorkspaceOfCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent();
     return this.workspaces.find((w) => w.windowId === currentWindow.id);
   }
 
-  get isNoWorkspace() {
+  get isEmpty() {
     return this.workspaces.length === 0;
   }
 

@@ -3,6 +3,8 @@ import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { $send } from '@/lib/ext-apis.js';
+import popupService from '@web/popup.service.js';
+
 import { Menu } from '@web/components/menu/index.js';
 import about from '@web/components/about.js';
 import donate from '@web/components/donate.js';
@@ -131,7 +133,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
   // # register events
 
-  bus.on('set-current', (workspace) => {
+  popupService.getWorkspaceOfCurrentWindow().then((workspace) => {
     title.textContent = workspace?.name ?? 'Workspace';
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);
     const darken = color.adjustBrightness(-0.36);

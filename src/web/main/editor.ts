@@ -24,10 +24,11 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const colorSelectorLabel = h('label', { for: 'workspace-color' }, 'Color');
   const colorSelector = colorPicker('workspace-color');
 
-  const deleteBtn = btn({ class: 'btn btn-danger btn-with-icon', title: 'Delete the workspace' }, [
+  const deleteBtn = btn('btn btn-danger btn-with-icon', [
     svg(trashSvg, 'var(--light)', 14),
     'Delete',
   ]);
+  deleteBtn.title = 'Delete the workspace';
 
   const body = [
     div('form-group form-group-with-btn', [

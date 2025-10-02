@@ -42,10 +42,6 @@ class PopupPage {
 
     // form modal
     this.main.on('open', (workspace: Workspace) => this.open(workspace));
-    this.main.on('save', (formData: WorkspaceFormData) => this.save(formData));
-    this.main.on('delete', (workspace: Workspace) => this.delete(workspace));
-
-    this.main.emit('set-current');
 
     if (__IS_DEV__) {
       import('./__mock__/toolbar.js').then(() => this.init());
