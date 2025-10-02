@@ -1,6 +1,6 @@
-const keys: (keyof WorkspaceTab)[] = ['id', 'index', 'title', 'url', 'pinned', 'windowId'];
+const keys: (keyof WorkspaceTabPlain)[] = ['id', 'index', 'title', 'url', 'pinned', 'windowId'];
 
-export class WorkspaceTab {
+export class WorkspaceTab implements WorkspaceTabPlain {
   static from(tab: browser.tabs.Tab): WorkspaceTab {
     return new WorkspaceTab().assign(tab);
   }

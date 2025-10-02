@@ -10,7 +10,7 @@ class PopupService {
     if (currentWindow.id === undefined) {
       return undefined;
     }
-    const workspaceId = activatedMap.get(currentWindow.id);
+    const workspaceId = activatedMap[currentWindow.id];
     return workspaces.find((w) => w.id === workspaceId);
   }
 

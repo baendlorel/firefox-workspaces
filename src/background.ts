@@ -1,7 +1,8 @@
 import '@/lib/promise-ext.js';
-import { $lsset, i } from '@/lib/ext-apis.js';
+import { $lsget, $lsset, i } from '@/lib/ext-apis.js';
 import { Action, OnUpdatedChangeInfoStatus, RandomNameLanguage, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
+import { WorkspaceTab } from './lib/workspace-tab.js';
 
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
@@ -29,7 +30,7 @@ class WorkspaceBackground {
     }
 
     // Always clear activatedMap because it contains runtime data
-    await $lsset({ activatedMap: new Map() });
+    await $lsset({ activatedMap: {} });
     await this.registerListeners();
   }
 
@@ -92,20 +93,23 @@ class WorkspaceBackground {
         return;
       }
 
+      // & now we do not close the window of the deleted workspace, this is no longer needed
       // Skip processing if this workspace is being deleted
-      if (this.manager.workspaces.isDeleting(workspace.id)) {
-        logger.debug(`WindowOnRemoved: Deleting '${workspace.name}', skip`);
-        return;
-      }
+      // if (this.manager.workspaces.isDeleting(workspace.id)) {
+      //   logger.debug(`WindowOnRemoved: Deleting '${workspace.name}', skip`);
+      //   return;
+      // }
 
-      const tabs = await this.manager.tabs.getTabsOfWindow(windowId);
+      const tabs = await browser.tabs.query({ windowId });
       if (tabs.length === 0) {
         logger.error('WindowOnRemoved: Cannot get tabs. window id =', windowId);
         return;
       }
 
-      workspace.tabs = tabs;
-      workspace.windowId = undefined;
+      workspace.tabs = tabs.map(WorkspaceTab.from);
+      const activatedMap = await $lsget('activatedMap');
+      delete activatedMap[windowId];
+      await $lsset({ activatedMap });
       this.manager.workspaces.deactivate(workspace.id);
 
       await this.manager.save();

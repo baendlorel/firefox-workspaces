@@ -32,6 +32,15 @@ declare global {
     lastOpened: number;
   }
 
+  interface WorkspaceTabPlain {
+    id: number; // OnCreated
+    index: number; // OnCreated
+    title: string; // OnCreated
+    url: string; // OnUpdated, changeInfo.url
+    pinned: boolean; // OnCreated
+    windowId: number; // OnCreated
+  }
+
   interface WorkspaceFormData {
     id: string | null;
     name: string;
@@ -50,7 +59,13 @@ declare global {
   }
 
   interface WorkspaceState extends WorkspacePersistant {
-    activatedMap: Map<number, string>; // windowId -> workspaceId
+    /**
+     * windowId -> workspaceId
+     *
+     * ## Use `Record` instead of `Map` because
+     * Maps are not serializable and cannot be stored in `browser.storage`
+     */
+    activatedMap: Record<number, string>; //
   }
 
   interface WorkspacePersistantWithHash extends WorkspacePersistant {
