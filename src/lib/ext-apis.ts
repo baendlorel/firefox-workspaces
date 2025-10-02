@@ -17,7 +17,7 @@ export const $aboutBlank = () =>
   });
 
 export function $lsget(): Promise<WorkspaceState>;
-export function $lsget(key: WorkspaceStateKey): Promise<WorkspaceState[typeof key]>;
+export function $lsget<T extends WorkspaceStateKey>(key: T): Promise<WorkspaceState[T]>;
 export function $lsget(defaultState: WorkspaceState): Promise<WorkspaceState>;
 export function $lsget(arg = Sym.NotProvided): Promise<any> {
   if (arg === Sym.NotProvided) {

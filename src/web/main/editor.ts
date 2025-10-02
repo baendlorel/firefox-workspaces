@@ -112,7 +112,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     await popupService.load();
 
     // use latest data to render the list
-    bus.emit('render-list', popupService.workspaces, popupService.activated);
+    bus.emit('render-list');
 
     close();
   });

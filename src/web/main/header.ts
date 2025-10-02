@@ -2,7 +2,7 @@ import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts, Action, Sym } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
-import { $send, i } from '@/lib/ext-apis.js';
+import { $lsget, $send, i } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
 import { Workspace } from '@/lib/workspace.js';
 import { stringify } from './debug.js';
@@ -87,18 +87,10 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: item(boxArrowUpSvg, i('export')),
       action: async () => {
-        const response = await $send<GetRequest>({
-          action: Action.Get,
-        }).fallbackWithDialog(i('exportFailed'));
-
-        if (response === Sym.Reject || !response.succ) {
-          return;
-        }
+        const state = await $lsget();
 
         // Create and download JSON file
-        const blob = new Blob([JSON.stringify(response.data, null, 2)], {
-          type: 'application/json',
-        });
+        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;

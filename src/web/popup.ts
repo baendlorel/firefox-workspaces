@@ -5,7 +5,6 @@ import './css/form.css';
 import '@/lib/promise-ext.js';
 
 import { createView } from './view.js';
-import popupService from './popup.service.js';
 
 import { danger } from './components/dialog/alerts.js';
 
@@ -19,19 +18,14 @@ class PopupPage {
 
   constructor() {
     logger.info('PopupPage Created');
-  }
-
-  async init() {
     const main = createView();
-    await popupService.load();
-    main.emit('render-list', popupService.workspaces, popupService.activated);
+    main.emit('render-list');
   }
 }
 
 // Initialize popup when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
   window.popup = new PopupPage();
-  window.popup.init();
 });
 
 declare global {

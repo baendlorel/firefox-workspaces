@@ -1,9 +1,10 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, h, svg } from '@/lib/dom.js';
+import { $lsget } from '@/lib/ext-apis.js';
+import { Workspace } from '@/lib/workspace.js';
 
 import editIcon from '@web/assets/3-dots.svg?raw';
 import listItem from './list-item.js';
-import { Workspace } from '@/lib/workspace.js';
 import popupService from '../popup.service.js';
 
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
@@ -35,6 +36,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       li.dataset.id = workspace.id;
 
       // # register events
+      // todo 这里可以舍弃popupservice吗？
       li.addEventListener('click', () => popupService.open(workspace));
 
       editBtn.addEventListener('click', (e) => {
@@ -59,9 +61,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     }
   };
 
-  bus.on('render-list', (workspaces, activated) => {
+  bus.on('render-list', async () => {
+    const workspaces = await $lsget('workspaces');
     renderList(workspaces);
-    activateHighlight(activated);
+    bus.emit('toggle-empty-state', workspaces.length === 0);
   });
 
   return container;
