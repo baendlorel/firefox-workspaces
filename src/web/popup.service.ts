@@ -58,7 +58,7 @@ class PopupService {
     });
   }
 
-  async getExportData(): Promise<WorkspaceStateWithHash> {
+  async getExportData(): Promise<WorkspacePersistantWithHash> {
     const state = await $lsget();
     // todo 采取一个哈希算法
     return { ...state, hash: 'ddd' };

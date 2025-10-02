@@ -17,6 +17,7 @@ class WorkspaceBackground {
     const state = (await browser.storage.local.get(null)) as WorkspaceState;
     const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = state;
 
+    // todo 可以做更细致的检测
     if (workspaces === Sym.NotProvided) {
       await $lsset({ workspaces: [] });
     }

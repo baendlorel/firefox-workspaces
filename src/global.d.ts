@@ -44,13 +44,18 @@ declare global {
     theme: Theme;
   }
 
-  interface WorkspaceState {
+  interface WorkspacePersistant {
     workspaces: WorkspacePlain[];
     settings: WorkspaceSettings;
+  }
+
+  interface WorkspaceState extends WorkspacePersistant {
     activatedMap: Map<number, string>; // windowId -> workspaceId
   }
 
-  type WorkspaceStateWithHash = WorkspaceState & { hash: string };
+  interface WorkspacePersistantWithHash extends WorkspacePersistant {
+    hash: string;
+  }
 
   type WorkspaceStateKey = keyof WorkspaceState;
 
