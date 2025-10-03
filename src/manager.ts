@@ -1,4 +1,4 @@
-import { add, find, get, set, has, remove } from 'flat-pair';
+import { get, set, has, remove, hasByValue } from 'flat-pair';
 
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
@@ -39,16 +39,18 @@ export class WorkspaceManager {
     } else {
       set(_windowTabs, browserTab.windowId, [browserTab]);
     }
+    await $lsset({ _windowTabs });
   }
 
   async refreshWindowTab(windowId: number | undefined) {
     const { _workspaceWindows, _windowTabs } = await $lsget('_workspaceWindows', '_windowTabs');
-    if (!has(_workspaceWindows, windowId)) {
+    if (!hasByValue(_workspaceWindows, windowId)) {
       return;
     }
 
     const tabs = await browser.tabs.query({ windowId });
     set(_windowTabs, windowId as number, tabs);
+    await $lsset({ _windowTabs });
   }
 
   /**
@@ -93,10 +95,10 @@ export class WorkspaceManager {
   // Open workspace in new window
   async open(workspace: Workspace): Promise<{ id: number } | null> {
     // If group already has an active window, focus it
-    const { _workspaceWindow } = await $lsget('_workspaceWindow');
+    const { _workspaceWindows } = await $lsget('_workspaceWindows');
 
     // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
-    const windowId = find<string, number>(_workspaceWindow, workspace.id);
+    const windowId = get<string, number>(_workspaceWindows, workspace.id);
     if (windowId) {
       // Check if window still exists
       const result = await browser.windows
@@ -109,7 +111,7 @@ export class WorkspaceManager {
     const tabs = workspace.tabs.sort((a, b) => a.index - b.index);
     if (tabs.length === 0) {
       const window = await $aboutBlank();
-      await this.openIniter(workspace, window, _workspaceWindow);
+      await this.openIniter(workspace, window, _workspaceWindows);
 
       // & Theoretically, `id` won't be NaN
       return { id: window.id ?? NaN };
@@ -141,7 +143,7 @@ export class WorkspaceManager {
     }
 
     // & Pin tabs are handled in OnUpdated listener
-    await this.openIniter(workspace, window, _workspaceWindow);
+    await this.openIniter(workspace, window, _workspaceWindows);
     return window;
   }
 
@@ -151,27 +153,25 @@ export class WorkspaceManager {
   private async openIniter(
     workspace: Workspace,
     window: WindowWithId,
-    _workspaceWindow: (string | number)[]
+    _workspaceWindows: (string | number)[]
   ) {
     this.setBadge(workspace, window.id);
-    this.workspaceWindows.add(window.id);
-    set<string, number>(_workspaceWindow, workspace.id, window.id);
-    await $lsset({ _workspaceWindows: _workspaceWindow });
+    set<string, number>(_workspaceWindows, workspace.id, window.id);
+    await $lsset({ _workspaceWindows });
   }
 
   // Update workspace tabs from window state
-  async updateTabsOfWorkspace(workspace: Workspace): Promise<boolean> {
-    const { _workspaceWindow } = await $lsget('_workspaceWindow');
-    const windowId = find<string, number>(_workspaceWindow, workspace.id);
+  async updateTabsOfWorkspace(workspace: Workspace): Promise<void> {
+    const { _workspaceWindows } = await $lsget('_workspaceWindows');
+    const windowId = get<string, number>(_workspaceWindows, workspace.id);
     if (windowId === undefined) {
       logger.error('Inactivated workspace has no windowId:', workspace);
-      return false;
+      return;
     }
 
     const browserTabs = await browser.tabs.query({ windowId });
     workspace.tabs = browserTabs.map(WorkspaceTab.from);
-
-    return true;
+    await $lsset({ _workspaceWindows });
   }
 
   // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口

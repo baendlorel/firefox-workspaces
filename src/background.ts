@@ -1,22 +1,19 @@
 import '@/lib/promise-ext.js';
 import { $lsset, i, $findWorkspaceByWindowId, $lsget } from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
-import { WorkspaceManager } from './manager.js';
 import { isValidWorkspace } from './lib/workspace.js';
+import { isValidSettings } from './lib/settings.js';
 
-type ChangeInfo = Merge<
-  Merge<
-    Merge<
-      Merge<browser.tabs._OnUpdatedChangeInfo, browser.tabs._OnAttachedAttachInfo>,
-      browser.tabs._OnMovedMoveInfo
-    >,
-    browser.tabs._OnRemovedRemoveInfo
-  >,
-  browser.tabs._OnDetachedDetachInfo
->;
+import { WorkspaceManager } from './manager.js';
+
+type ChangeInfo = browser.tabs._OnUpdatedChangeInfo &
+  browser.tabs._OnAttachedAttachInfo &
+  browser.tabs._OnMovedMoveInfo &
+  browser.tabs._OnRemovedRemoveInfo &
+  browser.tabs._OnDetachedDetachInfo;
 
 class WorkspaceBackground {
-  private readonly manager: WorkspaceManager = new WorkspaceManager();
+  private readonly manager = new WorkspaceManager();
 
   constructor() {
     this.init();
@@ -31,6 +28,9 @@ class WorkspaceBackground {
     if (workspaces === Sym.NotProvided) {
       logger.info('No workspaces found, initializing empty array');
       await $lsset({ workspaces: [] });
+    } else if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
+      logger.warn('Invalid workspaces data found, resetting to empty array', workspaces);
+      await $lsset({ workspaces: [] });
     }
 
     if (settings === Sym.NotProvided) {
@@ -38,21 +38,8 @@ class WorkspaceBackground {
       await $lsset({
         settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
-    }
-
-    // & Reset invalid data
-    if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
-      logger.warn('Invalid workspaces data found, resetting to empty array');
-      await $lsset({ workspaces: [] });
-    }
-
-    if (
-      typeof settings !== 'object' ||
-      settings === null ||
-      typeof settings.theme !== 'string' ||
-      typeof settings.randomNameLang !== 'string'
-    ) {
-      logger.warn('Invalid settings data found, resetting to default settings');
+    } else if (!isValidSettings(settings)) {
+      logger.warn('Invalid settings data found, resetting to default settings', settings);
       await $lsset({
         settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
@@ -129,7 +116,7 @@ class WorkspaceBackground {
     });
   }
 
-  private async refreshTab(info: ChangeInfo) {
+  private async refreshTab(info: Partial<ChangeInfo>) {
     const windowId = info.windowId ?? info.newWindowId ?? info.oldWindowId ?? Sym.NotProvided;
     if (windowId === Sym.NotProvided) {
       return;
