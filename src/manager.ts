@@ -74,13 +74,13 @@ export class WorkspaceManager {
    * Remove the pair of `workspaceToWindow` in store
    */
   async deactivate(id: string) {
-    const workspaceToWindow = await $lsget('workspaceToWindow');
+    const { workspaceToWindow } = await $lsget('workspaceToWindow');
     FlatPair.delete(workspaceToWindow, id);
     await $lsset({ workspaceToWindow });
   }
 
   async save(workspace: WorkspacePlain) {
-    const workspaces = await $lsget('workspaces');
+    const { workspaces } = await $lsget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     if (index !== -1) {
       workspaces[index] = workspace;
@@ -112,7 +112,7 @@ export class WorkspaceManager {
   // Open workspace in new window
   async open(workspace: WorkspacePlain): Promise<{ id: number } | null> {
     // If group already has an active window, focus it
-    const workspaceToWindow = await $lsget('workspaceToWindow');
+    const { workspaceToWindow } = await $lsget('workspaceToWindow');
 
     // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
     const windowId = FlatPair.find<string, number>(workspaceToWindow, workspace.id);
@@ -189,7 +189,7 @@ export class WorkspaceManager {
 
   // Update workspace tabs from window state
   async updateTabsOfWorkspace(workspace: Workspace): Promise<boolean> {
-    const workspaceToWindow = await $lsget('workspaceToWindow');
+    const { workspaceToWindow } = await $lsget('workspaceToWindow');
     const windowId = FlatPair.find<string, number>(workspaceToWindow, workspace.id);
     if (windowId === undefined) {
       logger.error('Inactivated workspace has no windowId:', workspace);

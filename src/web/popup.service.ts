@@ -12,7 +12,7 @@ class PopupService {
    * Save workspace (create or update)
    */
   async save(formData: WorkspaceFormData) {
-    const workspaces = await $lsget('workspaces');
+    const { workspaces } = await $lsget('workspaces');
 
     const newWorkspace = createWorkspacePlain(formData);
     if (workspaces.every((w) => w.id !== newWorkspace.id)) {
@@ -28,7 +28,7 @@ class PopupService {
 
   // Delete workspace
   async delete(workspace: WorkspacePlain) {
-    const workspaces = await $lsget('workspaces');
+    const { workspaces } = await $lsget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     if (index === -1) {
       workspaces.splice(index, 1);

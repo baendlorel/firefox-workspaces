@@ -17,9 +17,16 @@ export const $aboutBlank = (): Promise<WindowWithId> =>
     type: 'normal',
   }) as Promise<WindowWithId>;
 
+type PartialWorkspaceState<T extends WorkspaceStateKey[]> = {
+  [K in T[number]]: WorkspaceState[K];
+};
+
 // # storage
 export function $lsget(): Promise<WorkspacePersistant>;
-export function $lsget<T extends WorkspaceStateKey>(key: T): Promise<WorkspaceState[T]>;
+export function $lsget<T extends WorkspaceStateKey>(
+  key: T
+): Promise<{ [K in T]: WorkspaceState[T] }>;
+export function $lsget<T extends WorkspaceStateKey[]>(key: T): Promise<PartialWorkspaceState<T>>;
 export function $lsget(defaultState: WorkspaceState): Promise<WorkspaceState>;
 export function $lsget(arg = Sym.NotProvided): Promise<any> {
   if (arg === Sym.NotProvided) {
@@ -32,18 +39,17 @@ export function $lsget(arg = Sym.NotProvided): Promise<any> {
 export const $lsset = (state: Partial<WorkspaceState>): Promise<void> =>
   browser.storage.local.set(state);
 
-export const $findWorkspaceByWindowId = async (
+export async function $findWorkspaceByWindowId(
   windowId: number | undefined
-): Promise<WorkspacePlain | undefined> => {
+): Promise<WorkspacePlain | undefined> {
   if (windowId === undefined) {
     return undefined;
   }
 
-  const workspaces = await $lsget('workspaces');
-  const workspaceToWindow = await $lsget('workspaceToWindow');
+  const { workspaces, workspaceToWindow } = await $lsget(['workspaces', 'workspaceToWindow']);
   const workspaceId = FlatPair.findByValue<string, number>(workspaceToWindow, windowId);
   return workspaces.find((w) => w.id === workspaceId);
-};
+}
 
 // # i18n
 true satisfies IsSameType<I18NEnKey, I18NZhKey>;

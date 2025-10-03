@@ -61,7 +61,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   };
 
   bus.on('render-list', async () => {
-    const workspaces = await $lsget('workspaces');
+    const { workspaces } = await $lsget('workspaces');
     renderList(workspaces);
     bus.emit('toggle-empty-state', workspaces.length === 0);
   });

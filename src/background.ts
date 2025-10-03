@@ -62,16 +62,6 @@ class WorkspaceBackground {
     this.runtimeListeners();
     this.tabListeners();
     this.windowListeners();
-
-    browser.contextMenus.onClicked.addListener(async (info: browser.contextMenus.OnClickData) => {
-      if (info.menuItemId !== 'addToWorkspace') {
-        return;
-      }
-      const popupUrl = browser.runtime.getURL('popup.html');
-      await browser.windows
-        .create({ url: popupUrl, type: 'popup', width: 1000, height: 600 })
-        .fallback();
-    });
   }
 
   private runtimeListeners() {
