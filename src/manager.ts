@@ -114,6 +114,7 @@ export class WorkspaceManager {
     // If group already has an active window, focus it
     const workspaceToWindow = await $lsget('workspaceToWindow');
 
+    // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
     const windowId = FlatPair.find<string, number>(workspaceToWindow, workspace.id);
     if (windowId) {
       // Check if window still exists
@@ -121,25 +122,15 @@ export class WorkspaceManager {
         .update(windowId, { focused: true })
         .fallback('__func__: Window update failed');
 
-      if (result !== Sym.Reject) {
-        return { id: windowId };
-      }
-
-      // & Window doesn't exist anymore, clear the reference and remove from active list
-      FlatPair.delete(workspaceToWindow, workspace.id);
-      await $lsset({ workspaceToWindow });
+      return result === Sym.Reject ? null : { id: windowId };
     }
 
     const tabs = workspace.tabs.sort((a, b) => a.index - b.index);
-
     if (tabs.length === 0) {
-      // Create window with new tab page if no URLs
       const window = await $aboutBlank();
-      this.setBadge(workspace, window.id);
-      FlatPair.add<string, number>(workspaceToWindow, workspace.id, window.id);
-      await $lsset({ workspaceToWindow });
+      await this.openIniter(workspace, window, workspaceToWindow);
 
-      // & should not be NaN
+      // & Theoretically, `id` won't be NaN
       return { id: window.id ?? NaN };
     }
 
@@ -148,11 +139,8 @@ export class WorkspaceManager {
       .create({ url: tabs[0].url, type: 'normal' })
       .fallback('__func__: Fallback to about:blank because', $aboutBlank)) as WindowWithId;
 
-    this.setBadge(workspace, window.id);
-    this.workspaceWindows.add(window.id);
-
     // Wait a moment for window to be ready
-    await $sleep(500);
+    await $sleep(600);
 
     const firstTabId = window.tabs?.[0].id;
     if (tabs[0].pinned && firstTabId !== undefined) {
@@ -166,6 +154,7 @@ export class WorkspaceManager {
           windowId: window.id,
           url: tabs[i].url,
           active: false,
+          pinned: tabs[i].pinned, // * This might not work 😔, so handle it again with `this.needPin`
           index: tabs[i].index,
         })
         .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`);
@@ -179,13 +168,23 @@ export class WorkspaceManager {
       }
     }
 
-    // * Pin tabs are handled in OnUpdated listener
+    // & Pin tabs are handled in OnUpdated listener
+    await this.openIniter(workspace, window, workspaceToWindow);
+    return window;
+  }
 
-    // Update group with window association and last opened time
+  /**
+   * init function used only in `this.open`
+   */
+  private async openIniter(
+    workspace: WorkspacePlain,
+    window: WindowWithId,
+    workspaceToWindow: (string | number)[]
+  ) {
+    this.setBadge(workspace, window.id);
+    this.workspaceWindows.add(window.id);
     FlatPair.add<string, number>(workspaceToWindow, workspace.id, window.id);
     await $lsset({ workspaceToWindow });
-
-    return window;
   }
 
   // Update workspace tabs from window state
