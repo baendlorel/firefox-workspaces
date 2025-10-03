@@ -24,7 +24,18 @@ export function $lsget(...args: any[]): Promise<any> {
   return browser.storage.local.get(args);
 }
 
-export const $lsset = (state: Partial<Local>): Promise<void> => browser.storage.local.set(state);
+export const $lpPersistSet = async (persist: Partial<Persist>) => {
+  persist.timestamp = Date.now();
+  await browser.storage.local.set(persist);
+};
+
+export const $lsStateSet = (state: Partial<Local>) => browser.storage.local.set(state);
+
+export const $syncGet = (): Promise<Persist> => browser.storage.sync.get() as any;
+export const $syncSet = async (persist: Persist) => {
+  persist.timestamp = Date.now();
+  await browser.storage.sync.set(persist);
+};
 
 // # common services
 export async function $findWorkspaceByWindowId(

@@ -1,5 +1,12 @@
 import '@/lib/promise-ext.js';
-import { $lsset, i, $findWorkspaceByWindowId, $lsget } from './lib/ext-apis.js';
+import {
+  $lsPersistSet,
+  i,
+  $findWorkspaceByWindowId,
+  $lsget,
+  $syncGet,
+  $syncSet,
+} from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
 import { isValidWorkspace } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
@@ -17,36 +24,38 @@ class WorkspaceBackground {
 
   constructor() {
     this.init();
+    this.startSyncTask();
   }
 
   private async init() {
     // # init storage
+    const sync = await $syncGet();
     const local = await $lsget();
     const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = local;
 
     // * Init empty data
     if (workspaces === Sym.NotProvided) {
       logger.info('No workspaces found, initializing empty array');
-      await $lsset({ workspaces: [] });
+      await $lsPersistSet({ workspaces: [] });
     } else if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
       logger.warn('Invalid workspaces data found, resetting to empty array', workspaces);
-      await $lsset({ workspaces: [] });
+      await $lsPersistSet({ workspaces: [] });
     }
 
     if (settings === Sym.NotProvided) {
       logger.info('No settings found, initializing default settings');
-      await $lsset({
+      await $lsPersistSet({
         settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
     } else if (!isValidSettings(settings)) {
       logger.warn('Invalid settings data found, resetting to default settings', settings);
-      await $lsset({
+      await $lsPersistSet({
         settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
     }
 
     // Always clear activated because it contains runtime data
-    await $lsset({ _workspaceWindows: [] });
+    await $lsPersistSet({ _workspaceWindows: [] });
     await this.registerListeners();
   }
 
@@ -164,6 +173,19 @@ class WorkspaceBackground {
       error: 'Unknown action: ' + String(action),
     };
     return errorResponse;
+  }
+
+  private async startSyncTask() {
+    const INTERVAL = 10 * 60 * 1000;
+    const task = async () => {
+      // * Might change if more features are added
+      const local = await $lsget('workspaces', 'settings');
+      await $syncSet(local);
+
+      setTimeout(task, INTERVAL);
+    };
+
+    setTimeout(task, INTERVAL);
   }
 }
 

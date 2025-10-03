@@ -1,5 +1,5 @@
 import { Action } from '@/lib/consts.js';
-import { $findWorkspaceByWindowId, $lsget, $lsset, $send } from '@/lib/ext-apis.js';
+import { $findWorkspaceByWindowId, $lsget, $lsPersistSet, $send } from '@/lib/ext-apis.js';
 import { $objectHash } from '@/lib/utils.js';
 import { createWorkspace } from '@/lib/workspace.js';
 
@@ -20,7 +20,7 @@ class PopupService {
       const newWorkspace = createWorkspace(formData);
       workspaces.push(newWorkspace);
 
-      await $lsset({ workspaces });
+      await $lsPersistSet({ workspaces });
 
       if (formData.tabs.length > 0) {
         await this.open(newWorkspace);
@@ -36,7 +36,7 @@ class PopupService {
     exists.name = formData.name;
     exists.color = formData.color;
     exists.tabs = formData.tabs;
-    await $lsset({ workspaces });
+    await $lsPersistSet({ workspaces });
   }
 
   // Delete workspace
@@ -46,7 +46,7 @@ class PopupService {
     if (index === -1) {
       workspaces.splice(index, 1);
     }
-    await $lsset({ workspaces });
+    await $lsPersistSet({ workspaces });
   }
 
   /**

@@ -1,5 +1,6 @@
 // # storage
 interface Persist {
+  timestamp: number;
   workspaces: Workspace[];
   settings: Settings;
 }

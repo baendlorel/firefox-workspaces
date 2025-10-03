@@ -3,7 +3,7 @@ import { get, set, has, remove, hasByValue } from 'flat-pair';
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
-import { $aboutBlank, $lsget, $lsset, i } from './lib/ext-apis.js';
+import { $aboutBlank, $lsget, $lsPersistSet, i } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { isValidWorkspace } from './lib/workspace.js';
@@ -39,7 +39,7 @@ export class WorkspaceManager {
     } else {
       set(_windowTabs, browserTab.windowId, [browserTab]);
     }
-    await $lsset({ _windowTabs });
+    await $lsPersistSet({ _windowTabs });
   }
 
   async refreshWindowTab(windowId: number | undefined) {
@@ -50,7 +50,7 @@ export class WorkspaceManager {
 
     const tabs = await browser.tabs.query({ windowId });
     set(_windowTabs, windowId as number, tabs);
-    await $lsset({ _windowTabs });
+    await $lsPersistSet({ _windowTabs });
   }
 
   /**
@@ -59,7 +59,7 @@ export class WorkspaceManager {
   async deactivate(id: string) {
     const { _workspaceWindows } = await $lsget('_workspaceWindows');
     remove(_workspaceWindows, id);
-    await $lsset({ _workspaceWindows });
+    await $lsPersistSet({ _workspaceWindows });
   }
 
   async save(workspace: Workspace) {
@@ -70,15 +70,10 @@ export class WorkspaceManager {
     } else {
       workspaces.push(workspace);
     }
-    await $lsset({ workspaces });
+    await $lsPersistSet({ workspaces });
   }
 
-  setBadge(workspace: Workspace, windowId?: number) {
-    if (!windowId) {
-      logger.debug('Not setting badge, no windowId');
-      return;
-    }
-
+  setBadge(workspace: Workspace, windowId: number) {
     const spaceIndex = workspace.name.indexOf(' ');
     const name =
       spaceIndex === -1
@@ -113,8 +108,7 @@ export class WorkspaceManager {
       const window = await $aboutBlank();
       await this.openIniter(workspace, window, _workspaceWindows);
 
-      // & Theoretically, `id` won't be NaN
-      return { id: window.id ?? NaN };
+      return { id: window.id };
     }
 
     // Create new window with first URL
@@ -157,7 +151,7 @@ export class WorkspaceManager {
   ) {
     this.setBadge(workspace, window.id);
     set<string, number>(_workspaceWindows, workspace.id, window.id);
-    await $lsset({ _workspaceWindows });
+    await $lsPersistSet({ _workspaceWindows });
   }
 
   // Update workspace tabs from window state
@@ -171,7 +165,7 @@ export class WorkspaceManager {
 
     const browserTabs = await browser.tabs.query({ windowId });
     workspace.tabs = browserTabs.map(WorkspaceTab.from);
-    await $lsset({ _workspaceWindows });
+    await $lsPersistSet({ _workspaceWindows });
   }
 
   // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口
