@@ -154,7 +154,7 @@ export class WorkspaceManager {
           windowId: window.id,
           url: tabs[i].url,
           active: false,
-          pinned: tabs[i].pinned, // * This might not work 😔, so handle it again with `this.needPin`
+          // pinned: tabs[i].pinned, // * This might not work 😔, so handle it again with `this.needPin`
           index: tabs[i].index,
         })
         .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`);

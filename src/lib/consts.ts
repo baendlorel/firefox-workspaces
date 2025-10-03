@@ -1,5 +1,6 @@
 export const enum Consts {
   StorageKey = 'kasukabe_tsumugi:workspaces',
+  InjectionFlag = 'kasukabe_tsumugi:workspaces',
   DefaultColor = '#2da191',
 }
 
@@ -20,7 +21,7 @@ export const WORKSPACE_COLORS: HexColor[] = [
   '#004e8c',
 ];
 
-export const enum OnUpdatedChangeInfoStatus {
+export const enum TabChangeStatus {
   Complete = 'complete',
   Loading = 'loading',
 }
@@ -30,7 +31,7 @@ export const enum Theme {
   Dark = 'dark',
 }
 
-export const enum RandomNameLanguage {
+export const enum RandomNameLang {
   Auto = 'auto',
   Zh = 'zh',
   En = 'en',

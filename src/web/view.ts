@@ -1,3 +1,10 @@
+// css
+import './css/theme.css';
+import './css/main.css';
+import './css/workspace.css';
+import './css/form.css';
+
+// packages
 import { EventBus } from 'minimal-event-bus';
 import { $id } from '@/lib/dom.js';
 
@@ -26,6 +33,9 @@ export function createView() {
   ];
 
   $id('app').append(...children);
+
+  // # initial render
+  emit('render-list');
 
   return { emit, on };
 }

@@ -1,6 +1,6 @@
 import '@/lib/promise-ext.js';
 import { $findWorkspaceByWindowId, $lsset, i } from './lib/ext-apis.js';
-import { Action, OnUpdatedChangeInfoStatus, RandomNameLanguage, Sym, Theme } from './lib/consts.js';
+import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
 import { Workspace } from './lib/workspace.js';
 
@@ -27,7 +27,7 @@ class WorkspaceBackground {
     if (settings === Sym.NotProvided) {
       logger.info('No settings found, initializing default settings');
       await $lsset({
-        settings: { theme: Theme.Auto, randomNameLanguage: RandomNameLanguage.Auto },
+        settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
     }
 
@@ -41,11 +41,11 @@ class WorkspaceBackground {
       typeof settings !== 'object' ||
       settings === null ||
       typeof settings.theme !== 'string' ||
-      typeof settings.randomNameLanguage !== 'string'
+      typeof settings.randomNameLang !== 'string'
     ) {
       logger.warn('Invalid settings data found, resetting to default settings');
       await $lsset({
-        settings: { theme: Theme.Auto, randomNameLanguage: RandomNameLanguage.Auto },
+        settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
     }
 
@@ -55,7 +55,9 @@ class WorkspaceBackground {
   }
 
   private getPopup(windowId: number) {
-    return browser.extension.getViews({ type: 'popup', windowId }).find((v) => v.popup);
+    return browser.extension
+      .getViews({ type: 'popup', windowId })
+      .find((v) => Reflect.has(v, Consts.InjectionFlag));
   }
 
   private registerListeners() {
@@ -130,7 +132,7 @@ class WorkspaceBackground {
     });
 
     browser.tabs.onUpdated.addListener(async (tabId, info, tab) => {
-      if (info.status === OnUpdatedChangeInfoStatus.Complete) {
+      if (info.status === TabChangeStatus.Complete) {
         if (!this.manager.needPin.has(tabId)) {
           await this.manager.refreshWindowTab(tab.windowId);
           return;
