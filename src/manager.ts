@@ -1,7 +1,8 @@
+import { add, find, remove } from 'flat-pair';
+
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
-import { FlatPair } from './lib/flat-pair.js';
 import { $aboutBlank, $lsget, $lsset, i } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
@@ -63,9 +64,9 @@ export class WorkspaceManager {
    * Remove the pair of `workspaceToWindow` in store
    */
   async deactivate(id: string) {
-    const { workspaceToWindow } = await $lsget('workspaceToWindow');
-    FlatPair.delete(workspaceToWindow, id);
-    await $lsset({ workspaceWindow: workspaceToWindow });
+    const { _workspaceWindow } = await $lsget('_workspaceWindow');
+    remove(_workspaceWindow, id);
+    await $lsset({ _workspaceWindow });
   }
 
   async save(workspace: Workspace) {
@@ -101,10 +102,10 @@ export class WorkspaceManager {
   // Open workspace in new window
   async open(workspace: Workspace): Promise<{ id: number } | null> {
     // If group already has an active window, focus it
-    const { workspaceToWindow } = await $lsget('workspaceToWindow');
+    const { _workspaceWindow } = await $lsget('_workspaceWindow');
 
     // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
-    const windowId = FlatPair.find<string, number>(workspaceToWindow, workspace.id);
+    const windowId = find<string, number>(_workspaceWindow, workspace.id);
     if (windowId) {
       // Check if window still exists
       const result = await browser.windows
@@ -117,7 +118,7 @@ export class WorkspaceManager {
     const tabs = workspace.tabs.sort((a, b) => a.index - b.index);
     if (tabs.length === 0) {
       const window = await $aboutBlank();
-      await this.openIniter(workspace, window, workspaceToWindow);
+      await this.openIniter(workspace, window, _workspaceWindow);
 
       // & Theoretically, `id` won't be NaN
       return { id: window.id ?? NaN };
@@ -149,7 +150,7 @@ export class WorkspaceManager {
     }
 
     // & Pin tabs are handled in OnUpdated listener
-    await this.openIniter(workspace, window, workspaceToWindow);
+    await this.openIniter(workspace, window, _workspaceWindow);
     return window;
   }
 
@@ -159,18 +160,18 @@ export class WorkspaceManager {
   private async openIniter(
     workspace: Workspace,
     window: WindowWithId,
-    workspaceToWindow: (string | number)[]
+    _workspaceWindow: (string | number)[]
   ) {
     this.setBadge(workspace, window.id);
     this.workspaceWindows.add(window.id);
-    FlatPair.add<string, number>(workspaceToWindow, workspace.id, window.id);
-    await $lsset({ workspaceWindow: workspaceToWindow });
+    add<string, number>(_workspaceWindow, workspace.id, window.id);
+    await $lsset({ _workspaceWindow });
   }
 
   // Update workspace tabs from window state
   async updateTabsOfWorkspace(workspace: Workspace): Promise<boolean> {
-    const { workspaceToWindow } = await $lsget('workspaceToWindow');
-    const windowId = FlatPair.find<string, number>(workspaceToWindow, workspace.id);
+    const { _workspaceWindow } = await $lsget('_workspaceWindow');
+    const windowId = find<string, number>(_workspaceWindow, workspace.id);
     if (windowId === undefined) {
       logger.error('Inactivated workspace has no windowId:', workspace);
       return false;

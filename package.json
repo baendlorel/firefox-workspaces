@@ -63,7 +63,7 @@
 		"vitest": "^3.2.4"
 	},
 	"dependencies": {
-		"flat-pair": "^1.0.0",
+		"flat-pair": "^1.0.1",
 		"minimal-event-bus": "^1.0.0"
 	}
 }

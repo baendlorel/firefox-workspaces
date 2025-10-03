@@ -13,19 +13,30 @@ class PopupService {
    * Save workspace (create or update)
    */
   async save(formData: WorkspaceFormData) {
-    const { persist } = await $lsget('persist');
-    const workspaces = persist.workspaces;
+    const { workspaces } = await $lsget('workspaces');
 
-    const newWorkspace = createWorkspace(formData);
-    if (workspaces.every((w) => w.id !== newWorkspace.id)) {
+    // handle create
+    if (formData.id === null) {
+      const newWorkspace = createWorkspace(formData);
       workspaces.push(newWorkspace);
+
+      await $lsset({ workspaces });
+
+      if (formData.tabs.length > 0) {
+        await this.open(newWorkspace);
+      }
     }
 
+    const exists = workspaces.find((w) => w.id === formData.id);
+    if (!exists) {
+      logger.error('Workspace(will non-null id) to update not found:', formData.id);
+      return;
+    }
+
+    exists.name = formData.name;
+    exists.color = formData.color;
+    exists.tabs = formData.tabs;
     await $lsset({ workspaces });
-
-    if (formData.id === null && formData.tabs.length > 0) {
-      await this.open(newWorkspace);
-    }
   }
 
   // Delete workspace
@@ -48,6 +59,8 @@ class PopupService {
    * 3. Click plugin button again creates a new popup page.
    */
   open(workspace: Workspace): Promise<OpenResponse> {
+    // & We couldn't stop opening while tabs.length === 0, because you must open it to add new tabs
+    // if the new workspace window is not created by 'create from current tabs', it will not trigger the opening
     return $send<OpenRequest>({
       action: Action.Open,
       workspace,

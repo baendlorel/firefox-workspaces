@@ -1,5 +1,5 @@
 import '@/lib/promise-ext.js';
-import { $lsset, i, $findWorkspaceByWindowId } from './lib/ext-apis.js';
+import { $lsset, i, $findWorkspaceByWindowId, $lsget } from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
 import { isValidWorkspace } from './lib/workspace.js';
@@ -24,8 +24,8 @@ class WorkspaceBackground {
 
   private async init() {
     // # init storage
-    const state = (await browser.storage.local.get(null)) as State;
-    const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = state;
+    const local = await $lsget();
+    const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = local;
 
     // * Init empty data
     if (workspaces === Sym.NotProvided) {
@@ -59,7 +59,7 @@ class WorkspaceBackground {
     }
 
     // Always clear activated because it contains runtime data
-    await $lsset({ workspaceWindow: [], tabToWindow: [] });
+    await $lsset({ _workspaceWindow: [] });
     await this.registerListeners();
   }
 
