@@ -23,8 +23,13 @@ export class WorkspaceManager {
 
   // # containers
   readonly workspaces = new WorkspaceContainer();
-  readonly tabs = new TabContainer();
   readonly needPin = new Set<number>();
+
+  /**
+   * Stores tabs of each window by windowId
+   * - will save to workspace when window is closed
+   */
+  private readonly windowTabs: Map<number, browser.tabs.Tab[]> = new Map();
 
   constructor() {
     const updatedAt = new Date('__DATE_TIME__');
@@ -152,7 +157,6 @@ export class WorkspaceManager {
     return true;
   }
 
-  // todo 貌似session可以访问到最近关闭的标签页。是否可以用这个办法来保存标签页呢？
   // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口
   async importData(state: WorkspacePersistant) {
     if (!Array.isArray(state.workspaces) || state.workspaces.some((w) => !Workspace.valid(w))) {

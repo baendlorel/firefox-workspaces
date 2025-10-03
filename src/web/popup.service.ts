@@ -1,19 +1,11 @@
 import { Action } from '@/lib/consts.js';
-import { $lsget, $lsset, $send } from '@/lib/ext-apis.js';
-import { FlatPair } from '@/lib/flat-pair.js';
+import { $findWorkspaceByWindowId, $lsget, $lsset, $send } from '@/lib/ext-apis.js';
 import { createWorkspacePlain } from '@/lib/workspace.js';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
-    // todo 查找其他 find workspace by window id的逻辑
-    const currentWindow = (await browser.windows.getCurrent()) as WindowWithId;
-    const workspaces = await $lsget('workspaces');
-    const workspaceToWindow = await $lsget('workspaceToWindow');
-    if (currentWindow.id === undefined) {
-      return undefined;
-    }
-    const workspaceId = FlatPair.findByValue<string, number>(workspaceToWindow, currentWindow.id);
-    return workspaces.find((w) => w.id === workspaceId);
+    const currentWindow = await browser.windows.getCurrent();
+    return $findWorkspaceByWindowId(currentWindow.id);
   }
 
   /**

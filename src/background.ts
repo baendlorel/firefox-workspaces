@@ -115,13 +115,11 @@ class WorkspaceBackground {
         return;
       }
 
+      // todo 逻辑：1、监听标签页改动，纳入window->tabs数组。2、关闭窗口时保存标签页到workspaces数组。
       workspace.tabs = tabs.map(WorkspaceTab.from);
       const workspaceToWindow = await $lsget('workspaceToWindow');
       FlatPair.delete(workspaceToWindow, windowId);
       await $lsset({ workspaceToWindow });
-
-      const urls = workspace.tabs.map((t) => (t.pinned ? '📌' + t.url : t.url)).join(', \n');
-      logger.info(`WindowOnRemoved: '${workspace.name}' removed. tabs are saved:`, urls);
     });
   }
 
@@ -240,7 +238,6 @@ class WorkspaceBackground {
 
   private async refreshTabContainer() {
     const browserTabs = await browser.tabs.query({});
-    this.manager.tabs.rebuild(browserTabs);
   }
 }
 

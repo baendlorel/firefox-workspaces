@@ -22,6 +22,30 @@ import workspaceSvg from '@web/assets/workspace.svg?raw';
 
 import { stringify } from './debug.js';
 
+const importData = async () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  input.onchange = async () => {
+    const file = input.files?.[0];
+    if (!file) {
+      return;
+    }
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+
+      const response = await $send<ImportRequest>({
+        action: Action.Import,
+        data,
+      });
+    } catch (error) {
+      alert(i('failedToParseFile', error));
+    }
+  };
+  input.click();
+};
+
 function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const SIZE = 18;
   const COLOR = '#283343';
@@ -48,42 +72,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     },
     {
       label: item(boxArrowDownSvg, i('import')),
-      action: async () => {
-        try {
-          // Create file input to select JSON file
-          const input = document.createElement('input');
-          input.type = 'file';
-          input.accept = '.json';
-          input.onchange = async () => {
-            const file = input.files?.[0];
-            if (!file) {
-              return;
-            }
-            try {
-              const text = await file.text();
-              const data = JSON.parse(text);
-
-              const response = await $send<ImportRequest>({
-                action: Action.Import,
-                data,
-              });
-
-              if (response.succ) {
-                alert(response.message || i('importSuccessful'));
-                // Refresh the workspace list
-                window.location.reload();
-              } else {
-                alert(response.message || i('importFailed'));
-              }
-            } catch (error) {
-              alert(i('failedToParseFile', error));
-            }
-          };
-          input.click();
-        } catch (error) {
-          logger.error('Import failed:', error);
-        }
-      },
+      action: importData,
     },
     {
       label: item(boxArrowUpSvg, i('export')),
