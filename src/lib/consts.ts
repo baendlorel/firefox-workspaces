@@ -39,7 +39,6 @@ export const enum RandomNameLanguage {
 export const enum Action {
   GetState,
   Open,
-  CheckPageInWorkspaces,
   Import,
 }
 

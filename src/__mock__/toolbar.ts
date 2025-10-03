@@ -238,18 +238,6 @@ export class MockBrowser {
         } as OpenResponse;
       }
 
-      case Action.CheckPageInWorkspaces: {
-        const req = request as CheckPageInWorkspacesRequest;
-        const matcher = (tab: WorkspaceTab) =>
-          tab.url.includes(req.url) || req.url.includes(tab.url);
-        const matchingWorkspaces = workspaces.filter((workspace) => workspace.tabs.some(matcher));
-
-        return {
-          succ: true,
-          data: matchingWorkspaces,
-        } as CheckPageInWorkspacesResponse;
-      }
-
       default:
         return {
           succ: false,

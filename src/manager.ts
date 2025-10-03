@@ -5,13 +5,12 @@ import { $aboutBlank, $lsget, $lsset, i } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { Workspace } from './lib/workspace.js';
-import { WorkspaceContainer } from './containers/workspaces.js';
-import { TabContainer } from './containers/tabs.js';
 import { FlatPair } from './lib/flat-pair.js';
 
 // Workspace Data Model and Storage Manager
-// todo 准备删除不需要的containers类，转为使用数组或数组衍生类
 export class WorkspaceManager {
+  // # singleton
+  private static _instance: WorkspaceManager;
   static getInstance() {
     if (!this._instance) {
       this._instance = new WorkspaceManager();
@@ -19,10 +18,7 @@ export class WorkspaceManager {
     return this._instance;
   }
 
-  private static _instance: WorkspaceManager;
-
   // # containers
-  readonly workspaces = new WorkspaceContainer();
   readonly needPin = new Set<number>();
 
   /**
@@ -65,10 +61,13 @@ export class WorkspaceManager {
     }
   }
 
-  refreshWindowTab(windowId: number | undefined) {
-    if (this.windowTabs.has(windowId as number)) {
+  async refreshWindowTab(windowId: number | undefined) {
+    if (!this.workspaceWindows.has(windowId as number)) {
       return;
     }
+
+    const tabs = await browser.tabs.query({ windowId });
+    this.windowTabs.set(windowId as number, tabs);
   }
 
   /**

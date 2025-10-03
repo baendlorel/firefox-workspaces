@@ -107,7 +107,6 @@ class WorkspaceBackground {
         return;
       }
 
-      // todo 逻辑：1、监听标签页改动，纳入window->tabs数组。2、关闭窗口时保存标签页到workspaces数组。
       workspace.tabs = this.manager.getWindowTabs(windowId);
       await this.manager.deactivate(workspace.id);
       await this.manager.save(workspace);
@@ -201,14 +200,6 @@ class WorkspaceBackground {
       return response;
     }
 
-    if (action === Action.CheckPageInWorkspaces) {
-      const matched = this.manager.workspaces.arr.filter((workspace) =>
-        workspace.tabs.some((tab) => tab.url === message.url)
-      );
-      const response: MessageResponseMap[typeof action] = { succ: true, data: matched };
-      return response;
-    }
-
     if (action === Action.Import) {
       await this.manager.importData(message.data);
       const response: MessageResponseMap[typeof action] = {
@@ -225,10 +216,6 @@ class WorkspaceBackground {
       error: 'Unknown action: ' + String(action),
     };
     return errorResponse;
-  }
-
-  private async refreshTabContainer() {
-    const browserTabs = await browser.tabs.query({});
   }
 }
 
