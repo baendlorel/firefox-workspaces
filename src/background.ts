@@ -16,11 +16,9 @@ type ChangeInfo = Merge<
 >;
 
 class WorkspaceBackground {
-  private readonly manager: WorkspaceManager;
+  private readonly manager: WorkspaceManager = new WorkspaceManager();
 
   constructor() {
-    // !! "dist/manager.js" is removed from manifest.background.scripts
-    this.manager = WorkspaceManager.getInstance();
     this.init();
   }
 
@@ -131,7 +129,7 @@ class WorkspaceBackground {
     });
   }
 
-  private async refreshTab(info: Partial<ChangeInfo>) {
+  private async refreshTab(info: ChangeInfo) {
     const windowId = info.windowId ?? info.newWindowId ?? info.oldWindowId ?? Sym.NotProvided;
     if (windowId === Sym.NotProvided) {
       return;

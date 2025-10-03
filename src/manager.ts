@@ -9,15 +9,7 @@ import { FlatPair } from './lib/flat-pair.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
-  // # singleton
-  private static _instance: WorkspaceManager;
-  static getInstance() {
-    if (!this._instance) {
-      this._instance = new WorkspaceManager();
-    }
-    return this._instance;
-  }
-
+  // todo background会按需销毁，数据要另想办法存储
   // # containers
   /**
    * Indicates it is a workspace window
