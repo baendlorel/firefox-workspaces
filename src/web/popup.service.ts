@@ -1,6 +1,6 @@
 import { Action } from '@/lib/consts.js';
 import { $findWorkspaceByWindowId, $lsget, $lsset, $send } from '@/lib/ext-apis.js';
-import { createWorkspacePlain } from '@/lib/workspace.js';
+import { createWorkspace } from '@/lib/workspace.js';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
@@ -14,7 +14,7 @@ class PopupService {
   async save(formData: WorkspaceFormData) {
     const { workspaces } = await $lsget('workspaces');
 
-    const newWorkspace = createWorkspacePlain(formData);
+    const newWorkspace = createWorkspace(formData);
     if (workspaces.every((w) => w.id !== newWorkspace.id)) {
       workspaces.push(newWorkspace);
     }

@@ -2,8 +2,8 @@ import './toolbar.css';
 import { Action, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
 import { WorkspaceTab } from '@/lib/workspace-tab.js';
-import { Workspace } from '@/lib/workspace.js';
 import locale from '../../_locales/en/messages.json' with { type: 'json' };
+import { createWorkspace } from '@/lib/workspace.js';
 
 // # Mock browser API in dev mode
 
@@ -29,7 +29,7 @@ export class MockBrowser {
       const parsedData = JSON.parse(stored);
       // Convert plain objects back to Workspace instances
       return parsedData.map((data: any) => {
-        const workspace = new Workspace(data);
+        const workspace = createWorkspace(data);
         workspace.id = data.id;
         workspace.tabs = data.tabs || [];
         workspace.createdAt = data.createdAt;
@@ -50,7 +50,7 @@ export class MockBrowser {
     }
   }
 
-  private generateRandomWorkspace(): Workspace {
+  private generateRandomWorkspace(): WorkspacePlain {
     const names = [
       'Work',
       'Personal',
@@ -64,7 +64,7 @@ export class MockBrowser {
     const name = names[Math.floor(Math.random() * names.length)];
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
 
-    return new Workspace({ id: null, name, color, tabs: [] });
+    return createWorkspace({ id: null, name, color, tabs: [] });
   }
 
   private createSampleTab(): WorkspaceTab {
@@ -201,7 +201,7 @@ export class MockBrowser {
     // Create a fake workspace
     const name = `Fake Workspace ${new Date().toLocaleTimeString()}`;
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
-    const fakeWorkspace = new Workspace({ id: null, name, color, tabs: [] });
+    const fakeWorkspace = createWorkspace({ id: null, name, color, tabs: [] });
     fakeWorkspace.tabs = tabs;
   }
 

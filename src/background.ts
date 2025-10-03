@@ -2,7 +2,7 @@ import '@/lib/promise-ext.js';
 import { $findWorkspaceByWindowId, $lsset, i } from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
-import { Workspace } from './lib/workspace.js';
+import { isValidWorkspace } from './lib/workspace.js';
 
 type ChangeInfo = Merge<
   Merge<
@@ -41,7 +41,7 @@ class WorkspaceBackground {
     }
 
     // & Reset invalid data
-    if (!Array.isArray(workspaces) || workspaces.some((w) => !Workspace.valid(w))) {
+    if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
       logger.warn('Invalid workspaces data found, resetting to empty array');
       await $lsset({ workspaces: [] });
     }

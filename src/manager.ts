@@ -1,11 +1,11 @@
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
+import { FlatPair } from './lib/flat-pair.js';
 import { $aboutBlank, $lsget, $lsset, i } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
-import { Workspace } from './lib/workspace.js';
-import { FlatPair } from './lib/flat-pair.js';
+import { isValidWorkspace } from './lib/workspace.js';
 
 // Workspace Data Model and Storage Manager
 export class WorkspaceManager {
@@ -169,7 +169,7 @@ export class WorkspaceManager {
   }
 
   // Update workspace tabs from window state
-  async updateTabsOfWorkspace(workspace: Workspace): Promise<boolean> {
+  async updateTabsOfWorkspace(workspace: WorkspacePlain): Promise<boolean> {
     const { workspaceToWindow } = await $lsget('workspaceToWindow');
     const windowId = FlatPair.find<string, number>(workspaceToWindow, workspace.id);
     if (windowId === undefined) {
@@ -185,7 +185,7 @@ export class WorkspaceManager {
 
   // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口
   async importData(state: WorkspacePersistant) {
-    if (!Array.isArray(state.workspaces) || state.workspaces.some((w) => !Workspace.valid(w))) {
+    if (!Array.isArray(state.workspaces) || state.workspaces.some((w) => !isValidWorkspace(w))) {
       logger.error('data.workspaceses must be Workspace[]', state);
       return;
     }

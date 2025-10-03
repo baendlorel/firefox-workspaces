@@ -1,5 +1,5 @@
 import { Theme } from '@/lib/consts.js';
-import { i } from '@/lib/ext-apis.js';
+import { $lsget, i } from '@/lib/ext-apis.js';
 import { confirmation } from './dialog/alerts.js';
 import { createDialog } from './dialog/index.js';
 import { h, div, btn } from '@/lib/dom.js';
@@ -58,10 +58,9 @@ export default () => {
     }
   });
 
-  // todo 是否不需要把事件传来传去了？
   // # load settings for editing
   dialog.bus.on('show', async () => {
-    const settings = (await browser.storage.local.get('settings')) as WorkspaceSettings;
+    const { settings } = await $lsget('settings');
     selectTheme(settings.theme);
   });
 
