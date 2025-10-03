@@ -6,10 +6,6 @@ declare global {
     action: Action.GetState;
   }
 
-  interface GetRequest {
-    action: Action.Get;
-  }
-
   interface OpenRequest {
     action: Action.Open;
     workspace: WorkspacePlain;
@@ -28,7 +24,6 @@ declare global {
   // Union type for all possible requests
   type MessageRequest =
     | GetStateRequest
-    | GetRequest
     | OpenRequest
     | CheckPageInWorkspacesRequest
     | ImportRequest;
@@ -40,11 +35,6 @@ declare global {
 
   interface GetStateResponse extends BaseResponse {
     data: WorkspaceState;
-  }
-
-  interface GetResponse extends BaseResponse {
-    data: WorkspacePlain[];
-    activated: string[]; // Array of active workspace IDs
   }
 
   interface AddCurrentTabResponse extends BaseResponse {
@@ -67,7 +57,6 @@ declare global {
 
   interface MessageResponseMap {
     [Action.GetState]: GetStateResponse;
-    [Action.Get]: GetResponse;
     [Action.Open]: OpenResponse;
     [Action.CheckPageInWorkspaces]: CheckPageInWorkspacesResponse;
     [Action.Import]: ImportResponse;

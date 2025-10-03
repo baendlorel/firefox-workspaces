@@ -34,7 +34,6 @@ export class MockBrowser {
         workspace.tabs = data.tabs || [];
         workspace.createdAt = data.createdAt;
         workspace.lastOpened = data.lastOpened;
-        workspace.windowId = data.windowId;
         return workspace;
       });
     } catch (error) {
@@ -204,7 +203,6 @@ export class MockBrowser {
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
     const fakeWorkspace = new Workspace({ id: null, name, color, tabs: [] });
     fakeWorkspace.tabs = tabs;
-    fakeWorkspace.windowId = 999;
   }
 
   private createResponse(request: MessageRequest): MessageResponseMap[Action] {
@@ -219,12 +217,6 @@ export class MockBrowser {
     const workspaces = this.getStoredWorkspaces();
 
     switch (action) {
-      case Action.Get:
-        return {
-          succ: true,
-          data: workspaces,
-        } as GetResponse;
-
       case Action.Open: {
         const req = request as OpenRequest;
         const workspace = workspaces.find((ws) => ws.id === req.workspace.id);

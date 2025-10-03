@@ -115,41 +115,50 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    browser.tabs.onAttached.addListener(() => {
+    browser.tabs.onAttached.addListener((_tabId, info) => {
       logger.info('Attached');
-      this.refreshTabContainer();
+      this.manager.refreshWindowTab(info.newWindowId);
     });
 
-    browser.tabs.onDetached.addListener(() => {
+    browser.tabs.onDetached.addListener((_tabId, info) => {
       logger.info('Detached');
-      this.refreshTabContainer();
+      this.manager.refreshWindowTab(info.oldWindowId);
     });
 
-    browser.tabs.onMoved.addListener(() => {
-      this.refreshTabContainer();
+    browser.tabs.onMoved.addListener((_tabId, info) => {
+      this.manager.refreshWindowTab(info.windowId);
     });
 
-    browser.tabs.onRemoved.addListener(async (_tabId, removeInfo) => {
-      if (!removeInfo.isWindowClosing) {
-        this.refreshTabContainer();
+    browser.tabs.onRemoved.addListener(async (_tabId, info) => {
+      if (info.isWindowClosing) {
+        return;
       }
+      this.manager.refreshWindowTab(info.windowId);
     });
 
     browser.tabs.onCreated.addListener(async (tab) => {
-      this.manager.tabs.save(tab);
+      this.manager.addWindowTab(tab);
     });
 
-    browser.tabs.onUpdated.addListener(async (tabId, changeInfo, _tab) => {
-      if (changeInfo.status === OnUpdatedChangeInfoStatus.Complete) {
+    browser.tabs.onUpdated.addListener(async (tabId, info, tab) => {
+      if (info.status === OnUpdatedChangeInfoStatus.Complete) {
         if (!this.manager.needPin.has(tabId)) {
+          await this.manager.refreshWindowTab(tab.windowId);
           return;
         }
         this.manager.needPin.delete(tabId);
-        this.manager.tabs.update(tabId, { pinned: true });
-        await this.recursivePin(tabId, 3);
-      } else {
-        await this.refreshTabContainer();
+
+        // & manually update
+        const browserTab = this.manager.windowTabs.get(tab.windowId!)?.find((t) => t.id === tabId);
+        if (!browserTab) {
+          logger.error(`Tab to pin not found in cache. tab(${tabId}), window(${tab.windowId})`);
+          return;
+        }
+        // do this before pin because possible failure, we still need it to be pinned next time
+        browserTab.pinned = true;
+        this.recursivePin(tabId, 3); // & won't await this, let it try
       }
+      await this.manager.refreshWindowTab(tab.windowId);
     });
   }
 
@@ -177,15 +186,6 @@ class WorkspaceBackground {
     if (action === Action.GetState) {
       const state = (await browser.storage.local.get()) as WorkspaceState;
       const response: MessageResponseMap[typeof action] = { succ: true, data: state };
-      return response;
-    }
-
-    if (action === Action.Get) {
-      const response: MessageResponseMap[typeof action] = {
-        succ: true,
-        data: this.manager.workspaces.arr,
-        activated: this.manager.activeWorkspaces,
-      };
       return response;
     }
 

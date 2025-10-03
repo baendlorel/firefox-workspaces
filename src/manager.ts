@@ -26,6 +26,11 @@ export class WorkspaceManager {
   readonly needPin = new Set<number>();
 
   /**
+   * Indicates it is a workspace window
+   */
+  readonly workspaceWindows = new Set<number>();
+
+  /**
    * Stores tabs of each window by windowId
    * - will save to workspace when window is closed
    */
@@ -45,6 +50,25 @@ export class WorkspaceManager {
   getWindowTabs(windowId: number): WorkspaceTab[] {
     const browserTabs = this.windowTabs.get(windowId) ?? [];
     return browserTabs.map(WorkspaceTab.from);
+  }
+
+  addWindowTab(browserTab: browser.tabs.Tab) {
+    if (browserTab.windowId === undefined || !this.workspaceWindows.has(browserTab.windowId)) {
+      return;
+    }
+
+    const raw = this.windowTabs.get(browserTab.windowId);
+    if (raw) {
+      raw.push(browserTab);
+    } else {
+      this.windowTabs.set(browserTab.windowId, [browserTab]);
+    }
+  }
+
+  refreshWindowTab(windowId: number | undefined) {
+    if (this.windowTabs.has(windowId as number)) {
+      return;
+    }
   }
 
   /**
@@ -124,12 +148,12 @@ export class WorkspaceManager {
     const window = (await browser.windows
       .create({ url: tabs[0].url, type: 'normal' })
       .fallback('__func__: Fallback to about:blank because', $aboutBlank)) as WindowWithId;
+
     this.setBadge(workspace, window.id);
+    this.workspaceWindows.add(window.id);
 
     // Wait a moment for window to be ready
     await $sleep(500);
-
-    logger.debug('tabs', tabs);
 
     const firstTabId = window.tabs?.[0].id;
     if (tabs[0].pinned && firstTabId !== undefined) {
