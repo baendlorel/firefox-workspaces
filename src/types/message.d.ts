@@ -13,7 +13,7 @@ declare global {
 
   interface ImportRequest {
     action: Action.Import;
-    data: WorkspacePersistantWithHash;
+    data: ExportData;
   }
 
   // Union type for all possible requests
@@ -29,7 +29,7 @@ declare global {
   }
 
   interface GetStateResponse extends BaseResponse {
-    data: WorkspaceState;
+    data: State;
   }
 
   interface OpenResponse extends BaseResponse {

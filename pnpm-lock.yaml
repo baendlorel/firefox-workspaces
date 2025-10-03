@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      flat-pair:
+        specifier: ^1.0.0
+        version: 1.0.0
       minimal-event-bus:
         specifier: ^1.0.0
         version: 1.0.0
@@ -774,6 +777,9 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  flat-pair@1.0.0:
+    resolution: {integrity: sha512-NyWvW/77aVAFN65jk9t3jIU1Mz3yRjdW0rPufcvri7brN7zOlgiLZ9W4sSn8zlA4680w+eBx/Yi2tp7a/OL1jA==}
 
   foreground-child@3.3.1:
     resolution: {integrity: sha512-gIXjKqtFuWEgzFRJA9WCQeSJLZDjgJUOMCMzxtvFq/37KojM1BFGufqsCy0r4qSQmYLsZYMeyRqzIWOMup03sw==}
@@ -1816,6 +1822,8 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
       picomatch: 4.0.3
+
+  flat-pair@1.0.0: {}
 
   foreground-child@3.3.1:
     dependencies:

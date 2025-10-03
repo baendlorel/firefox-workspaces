@@ -24,7 +24,7 @@ class WorkspaceBackground {
 
   private async init() {
     // # init storage
-    const state = (await browser.storage.local.get(null)) as WorkspaceState;
+    const state = (await browser.storage.local.get(null)) as State;
     const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = state;
 
     // * Init empty data
@@ -144,7 +144,7 @@ class WorkspaceBackground {
   private async handlePopupMessage(message: MessageRequest): Promise<MessageResponseMap[Action]> {
     const action = message.action;
     if (action === Action.GetState) {
-      const state = (await browser.storage.local.get()) as WorkspaceState;
+      const state = (await browser.storage.local.get()) as State;
       const response: MessageResponseMap[typeof action] = { succ: true, data: state };
       return response;
     }

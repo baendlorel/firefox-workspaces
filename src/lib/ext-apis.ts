@@ -1,6 +1,5 @@
 import { MockBrowser } from '@/__mock__/toolbar.js';
-import { Sym } from './consts.js';
-import { FlatPair } from './flat-pair.js';
+import { findByValue } from 'flat-pair';
 
 if (__IS_DEV__) {
   new MockBrowser();
@@ -17,27 +16,23 @@ export const $aboutBlank = (): Promise<WindowWithId> =>
     type: 'normal',
   }) as Promise<WindowWithId>;
 
-type PartialWorkspaceState<T extends WorkspaceStateKey[]> = {
-  [K in T[number]]: WorkspaceState[K];
+type PartialLocal<T extends LocalKey[]> = {
+  [K in T[number]]: Local[K];
 };
 
 // # storage
-export function $lsget(): Promise<WorkspacePersistant>;
-export function $lsget<T extends WorkspaceStateKey>(
-  key: T
-): Promise<{ [K in T]: WorkspaceState[T] }>;
-export function $lsget<T extends WorkspaceStateKey[]>(key: T): Promise<PartialWorkspaceState<T>>;
-export function $lsget(defaultState: WorkspaceState): Promise<WorkspaceState>;
-export function $lsget(arg = Sym.NotProvided): Promise<any> {
-  if (arg === Sym.NotProvided) {
-    const keys: (keyof WorkspacePersistant)[] = ['workspaces', 'settings'];
-    return browser.storage.local.get(keys);
+export function $lsget(): Promise<Local>;
+export function $lsget<T extends LocalKey>(key: T): Promise<{ [K in T]: Local[T] }>;
+export function $lsget<T extends LocalKey[]>(key: T): Promise<PartialLocal<T>>;
+export function $lsget(arg?: any): Promise<any> {
+  if (arg === undefined) {
+    const keys: (keyof Persist)[] = ['workspaces', 'settings'];
+    return browser.storage.sync.get(keys);
   }
   return browser.storage.local.get(arg);
 }
 
-export const $lsset = (state: Partial<WorkspaceState>): Promise<void> =>
-  browser.storage.local.set(state);
+export const $lsset = (state: Partial<State>): Promise<void> => browser.storage.local.set(state);
 
 export async function $findWorkspaceByWindowId(
   windowId: number | undefined
@@ -46,9 +41,9 @@ export async function $findWorkspaceByWindowId(
     return undefined;
   }
 
-  const { workspaces, workspaceToWindow } = await $lsget(['workspaces', 'workspaceToWindow']);
-  const workspaceId = FlatPair.findByValue<string, number>(workspaceToWindow, windowId);
-  return workspaces.find((w) => w.id === workspaceId);
+  const { persist, state } = await $lsget();
+  const workspaceId = findByValue<string, number>(state.workspaceToWindow, windowId);
+  return persist.workspaces.find((w) => w.id === workspaceId);
 }
 
 // # i18n

@@ -34,3 +34,30 @@ export const $debounce = <T extends (...a: any[]) => any>(fn: T, thisArg: any, d
     timeout = setTimeout(() => fn.apply(thisArg, args), delay);
   };
 };
+
+// Hash a plain object, order-insensitive
+
+export function $objectHash(obj: any): string {
+  // Recursively sort keys
+  function sortObject(o: any): any {
+    if (Array.isArray(o)) return o.map(sortObject);
+    if (o && typeof o === 'object' && o.constructor === Object) {
+      return Object.keys(o)
+        .sort()
+        .reduce((acc, k) => {
+          acc[k] = sortObject(o[k]);
+          return acc;
+        }, {} as any);
+    }
+    return o;
+  }
+
+  // & FNV-1a（Fowler–Noll–Vo hash, variant 1a）
+  const str = JSON.stringify(sortObject(obj));
+  let hash = 0x811c9dc5; // FNV offset basis
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i);
+    hash = (hash * 0x01000193) >>> 0; // FNV prime, 保持32位
+  }
+  return hash.toString(16);
+}

@@ -54,7 +54,7 @@ import { Action, Consts } from './lib/consts.js';
             return;
           }
 
-          let data: WorkspaceState;
+          let data: State;
 
           try {
             const str =

@@ -184,7 +184,7 @@ export class WorkspaceManager {
   }
 
   // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口
-  async importData(state: WorkspacePersistant) {
+  async importData(state: Persist) {
     if (!Array.isArray(state.workspaces) || state.workspaces.some((w) => !isValidWorkspace(w))) {
       logger.error('data.workspaceses must be Workspace[]', state);
       return;

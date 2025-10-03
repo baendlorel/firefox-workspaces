@@ -1,5 +1,6 @@
 import { Action } from '@/lib/consts.js';
 import { $findWorkspaceByWindowId, $lsget, $lsset, $send } from '@/lib/ext-apis.js';
+import { $objectHash } from '@/lib/utils.js';
 import { createWorkspace } from '@/lib/workspace.js';
 
 class PopupService {
@@ -12,7 +13,8 @@ class PopupService {
    * Save workspace (create or update)
    */
   async save(formData: WorkspaceFormData) {
-    const { workspaces } = await $lsget('workspaces');
+    const { persist } = await $lsget('persist');
+    const workspaces = persist.workspaces;
 
     const newWorkspace = createWorkspace(formData);
     if (workspaces.every((w) => w.id !== newWorkspace.id)) {
@@ -52,10 +54,9 @@ class PopupService {
     });
   }
 
-  async getExportData(): Promise<WorkspacePersistantWithHash> {
+  async getExportData(): Promise<ExportData> {
     const state = await $lsget();
-    // todo 采取一个哈希算法
-    return { ...state, hash: 'ddd' };
+    return { ...state, hash: $objectHash(state) };
   }
 }
 

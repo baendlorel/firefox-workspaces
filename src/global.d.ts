@@ -35,7 +35,7 @@ declare global {
     index: number; // OnCreated
     title: string; // OnCreated
     url: string; // OnUpdated, changeInfo.url
-    pinned: boolean; // OnCreated
+    pinned: boolean; // * no longer use this. OnCreated
   }
 
   interface WorkspaceFormData {
@@ -45,33 +45,37 @@ declare global {
     tabs: WorkspaceTab[];
   }
 
-  interface WorkspaceSettings {
+  interface Settings {
     randomNameLang: RandomNameLang;
     theme: Theme;
   }
 
-  interface WorkspacePersistant {
+  interface Persist {
     workspaces: WorkspacePlain[];
-    settings: WorkspaceSettings;
+    settings: Settings;
   }
 
-  interface WorkspaceState extends WorkspacePersistant {
+  interface State {
     /**
      * windowId -> workspaceId
      *
-     * ## Use `FlatPair` instead of `Map` because
-     * Maps are not serializable and cannot be stored in `browser.storage`
+     * Maps cannot be stored in `browser.storage`. Use FlatPair instead
      */
     workspaceToWindow: (string | number)[];
-
-    tabToWindow: number[];
   }
 
-  interface WorkspacePersistantWithHash extends WorkspacePersistant {
+  interface Local {
+    persist: Persist;
+    state: State;
+  }
+
+  type LocalKey = keyof Local;
+  type StateKey = keyof State;
+  type PersistKey = keyof Persist;
+
+  interface ExportData extends Persist {
     hash: string;
   }
-
-  type WorkspaceStateKey = keyof WorkspaceState;
 
   type WindowWithId = browser.windows.Window & { id: number };
 }
