@@ -15,3 +15,15 @@ type Merge<A, B> = {
 } & {
   [K in KeysOnlyInB<A, B>]?: B[K];
 };
+
+type PickUnderscore<T> = {
+  [K in keyof T as K extends `_${string}` ? K : never]: T[K];
+};
+
+type PickNonUnderscore<T> = {
+  [K in keyof T as K extends `_${string}` ? never : K]: T[K];
+};
+
+type StripUnderscoreKeys<T> = {
+  [K in keyof T as K extends `_${infer Rest}` ? Rest : K]: T[K];
+};

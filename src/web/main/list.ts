@@ -12,7 +12,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const container = h('ul', 'wb-ul');
   const lis: WorkspaceLi[] = [];
 
-  const renderList = (workspaces: WorkspacePlain[]) => {
+  const renderList = (workspaces: Workspace[]) => {
     // clear all children
     container.textContent = '';
     lis.length = 0;

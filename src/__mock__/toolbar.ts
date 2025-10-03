@@ -21,7 +21,7 @@ export class MockBrowser {
     }
   }
 
-  private getStoredWorkspaces(): WorkspacePlain[] {
+  private getStoredWorkspaces(): Workspace[] {
     try {
       const stored = localStorage.getItem(this.storageKey);
       if (!stored) return [];
@@ -42,7 +42,7 @@ export class MockBrowser {
     }
   }
 
-  private saveWorkspaces(workspaces: WorkspacePlain[]): void {
+  private saveWorkspaces(workspaces: Workspace[]): void {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(workspaces));
     } catch (error) {
@@ -50,7 +50,7 @@ export class MockBrowser {
     }
   }
 
-  private generateRandomWorkspace(): WorkspacePlain {
+  private generateRandomWorkspace(): Workspace {
     const names = [
       'Work',
       'Personal',

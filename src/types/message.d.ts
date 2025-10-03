@@ -8,7 +8,7 @@ declare global {
 
   interface OpenRequest {
     action: Action.Open;
-    workspace: WorkspacePlain;
+    workspace: Workspace;
   }
 
   interface ImportRequest {

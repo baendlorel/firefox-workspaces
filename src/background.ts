@@ -59,7 +59,7 @@ class WorkspaceBackground {
     }
 
     // Always clear activated because it contains runtime data
-    await $lsset({ workspaceToWindow: [], tabToWindow: [] });
+    await $lsset({ workspaceWindow: [], tabToWindow: [] });
     await this.registerListeners();
   }
 

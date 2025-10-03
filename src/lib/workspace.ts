@@ -2,7 +2,7 @@ import { Color } from './color.js';
 import { $genId } from './utils.js';
 import { WorkspaceTab } from './workspace-tab.js';
 
-export const createWorkspace = (formData: WorkspaceFormData): WorkspacePlain => ({
+export const createWorkspace = (formData: WorkspaceFormData): Workspace => ({
   id: $genId(),
   name: formData.name,
   color: formData.color,
@@ -11,7 +11,7 @@ export const createWorkspace = (formData: WorkspaceFormData): WorkspacePlain => 
   lastOpened: 0,
 });
 
-export const isValidWorkspace = (o: WorkspacePlain) => {
+export const isValidWorkspace = (o: Workspace) => {
   if (typeof o !== 'object' || o === null) {
     return false;
   }

@@ -36,7 +36,7 @@ export const $lsset = (state: Partial<State>): Promise<void> => browser.storage.
 
 export async function $findWorkspaceByWindowId(
   windowId: number | undefined
-): Promise<WorkspacePlain | undefined> {
+): Promise<Workspace | undefined> {
   if (windowId === undefined) {
     return undefined;
   }

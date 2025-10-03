@@ -31,7 +31,7 @@ declare global {
 
     'render-list': () => void;
     'toggle-empty-state': (visible: boolean) => void;
-    edit: (workspace: WorkspacePlain | null, tabs?: browser.tabs.Tab[]) => void;
-    open: (workspace: WorkspacePlain) => void;
+    edit: (workspace: Workspace | null, tabs?: browser.tabs.Tab[]) => void;
+    open: (workspace: Workspace) => void;
   };
 }

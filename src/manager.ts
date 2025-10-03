@@ -7,7 +7,6 @@ import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { isValidWorkspace } from './lib/workspace.js';
 
-// Workspace Data Model and Storage Manager
 export class WorkspaceManager {
   // todo background会按需销毁，数据要另想办法存储
   // # containers
@@ -66,10 +65,10 @@ export class WorkspaceManager {
   async deactivate(id: string) {
     const { workspaceToWindow } = await $lsget('workspaceToWindow');
     FlatPair.delete(workspaceToWindow, id);
-    await $lsset({ workspaceToWindow });
+    await $lsset({ workspaceWindow: workspaceToWindow });
   }
 
-  async save(workspace: WorkspacePlain) {
+  async save(workspace: Workspace) {
     const { workspaces } = await $lsget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     if (index !== -1) {
@@ -80,7 +79,7 @@ export class WorkspaceManager {
     await $lsset({ workspaces });
   }
 
-  setBadge(workspace: WorkspacePlain, windowId?: number) {
+  setBadge(workspace: Workspace, windowId?: number) {
     if (!windowId) {
       logger.debug('Not setting badge, no windowId');
       return;
@@ -100,7 +99,7 @@ export class WorkspaceManager {
   }
 
   // Open workspace in new window
-  async open(workspace: WorkspacePlain): Promise<{ id: number } | null> {
+  async open(workspace: Workspace): Promise<{ id: number } | null> {
     // If group already has an active window, focus it
     const { workspaceToWindow } = await $lsget('workspaceToWindow');
 
@@ -158,18 +157,18 @@ export class WorkspaceManager {
    * init function used only in `this.open`
    */
   private async openIniter(
-    workspace: WorkspacePlain,
+    workspace: Workspace,
     window: WindowWithId,
     workspaceToWindow: (string | number)[]
   ) {
     this.setBadge(workspace, window.id);
     this.workspaceWindows.add(window.id);
     FlatPair.add<string, number>(workspaceToWindow, workspace.id, window.id);
-    await $lsset({ workspaceToWindow });
+    await $lsset({ workspaceWindow: workspaceToWindow });
   }
 
   // Update workspace tabs from window state
-  async updateTabsOfWorkspace(workspace: WorkspacePlain): Promise<boolean> {
+  async updateTabsOfWorkspace(workspace: Workspace): Promise<boolean> {
     const { workspaceToWindow } = await $lsget('workspaceToWindow');
     const windowId = FlatPair.find<string, number>(workspaceToWindow, workspace.id);
     if (windowId === undefined) {

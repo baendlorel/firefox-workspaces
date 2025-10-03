@@ -21,7 +21,7 @@ declare global {
   /**
    * Plain Object of workspace
    */
-  interface WorkspacePlain {
+  interface Workspace {
     id: string;
     name: string;
     color: HexColor;
@@ -50,32 +50,29 @@ declare global {
     theme: Theme;
   }
 
-  interface Persist {
-    workspaces: WorkspacePlain[];
-    settings: Settings;
-  }
+  type WindowWithId = browser.windows.Window & { id: number };
 
-  interface State {
-    /**
-     * windowId -> workspaceId
-     *
-     * Maps cannot be stored in `browser.storage`. Use FlatPair instead
-     */
-    workspaceToWindow: (string | number)[];
-  }
+  // # storage
 
   interface Local {
-    persist: Persist;
-    state: State;
+    workspaces: Workspace[];
+
+    settings: Settings;
+
+    /**
+     * A flat pair array of windowId -> workspaceId
+     * @see https://www.npmjs.com/package/flat-pair
+     */
+    _workspaceWindow: (string | number)[];
   }
 
+  type State = PickUnderscore<Local>;
+  type Persist = PickNonUnderscore<Local>;
+
   type LocalKey = keyof Local;
-  type StateKey = keyof State;
-  type PersistKey = keyof Persist;
+  type StateKey = StripUnderscoreKeys<State>;
 
   interface ExportData extends Persist {
     hash: string;
   }
-
-  type WindowWithId = browser.windows.Window & { id: number };
 }

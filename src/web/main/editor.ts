@@ -14,7 +14,7 @@ import popupService from '@web/popup.service.js';
 import trashSvg from '@web/assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
-  let editingWorkspace: WorkspacePlain | null = null;
+  let editingWorkspace: Workspace | null = null;
   let currentTabs: WorkspaceTab[] = [];
 
   // # body
@@ -62,7 +62,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   };
 
   // # register events
-  bus.on('edit', (workspace: WorkspacePlain | null = null, tabs: browser.tabs.Tab[] = []) => {
+  bus.on('edit', (workspace: Workspace | null = null, tabs: browser.tabs.Tab[] = []) => {
     editingWorkspace = workspace;
     currentTabs = tabs.map(WorkspaceTab.from);
 
