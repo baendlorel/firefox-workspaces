@@ -1,4 +1,4 @@
-import { add, find, remove } from 'flat-pair';
+import { add, find, get, set, has, remove } from 'flat-pair';
 
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
@@ -10,18 +10,6 @@ import { isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {
   // todo background会按需销毁，数据要另想办法存储
-  // # containers
-  /**
-   * Indicates it is a workspace window
-   */
-  readonly workspaceWindows = new Set<number>();
-
-  /**
-   * Stores tabs of each window by windowId
-   * - will save to workspace when window is closed
-   */
-  readonly windowTabs: Map<number, browser.tabs.Tab[]> = new Map();
-
   constructor() {
     const updatedAt = new Date('__DATE_TIME__');
     const delta = Date.now() - updatedAt.getTime();
@@ -33,40 +21,43 @@ export class WorkspaceManager {
   /**
    * Get the cached tabs of a window and transform to `WorkspaceTab[]`
    */
-  getWindowTabs(windowId: number): WorkspaceTab[] {
-    const browserTabs = this.windowTabs.get(windowId) ?? [];
+  async getWindowTabs(windowId: number): Promise<WorkspaceTab[]> {
+    const { _windowTabs } = await $lsget('_windowTabs');
+    const browserTabs = get<number, browser.tabs.Tab[]>(_windowTabs, windowId) ?? [];
     return browserTabs.map(WorkspaceTab.from);
   }
 
-  addWindowTab(browserTab: browser.tabs.Tab) {
-    if (browserTab.windowId === undefined || !this.workspaceWindows.has(browserTab.windowId)) {
+  async addWindowTab(browserTab: browser.tabs.Tab) {
+    const { _workspaceWindows, _windowTabs } = await $lsget('_workspaceWindows', '_windowTabs');
+    if (browserTab.windowId === undefined || !has(_workspaceWindows, browserTab.windowId)) {
       return;
     }
 
-    const raw = this.windowTabs.get(browserTab.windowId);
-    if (raw) {
-      raw.push(browserTab);
+    const rawTabs = get<number, browser.tabs.Tab[]>(_windowTabs, browserTab.windowId);
+    if (rawTabs) {
+      rawTabs.push(browserTab);
     } else {
-      this.windowTabs.set(browserTab.windowId, [browserTab]);
+      set(_windowTabs, browserTab.windowId, [browserTab]);
     }
   }
 
   async refreshWindowTab(windowId: number | undefined) {
-    if (!this.workspaceWindows.has(windowId as number)) {
+    const { _workspaceWindows, _windowTabs } = await $lsget('_workspaceWindows', '_windowTabs');
+    if (!has(_workspaceWindows, windowId)) {
       return;
     }
 
     const tabs = await browser.tabs.query({ windowId });
-    this.windowTabs.set(windowId as number, tabs);
+    set(_windowTabs, windowId as number, tabs);
   }
 
   /**
    * Remove the pair of `workspaceToWindow` in store
    */
   async deactivate(id: string) {
-    const { _workspaceWindow } = await $lsget('_workspaceWindow');
-    remove(_workspaceWindow, id);
-    await $lsset({ _workspaceWindow });
+    const { _workspaceWindows } = await $lsget('_workspaceWindows');
+    remove(_workspaceWindows, id);
+    await $lsset({ _workspaceWindows });
   }
 
   async save(workspace: Workspace) {
@@ -164,8 +155,8 @@ export class WorkspaceManager {
   ) {
     this.setBadge(workspace, window.id);
     this.workspaceWindows.add(window.id);
-    add<string, number>(_workspaceWindow, workspace.id, window.id);
-    await $lsset({ _workspaceWindow });
+    set<string, number>(_workspaceWindow, workspace.id, window.id);
+    await $lsset({ _workspaceWindows: _workspaceWindow });
   }
 
   // Update workspace tabs from window state

@@ -1,5 +1,5 @@
+import { getByValue } from 'flat-pair';
 import { MockBrowser } from '@/__mock__/toolbar.js';
-import { findByValue } from 'flat-pair';
 
 if (__IS_DEV__) {
   new MockBrowser();
@@ -33,9 +33,8 @@ export async function $findWorkspaceByWindowId(
   if (windowId === undefined) {
     return undefined;
   }
-
-  const { workspaces, _workspaceWindow } = await $lsget('workspaces', '_workspaceWindow');
-  const workspaceId = findByValue<string, number>(_workspaceWindow, windowId);
+  const { workspaces, _workspaceWindows } = await $lsget('workspaces', '_workspaceWindows');
+  const workspaceId = getByValue<string, number>(_workspaceWindows, windowId);
   return workspaces.find((w) => w.id === workspaceId);
 }
 

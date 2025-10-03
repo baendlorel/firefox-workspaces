@@ -59,7 +59,7 @@ class WorkspaceBackground {
     }
 
     // Always clear activated because it contains runtime data
-    await $lsset({ _workspaceWindow: [] });
+    await $lsset({ _workspaceWindows: [] });
     await this.registerListeners();
   }
 
@@ -108,7 +108,7 @@ class WorkspaceBackground {
         return;
       }
 
-      workspace.tabs = this.manager.getWindowTabs(windowId);
+      workspace.tabs = await this.manager.getWindowTabs(windowId);
       await this.manager.deactivate(workspace.id);
       await this.manager.save(workspace);
     });
