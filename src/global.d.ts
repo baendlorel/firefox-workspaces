@@ -51,28 +51,4 @@ declare global {
   }
 
   type WindowWithId = browser.windows.Window & { id: number };
-
-  // # storage
-
-  interface Local {
-    workspaces: Workspace[];
-
-    settings: Settings;
-
-    /**
-     * A flat pair array of windowId -> workspaceId
-     * @see https://www.npmjs.com/package/flat-pair
-     */
-    _workspaceWindow: (string | number)[];
-  }
-
-  type State = PickUnderscore<Local>;
-  type Persist = PickNonUnderscore<Local>;
-
-  type LocalKey = keyof Local;
-  type StateKey = StripUnderscoreKeys<State>;
-
-  interface ExportData extends Persist {
-    hash: string;
-  }
 }

@@ -18,22 +18,27 @@ export const $sleep = (ms: number) => new Promise((resolve) => setTimeout(resolv
  * Hash a plain object, order-insensitive
  */
 export function $objectHash(obj: any): string {
-  // Recursively sort keys
-  function sortObject(o: any): any {
-    if (Array.isArray(o)) return o.map(sortObject);
-    if (o && typeof o === 'object' && o.constructor === Object) {
-      return Object.keys(o)
-        .sort()
-        .reduce((acc, k) => {
-          acc[k] = sortObject(o[k]);
-          return acc;
-        }, {} as any);
+  const sortObject = (o: any): any => {
+    if (Array.isArray(o)) {
+      return o.map(sortObject);
     }
-    return o;
-  }
+    if (!o || typeof o !== 'object') {
+      return o;
+    }
+
+    const keys = Object.keys(o).sort();
+    const sorted = {} as any;
+    for (let i = 0; i < keys.length; i++) {
+      const k = keys[i];
+      sorted[k] = sortObject(o[k]);
+    }
+
+    return sorted;
+  };
 
   // & FNV-1a（Fowler–Noll–Vo hash, variant 1a）
-  const str = JSON.stringify(sortObject(obj));
+  const sorted = sortObject(obj);
+  const str = JSON.stringify(sorted);
   let hash = 0x811c9dc5; // FNV offset basis
   for (let i = 0; i < str.length; i++) {
     hash ^= str.charCodeAt(i);
