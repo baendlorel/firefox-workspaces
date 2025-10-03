@@ -1,42 +1,22 @@
-export const $randInt = (max: number) => Math.floor(Math.random() * max);
+const $randInt = (max: number) => Math.floor(Math.random() * max);
 
-export const $randChar = () => {
-  const r = $randInt(36);
-  // use ascii to save the memory of '0-9a-z' string
-  return r < 10 ? String.fromCharCode(48 + r) : String.fromCharCode(97 + (r - 10));
-};
+export const $randItem = <T extends any[] | string>(items: T): T extends (infer U)[] ? U : string =>
+  items[$randInt(items.length)];
 
-export const $genId = () => {
+const letters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+export const $genId = (n: number = 16) => {
   const digits: string[] = ['kskb_', String(Date.now()), '_'];
-  for (let i = 0; i < 16; i++) {
-    digits.push($randChar());
+  for (let i = 0; i < n; i++) {
+    digits.push($randItem(letters));
   }
   return digits.join('');
 };
 
 export const $sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-export const $truncate = (s: string, maxLen = 50) => {
-  if (!s) {
-    return '';
-  }
-  if (s.length <= maxLen) {
-    return s;
-  }
-  return s.substring(0, maxLen - 3) + '...';
-};
 
-export const $debounce = <T extends (...a: any[]) => any>(fn: T, thisArg: any, delay: number) => {
-  let timeout: ReturnType<typeof setTimeout> | null = null;
-  return function (...args: Parameters<T>): void {
-    if (timeout !== null) {
-      clearTimeout(timeout);
-    }
-    timeout = setTimeout(() => fn.apply(thisArg, args), delay);
-  };
-};
-
-// Hash a plain object, order-insensitive
-
+/**
+ * Hash a plain object, order-insensitive
+ */
 export function $objectHash(obj: any): string {
   // Recursively sort keys
   function sortObject(o: any): any {

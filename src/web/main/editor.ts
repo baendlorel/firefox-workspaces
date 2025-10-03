@@ -2,7 +2,7 @@ import { EventBus } from 'minimal-event-bus';
 import { RANDOM_NAME_EN_A, RANDOM_NAME_EN_B, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
-import { $randInt } from '@/lib/utils.js';
+import { $randItem } from '@/lib/utils.js';
 import { i } from '@/lib/ext-apis.js';
 import { WorkspaceTab } from '@/lib/workspace-tab.js';
 
@@ -75,7 +75,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       inputName.value = '';
       setTitle(tabs.length > 0 ? i('newWorkspaceWithTabs') : i('newWorkspace'));
       // randomly pick a color
-      colorSelector.value = WORKSPACE_COLORS[$randInt(WORKSPACE_COLORS.length)];
+      colorSelector.value = $randItem(WORKSPACE_COLORS);
       deleteBtn.style.display = 'none';
     }
 
@@ -84,8 +84,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   });
 
   randomNameBtn.addEventListener('click', () => {
-    const part1 = RANDOM_NAME_EN_A[$randInt(RANDOM_NAME_EN_A.length)];
-    const part2 = RANDOM_NAME_EN_B[$randInt(RANDOM_NAME_EN_B.length)];
+    const part1 = $randItem(RANDOM_NAME_EN_A);
+    const part2 = $randItem(RANDOM_NAME_EN_B);
     inputName.value = `${part1} ${part2}`;
   });
 

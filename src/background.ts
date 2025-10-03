@@ -1,5 +1,5 @@
 import '@/lib/promise-ext.js';
-import { $findWorkspaceByWindowId, $lsset, i } from './lib/ext-apis.js';
+import { $lsset, i, $findWorkspaceByWindowId } from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
 import { isValidWorkspace } from './lib/workspace.js';
