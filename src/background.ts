@@ -1,9 +1,7 @@
 import '@/lib/promise-ext.js';
-import { FlatPair } from './lib/flat-pair.js';
-import { $lsget, $lsset, i } from './lib/ext-apis.js';
+import { $findWorkspaceByWindowId, $lsset, i } from './lib/ext-apis.js';
 import { Action, OnUpdatedChangeInfoStatus, RandomNameLanguage, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
-import { WorkspaceTab } from './lib/workspace-tab.js';
 import { Workspace } from './lib/workspace.js';
 
 class WorkspaceBackground {
@@ -104,22 +102,15 @@ class WorkspaceBackground {
     // Handle window events for session management
     browser.windows.onRemoved.addListener(async (windowId) => {
       // Check if this window belongs to a workspace
-      const workspace = this.manager.getByWindowId(windowId);
+      const workspace = await $findWorkspaceByWindowId(windowId);
       if (!workspace) {
         return;
       }
 
-      const tabs = await browser.tabs.query({ windowId });
-      if (tabs.length === 0) {
-        logger.error('WindowOnRemoved: Cannot get tabs. window id =', windowId);
-        return;
-      }
-
       // todo 逻辑：1、监听标签页改动，纳入window->tabs数组。2、关闭窗口时保存标签页到workspaces数组。
-      workspace.tabs = tabs.map(WorkspaceTab.from);
-      const workspaceToWindow = await $lsget('workspaceToWindow');
-      FlatPair.delete(workspaceToWindow, windowId);
-      await $lsset({ workspaceToWindow });
+      workspace.tabs = this.manager.getWindowTabs(windowId);
+      await this.manager.deactivate(workspace.id);
+      await this.manager.save(workspace);
     });
   }
 

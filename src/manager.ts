@@ -29,7 +29,7 @@ export class WorkspaceManager {
    * Stores tabs of each window by windowId
    * - will save to workspace when window is closed
    */
-  private readonly windowTabs: Map<number, browser.tabs.Tab[]> = new Map();
+  readonly windowTabs: Map<number, browser.tabs.Tab[]> = new Map();
 
   constructor() {
     const updatedAt = new Date('__DATE_TIME__');
@@ -39,9 +39,32 @@ export class WorkspaceManager {
     logger.info('Updated before ' + time);
   }
 
-  // Get currently active/opened workspaces
-  get activeWorkspaces(): string[] {
-    return this.workspaces.activated;
+  /**
+   * Get the cached tabs of a window and transform to `WorkspaceTab[]`
+   */
+  getWindowTabs(windowId: number): WorkspaceTab[] {
+    const browserTabs = this.windowTabs.get(windowId) ?? [];
+    return browserTabs.map(WorkspaceTab.from);
+  }
+
+  /**
+   * Remove the pair of `workspaceToWindow` in store
+   */
+  async deactivate(id: string) {
+    const workspaceToWindow = await $lsget('workspaceToWindow');
+    FlatPair.delete(workspaceToWindow, id);
+    await $lsset({ workspaceToWindow });
+  }
+
+  async save(workspace: WorkspacePlain) {
+    const workspaces = await $lsget('workspaces');
+    const index = workspaces.findIndex((w) => w.id === workspace.id);
+    if (index !== -1) {
+      workspaces[index] = workspace;
+    } else {
+      workspaces.push(workspace);
+    }
+    await $lsset({ workspaces });
   }
 
   setBadge(workspace: WorkspacePlain, windowId?: number) {
