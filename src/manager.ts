@@ -19,8 +19,6 @@ export class WorkspaceManager {
   }
 
   // # containers
-  readonly needPin = new Set<number>();
-
   /**
    * Indicates it is a workspace window
    */
@@ -142,11 +140,6 @@ export class WorkspaceManager {
     // Wait a moment for window to be ready
     await $sleep(600);
 
-    const firstTabId = window.tabs?.[0].id;
-    if (tabs[0].pinned && firstTabId !== undefined) {
-      this.needPin.add(firstTabId);
-    }
-
     // Open remaining URLs as tabs
     for (let i = 1; i < tabs.length; i++) {
       const tab = await browser.tabs
@@ -161,10 +154,6 @@ export class WorkspaceManager {
 
       if (tab === Sym.Reject) {
         continue;
-      }
-
-      if (tabs[i].pinned && tab.id !== undefined) {
-        this.needPin.add(tab.id);
       }
     }
 

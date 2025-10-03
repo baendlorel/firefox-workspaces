@@ -7,9 +7,23 @@ import type I18NZhMessage from '../_locales/zh_CN/messages.json';
 declare global {
   const __IS_DEV__: boolean;
 
+  // # utils
   type IsSameType<A, B> =
     (<T>() => T extends A ? 1 : 2) extends <T>() => T extends B ? 1 : 2 ? true : false;
 
+  type Merge<A extends object, B extends object> = {
+    [K in keyof A | keyof B]: K extends keyof B ? B[K] : K extends keyof A ? A[K] : never;
+  };
+
+  type Merge5<
+    A extends object,
+    B extends object,
+    C extends object,
+    D extends object,
+    E extends object,
+  > = Merge<Merge<Merge<Merge<A, B>, C>, D>, E>;
+
+  // # types
   type I18NEnKey = keyof typeof I18NEnMessage;
   type I18NZhKey = keyof typeof I18NZhMessage;
   type I18NKey = I18NEnKey & I18NZhKey;

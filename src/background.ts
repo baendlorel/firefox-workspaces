@@ -4,6 +4,17 @@ import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './l
 import { WorkspaceManager } from './manager.js';
 import { Workspace } from './lib/workspace.js';
 
+type ChangeInfo = Merge<
+  Merge<
+    Merge<
+      Merge<browser.tabs._OnUpdatedChangeInfo, browser.tabs._OnAttachedAttachInfo>,
+      browser.tabs._OnMovedMoveInfo
+    >,
+    browser.tabs._OnRemovedRemoveInfo
+  >,
+  browser.tabs._OnDetachedDetachInfo
+>;
+
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
 
@@ -106,70 +117,30 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    browser.tabs.onAttached.addListener((_tabId, info) => {
-      logger.info('Attached');
-      this.manager.refreshWindowTab(info.newWindowId);
-    });
+    browser.tabs.onCreated.addListener(async (tab) => this.manager.addWindowTab(tab));
 
-    browser.tabs.onDetached.addListener((_tabId, info) => {
-      logger.info('Detached');
-      this.manager.refreshWindowTab(info.oldWindowId);
-    });
-
-    browser.tabs.onMoved.addListener((_tabId, info) => {
-      this.manager.refreshWindowTab(info.windowId);
-    });
-
-    browser.tabs.onRemoved.addListener(async (_tabId, info) => {
-      if (info.isWindowClosing) {
-        return;
+    // # cases of refresh
+    browser.tabs.onAttached.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onDetached.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onMoved.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onRemoved.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onUpdated.addListener(async (_tabId, info, tab) => {
+      if (info.status === TabChangeStatus.Complete || info.status === TabChangeStatus.Loading) {
+        await this.refreshTab({ windowId: tab.windowId });
       }
-      this.manager.refreshWindowTab(info.windowId);
-    });
-
-    browser.tabs.onCreated.addListener(async (tab) => {
-      this.manager.addWindowTab(tab);
-    });
-
-    browser.tabs.onUpdated.addListener(async (tabId, info, tab) => {
-      if (info.status === TabChangeStatus.Complete) {
-        if (!this.manager.needPin.has(tabId)) {
-          await this.manager.refreshWindowTab(tab.windowId);
-          return;
-        }
-        this.manager.needPin.delete(tabId);
-
-        // & manually update
-        const browserTab = this.manager.windowTabs.get(tab.windowId!)?.find((t) => t.id === tabId);
-        if (!browserTab) {
-          logger.error(`Tab to pin not found in cache. tab(${tabId}), window(${tab.windowId})`);
-          return;
-        }
-        // do this before pin because possible failure, we still need it to be pinned next time
-        browserTab.pinned = true;
-        this.recursivePin(tabId, 3); // & won't await this, let it try
-      }
-      await this.manager.refreshWindowTab(tab.windowId);
     });
   }
 
-  /**
-   * [INFO] Raise the possibility of successfully pin a tab under desperation
-   * - the browser seems to be unreliable in pinning a tab, even if the API call
-   *   succeeds, the tab may still not be pinned.
-   * - pinning multiple times in quick succession increases the chance of success.
-   */
-  private async recursivePin(tabId: number, attempts: number) {
-    if (attempts <= 0) {
+  private async refreshTab(info: Partial<ChangeInfo>) {
+    const windowId = info.windowId ?? info.newWindowId ?? info.oldWindowId ?? Sym.NotProvided;
+    if (windowId === Sym.NotProvided) {
       return;
     }
 
-    await browser.tabs.update(tabId, { pinned: true });
-    const result = await browser.tabs.query({ pinned: false });
-    if (result.every((t) => t.id !== tabId)) {
-      return;
+    // isWindowClosing would be false or undefined
+    if (!info.isWindowClosing) {
+      await this.manager.refreshWindowTab(windowId);
     }
-    await this.recursivePin(tabId, attempts - 1);
   }
 
   private async handlePopupMessage(message: MessageRequest): Promise<MessageResponseMap[Action]> {
