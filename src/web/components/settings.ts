@@ -1,5 +1,5 @@
 import { Theme } from '@/lib/consts.js';
-import { $lsget, i } from '@/lib/ext-apis.js';
+import { i, $lget } from '@/lib/ext-apis.js';
 import { confirmation } from './dialog/alerts.js';
 import { createDialog } from './dialog/index.js';
 import { h, div, btn } from '@/lib/dom.js';
@@ -60,7 +60,7 @@ export default () => {
 
   // # load settings for editing
   dialog.bus.on('show', async () => {
-    const { settings } = await $lsget('settings');
+    const { settings } = await $lget('settings');
     selectTheme(settings.theme);
   });
 

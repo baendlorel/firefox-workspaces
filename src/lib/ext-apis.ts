@@ -17,22 +17,27 @@ export const $aboutBlank = (): Promise<WindowWithId> =>
   }) as Promise<WindowWithId>;
 
 // # storage
-export function $lsget(): Promise<Local>;
-export function $lsget<T extends LocalKey>(key: T): Promise<{ [K in T]: Local[T] }>;
-export function $lsget<T extends LocalKey[]>(...keys: T): Promise<PartialLocal<T>>;
-export function $lsget(...args: any[]): Promise<any> {
+export function $lget(): Promise<Local>;
+export function $lget<T extends LocalKey>(key: T): Promise<{ [K in T]: Local[T] }>;
+export function $lget<T extends LocalKey[]>(...keys: T): Promise<PartialLocal<T>>;
+export function $lget(...args: LocalKey[]): Promise<any> {
+  if (args.length === 0) {
+    return browser.storage.local.get();
+  }
+  // always get timestamp
+  args.push('timestamp');
   return browser.storage.local.get(args);
 }
 
-export const $lpPersistSet = async (persist: Partial<Persist>) => {
+export const $lpset = async (persist: Partial<Persist>) => {
   persist.timestamp = Date.now();
   await browser.storage.local.set(persist);
 };
 
-export const $lsStateSet = (state: Partial<Local>) => browser.storage.local.set(state);
+export const $lsset = (state: Partial<Local>) => browser.storage.local.set(state);
 
-export const $syncGet = (): Promise<Persist> => browser.storage.sync.get() as any;
-export const $syncSet = async (persist: Persist) => {
+export const $sget = (): Promise<Persist> => browser.storage.sync.get() as any;
+export const $sset = async (persist: Persist) => {
   persist.timestamp = Date.now();
   await browser.storage.sync.set(persist);
 };
@@ -44,7 +49,7 @@ export async function $findWorkspaceByWindowId(
   if (windowId === undefined) {
     return undefined;
   }
-  const { workspaces, _workspaceWindows } = await $lsget('workspaces', '_workspaceWindows');
+  const { workspaces, _workspaceWindows } = await $lget('workspaces', '_workspaceWindows');
   const workspaceId = getByValue<string, number>(_workspaceWindows, windowId);
   return workspaces.find((w) => w.id === workspaceId);
 }

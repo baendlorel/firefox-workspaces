@@ -1,11 +1,12 @@
 import '@/lib/promise-ext.js';
 import {
-  $lsPersistSet,
   i,
+  $lget,
+  $lpset,
+  $lsset,
+  $sget,
+  $sset,
   $findWorkspaceByWindowId,
-  $lsget,
-  $syncGet,
-  $syncSet,
 } from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
 import { isValidWorkspace } from './lib/workspace.js';
@@ -29,33 +30,33 @@ class WorkspaceBackground {
 
   private async init() {
     // # init storage
-    const sync = await $syncGet();
-    const local = await $lsget();
+    const sync = await $sget();
+    const local = await $lget();
     const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = local;
 
     // * Init empty data
     if (workspaces === Sym.NotProvided) {
       logger.info('No workspaces found, initializing empty array');
-      await $lsPersistSet({ workspaces: [] });
+      await $lpset({ workspaces: [] });
     } else if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
       logger.warn('Invalid workspaces data found, resetting to empty array', workspaces);
-      await $lsPersistSet({ workspaces: [] });
+      await $lpset({ workspaces: [] });
     }
 
     if (settings === Sym.NotProvided) {
       logger.info('No settings found, initializing default settings');
-      await $lsPersistSet({
+      await $lpset({
         settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
     } else if (!isValidSettings(settings)) {
       logger.warn('Invalid settings data found, resetting to default settings', settings);
-      await $lsPersistSet({
+      await $lpset({
         settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
       });
     }
 
     // Always clear activated because it contains runtime data
-    await $lsPersistSet({ _workspaceWindows: [] });
+    await $lsset({ _workspaceWindows: [] });
     await this.registerListeners();
   }
 
@@ -179,8 +180,8 @@ class WorkspaceBackground {
     const INTERVAL = 10 * 60 * 1000;
     const task = async () => {
       // * Might change if more features are added
-      const local = await $lsget('workspaces', 'settings');
-      await $syncSet(local);
+      const local = await $lget('workspaces', 'settings');
+      await $sset(local);
 
       setTimeout(task, INTERVAL);
     };

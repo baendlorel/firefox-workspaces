@@ -29,4 +29,4 @@ interface ExportData extends Persist {
 
 type PartialLocal<T extends LocalKey[]> = {
   [K in T[number]]: Local[K];
-};
+} & { timestamp: number };

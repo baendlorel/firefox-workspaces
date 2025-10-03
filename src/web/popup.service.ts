@@ -1,5 +1,5 @@
 import { Action } from '@/lib/consts.js';
-import { $findWorkspaceByWindowId, $lsget, $lsPersistSet, $send } from '@/lib/ext-apis.js';
+import { $findWorkspaceByWindowId, $lget, $lpset, $send } from '@/lib/ext-apis.js';
 import { $objectHash } from '@/lib/utils.js';
 import { createWorkspace } from '@/lib/workspace.js';
 
@@ -13,14 +13,14 @@ class PopupService {
    * Save workspace (create or update)
    */
   async save(formData: WorkspaceFormData) {
-    const { workspaces } = await $lsget('workspaces');
+    const { workspaces } = await $lget('workspaces');
 
     // handle create
     if (formData.id === null) {
       const newWorkspace = createWorkspace(formData);
       workspaces.push(newWorkspace);
 
-      await $lsPersistSet({ workspaces });
+      await $lpset({ workspaces });
 
       if (formData.tabs.length > 0) {
         await this.open(newWorkspace);
@@ -36,17 +36,17 @@ class PopupService {
     exists.name = formData.name;
     exists.color = formData.color;
     exists.tabs = formData.tabs;
-    await $lsPersistSet({ workspaces });
+    await $lpset({ workspaces });
   }
 
   // Delete workspace
   async delete(workspace: Workspace) {
-    const { workspaces } = await $lsget('workspaces');
+    const { workspaces } = await $lget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     if (index === -1) {
       workspaces.splice(index, 1);
     }
-    await $lsPersistSet({ workspaces });
+    await $lpset({ workspaces });
   }
 
   /**
@@ -68,7 +68,7 @@ class PopupService {
   }
 
   async getExportData(): Promise<ExportData> {
-    const state = await $lsget();
+    const state = await $lget();
     return { ...state, hash: $objectHash(state) };
   }
 }

@@ -3,7 +3,7 @@ import { get, set, has, remove, hasByValue } from 'flat-pair';
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
-import { $aboutBlank, $lsget, $lsPersistSet, i } from './lib/ext-apis.js';
+import { i, $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { isValidWorkspace } from './lib/workspace.js';
@@ -22,13 +22,13 @@ export class WorkspaceManager {
    * Get the cached tabs of a window and transform to `WorkspaceTab[]`
    */
   async getWindowTabs(windowId: number): Promise<WorkspaceTab[]> {
-    const { _windowTabs } = await $lsget('_windowTabs');
+    const { _windowTabs } = await $lget('_windowTabs');
     const browserTabs = get<number, browser.tabs.Tab[]>(_windowTabs, windowId) ?? [];
     return browserTabs.map(WorkspaceTab.from);
   }
 
   async addWindowTab(browserTab: browser.tabs.Tab) {
-    const { _workspaceWindows, _windowTabs } = await $lsget('_workspaceWindows', '_windowTabs');
+    const { _workspaceWindows, _windowTabs } = await $lget('_workspaceWindows', '_windowTabs');
     if (browserTab.windowId === undefined || !has(_workspaceWindows, browserTab.windowId)) {
       return;
     }
@@ -39,38 +39,38 @@ export class WorkspaceManager {
     } else {
       set(_windowTabs, browserTab.windowId, [browserTab]);
     }
-    await $lsPersistSet({ _windowTabs });
+    await $lsset({ _windowTabs });
   }
 
   async refreshWindowTab(windowId: number | undefined) {
-    const { _workspaceWindows, _windowTabs } = await $lsget('_workspaceWindows', '_windowTabs');
+    const { _workspaceWindows, _windowTabs } = await $lget('_workspaceWindows', '_windowTabs');
     if (!hasByValue(_workspaceWindows, windowId)) {
       return;
     }
 
     const tabs = await browser.tabs.query({ windowId });
     set(_windowTabs, windowId as number, tabs);
-    await $lsPersistSet({ _windowTabs });
+    await $lsset({ _windowTabs });
   }
 
   /**
    * Remove the pair of `workspaceToWindow` in store
    */
   async deactivate(id: string) {
-    const { _workspaceWindows } = await $lsget('_workspaceWindows');
+    const { _workspaceWindows } = await $lget('_workspaceWindows');
     remove(_workspaceWindows, id);
-    await $lsPersistSet({ _workspaceWindows });
+    await $lsset({ _workspaceWindows });
   }
 
   async save(workspace: Workspace) {
-    const { workspaces } = await $lsget('workspaces');
+    const { workspaces } = await $lget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     if (index !== -1) {
       workspaces[index] = workspace;
     } else {
       workspaces.push(workspace);
     }
-    await $lsPersistSet({ workspaces });
+    await $lpset({ workspaces });
   }
 
   setBadge(workspace: Workspace, windowId: number) {
@@ -90,7 +90,7 @@ export class WorkspaceManager {
   // Open workspace in new window
   async open(workspace: Workspace): Promise<{ id: number } | null> {
     // If group already has an active window, focus it
-    const { _workspaceWindows } = await $lsget('_workspaceWindows');
+    const { _workspaceWindows } = await $lget('_workspaceWindows');
 
     // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
     const windowId = get<string, number>(_workspaceWindows, workspace.id);
@@ -151,12 +151,12 @@ export class WorkspaceManager {
   ) {
     this.setBadge(workspace, window.id);
     set<string, number>(_workspaceWindows, workspace.id, window.id);
-    await $lsPersistSet({ _workspaceWindows });
+    await $lsset({ _workspaceWindows });
   }
 
   // Update workspace tabs from window state
   async updateTabsOfWorkspace(workspace: Workspace): Promise<void> {
-    const { _workspaceWindows } = await $lsget('_workspaceWindows');
+    const { _workspaceWindows } = await $lget('_workspaceWindows');
     const windowId = get<string, number>(_workspaceWindows, workspace.id);
     if (windowId === undefined) {
       logger.error('Inactivated workspace has no windowId:', workspace);
@@ -165,7 +165,7 @@ export class WorkspaceManager {
 
     const browserTabs = await browser.tabs.query({ windowId });
     workspace.tabs = browserTabs.map(WorkspaceTab.from);
-    await $lsPersistSet({ _workspaceWindows });
+    await $lsset({ _workspaceWindows });
   }
 
   // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口

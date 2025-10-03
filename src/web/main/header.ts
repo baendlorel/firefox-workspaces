@@ -2,7 +2,7 @@ import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
-import { $lsget, $send, i } from '@/lib/ext-apis.js';
+import { i, $lget, $send } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
 
 import { Menu } from '@web/components/menu/index.js';
@@ -94,7 +94,7 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: item(bugSvg, i('debugInfo')),
       action: async () => {
-        const workspaces = await $lsget('workspaces');
+        const workspaces = await $lget('workspaces');
         logger.debug('workspaces', stringify(workspaces));
       },
     },
