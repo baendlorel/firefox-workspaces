@@ -1,5 +1,6 @@
 import '@/lib/promise-ext.js';
-import { $lsget, $lsset, i } from '@/lib/ext-apis.js';
+import { FlatPair } from './lib/flat-pair.js';
+import { $lsget, $lsset, i } from './lib/ext-apis.js';
 import { Action, OnUpdatedChangeInfoStatus, RandomNameLanguage, Sym, Theme } from './lib/consts.js';
 import { WorkspaceManager } from './manager.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
@@ -50,8 +51,8 @@ class WorkspaceBackground {
       });
     }
 
-    // Always clear activatedMap because it contains runtime data
-    await $lsset({ activatedMap: {} });
+    // Always clear activated because it contains runtime data
+    await $lsset({ workspaceToWindow: [], tabToWindow: [] });
     await this.registerListeners();
   }
 
@@ -79,12 +80,6 @@ class WorkspaceBackground {
     // Initialize when extension starts
     browser.runtime.onStartup.addListener(() => this.init());
     browser.runtime.onInstalled.addListener(() => this.init());
-
-    // Save sessions before browser shuts down
-    browser.runtime.onSuspend.addListener(async () => {
-      logger.info('Saving workspace sessions before browser shutdown');
-      await this.manager.saveActiveSessions();
-    });
 
     // Handle messages from popup and content scripts
     browser.runtime.onMessage.addListener(
@@ -121,9 +116,9 @@ class WorkspaceBackground {
       }
 
       workspace.tabs = tabs.map(WorkspaceTab.from);
-      const activatedMap = await $lsget('activatedMap');
-      delete activatedMap[windowId];
-      await $lsset({ activatedMap });
+      const workspaceToWindow = await $lsget('workspaceToWindow');
+      FlatPair.delete(workspaceToWindow, windowId);
+      await $lsset({ workspaceToWindow });
 
       const urls = workspace.tabs.map((t) => (t.pinned ? '📌' + t.url : t.url)).join(', \n');
       logger.info(`WindowOnRemoved: '${workspace.name}' removed. tabs are saved:`, urls);
@@ -226,30 +221,11 @@ class WorkspaceBackground {
     }
 
     if (action === Action.Import) {
-      try {
-        for (const workspace of message.data) {
-          // Create workspace with its tabs
-          await this.manager.create(workspace); // ?? 这里也是import来的，谨慎
-          // Get the last created workspace
-          const created = this.manager.workspaces.arr[this.manager.workspaces.arr.length - 1];
-          // Assign the original tabs and other properties
-          created.tabs = workspace.tabs || [];
-          created.createdAt = workspace.createdAt || Date.now();
-          created.lastOpened = workspace.lastOpened || 0;
-        }
-        await this.manager.save();
-        const response: MessageResponseMap[typeof action] = {
-          succ: true,
-          message: `Successfully imported ${message.data.length} workspaces`,
-        };
-        return response;
-      } catch (error) {
-        const response: MessageResponseMap[typeof action] = {
-          succ: false,
-          message: `Failed to import workspaces: ${error}`,
-        };
-        return response;
-      }
+      await this.manager.importData(message.data);
+      const response: MessageResponseMap[typeof action] = {
+        succ: true,
+      };
+      return response;
     }
 
     action satisfies never;
@@ -265,19 +241,6 @@ class WorkspaceBackground {
   private async refreshTabContainer() {
     const browserTabs = await browser.tabs.query({});
     this.manager.tabs.rebuild(browserTabs);
-  }
-
-  /**
-   * Periodically save workspace states for active windows
-   */
-  private async periodicallySave() {
-    const INTERVAL = 5 * 60 * 1000; // 5 minutes
-    const fn = async () => {
-      logger.debug('Periodic save of active workspace sessions');
-      await this.manager.saveActiveSessions();
-      setTimeout(fn, INTERVAL);
-    };
-    setTimeout(fn, INTERVAL);
   }
 }
 

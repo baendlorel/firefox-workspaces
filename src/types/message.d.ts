@@ -22,7 +22,7 @@ declare global {
 
   interface ImportRequest {
     action: Action.Import;
-    data: WorkspaceState;
+    data: WorkspacePersistantWithHash;
   }
 
   // Union type for all possible requests
@@ -59,9 +59,7 @@ declare global {
     data: WorkspacePlain[];
   }
 
-  interface ImportResponse extends BaseResponse {
-    message?: string;
-  }
+  interface ImportResponse extends BaseResponse {}
 
   interface ErrorResponse extends BaseResponse {
     error: string;

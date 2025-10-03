@@ -61,10 +61,12 @@ declare global {
     /**
      * windowId -> workspaceId
      *
-     * ## Use `Record` instead of `Map` because
+     * ## Use `FlatPair` instead of `Map` because
      * Maps are not serializable and cannot be stored in `browser.storage`
      */
-    activatedMap: Record<number, string>; //
+    workspaceToWindow: (string | number)[];
+
+    tabToWindow: number[];
   }
 
   interface WorkspacePersistantWithHash extends WorkspacePersistant {
@@ -73,18 +75,5 @@ declare global {
 
   type WorkspaceStateKey = keyof WorkspaceState;
 
-  interface WorkspaceStats {
-    totalTabs: number;
-    pinnedTabs: number;
-    regularTabs: number;
-    lastOpened: number;
-    createdAt: number;
-    isActive: boolean;
-  }
-
-  interface DraggingData {
-    tabId: number;
-    workspaceId: string;
-    tabUrl: string;
-  }
+  type WindowWithId = browser.windows.Window & { id: number };
 }

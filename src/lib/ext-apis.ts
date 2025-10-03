@@ -1,5 +1,5 @@
 import { MockBrowser } from '@/__mock__/toolbar.js';
-import { RandomNameLanguage, Sym, Theme } from './consts.js';
+import { Sym } from './consts.js';
 
 if (__IS_DEV__) {
   new MockBrowser();
@@ -10,11 +10,11 @@ export const $send = <M extends MessageRequest, R = MessageResponseMap[M['action
   message: M
 ): Promise<R> => browser.runtime.sendMessage(message) as Promise<R>;
 
-export const $aboutBlank = () =>
+export const $aboutBlank = (): Promise<WindowWithId> =>
   browser.windows.create({
     url: 'about:blank',
     type: 'normal',
-  });
+  }) as Promise<WindowWithId>;
 
 export function $lsget(): Promise<WorkspacePersistant>;
 export function $lsget<T extends WorkspaceStateKey>(key: T): Promise<WorkspaceState[T]>;
