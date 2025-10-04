@@ -15,6 +15,7 @@ type ChangeInfo = browser.tabs._OnUpdatedChangeInfo &
 
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
+  private sync: boolean;
 
   constructor() {
     const updatedAt = new Date('__DATE_TIME__');
@@ -23,9 +24,10 @@ class WorkspaceBackground {
     const time = min < 1 ? i('justNow') : i('minutesAgo', min);
     logger.info('Updated before ' + time);
 
+    this.sync = true;
     this.manager = new WorkspaceManager();
     this.init();
-    this.startSyncTask();
+    this.initSync();
   }
 
   private async init() {
@@ -124,7 +126,7 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    browser.tabs.onCreated.addListener((tab) => this.manager.addWindowTab(tab));
+    browser.tabs.onCreated.addListener((tab) => this.manager.addTabToWindow(tab));
 
     // # cases of refresh
     browser.tabs.onAttached.addListener((_tabId, info) => this.refreshTab(info));
@@ -172,15 +174,17 @@ class WorkspaceBackground {
     };
   }
 
-  private async startSyncTask() {
+  async initSync() {
     const EVERY_X_MINUTES = 5;
 
     const task = async () => {
-      logger.verbose('Sync storage on', $thm());
+      if (this.sync) {
+        logger.verbose('Sync storage on', $thm());
 
-      // * Might change if more features are added
-      const local = await $lget('workspaces', 'settings');
-      await $sset(local);
+        // * Might change if more features are added
+        const local = await $lget('workspaces', 'settings');
+        await $sset(local);
+      }
 
       launcher();
     };
@@ -188,10 +192,18 @@ class WorkspaceBackground {
     const launcher = () => {
       const minute = new Date().getMinutes();
       const delta = EVERY_X_MINUTES - (minute % EVERY_X_MINUTES);
-      setTimeout(task, delta);
+      setTimeout(task, delta * 60000);
     };
 
     launcher();
+  }
+
+  async startSync() {
+    this.sync = true;
+  }
+
+  async stopSync() {
+    this.sync = false;
   }
 }
 

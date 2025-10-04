@@ -19,14 +19,15 @@ export class WorkspaceManager {
       .map(createWorkspaceTab);
   }
 
-  async addWindowTab(browserTab: browser.tabs.Tab) {
+  async addTabToWindow(browserTab: browser.tabs.Tab) {
     const { _workspaceWindows, _windowTabs } = await $lget('_workspaceWindows', '_windowTabs');
     const windowId = browserTab.windowId;
     if (windowId === undefined) {
       return;
     }
-    const workspaceId = _workspaceWindows[windowId];
-    if (workspaceId === undefined) {
+
+    const entry = Object.entries(_workspaceWindows).find(([, wid]) => wid === windowId);
+    if (!entry) {
       return;
     }
 
@@ -95,7 +96,10 @@ export class WorkspaceManager {
       .create({ url: tabs[0].url, type: 'normal' })
       .catch((e) => (logger.error(e), $aboutBlank()))) as WindowWithId;
 
-    await this.waitForWindowReady(window);
+    const waitToMuchTime = await this.waitForWindowReady(window);
+    if (waitToMuchTime) {
+      logger.warn('Window is not ready in time, some tabs may be missing');
+    }
 
     // Open remaining URLs as tabs
     for (let i = 1; i < tabs.length; i++) {
@@ -112,19 +116,20 @@ export class WorkspaceManager {
     return await this.openIniter(workspace, window, _workspaceWindows);
   }
 
-  private waitForWindowReady(window: WindowWithId) {
-    return new Promise<void>((resolve) => {
+  private waitForWindowReady(window: WindowWithId, timeout: number = 6000) {
+    return new Promise<boolean>((resolve) => {
       const checker = async (
         _tabId: number,
         _changeInfo: browser.tabs._OnUpdatedChangeInfo,
         tab: browser.tabs.Tab
       ) => {
         if (tab && tab.windowId === window.id) {
-          resolve();
+          resolve(false);
           browser.tabs.onUpdated.removeListener(checker);
         }
       };
       browser.tabs.onUpdated.addListener(checker);
+      setTimeout(() => resolve(true), timeout);
     });
   }
 
