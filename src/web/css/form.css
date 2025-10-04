@@ -58,11 +58,11 @@
 }
 
 .radio input[type='radio'] + label::before {
-  background: no-repeat url('assets/radio.svg');
+  background: no-repeat url('/assets/radio.svg');
 }
 
 .radio input[type='radio']:checked + label::before {
-  background: no-repeat url('assets/radio-checked.svg');
+  background: no-repeat url('/assets/radio-checked.svg');
 }
 
 .radio input[type='radio'] {
