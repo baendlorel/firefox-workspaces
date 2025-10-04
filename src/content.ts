@@ -44,7 +44,7 @@ import { Consts, Action } from './lib/consts.js';
             return;
           }
 
-          // todo 看看能不能包一个大promise直接包回去
+          // todo 测试导出
           file.text().then(resolve);
         };
         document.body.appendChild(input);
