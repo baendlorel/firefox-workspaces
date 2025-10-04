@@ -1,5 +1,7 @@
 import { Color } from './lib/color.js';
 import { $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
+import { isValidSettings } from './lib/settings.js';
+import { $objectHash } from './lib/utils.js';
 import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {
@@ -157,11 +159,63 @@ export class WorkspaceManager {
     browser.action.setBadgeText({ text: short, windowId });
   }
 
-  // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口
-  async importData(state: Persist) {
-    if (!Array.isArray(state.workspaces) || state.workspaces.some((w) => !isValidWorkspace(w))) {
-      logger.error('data.workspaceses must be Workspace[]', state);
-      return;
+  async importData(data: ExportData): Promise<ImportResponse> {
+    // 1. Validate hash
+    const { hash, workspaces, settings, timestamp } = data;
+    const dataWithoutHash = { workspaces, settings, timestamp };
+
+    const calculatedHash = $objectHash(dataWithoutHash);
+
+    if (hash !== calculatedHash) {
+      logger.error('Hash validation failed', { expected: hash, calculated: calculatedHash });
+      return {
+        succ: false,
+        message: 'Data integrity check failed. The file may be corrupted.',
+        addedCount: 0,
+      };
     }
+
+    // 2. Validate workspaces
+    if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
+      logger.error('Invalid workspaces data', workspaces);
+      return {
+        succ: false,
+        message: 'Invalid workspace data format.',
+        addedCount: 0,
+      };
+    }
+
+    // 3. Validate settings
+    if (!isValidSettings(settings)) {
+      logger.error('Invalid settings data', settings);
+      return {
+        succ: false,
+        message: 'Invalid settings data format.',
+        addedCount: 0,
+      };
+    }
+
+    // 4. Get current data
+    const { workspaces: currentWorkspaces } = await $lget('workspaces', 'settings');
+
+    // 5. Merge workspaces (only add new ones, don't overwrite)
+    const existingIds = new Set(currentWorkspaces.map((w) => w.id));
+    const newWorkspaces = workspaces.filter((w) => !existingIds.has(w.id));
+    const mergedWorkspaces = [...currentWorkspaces, ...newWorkspaces];
+
+    // 6. Save merged data
+    await $lpset({ workspaces: mergedWorkspaces, settings });
+
+    logger.info('Import completed', {
+      total: workspaces.length,
+      added: newWorkspaces.length,
+      skipped: workspaces.length - newWorkspaces.length,
+    });
+
+    return {
+      succ: true,
+      message: `Successfully imported ${newWorkspaces.length} workspace(s). ${workspaces.length - newWorkspaces.length} workspace(s) skipped (already exists).`,
+      addedCount: newWorkspaces.length,
+    };
   }
 }

@@ -162,17 +162,39 @@ class WorkspaceBackground {
         const data = await this.manager.open(message.workspace);
         return { succ: data.id !== browser.windows.WINDOW_ID_NONE };
       }
-      case Action.ToggleSync: {
+      case Action.ToggleSync:
         if (message.sync === Switch.On) {
           await this.initSync();
         } else {
           await this.stopSync();
         }
         return { succ: true };
-      }
-      case Action.Import: {
-        await this.manager.importData(message.data);
+      case Action.Import:
+        // Inject content script to active tab and trigger file import
+        await this.injectContentScriptAndImport();
         return { succ: true };
+      case Action.TriggerImport:
+        return { succ: false, from: 'background' };
+      case Action.FileImportData: {
+        // Handle the actual import data from content script
+        const result = await this.manager.importData(message.data);
+
+        // Show notification
+        const notificationId = await browser.notifications.create({
+          type: 'basic',
+          iconUrl: browser.runtime.getURL('public/icon-128.png'),
+          title: result.succ ? 'Import Successful' : 'Import Failed',
+          message:
+            result.message ||
+            (result.succ
+              ? `Imported ${result.addedCount || 0} workspace(s)`
+              : 'Failed to import data'),
+        });
+
+        // Auto-clear notification after 5 seconds
+        setTimeout(() => browser.notifications.clear(notificationId), 5000);
+
+        return result;
       }
       default:
         message satisfies never;
@@ -184,6 +206,45 @@ class WorkspaceBackground {
       succ: false,
       error: 'Unknown message: ' + String(message),
     };
+  }
+
+  private async injectContentScriptAndImport() {
+    try {
+      // Get active tab
+      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+      const activeTab = tabs[0];
+
+      if (!activeTab || !activeTab.id) {
+        logger.error('No active tab found');
+        return;
+      }
+
+      // Inject content script
+      await browser.scripting.executeScript({
+        target: { tabId: activeTab.id },
+        files: ['src/content.js'],
+      });
+
+      // Wait a bit for content script to initialize
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      // Trigger file import in content script
+      await browser.tabs.sendMessage(activeTab.id, {
+        action: Action.TriggerImport,
+      });
+    } catch (error) {
+      logger.error('Failed to inject content script:', error);
+
+      // Show error notification
+      const notificationId = await browser.notifications.create({
+        type: 'basic',
+        iconUrl: browser.runtime.getURL('public/icon-128.png'),
+        title: 'Import Failed',
+        message: 'Failed to inject content script',
+      });
+
+      setTimeout(() => browser.notifications.clear(notificationId), 5000);
+    }
   }
 
   async initSync() {

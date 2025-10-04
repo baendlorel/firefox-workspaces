@@ -14,11 +14,25 @@ declare global {
 
   interface ImportRequest {
     action: Action.Import;
-    data: ExportData;
+  }
+
+  interface TriggerImportRequest {
+    action: Action.TriggerImport;
+  }
+
+  interface FileImportDataRequest {
+    action: Action.FileImportData;
+    succ: boolean;
+    data: string;
   }
 
   // Union type for all possible requests
-  type MessageRequest = OpenRequest | ToggleSyncRequest | ImportRequest;
+  type MessageRequest =
+    | OpenRequest
+    | ToggleSyncRequest
+    | ImportRequest
+    | TriggerImportRequest
+    | FileImportDataRequest;
 
   // # responses
   interface ErrorResponse {
@@ -30,11 +44,23 @@ declare global {
     succ: boolean;
   }
 
-  type MessageResponse = CommonResponse | ErrorResponse;
+  interface ImportResponse extends CommonResponse {
+    message: string;
+    addedCount: number;
+  }
+
+  interface TriggerImportResponse {
+    succ: boolean;
+    from: 'content' | 'background' | 'popup';
+  }
+
+  type MessageResponse = CommonResponse | ErrorResponse | ImportResponse | TriggerImportResponse;
 
   type MessageResponseMap = {
     [Action.Open]: CommonResponse;
     [Action.ToggleSync]: CommonResponse;
     [Action.Import]: CommonResponse;
+    [Action.TriggerImport]: TriggerImportResponse;
+    [Action.FileImportData]: ImportResponse;
   };
 }

@@ -22,29 +22,10 @@ import heartSvg from '@web/assets/heart.svg?raw';
 import gearSvg from '@web/assets/gear.svg?raw';
 import workspaceSvg from '@web/assets/workspace.svg?raw';
 
-const importData = async () => {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.json';
-  input.onchange = async () => {
-    const file = input.files?.[0];
-    if (!file) {
-      return;
-    }
-    try {
-      const text = await file.text();
-      const data = JSON.parse(text);
-
-      const response = await $send<ImportRequest>({
-        action: Action.Import,
-        data,
-      });
-    } catch (error) {
-      alert(i('failedToParseFile', error));
-    }
-  };
-  input.click();
-};
+const importData = async () =>
+  $send<ImportRequest>({
+    action: Action.Import,
+  }).catch((e) => logger.error('Failed to trigger import:', e));
 
 function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const contextMenu = new Menu([
