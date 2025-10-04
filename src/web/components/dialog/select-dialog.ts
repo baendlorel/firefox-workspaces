@@ -1,4 +1,3 @@
-import '@/lib/promise-ext.js';
 import { btn, h } from '@/lib/dom.js';
 import { i } from '@/lib/ext-apis.js';
 import { createDialog } from './index.js';
@@ -8,7 +7,9 @@ export default async (config: {
   message?: string;
   options: { value: any; label: HTMLElement | string }[];
 }): Promise<any> => {
-  const { promise, resolve } = Promise.create<number | null>();
+  let resolve!: (value: any) => void;
+  const promise = new Promise<any>((res) => (resolve = res));
+
   const { title, message = '', options } = config;
   if (options.length === 0) {
     logger.warn('No options provided for select dialog.');

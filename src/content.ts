@@ -1,6 +1,5 @@
 // Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
-import '@/lib/promise-ext.js';
 import { Action, Consts } from './lib/consts.js';
 
 (function () {

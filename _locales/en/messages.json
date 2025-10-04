@@ -306,8 +306,18 @@
   "lastUpdatedAt": {
     "message": "last updated at"
   },
+  "syncData": {
+    "message": "Sync data",
+    "description": "Toggle to enable data sync via browser.storage.sync"
+  },
   "failedToLoadState": {
     "message": "Failed to load plugin state data",
     "description": "Load state error message"
+  },
+  "on": {
+    "message": "On"
+  },
+  "off": {
+    "message": "Off"
   }
 }

@@ -1,6 +1,5 @@
-import '@/lib/promise-ext.js';
 import { i, $lget, $lset, $sget, $sset, $windowWorkspace } from './lib/ext-apis.js';
-import { Action, Sym, Theme } from './lib/consts.js';
+import { Action, Switch, Sym, Theme } from './lib/consts.js';
 import { $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
@@ -15,7 +14,8 @@ type ChangeInfo = browser.tabs._OnUpdatedChangeInfo &
 
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
-  private sync: boolean;
+  private sync: Switch;
+  private syncTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     const updatedAt = new Date('__DATE_TIME__');
@@ -24,10 +24,9 @@ class WorkspaceBackground {
     const time = min < 1 ? i('justNow') : i('minutesAgo', min);
     logger.info('Updated before ' + time);
 
-    this.sync = true;
+    this.sync = Switch.Off;
     this.manager = new WorkspaceManager();
     this.init();
-    this.initSync();
   }
 
   private async init() {
@@ -70,27 +69,39 @@ class WorkspaceBackground {
     }
 
     await this.registerListeners();
+
+    // todo 新增逻辑，但可能无必要
+    {
+      const { settings } = await $lget('settings');
+      this.sync = isValidSettings(settings) ? settings.sync : Switch.On;
+
+      if (this.sync === Switch.On) {
+        this.initSync();
+      }
+    }
   }
 
-  private async initLocalWith(data: Partial<Local>) {
-    let {
-      workspaces = Sym.NotProvided,
-      settings = Sym.NotProvided,
-      _workspaceWindows = {},
-      _windowTabs = {},
-    } = data;
+  private async initLocalWith(data: { workspaces?: unknown; settings?: unknown } = {}) {
+    let { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = data as any;
 
     if (!isValidWorkspaces(workspaces)) {
-      logger.error('data.workspaceses must be Workspace[]', workspaces);
+      if (workspaces !== Sym.NotProvided) {
+        logger.error('data.workspaces must be Workspace[]', workspaces);
+      }
       workspaces = [];
     }
 
     if (!isValidSettings(settings)) {
-      logger.error('data.settings must be Settings object', settings);
-      settings = { theme: Theme.Auto };
+      if (settings !== Sym.NotProvided) {
+        logger.error('data.settings must be Settings object', settings);
+      }
+      settings = { theme: Theme.Auto, sync: false };
     }
 
-    $lset({ workspaces, settings, _workspaceWindows, _windowTabs });
+    const _workspaceWindows: Record<string, number> = {};
+    const _windowTabs: Record<string, browser.tabs.Tab[]> = {};
+
+    await $lset({ workspaces, settings, _workspaceWindows, _windowTabs, timestamp: Date.now() });
   }
 
   private registerListeners() {
@@ -102,12 +113,11 @@ class WorkspaceBackground {
   private runtimeListeners() {
     browser.runtime.onStartup.addListener(() => this.init());
     browser.runtime.onInstalled.addListener(() => this.init());
-    browser.runtime.onMessage.addListener(
-      async (message: MessageRequest): Promise<MessageResponse> =>
-        this.handlePopupMessage(message).catch((e) => {
-          logger.error('onMessage Error', e);
-          return { succ: false, error: 'Error handling message.' };
-        })
+    browser.runtime.onMessage.addListener(async (message) =>
+      this.handlePopupMessage(message).catch((e) => {
+        logger.error('onMessage Error', e);
+        return { succ: false, error: 'Error handling message.' };
+      })
     );
   }
 
@@ -176,34 +186,52 @@ class WorkspaceBackground {
 
   async initSync() {
     const EVERY_X_MINUTES = 5;
+    // Avoid scheduling multiple concurrent timers
+    if (this.syncTimer !== null) {
+      return;
+    }
 
     const task = async () => {
-      if (this.sync) {
-        logger.verbose('Sync storage on', $thm());
+      try {
+        if (this.sync) {
+          logger.verbose('Sync storage on', $thm());
 
-        // * Might change if more features are added
-        const local = await $lget('workspaces', 'settings');
-        await $sset(local);
+          // * Might change if more features are added
+          const local = await $lget('workspaces', 'settings');
+          await $sset(local);
+        }
+      } catch (e) {
+        logger.error('Error while syncing', e);
+      } finally {
+        // schedule next run
+        scheduleNext();
       }
-
-      launcher();
     };
 
-    const launcher = () => {
+    const scheduleNext = () => {
       const minute = new Date().getMinutes();
       const delta = EVERY_X_MINUTES - (minute % EVERY_X_MINUTES);
-      setTimeout(task, delta * 60000);
+      // store timer id so it can be cancelled
+      this.syncTimer = setTimeout(task, delta * 60000);
     };
 
-    launcher();
+    // first schedule
+    scheduleNext();
   }
 
   async startSync() {
-    this.sync = true;
+    this.sync = Switch.On;
+    if (this.syncTimer === null) {
+      this.initSync();
+    }
   }
 
   async stopSync() {
-    this.sync = false;
+    this.sync = Switch.Off;
+    if (this.syncTimer !== null) {
+      clearTimeout(this.syncTimer);
+      this.syncTimer = null;
+    }
   }
 }
 

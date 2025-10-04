@@ -21,6 +21,11 @@ export const WORKSPACE_COLORS: HexColor[] = [
   '#004e8c',
 ];
 
+export const enum Switch {
+  On = 'on',
+  Off = 'off',
+}
+
 export const enum Theme {
   Auto = 'auto',
   Light = 'light',

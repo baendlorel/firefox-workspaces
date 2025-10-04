@@ -1,5 +1,5 @@
 import 'rollup-plugin-func-macro';
-import { Theme } from './lib/consts.ts';
+import { Switch, Theme } from './lib/consts.ts';
 import type I18NEnMessage from '../_locales/en/messages.json';
 import type I18NZhMessage from '../_locales/zh_CN/messages.json';
 
@@ -46,6 +46,8 @@ declare global {
 
   interface Settings {
     theme: Theme;
+    // Whether to sync data via browser.storage.sync
+    sync: Switch;
   }
 
   type WindowWithId = browser.windows.Window & { id: number };

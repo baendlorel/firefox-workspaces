@@ -306,8 +306,18 @@
   "lastUpdatedAt": {
     "message": "最近更新于"
   },
+  "syncData": {
+    "message": "同步数据",
+    "description": "是否启用通过 browser.storage.sync 同步数据"
+  },
   "failedToLoadState": {
     "message": "加载插件数据失败",
     "description": "Load state error message"
+  },
+  "on": {
+    "message": "开启"
+  },
+  "off": {
+    "message": "关闭"
   }
 }

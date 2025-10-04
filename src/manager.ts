@@ -1,4 +1,3 @@
-import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
 import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';

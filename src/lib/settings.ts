@@ -1,4 +1,4 @@
-import { Theme } from './consts.js';
+import { Switch, Theme } from './consts.js';
 
 export const isValidSettings = (settings: Settings): settings is Settings => {
   if (typeof settings !== 'object' || settings === null) {
@@ -12,6 +12,15 @@ export const isValidSettings = (settings: Settings): settings is Settings => {
       break;
     default:
       settings.theme satisfies never;
+      return false;
+  }
+
+  switch (settings.sync) {
+    case Switch.On:
+    case Switch.Off:
+      break;
+    default:
+      settings.sync satisfies never;
       return false;
   }
 
