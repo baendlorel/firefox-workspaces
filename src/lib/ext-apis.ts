@@ -29,9 +29,14 @@ export function $lget(...args: LocalKey[]): Promise<any> {
   return browser.storage.local.get(args);
 }
 
-export const $lpset = async (persist: Partial<Persist>) => {
-  persist.timestamp = Date.now();
-  await browser.storage.local.set(persist);
+export const $lpset = async (data: Partial<Persist>) => {
+  data.timestamp = Date.now();
+  await browser.storage.local.set(data);
+};
+
+export const $lset = async (data: Partial<Local>) => {
+  data.timestamp = Date.now();
+  await browser.storage.local.set(data);
 };
 
 export const $lsset = (state: Partial<Local>) => browser.storage.local.set(state);

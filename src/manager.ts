@@ -9,15 +9,6 @@ import { WorkspaceTab } from './lib/workspace-tab.js';
 import { isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {
-  // todo background会按需销毁，数据要另想办法存储
-  constructor() {
-    const updatedAt = new Date('__DATE_TIME__');
-    const delta = Date.now() - updatedAt.getTime();
-    const min = Math.floor(delta / 60000);
-    const time = min < 1 ? i('justNow') : i('minutesAgo', min);
-    logger.info('Updated before ' + time);
-  }
-
   /**
    * Get the cached tabs of a window and transform to `WorkspaceTab[]`
    */

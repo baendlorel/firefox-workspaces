@@ -25,3 +25,7 @@ export const isValidWorkspace = (o: Workspace) => {
     o.tabs.every(WorkspaceTab.valid)
   );
 };
+
+export const isValidWorkspaces = (o: Workspace[]): o is Workspace[] => {
+  return Array.isArray(o) && o.every((w) => isValidWorkspace(w));
+};

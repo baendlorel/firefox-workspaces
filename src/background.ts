@@ -1,15 +1,7 @@
 import '@/lib/promise-ext.js';
-import {
-  i,
-  $lget,
-  $lpset,
-  $lsset,
-  $sget,
-  $sset,
-  $findWorkspaceByWindowId,
-} from './lib/ext-apis.js';
+import { i, $lget, $sget, $sset, $findWorkspaceByWindowId, $lset } from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
-import { isValidWorkspace } from './lib/workspace.js';
+import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
 
 import { WorkspaceManager } from './manager.js';
@@ -21,9 +13,16 @@ type ChangeInfo = browser.tabs._OnUpdatedChangeInfo &
   browser.tabs._OnDetachedDetachInfo;
 
 class WorkspaceBackground {
-  private readonly manager = new WorkspaceManager();
+  private readonly manager: WorkspaceManager;
 
   constructor() {
+    const updatedAt = new Date('__DATE_TIME__');
+    const delta = Date.now() - updatedAt.getTime();
+    const min = Math.floor(delta / 60000);
+    const time = min < 1 ? i('justNow') : i('minutesAgo', min);
+    logger.info('Updated before ' + time);
+
+    this.manager = new WorkspaceManager();
     this.init();
     this.startSyncTask();
   }
@@ -31,33 +30,64 @@ class WorkspaceBackground {
   private async init() {
     // # init storage
     const sync = await $sget();
+
+    const {
+      workspaces: sworkspaces = Sym.NotProvided,
+      settings: ssettings = Sym.NotProvided,
+      timestamp: stimestamp = Sym.NotProvided,
+    } = sync;
+
     const local = await $lget();
-    const { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = local;
+    const {
+      workspaces = Sym.NotProvided,
+      settings = Sym.NotProvided,
+      timestamp = Sym.NotProvided,
+    } = local;
 
-    // * Init empty data
-    if (workspaces === Sym.NotProvided) {
-      logger.info('No workspaces found, initializing empty array');
-      await $lpset({ workspaces: [] });
-    } else if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
-      logger.warn('Invalid workspaces data found, resetting to empty array', workspaces);
-      await $lpset({ workspaces: [] });
+    // Brand new
+    if (timestamp === Sym.NotProvided && stimestamp === Sym.NotProvided) {
+      logger.info('No existing data found, initializing with default values');
+      await this.initLocalWith({});
+    } else if (timestamp === Sym.NotProvided && Number.isSafeInteger(stimestamp)) {
+      logger.info('sync data found');
+      await this.initLocalWith({ workspaces: sworkspaces, settings: ssettings });
+    } else if (Number.isSafeInteger(timestamp) && stimestamp === Sym.NotProvided) {
+      logger.info('local data found');
+      await this.initLocalWith({ workspaces, settings });
+    } else if (Number.isSafeInteger(timestamp) && Number.isSafeInteger(stimestamp)) {
+      logger.info('local/sync found', timestamp > stimestamp ? 'local' : 'sync', 'is newer');
+      if (timestamp > stimestamp) {
+        await this.initLocalWith({ workspaces, settings });
+      } else {
+        await this.initLocalWith({ workspaces: sworkspaces, settings: ssettings });
+      }
+    } else {
+      logger.warn('Invalid timestamps, re-initializing with default values');
+      await this.initLocalWith({});
     }
 
-    if (settings === Sym.NotProvided) {
-      logger.info('No settings found, initializing default settings');
-      await $lpset({
-        settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
-      });
-    } else if (!isValidSettings(settings)) {
-      logger.warn('Invalid settings data found, resetting to default settings', settings);
-      await $lpset({
-        settings: { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto },
-      });
-    }
-
-    // Always clear activated because it contains runtime data
-    await $lsset({ _workspaceWindows: [] });
     await this.registerListeners();
+  }
+
+  private async initLocalWith(data: Partial<Local>) {
+    let {
+      workspaces = Sym.NotProvided,
+      settings = Sym.NotProvided,
+      _workspaceWindows = [],
+      _windowTabs = [],
+    } = data;
+
+    if (!isValidWorkspaces(workspaces)) {
+      logger.error('data.workspaceses must be Workspace[]', workspaces);
+      workspaces = [];
+    }
+
+    if (!isValidSettings(settings)) {
+      logger.error('data.settings must be Settings object', settings);
+      settings = { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto };
+    }
+
+    $lset({ workspaces, settings, _workspaceWindows, _windowTabs });
   }
 
   private getPopup(windowId: number) {
