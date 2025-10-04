@@ -8,12 +8,15 @@
     "description": "Extension description"
   },
   "workspace": {
-    "message": "Workspace",
+    "message": "Workspaces",
     "description": "Header title"
   },
   "newWorkspace": {
-    "message": "New workspace",
-    "description": "New workspace button tooltip"
+    "message": "Create a workspace"
+  },
+  "createWithCurrentTabs": {
+    "message": "Save tabs to a workspace",
+    "description": "Context menu item"
   },
   "moreActions": {
     "message": "More Actions",
@@ -26,10 +29,6 @@
   "createWorkspaceToGetStarted": {
     "message": "Create a new workspace to get started!",
     "description": "Empty state call to action"
-  },
-  "createWithCurrentTabs": {
-    "message": "Create with current tabs",
-    "description": "Context menu item"
   },
   "import": {
     "message": "Import",

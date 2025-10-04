@@ -9,6 +9,8 @@ import { Menu } from '@web/components/menu/index.js';
 import about from '@web/components/about.js';
 import donate from '@web/components/donate.js';
 import settings from '@web/components/settings.js';
+import { btnWithIcon } from './icon.js';
+import { stringify } from './debug.js';
 
 import plusSvg from '@web/assets/workspace-plus.svg?raw';
 import listSvg from '@web/assets/list.svg?raw';
@@ -19,8 +21,6 @@ import bugSvg from '@web/assets/bug.svg?raw';
 import heartSvg from '@web/assets/heart.svg?raw';
 import gearSvg from '@web/assets/gear.svg?raw';
 import workspaceSvg from '@web/assets/workspace.svg?raw';
-
-import { stringify } from './debug.js';
 
 const importData = async () => {
   const input = document.createElement('input');
@@ -46,20 +46,10 @@ const importData = async () => {
   input.click();
 };
 
-function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
-  const SIZE = 18;
-  const COLOR = '#283343';
-
-  const item = (svgStr: string, label: string) =>
-    btn('btn-with-icon', [svg(svgStr, COLOR, SIZE), label]);
-
-  const aboutDialog = about();
-  const donateDialog = donate();
-  const settingsDialog = settings();
-
+function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const contextMenu = new Menu([
     {
-      label: item(bookmarkPlusSvg, i('createWithCurrentTabs')),
+      label: btnWithIcon(bookmarkPlusSvg, i('createWithCurrentTabs')),
       action: async function (this) {
         // Get current window tabs
         const currentWindow = await browser.windows.getCurrent();
@@ -71,11 +61,29 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
       },
     },
     {
-      label: item(boxArrowDownSvg, i('import')),
+      label: btnWithIcon(plusSvg, i('newWorkspace')),
+      action: async function (this) {
+        bus.emit('edit', null);
+        this.close();
+      },
+    },
+  ]);
+
+  return contextMenu;
+}
+
+function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
+  const aboutDialog = about();
+  const donateDialog = donate();
+  const settingsDialog = settings();
+
+  const contextMenu = new Menu([
+    {
+      label: btnWithIcon(boxArrowDownSvg, i('import')),
       action: importData,
     },
     {
-      label: item(boxArrowUpSvg, i('export')),
+      label: btnWithIcon(boxArrowUpSvg, i('export')),
       action: async function (this) {
         const state = await popupService.getExportData();
 
@@ -92,14 +100,14 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     },
     Menu.Divider,
     {
-      label: item(bugSvg, i('debugInfo')),
+      label: btnWithIcon(bugSvg, i('debugInfo')),
       action: async () => {
         const workspaces = await $lget('workspaces');
         logger.debug('workspaces', stringify(workspaces));
       },
     },
     {
-      label: item(gearSvg, i('settings')),
+      label: btnWithIcon(gearSvg, i('settings')),
       action: function (this) {
         settingsDialog.bus.emit('show');
         this.close();
@@ -107,14 +115,14 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
     },
     Menu.Divider,
     {
-      label: item(heartSvg, i('donate')),
+      label: btnWithIcon(heartSvg, i('donate')),
       action: function (this) {
         donateDialog.bus.emit('show');
         this.close();
       },
     },
     {
-      label: item(workspaceSvg, i('about')),
+      label: btnWithIcon(workspaceSvg, i('about')),
       action: function (this) {
         aboutDialog.bus.emit('show');
         this.close();
@@ -126,13 +134,10 @@ function createContextMenu(bus: EventBus<WorkspaceEditorEventMap>) {
 }
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const addBtn = btn({ class: 'btn-text', title: i('newWorkspace') }, [
-    svg(plusSvg, '#fff', 18, 18),
-  ]);
-  const moreBtn = btn({ class: 'btn-text', title: i('moreActions') }, [
-    svg(listSvg, '#fff', 18, 18),
-  ]);
-  const contextMenu = createContextMenu(bus);
+  const addBtn = btn({ class: 'btn-text', title: i('newWorkspace') }, [svg(plusSvg, '#fff', 18)]);
+  const moreBtn = btn({ class: 'btn-text', title: i('moreActions') }, [svg(listSvg, '#fff', 18)]);
+  const createMenu = createCreateMenu(bus);
+  const moreActionMenu = createMoreActionMenu(bus);
 
   const title = h('h2', 'wb-header-title', i('workspace'));
   const header = div('wb-header', [title, addBtn, moreBtn]);
@@ -146,14 +151,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     header.style.setProperty('--header-darken-gradient', gradient);
   });
 
-  addBtn.addEventListener('click', () => bus.emit('edit', null));
-  moreBtn.addEventListener('click', () => {
-    const rect = moreBtn.getBoundingClientRect();
-    const drect = contextMenu.getBoundingClientRect();
-    const x = rect.x - drect.width - 1;
-    const y = rect.y + rect.height - 1;
-    contextMenu.show(x, y);
-  });
+  addBtn.addEventListener('click', () => createMenu.showBeside(addBtn));
+  moreBtn.addEventListener('click', () => moreActionMenu.showBeside(moreBtn));
 
   return header;
 };

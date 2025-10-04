@@ -12,8 +12,12 @@
     "description": "Header title"
   },
   "newWorkspace": {
-    "message": "新建工作区",
+    "message": "创建工作区",
     "description": "New workspace button tooltip"
+  },
+  "createWithCurrentTabs": {
+    "message": "将选项卡保存到工作区",
+    "description": "Context menu item"
   },
   "moreActions": {
     "message": "更多操作",
@@ -26,10 +30,6 @@
   "createWorkspaceToGetStarted": {
     "message": "创建一个新工作区开始使用！",
     "description": "Empty state call to action"
-  },
-  "createWithCurrentTabs": {
-    "message": "使用当前标签页创建",
-    "description": "Context menu item"
   },
   "import": {
     "message": "导入",

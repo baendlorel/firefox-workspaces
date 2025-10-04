@@ -1,4 +1,4 @@
-import { div, svg } from '@/lib/dom.js';
+import { btn, div, svg } from '@/lib/dom.js';
 import workspaceIcon from '@web/assets/workspace.svg?raw';
 
 export const wbicon = (color: HexColor): HTMLSpanElement => {
@@ -8,3 +8,6 @@ export const wbicon = (color: HexColor): HTMLSpanElement => {
   icon.style.backgroundColor = bg;
   return icon;
 };
+
+export const btnWithIcon = (svgStr: string, label: string) =>
+  btn('btn-with-icon', [svg(svgStr, '#283343', 18), label]);

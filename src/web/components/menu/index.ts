@@ -98,4 +98,12 @@ export class Menu {
     this.dialog.close();
     return drect;
   }
+
+  showBeside(button: HTMLButtonElement) {
+    const rect = button.getBoundingClientRect();
+    const drect = this.getBoundingClientRect();
+    const x = rect.x - drect.width - 1;
+    const y = rect.y + rect.height - 1;
+    this.show(x, y);
+  }
 }
