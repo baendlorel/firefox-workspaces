@@ -162,6 +162,7 @@ class WorkspaceBackground {
         const data = await this.manager.open(message.workspace);
         return { succ: data.id !== browser.windows.WINDOW_ID_NONE };
       }
+
       case Action.ToggleSync:
         if (message.sync === Switch.On) {
           await this.initSync();
@@ -169,12 +170,21 @@ class WorkspaceBackground {
           await this.stopSync();
         }
         return { succ: true };
+
+      case Action.Export: {
+        const window = await browser.windows.getCurrent();
+        await this.manager.refreshWindowTab(window.id);
+        return { succ: true };
+      }
+
       case Action.Import:
         // Inject content script to active tab and trigger file import
         await this.injectContentScriptAndImport();
         return { succ: true };
+
       case Action.OpenFileInput:
         return { succ: false, from: 'background' };
+
       case Action.ReturnFileData: {
         // Handle the actual import data from content script
         let obj: any = null;
@@ -197,22 +207,10 @@ class WorkspaceBackground {
         }
 
         const result = await this.manager.importData(obj);
-
-        // Show notification
-        const notificationId = await browser.notifications.create({
-          type: 'basic',
-          iconUrl: browser.runtime.getURL('public/icon-128.png'),
-          title: result.succ ? 'Import Successful' : 'Import Failed',
-          message:
-            result.message ||
-            (result.succ
-              ? `Imported ${result.addedCount || 0} workspace(s)`
-              : 'Failed to import data'),
-        });
-        setTimeout(() => browser.notifications.clear(notificationId), 5000);
-
+        $notify(result.message, 'Import');
         return result;
       }
+
       default:
         message satisfies never;
         break;

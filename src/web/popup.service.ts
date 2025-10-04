@@ -66,7 +66,9 @@ class PopupService {
   }
 
   async getExportData(): Promise<ExportData> {
-    const state = await $lget();
+    // & Let background to save the cached tabs into storage.local's persist part
+    await $send<ExportRequest>({ action: Action.Export });
+    const state = await $lget('workspaces', 'settings');
     return { ...state, hash: $objectHash(state) };
   }
 }

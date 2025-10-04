@@ -35,6 +35,7 @@ export const enum Theme {
 export const enum Action {
   Open,
   ToggleSync,
+  Export,
   Import,
   OpenFileInput,
   ReturnFileData,

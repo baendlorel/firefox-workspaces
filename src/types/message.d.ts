@@ -12,6 +12,10 @@ declare global {
     sync: Switch;
   }
 
+  interface ExportRequest {
+    action: Action.Export;
+  }
+
   interface ImportRequest {
     action: Action.Import;
   }
@@ -31,6 +35,7 @@ declare global {
   type MessageRequest =
     | OpenRequest
     | ToggleSyncRequest
+    | ExportRequest
     | ImportRequest
     | OpenFileInputRequest
     | ReturnFileDataRequest;
@@ -60,6 +65,7 @@ declare global {
   type MessageResponseMap = {
     [Action.Open]: CommonResponse;
     [Action.ToggleSync]: CommonResponse;
+    [Action.Export]: CommonResponse;
     [Action.Import]: CommonResponse;
     [Action.OpenFileInput]: OpenFileInputResponse;
     [Action.ReturnFileData]: ImportResponse;
