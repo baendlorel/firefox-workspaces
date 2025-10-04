@@ -1,6 +1,7 @@
 import '@/lib/promise-ext.js';
 import { i, $lget, $lset, $sget, $sset, $windowWorkspace } from './lib/ext-apis.js';
 import { Action, Sym, Theme } from './lib/consts.js';
+import { $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
 
@@ -172,16 +173,25 @@ class WorkspaceBackground {
   }
 
   private async startSyncTask() {
-    const INTERVAL = 5 * 60 * 1000;
+    const EVERY_X_MINUTES = 5;
+
     const task = async () => {
+      logger.verbose('Sync storage on', $thm());
+
       // * Might change if more features are added
       const local = await $lget('workspaces', 'settings');
       await $sset(local);
 
-      setTimeout(task, INTERVAL);
+      launcher();
     };
 
-    setTimeout(task, INTERVAL);
+    const launcher = () => {
+      const minute = new Date().getMinutes();
+      const delta = EVERY_X_MINUTES - (minute % EVERY_X_MINUTES);
+      setTimeout(task, delta);
+    };
+
+    launcher();
   }
 }
 

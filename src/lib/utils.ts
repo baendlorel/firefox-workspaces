@@ -14,6 +14,30 @@ export const $genId = (n: number = 16) => {
 
 export const $sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const p2 = (x: number) => String(x).padStart(2, '0');
+
+/**
+ * Time in "YYYY-MM-DD HH:MM:SS" format
+ */
+export const $tdt = (dt: Date = new Date()) => {
+  const y = dt.getFullYear();
+  const m = p2(dt.getMonth() + 1);
+  const d = p2(dt.getDate());
+  const h = p2(dt.getHours());
+  const min = p2(dt.getMinutes());
+  const s = p2(dt.getSeconds());
+  return `${y}-${m}-${d} ${h}:${min}:${s}`;
+};
+
+/**
+ * Time in "HH:MM" format
+ */
+export const $thm = (dt: Date = new Date()) => {
+  const h = p2(dt.getHours());
+  const min = p2(dt.getMinutes());
+  return `${h}:${min}`;
+};
+
 /**
  * Hash a plain object, order-insensitive
  */
