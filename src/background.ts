@@ -1,5 +1,5 @@
 import '@/lib/promise-ext.js';
-import { i, $lget, $sget, $sset, $findWorkspaceByWindowId, $lset } from './lib/ext-apis.js';
+import { i, $lget, $lset, $sget, $sset, $windowWorkspace } from './lib/ext-apis.js';
 import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
@@ -130,7 +130,7 @@ class WorkspaceBackground {
     // Handle window events for session management
     browser.windows.onRemoved.addListener(async (windowId) => {
       // Check if this window belongs to a workspace
-      const workspace = await $findWorkspaceByWindowId(windowId);
+      const workspace = await $windowWorkspace(windowId);
       if (!workspace) {
         return;
       }
@@ -207,7 +207,7 @@ class WorkspaceBackground {
   }
 
   private async startSyncTask() {
-    const INTERVAL = 10 * 60 * 1000;
+    const INTERVAL = 5 * 60 * 1000;
     const task = async () => {
       // * Might change if more features are added
       const local = await $lget('workspaces', 'settings');

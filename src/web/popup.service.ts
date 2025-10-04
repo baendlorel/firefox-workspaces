@@ -1,12 +1,12 @@
 import { Action } from '@/lib/consts.js';
-import { $findWorkspaceByWindowId, $lget, $lpset, $send } from '@/lib/ext-apis.js';
+import { $windowWorkspace, $lget, $lpset, $send } from '@/lib/ext-apis.js';
 import { $objectHash } from '@/lib/utils.js';
 import { createWorkspace } from '@/lib/workspace.js';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
     const currentWindow = await browser.windows.getCurrent();
-    return $findWorkspaceByWindowId(currentWindow.id);
+    return $windowWorkspace(currentWindow.id);
   }
 
   /**

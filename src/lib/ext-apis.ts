@@ -48,7 +48,10 @@ export const $sset = async (persist: Persist) => {
 };
 
 // # common services
-export async function $findWorkspaceByWindowId(
+/**
+ * Get workspace by `windowId`
+ */
+export async function $windowWorkspace(
   windowId: number | undefined
 ): Promise<Workspace | undefined> {
   if (windowId === undefined) {
