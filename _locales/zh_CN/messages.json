@@ -32,11 +32,11 @@
     "description": "Empty state call to action"
   },
   "import": {
-    "message": "导入",
+    "message": "导入数据",
     "description": "Context menu item"
   },
   "export": {
-    "message": "导出",
+    "message": "导出数据",
     "description": "Context menu item"
   },
   "debugInfo": {
@@ -322,5 +322,11 @@
   },
   "off": {
     "message": "关闭"
+  },
+  "donateThank": {
+    "message": "你的支持是我前进的动力！ 🌟"
+  },
+  "new": {
+    "message": "新建"
   }
 }

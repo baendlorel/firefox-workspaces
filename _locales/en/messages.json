@@ -31,11 +31,11 @@
     "description": "Empty state call to action"
   },
   "import": {
-    "message": "Import",
+    "message": "Import Data",
     "description": "Context menu item"
   },
   "export": {
-    "message": "Export",
+    "message": "Export Data",
     "description": "Context menu item"
   },
   "debugInfo": {
@@ -321,5 +321,11 @@
   },
   "off": {
     "message": "Off"
+  },
+  "donateThank": {
+    "message": "Your support motivates me to keep creating 🌟"
+  },
+  "new": {
+    "message": "New"
   }
 }

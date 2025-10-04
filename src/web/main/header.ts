@@ -134,7 +134,7 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
 }
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const addBtn = btn({ class: 'btn-text', title: i('newWorkspace') }, [svg(plusSvg, '#fff', 18)]);
+  const addBtn = btn({ class: 'btn-text', title: i('newWorkspace') }, i('new'));
   const moreBtn = btn({ class: 'btn-text', title: i('moreActions') }, [svg(listSvg, '#fff', 18)]);
   const createMenu = createCreateMenu(bus);
   const moreActionMenu = createMoreActionMenu(bus);
