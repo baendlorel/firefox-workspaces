@@ -160,11 +160,19 @@ class WorkspaceBackground {
     switch (message.action) {
       case Action.Open: {
         const data = await this.manager.open(message.workspace);
-        return { succ: data.id !== browser.windows.WINDOW_ID_NONE } satisfies OpenResponse;
+        return { succ: data.id !== browser.windows.WINDOW_ID_NONE };
+      }
+      case Action.ToggleSync: {
+        if (message.sync === Switch.On) {
+          await this.initSync();
+        } else {
+          await this.stopSync();
+        }
+        return { succ: true };
       }
       case Action.Import: {
         await this.manager.importData(message.data);
-        return { succ: true } satisfies ImportResponse;
+        return { succ: true };
       }
       default:
         message satisfies never;
@@ -180,6 +188,7 @@ class WorkspaceBackground {
 
   async initSync() {
     const EVERY_X_MINUTES = 5;
+
     // Avoid scheduling multiple concurrent timers
     if (this.syncer !== null) {
       return;
@@ -214,13 +223,6 @@ class WorkspaceBackground {
     scheduleNext();
   }
 
-  async startSync() {
-    if (this.syncer === null) {
-      await this.initSync();
-    }
-  }
-
-  // todo 增加一个togglesync的事件来让后台做
   async stopSync() {
     if (this.syncer !== null) {
       clearTimeout(this.syncer);

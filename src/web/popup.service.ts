@@ -58,7 +58,7 @@ class PopupService {
    * 2. Unfocused popup is basically deleted.
    * 3. Click plugin button again creates a new popup page.
    */
-  open(workspace: Workspace): Promise<OpenResponse> {
+  open(workspace: Workspace) {
     return $send<OpenRequest>({
       action: Action.Open,
       workspace,

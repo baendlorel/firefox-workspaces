@@ -1,4 +1,4 @@
-import { Action } from '@/lib/consts.js';
+import { Action, Switch } from '@/lib/consts.js';
 
 declare global {
   // # requests
@@ -7,31 +7,34 @@ declare global {
     workspace: Workspace;
   }
 
+  interface ToggleSyncRequest {
+    action: Action.ToggleSync;
+    sync: Switch;
+  }
+
   interface ImportRequest {
     action: Action.Import;
     data: ExportData;
   }
 
   // Union type for all possible requests
-  type MessageRequest = OpenRequest | ImportRequest;
+  type MessageRequest = OpenRequest | ToggleSyncRequest | ImportRequest;
 
   // # responses
-  interface BaseResponse {
-    succ: boolean;
-  }
-
-  interface ErrorResponse extends BaseResponse {
+  interface ErrorResponse {
+    succ: false;
     error: string;
   }
 
-  interface OpenResponse extends BaseResponse {}
+  interface CommonResponse {
+    succ: boolean;
+  }
 
-  interface ImportResponse extends BaseResponse {}
-
-  type MessageResponse = OpenResponse | ImportResponse | ErrorResponse;
+  type MessageResponse = CommonResponse | ErrorResponse;
 
   type MessageResponseMap = {
-    [Action.Open]: OpenResponse;
-    [Action.Import]: ImportResponse;
+    [Action.Open]: CommonResponse;
+    [Action.ToggleSync]: CommonResponse;
+    [Action.Import]: CommonResponse;
   };
 }

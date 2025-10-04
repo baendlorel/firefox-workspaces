@@ -231,10 +231,7 @@ export class MockBrowser {
         workspace.lastOpened = Date.now();
         this.saveWorkspaces(workspaces);
 
-        return {
-          succ: true,
-          data: { id: Math.floor(Math.random() * 100000) },
-        } as OpenResponse;
+        return { succ: true };
       }
 
       default:

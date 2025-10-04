@@ -34,6 +34,7 @@ export const enum Theme {
 
 export const enum Action {
   Open,
+  ToggleSync,
   Import,
 }
 
