@@ -88,7 +88,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   randomNameBtn.addEventListener('click', () => {
     const part1 = $randItem(i('randomNamePart1').split(','));
     const part2 = $randItem(i('randomNamePart2').split(','));
-    inputName.value = `${part1} ${part2}`;
+    inputName.value = part1 + part2;
   });
 
   closeBtn.addEventListener('click', close);

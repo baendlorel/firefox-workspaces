@@ -1,18 +1,18 @@
 {
   "extensionName": {
-    "message": "Firefox 工作空间",
+    "message": "Firefox 工作区",
     "description": "Extension name"
   },
   "extensionDescription": {
-    "message": "一个强大的 Firefox 工作空间管理器",
+    "message": "一个强大的 Firefox 工作区管理器",
     "description": "Extension description"
   },
   "workspace": {
-    "message": "工作空间",
+    "message": "工作区",
     "description": "Header title"
   },
   "newWorkspace": {
-    "message": "新建工作空间",
+    "message": "新建工作区",
     "description": "New workspace button tooltip"
   },
   "moreActions": {
@@ -20,11 +20,11 @@
     "description": "More actions button tooltip"
   },
   "noWorkspacesYet": {
-    "message": "还没有工作空间。",
+    "message": "还没有工作区。",
     "description": "Empty state message"
   },
   "createWorkspaceToGetStarted": {
-    "message": "创建一个新工作空间开始使用！",
+    "message": "创建一个新工作区开始使用！",
     "description": "Empty state call to action"
   },
   "createWithCurrentTabs": {
@@ -56,11 +56,11 @@
     "description": "Context menu item"
   },
   "editWorkspace": {
-    "message": "编辑工作空间",
+    "message": "编辑工作区",
     "description": "Edit workspace dialog title"
   },
   "newWorkspaceWithTabs": {
-    "message": "新建工作空间（包含标签页）",
+    "message": "新建工作区（包含标签页）",
     "description": "New workspace with tabs dialog title"
   },
   "name": {
@@ -90,7 +90,7 @@
     "description": "Delete button"
   },
   "deleteWorkspace": {
-    "message": "删除工作空间",
+    "message": "删除工作区",
     "description": "Delete button tooltip"
   },
   "cancel": {
@@ -106,7 +106,7 @@
     "description": "Save button"
   },
   "saveWorkspace": {
-    "message": "保存工作空间",
+    "message": "保存工作区",
     "description": "Save button tooltip"
   },
   "pleaseEnterGroupName": {
@@ -119,7 +119,7 @@
     "placeholders": {
       "name": {
         "content": "$1",
-        "example": "我的工作空间"
+        "example": "我的工作区"
       }
     }
   },
@@ -144,7 +144,7 @@
     "description": "Reset button"
   },
   "firefoxWorkspacesSettings": {
-    "message": "Firefox 工作空间设置",
+    "message": "Firefox 工作区设置",
     "description": "Settings dialog aria label"
   },
   "closeSettingsDialog": {
@@ -160,7 +160,7 @@
     "description": "General confirmation message"
   },
   "aboutFirefoxWorkspaces": {
-    "message": "关于 Firefox 工作空间",
+    "message": "关于 Firefox 工作区",
     "description": "About dialog title"
   },
   "organizeTabs": {
@@ -168,7 +168,7 @@
     "description": "About dialog subtitle"
   },
   "lightningFast": {
-    "message": "闪电般快速的工作空间切换",
+    "message": "闪电般快速的工作区切换",
     "description": "Feature description"
   },
   "beautifulColorCoded": {
@@ -176,11 +176,11 @@
     "description": "Feature description"
   },
   "importExport": {
-    "message": "导入/导出您的工作空间",
+    "message": "导入/导出您的工作区",
     "description": "Feature description"
   },
   "createFromTabs": {
-    "message": "从当前标签页创建工作空间",
+    "message": "从当前标签页创建工作区",
     "description": "Feature description"
   },
   "repository": {
@@ -250,15 +250,15 @@
     "description": "Load error message"
   },
   "failedToSaveWorkspace": {
-    "message": "保存工作空间失败，请重试。",
+    "message": "保存工作区失败，请重试。",
     "description": "Save error message"
   },
   "failedToDeleteWorkspace": {
-    "message": "删除工作空间失败，请重试。",
+    "message": "删除工作区失败，请重试。",
     "description": "Delete error message"
   },
   "addToWorkspaces": {
-    "message": "添加到工作空间",
+    "message": "添加到工作区",
     "description": "Browser context menu item"
   },
   "justNow": {
@@ -280,11 +280,11 @@
     "description": "Debug: clear cache button"
   },
   "clearAllMockData": {
-    "message": "从本地存储中清除所有模拟工作空间数据",
+    "message": "从本地存储中清除所有模拟工作区数据",
     "description": "Debug: clear cache tooltip"
   },
   "randomWorkspaces": {
-    "message": "随机 3 个工作空间",
+    "message": "随机 3 个工作区",
     "description": "Debug: create random workspaces button"
   },
   "setCurrent": {

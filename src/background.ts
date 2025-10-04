@@ -82,14 +82,14 @@ class WorkspaceBackground {
       if (workspaces !== Sym.NotProvided) {
         logger.error('data.workspaces must be Workspace[]', workspaces);
       }
-      workspaces = [];
+      workspaces = [] satisfies Workspace[];
     }
 
     if (!isValidSettings(settings)) {
       if (settings !== Sym.NotProvided) {
         logger.error('data.settings must be Settings object', settings);
       }
-      settings = { theme: Theme.Auto, sync: false };
+      settings = { theme: Theme.Auto, sync: Switch.On } satisfies Settings;
     }
 
     const _workspaceWindows: Record<string, number> = {};
