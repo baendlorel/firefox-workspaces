@@ -16,25 +16,27 @@ export default () => {
     radio('theme', Theme.Light, i('light')),
     radio('theme', Theme.Dark, i('dark')),
   ]);
+  const themeRadioGroup = div('form-group', [h('label', { for: 'theme' }, i('theme')), themeRadio]);
 
   // Sync toggle
   const syncRadio = div('flex gap-2', [
     radio('sync', 'on', i('on')),
     radio('sync', 'off', i('off')),
   ]);
+  const syncRadioGroup = div('form-group', [h('label', { for: 'sync' }, i('syncData')), syncRadio]);
 
-  const form = div('form-group', [h('label', { for: 'theme' }, i('theme')), themeRadio, syncRadio]);
   const resetBtn = btn('btn btn-secondary', i('reset'));
   const saveBtn = btn('btn btn-primary ms-2', i('save'));
 
-  const { dialog, closeBtn } = createDialog(i('settings'), [form], [resetBtn, saveBtn]);
+  const { dialog, closeBtn } = createDialog(
+    i('settings'),
+    [themeRadioGroup, syncRadioGroup],
+    [resetBtn, saveBtn]
+  );
   dialog.setAttribute('aria-label', i('firefoxWorkspacesSettings'));
   closeBtn.title = i('closeSettingsDialog');
 
   // # register events
-  const selectTheme = (value: Theme) => selectRadioValue(themeRadio, value);
-  const selectSync = (value: Switch) => selectRadioValue(syncRadio, value);
-
   saveBtn.addEventListener('click', async () => {
     const theme = getRadioValue(themeRadio, Theme.Auto) as Theme;
     const sync = getRadioValue(syncRadio, Switch.On) as Switch;
@@ -45,6 +47,7 @@ export default () => {
     // Persist settings
     await $lset({ settings: { theme, sync } });
 
+    // apply sync setting
     await $send<ToggleSyncRequest>({ action: Action.ToggleSync, sync });
 
     dialog.bus.emit('close');
@@ -52,17 +55,20 @@ export default () => {
 
   resetBtn.addEventListener('click', async () => {
     const yes = await confirmation(i('resetSettings'), i('areYouSure'));
-    if (yes) {
-      selectTheme(Theme.Auto);
-      applyTheme('auto');
+    if (!yes) {
+      return;
     }
+
+    selectRadioValue(themeRadio, Theme.Auto);
+    selectRadioValue(syncRadio, Switch.On);
+    applyTheme(Theme.Auto);
   });
 
   // # load settings for editing
   dialog.bus.on('show', async () => {
     const { settings } = await $lget('settings');
-    selectTheme(settings.theme);
-    selectSync(settings.sync);
+    selectRadioValue(themeRadio, settings.theme);
+    selectRadioValue(syncRadio, settings.sync);
   });
 
   document.body.appendChild(dialog);
