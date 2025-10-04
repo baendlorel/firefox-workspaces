@@ -76,11 +76,12 @@ export class WorkspaceManager {
     const windowId = _workspaceWindows[workspace.id];
     if (windowId) {
       // Check if window still exists
-      const result = await browser.windows
-        .update(windowId, { focused: true })
-        .fallback('__func__: Window update failed', null);
-
-      return result === null ? { id: browser.windows.WINDOW_ID_NONE } : { id: windowId };
+      const result = await browser.windows.update(windowId, { focused: true }).catch(() => null);
+      if (result === null) {
+        logger.error('__func__: Window update failed');
+        return { id: browser.windows.WINDOW_ID_NONE };
+      }
+      return { id: windowId };
     }
 
     const tabs = [...workspace.tabs].sort((a, b) => a.index - b.index);
@@ -92,28 +93,39 @@ export class WorkspaceManager {
     // Create new window with first URL
     const window = (await browser.windows
       .create({ url: tabs[0].url, type: 'normal' })
-      .fallback('__func__: Fallback to about:blank because', $aboutBlank)) as WindowWithId;
+      .catch((e) => (logger.error(e), $aboutBlank()))) as WindowWithId;
 
-    // Wait a moment for window to be ready
-    await $sleep(600);
+    await this.waitForWindowReady(window);
 
     // Open remaining URLs as tabs
     for (let i = 1; i < tabs.length; i++) {
       const tab = await browser.tabs
-        .create({
-          windowId: window.id,
-          url: tabs[i].url,
-          active: false,
-          index: tabs[i].index,
-        })
-        .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`);
+        .create({ windowId: window.id, url: tabs[i].url, index: tabs[i].index })
+        .catch((e) => e);
 
-      if (tab === Sym.Reject) {
+      if (!tab || tab.id === undefined) {
+        logger.error('Tab creation failed, skipping to next', tab);
         continue;
       }
     }
 
     return await this.openIniter(workspace, window, _workspaceWindows);
+  }
+
+  private waitForWindowReady(window: WindowWithId) {
+    return new Promise<void>((resolve) => {
+      const checker = async (
+        _tabId: number,
+        _changeInfo: browser.tabs._OnUpdatedChangeInfo,
+        tab: browser.tabs.Tab
+      ) => {
+        if (tab && tab.windowId === window.id) {
+          resolve();
+          browser.tabs.onUpdated.removeListener(checker);
+        }
+      };
+      browser.tabs.onUpdated.addListener(checker);
+    });
   }
 
   /**

@@ -1,88 +1,69 @@
-# 源码静态扫描报告 — src/（再评估：寻找可精简逻辑）
+# 源码静态扫描报告 — src（最终复评）
 
-我已重新扫描仓库中 `src/` 的关键文件（尤其关注你最近的改动：移除 `flat-pair`、对存储与管理逻辑的调整），下面是本次复评结论：已变更点、已完成的简化、剩余问题与可进一步精简的具体建议。
+对你最近的大量精简我做了最终复评（移除 `flat-pair`、规范存储访问、强化 tab id 的校验等）。下面是当前代码的精要结论、风险点、以及可以进一步精简或改进的具体建议（按成本/收益排序）。
 
-## 这次我重点查看的文件
+## 本次重点观察的变化
 
-- `src/lib/ext-apis.ts`
-- `src/manager.ts`
-- `src/background.ts`
-- `src/web/popup.service.ts`
-- `src/lib/workspace-tab.ts`
+- 移除 `flat-pair` 并改用原生对象及 `Object.entries` 的实现，减少外部依赖。
+- `initLocalWith` 已把 `_workspaceWindows` / `_windowTabs` 初始化为 `{}`。
+- `createWorkspaceTab` 在 `src/lib/workspace.ts` 中现在严格检查 `tab.id`：如果 `id` 为 `undefined` 或 `TAB_ID_NONE` 会直接抛错；这使得 tab 的数据在进入 store 前是干净且可靠的。
+- `WorkspaceManager`、`background`、`popup.service` 中已去除若干不必要的中间库调用与局部副作用（例如不再对传入 `workspace.tabs` 做原地排序）。
 
-这些文件目前反映了你最近的修改（将 flat-pair 逻辑替换为普通对象访问、调整了 `initLocalWith` 的默认值等）。
+## 当前风险点与注意事项
 
-## 已变更与已修复（确认）
+1. `createWorkspaceTab` 的严格抛错策略
+   - 优点：保证持久化的数据一定有合法 tab id，比较安全。
+   - 风险：在某些 runtime 场景下（例如 tab 尚未分配 id 的 onCreated 回调），抛错可能导致事件处理链中断。
+   - 建议：
+     - 如果你能保证只在有 id 的时机调用 `createWorkspaceTab`（目前 `getWindowTabs` 使用 `browser.tabs.query` 返回的 tabs 通常会有 id），则保留当前行为。
+     - 否则可以改为返回 `null` 或 `undefined` 表示暂时不可用，然后在上层过滤（更稳健）。
 
-- 已移除 `flat-pair` 依赖（你在仓库中卸载了该包），代码已相应改为直接使用对象访问（`_workspaceWindows[...]` / `Object.entries` 等）。这简化了库依赖并使数据结构更直观。
-- `initLocalWith` 已把 `_workspaceWindows` 与 `_windowTabs` 的默认值改为对象 `{}`，与后续按 key/value 使用保持一致，修复了语义不匹配的问题。
-- `openIniter` 的参数与实现已改为直接处理对象（`State['_workspaceWindows']`），消除了先前数组/对象类型不一致的问题。
-- `popup.service.delete`、`background` 的 `onUpdated` 等先前高优先项已修复（删除条件、空检查、避免对传入 tabs 原地排序）。
-- `$lget` 已改为传入新的 keys 数组（`browser.storage.local.get([...args, 'timestamp'])`），不再在参数对象上直接 push，提升可读性。
+2. 仍有全局 Promise 扩展（可选择移除）
+   - 当前项目仍有 `Promise.prototype.fallback` / `fallbackWithDialog` / `Promise.create`。这些为代码带来便利，但也引入全局副作用。
+   - 建议：逐步替换为导出工具函数（不会一次性破坏代码）：在合适的阶段替换 `promise.fallback(...)` 为 `withFallback(promise, ...)`。
 
-## 仍需关注的问题（功能/正确性）
+3. 定时器策略（目前采用按分钟对齐的 `setTimeout`）
+   - 现状：`startSyncTask` 使用按分钟对齐的 `launcher()` 来调度。优点是更精确地每 N 分钟触发（例如在 0/5/10 分钟触发）。缺点是逻辑较复杂且不便于取消/测试。
+   - 建议：如果你需要精确对齐，可以保留并添加 `stopSync()`；如果不需要精确对齐，改成 `setInterval` 并保存 interval id 会更简单易测。
 
-1. `WorkspaceTab` 的 id 与验证仍不一致
-   - 问题：`WorkspaceTab` 默认 `id` 为 `browser.tabs.TAB_ID_NONE`（通常 -1），但 `WorkspaceTab.valid` 要求 `o.id >= 0`。因此刚创建但未分配真实 id 的 tab 会被判为无效。
-   - 影响：可能让某些临时 tab 条目在验证或持久化时被忽略或导致断言失败。
-   - 建议：要么在 `valid` 中接受 `TAB_ID_NONE`，要么在 `assign`/持久化前把 `TAB_ID_NONE` 转换（或过滤掉）——按项目预期行为选择。
+4. 存储层接口仍可进一步收敛
+   - 现在 `$lget/$lset/$lpset/$lsset` 已比较清晰，但项目中对它们的使用模式仍然分散。
+   - 建议：提供一套更语义化的存储 wrapper（读、写、快照写、无时间戳写等），并在项目中逐步替换，可减少误用。
 
-2. `Promise` 全局扩展的副作用
-   - 问题：`src/lib/promise-ext.ts` 仍在修改 `Promise.prototype`（`fallback`、`fallbackWithDialog`）和创建全局 `Promise.create`。这增加了全局隐式行为，可能影响第三方库与测试。
-   - 建议：若要继续保留便捷函数，可把实现导出为纯函数（例如 `withFallback(promise, ...)`、`createPromise()`），或在 README/开发文档中明确列出这些扩展，方便测试时 mock/恢复。
+## 可进一步精简的逻辑（按优先级）
 
-3. 周期同步使用递归 `setTimeout`
-   - 问题：`startSyncTask` 使用递归 `setTimeout` 调度同步，逻辑正常但不如 `setInterval` 简洁，且不易在中途取消（当前没有保存 timer id）。
-   - 建议：改用 `setInterval` 并保存返回的 timer id（便于在需要时 `clearInterval`）。这也使单元测试更容易模拟/取消。
+1. 把 `Promise` 的全局扩展替换为工具函数（中高收益，分步改动）
+   - 影响范围：代码中使用 `.fallback()` 的位置都可以被 `withFallback(promise, ...)` 替代。
+   - 好处：消除全局副作用、单元测试更容易、对外部库无影响。
+   - 可行步骤：
+     1. 在 `src/lib/promise-ext.ts` 新增并导出 `withFallback`、`withFallbackWithDialog`、`createPromise` 等函数（保留现有实现）。
+     2. 在代码中逐个替换 `.fallback(...)` 调用为 `await withFallback(promise, ...)`（可在多次提交中完成）。
+     3. 最后删除 `Promise.prototype` 的改写。
 
-4. 存储函数种类仍有重叠与语义不一致
-   - 问题：项目使用了 `$lget`, `$lset`, `$lpset`, `$lsset`（行为略不同）。长期维护中容易造成误用（例如忘了更新 timestamp、使用错误的 set variant）。
-   - 建议：抽一层 `storage` helper（少量函数，明确用途并带类型签名），例如：
-     - `readLocal(keys?: string[])`（不修改 timestamp）
-     - `writeLocal(data: Partial<Local>, opts?: { persistSnapshot?: boolean })`（自动管理 timestamp）
-       这样可以把 timestamp 管理集中起来并减少开发者错误。
+2. 统一存储写入/读取 wrapper（高收益、低改动）
+   - 目标：把 timestamp 管理与键名约束集中到一处，避免忘记用 `lpset` 导致 timestamp 未更新等问题。
+   - 实现示例：增加 `src/lib/storage.ts`，导出 `readLocal(keys?)`、`writeLocal(data, opts?)`。
 
-## 可进一步精简/重构的点（推荐按成本收益排序）
+3. 把 `_workspaceWindows` 的读写封装（中等收益、低改动）
+   - 现在在多个地方通过 `Object.entries` 或 `_workspaceWindows[id]` 查找/写入 windowId。封装后可更改内部实现（例如改为 Map）而不影响调用方。
 
-1. 移除或替代全局 Promise 扩展（中等收益、低到中等改动）
-   - 替代方案：把 `fallback` / `fallbackWithDialog` 提供为导出函数。例：
-     - `export const withFallback = <T>(p: Promise<T>, fallbackValue?: T | (() => T)) => p.catch(() => typeof fallbackValue === 'function' ? fallbackValue() : fallbackValue);`
-   - 好处：避免全局副作用，单元测试更可控，第三方库不会被意外影响。
+4. 去除冗余日志或把日志等级分级（低成本）
+   - 某些 `logger.debug/info` 调用在生产分支可能噪音较多。把日志等级集中管理，或使用环境变量控制日志级别，会更清晰。
 
-2. 统一 storage 写入接口（高收益、低改动）
-   - 把 `$lpset` / `$lset` / `$lsset` 的职责整理清楚，并提供一组语义明确的 wrapper。能减少未来类似把错误键传给 `set` 的 bug。
+## 建议的执行计划（短期 1-2 天内可完成）
 
-3. 简化 sync 定时器（低成本）
-   - 把 `startSyncTask` 改成 `this.syncInterval = setInterval(task, INTERVAL)`，并在构造或某个停止入口暴露 `stopSync()`，更适合测试和资源释放。
+1. 优先：根据项目需求决定是否保留 `createWorkspaceTab` 的严格抛错，或改为返回 `null` 并在上层过滤（预计 0.5 天）。
+2. 优先：把 `startSyncTask` 的 launcher 改为支持 `stopSync()`（0.25 天），或者改成 `setInterval`（0.25 天）。
+3. 中期：新增 `storage` wrapper（`readLocal` / `writeLocal`）并逐步替换调用点（0.5–1 天）。
+4. 中期：分阶段替换 Promise 全局扩展为工具函数（1–2 天，按文件分批替换）。
 
-4. `WorkspaceManager` 中 tab/windows 操作统一风格（低成本）
-   - 现在 `WorkspaceManager` 中有些方法用 `Object.entries(...).find(...)`，有些直接索引 `[...]`。可以把 `_workspaceWindows` 的查找与写入封装为小 helper（`getWindowId(workspaceId)` / `setWindowId(workspaceId, wid)`），减少重复代码并利于后续切换回 Map 等结构。
+## 结论
 
-5. 考虑移除 `await $sleep(600)` 或将其变为常量并记录原因（低成本）
-   - `open` 中等待 600ms 是为了让 window 就绪，这种硬编码等待在不同环境下可能不稳定。建议：
-     - 把等待时间抽为常量并用注释说明原因，或
-     - 尝试基于事件（如 `tabs.onCreated`）来判断何时继续（更可靠但改动较大）。
+你已完成大量且高质量的精简工作：移除不必要依赖、修正类型/语义不符、强化输入校验，并减少了副作用。接下来的改动可以以提升可测试性和可维护性为目标，逐步消除全局扩展并统一存储接口。
 
-6. 尽量避免在消息处理链中直接 `.fallback` 返回原始错误的 side-effect
-   - 现在 `background` 的 runtime onMessage 使用了 `.fallback(...)`，这会在捕捉到错误时打印并返回固定响应。更好的方式是明确捕获异常并在一处格式化错误响应，便于 debugging 与 metrics。
+我可以立刻帮你完成下面任一项（并在完成后运行类型检查与测试）：
 
-## 建议的最小补丁（可择一执行）
+- 把 `startSyncTask` 改为可停止的 `setInterval` 实现并添加 `stopSync()`；或
+- 把 `Promise.prototype.fallback` 调用替换为导出函数 `withFallback`（并保留原有实现以便回退）。
 
-- A：把 `startSyncTask` 改为 `setInterval` 并保存 timer id（一次性改动，易于回退）。
-- B：把 `Promise` 全局扩展替换为导出函数（非破坏性重构，分阶段实施）。
-- C：为 `_workspaceWindows` 操作增加 small helper 函数（封装 `Object.entries` 查找/赋值），减少重复并更易读。
-
-## 小结
-
-总体而言，移除 `flat-pair` 并把存取改为原生对象后，代码变得更简单、可读性更好。你已经修复了主要的运行时问题（删除 bug、空检查、原地排序）。接下来建议的工作重心是：
-
-1. 解决 `WorkspaceTab` 的 id/验证不一致（若该库依赖 tab id 做重要判定，这是优先级高的修复）。
-2. 将部分隐式全局行为（Promise 扩展）改为显式工具函数，降低测试与第三方风险。
-3. 小范围统一 storage 接口与 timer 管理，提升可维护性。
-
-如果你希望，我可以现在：
-
-- 直接应用其中一项最小补丁（例如把 `startSyncTask` 改为 `setInterval` + 保存 timer id），并运行 `pnpm run check`（TypeScript 类型检查）与 `pnpm test`（如果可用）；或
-- 先自动生成上述三项补丁的代码 diff 供你审阅。
-
-告诉我你想让我先做哪一个，我就开始执行并汇报结果。
+你想我现在先做哪一项？

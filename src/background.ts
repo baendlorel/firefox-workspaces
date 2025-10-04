@@ -102,9 +102,9 @@ class WorkspaceBackground {
     browser.runtime.onInstalled.addListener(() => this.init());
     browser.runtime.onMessage.addListener(
       async (message: MessageRequest): Promise<MessageResponse> =>
-        this.handlePopupMessage(message).fallback('Error handling message', {
-          succ: false,
-          error: 'Error handling message.',
+        this.handlePopupMessage(message).catch((e) => {
+          logger.error('onMessage Error', e);
+          return { succ: false, error: 'Error handling message.' };
         })
     );
   }
