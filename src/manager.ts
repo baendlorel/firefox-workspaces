@@ -53,6 +53,16 @@ export class WorkspaceManager {
     await $lsset({ _windowTabs });
   }
 
+  async saveAllTab() {
+    const { workspaces, _workspaceWindows, _windowTabs } = await $lget(
+      'workspaces',
+      '_workspaceWindows',
+      '_windowTabs'
+    );
+
+    await $lpset({ workspaces });
+  }
+
   /**
    * Remove the pair of `workspaceToWindow` in store
    */

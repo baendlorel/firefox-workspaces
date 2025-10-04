@@ -1,4 +1,13 @@
-import { i, $lget, $lset, $sget, $sset, $windowWorkspace, $notify } from './lib/ext-apis.js';
+import {
+  i,
+  $lget,
+  $lpset,
+  $lsset,
+  $sget,
+  $sset,
+  $windowWorkspace,
+  $notify,
+} from './lib/ext-apis.js';
 import { Action, Switch, Sym, Theme } from './lib/consts.js';
 import { $sleep, $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
@@ -95,7 +104,8 @@ class WorkspaceBackground {
     const _workspaceWindows: Record<string, number> = {};
     const _windowTabs: Record<string, browser.tabs.Tab[]> = {};
 
-    await $lset({ workspaces, settings, _workspaceWindows, _windowTabs, timestamp: Date.now() });
+    await $lpset({ workspaces, settings });
+    await $lsset({ _workspaceWindows, _windowTabs });
   }
 
   private registerListeners() {
@@ -171,11 +181,9 @@ class WorkspaceBackground {
         }
         return { succ: true };
 
-      case Action.Export: {
-        const window = await browser.windows.getCurrent();
-        await this.manager.refreshWindowTab(window.id);
+      case Action.Export:
+        await this.manager.saveAllTab();
         return { succ: true };
-      }
 
       case Action.Import:
         // Inject content script to active tab and trigger file import

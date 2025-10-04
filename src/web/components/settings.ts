@@ -1,5 +1,5 @@
 import { Action, Switch, Theme } from '@/lib/consts.js';
-import { i, $lget, $lset, $send } from '@/lib/ext-apis.js';
+import { i, $lget, $lpset, $send } from '@/lib/ext-apis.js';
 import { confirmation } from './dialog/alerts.js';
 import { createDialog } from './dialog/index.js';
 import { h, div, btn } from '@/lib/dom.js';
@@ -49,7 +49,7 @@ export default () => {
     logger.info('Saving settings', { theme, sync });
 
     // Persist settings
-    await $lset({ settings: { theme, sync } });
+    await $lpset({ settings: { theme, sync } });
 
     // apply sync setting
     await $send<ToggleSyncRequest>({ action: Action.ToggleSync, sync });

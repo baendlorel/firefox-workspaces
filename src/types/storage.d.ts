@@ -6,7 +6,9 @@ interface Persist {
 }
 
 interface State {
+  // workspaceId -> windowId
   _workspaceWindows: Record<string, number>;
+  // windowId -> browser.tabs.Tab[]
   _windowTabs: Record<number, browser.tabs.Tab[]>;
 }
 

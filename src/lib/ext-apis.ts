@@ -40,13 +40,7 @@ export const $lpset = async (data: Partial<Persist>) => {
   data.timestamp = Date.now();
   await browser.storage.local.set(data);
 };
-
-export const $lset = async (data: Partial<Local>) => {
-  data.timestamp = Date.now();
-  await browser.storage.local.set(data);
-};
-
-export const $lsset = (state: Partial<Local>) => browser.storage.local.set(state);
+export const $lsset = (state: Partial<State>) => browser.storage.local.set(state);
 
 export const $sget = (): Promise<Persist> => browser.storage.sync.get() as any;
 export const $sset = async (persist: Persist) => {
