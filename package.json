@@ -31,6 +31,7 @@
 		"javascript"
 	],
 	"scripts": {
+		"lines": "clear && find ./src -type f \\( -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.js\" -o -name \"*.mjs\" -o -name \"*.cjs\" -o -name \"*.cpp\" -o -name \"*.h\" -o -name \"*.py\"  -o -name \"*.css\" -o -name \"*.rs\" -o -name \"*.rc\" \\) | xargs wc -l",
 		"dev": "vite",
 		"build": "tsc && vite build",
 		"preview": "vite preview",

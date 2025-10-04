@@ -21,10 +21,6 @@ export const WORKSPACE_COLORS: HexColor[] = [
   '#004e8c',
 ];
 
-export const enum TabChangeStatus {
-  Complete = 'complete',
-  Loading = 'loading',
-}
 export const enum Theme {
   Auto = 'auto',
   Light = 'light',
@@ -32,7 +28,6 @@ export const enum Theme {
 }
 
 export const enum Action {
-  GetState,
   Open,
   Import,
 }

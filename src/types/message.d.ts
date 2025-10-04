@@ -2,10 +2,6 @@ import { Action } from '@/lib/consts.js';
 
 declare global {
   // # requests
-  interface GetStateRequest {
-    action: Action.GetState;
-  }
-
   interface OpenRequest {
     action: Action.Open;
     workspace: Workspace;
@@ -17,7 +13,7 @@ declare global {
   }
 
   // Union type for all possible requests
-  type MessageRequest = GetStateRequest | OpenRequest | ImportRequest;
+  type MessageRequest = OpenRequest | ImportRequest;
 
   // # responses
   interface BaseResponse {
@@ -28,19 +24,16 @@ declare global {
     error: string;
   }
 
-  interface GetStateResponse extends BaseResponse {
-    data: State;
-  }
-
   interface OpenResponse extends BaseResponse {
     data: { id: number } | null;
   }
 
   interface ImportResponse extends BaseResponse {}
 
-  interface MessageResponseMap {
-    [Action.GetState]: GetStateResponse;
+  type MessageResponse = OpenResponse | ImportResponse | ErrorResponse;
+
+  type MessageResponseMap = {
     [Action.Open]: OpenResponse;
     [Action.Import]: ImportResponse;
-  }
+  };
 }

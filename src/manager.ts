@@ -3,7 +3,7 @@ import { get, set, has, remove, hasByValue } from 'flat-pair';
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
-import { i, $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
+import { $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
 import { WorkspaceTab } from './lib/workspace-tab.js';
 import { isValidWorkspace } from './lib/workspace.js';
@@ -25,11 +25,7 @@ export class WorkspaceManager {
     }
 
     const rawTabs = get<number, browser.tabs.Tab[]>(_windowTabs, browserTab.windowId);
-    if (rawTabs) {
-      rawTabs.push(browserTab);
-    } else {
-      set(_windowTabs, browserTab.windowId, [browserTab]);
-    }
+    rawTabs ? rawTabs.push(browserTab) : set(_windowTabs, browserTab.windowId, [browserTab]);
     await $lsset({ _windowTabs });
   }
 
@@ -56,30 +52,12 @@ export class WorkspaceManager {
   async save(workspace: Workspace) {
     const { workspaces } = await $lget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
-    if (index !== -1) {
-      workspaces[index] = workspace;
-    } else {
-      workspaces.push(workspace);
-    }
+    workspaces[index === -1 ? workspaces.length : index] = workspace;
     await $lpset({ workspaces });
   }
 
-  setBadge(workspace: Workspace, windowId: number) {
-    const spaceIndex = workspace.name.indexOf(' ');
-    const name =
-      spaceIndex === -1
-        ? workspace.name.slice(0, 2)
-        : workspace.name[0] + workspace.name[spaceIndex + 1];
-
-    browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
-    browser.action.setBadgeText({ text: name, windowId });
-    const color = Color.from(workspace.color);
-    const textColor = color.brightness < 128 ? '#F8F9FA' : '#212729';
-    browser.action.setBadgeTextColor({ color: textColor, windowId });
-  }
-
   // Open workspace in new window
-  async open(workspace: Workspace): Promise<{ id: number } | null> {
+  async open(workspace: Workspace): Promise<{ id: number }> {
     // If group already has an active window, focus it
     const { _workspaceWindows } = await $lget('_workspaceWindows');
 
@@ -89,17 +67,15 @@ export class WorkspaceManager {
       // Check if window still exists
       const result = await browser.windows
         .update(windowId, { focused: true })
-        .fallback('__func__: Window update failed');
+        .fallback('__func__: Window update failed', null);
 
-      return result === Sym.Reject ? null : { id: windowId };
+      return result === null ? { id: browser.windows.WINDOW_ID_NONE } : { id: windowId };
     }
 
-    const tabs = workspace.tabs.sort((a, b) => a.index - b.index);
+    const tabs = [...workspace.tabs].sort((a, b) => a.index - b.index);
     if (tabs.length === 0) {
       const window = await $aboutBlank();
-      await this.openIniter(workspace, window, _workspaceWindows);
-
-      return { id: window.id };
+      return await this.openIniter(workspace, window, _workspaceWindows);
     }
 
     // Create new window with first URL
@@ -117,7 +93,6 @@ export class WorkspaceManager {
           windowId: window.id,
           url: tabs[i].url,
           active: false,
-          // pinned: tabs[i].pinned, // * This might not work 😔, so handle it again with `this.needPin`
           index: tabs[i].index,
         })
         .fallback(`__func__: Failed to create tab for URL: ${tabs[i].url}`);
@@ -127,9 +102,7 @@ export class WorkspaceManager {
       }
     }
 
-    // & Pin tabs are handled in OnUpdated listener
-    await this.openIniter(workspace, window, _workspaceWindows);
-    return window;
+    return await this.openIniter(workspace, window, _workspaceWindows);
   }
 
   /**
@@ -143,20 +116,18 @@ export class WorkspaceManager {
     this.setBadge(workspace, window.id);
     set<string, number>(_workspaceWindows, workspace.id, window.id);
     await $lsset({ _workspaceWindows });
+    return { id: window.id };
   }
 
-  // Update workspace tabs from window state
-  async updateTabsOfWorkspace(workspace: Workspace): Promise<void> {
-    const { _workspaceWindows } = await $lget('_workspaceWindows');
-    const windowId = get<string, number>(_workspaceWindows, workspace.id);
-    if (windowId === undefined) {
-      logger.error('Inactivated workspace has no windowId:', workspace);
-      return;
-    }
+  private setBadge(workspace: Workspace, windowId: number) {
+    const name = workspace.name;
+    const spaceIndex = name.indexOf(' ');
+    const short = spaceIndex === -1 ? name.slice(0, 2) : name[0] + name[spaceIndex + 1];
 
-    const browserTabs = await browser.tabs.query({ windowId });
-    workspace.tabs = browserTabs.map(WorkspaceTab.from);
-    await $lsset({ _workspaceWindows });
+    const color = Color.from(workspace.color).brightness < 128 ? '#F8F9FA' : '#212729';
+    browser.action.setBadgeTextColor({ color, windowId });
+    browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
+    browser.action.setBadgeText({ text: short, windowId });
   }
 
   // todo 是否可以人工创建一个popup窗口，然后位置设置在屏幕外面，触发focus和选择文件，处理后关闭窗口

@@ -1,6 +1,6 @@
 import '@/lib/promise-ext.js';
 import { i, $lget, $lset, $sget, $sset, $windowWorkspace } from './lib/ext-apis.js';
-import { Action, Consts, TabChangeStatus, Sym, Theme } from './lib/consts.js';
+import { Action, Sym, Theme } from './lib/consts.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
 
@@ -90,12 +90,6 @@ class WorkspaceBackground {
     $lset({ workspaces, settings, _workspaceWindows, _windowTabs });
   }
 
-  private getPopup(windowId: number) {
-    return browser.extension
-      .getViews({ type: 'popup', windowId })
-      .find((v) => Reflect.has(v, Consts.InjectionFlag));
-  }
-
   private registerListeners() {
     this.runtimeListeners();
     this.tabListeners();
@@ -103,31 +97,18 @@ class WorkspaceBackground {
   }
 
   private runtimeListeners() {
-    // Initialize when extension starts
     browser.runtime.onStartup.addListener(() => this.init());
     browser.runtime.onInstalled.addListener(() => this.init());
-
-    // Handle messages from popup and content scripts
     browser.runtime.onMessage.addListener(
-      async (message: MessageRequest): Promise<MessageResponseMap[Action]> =>
-        this.handlePopupMessage(message).catch((error) => {
-          logger.error('Error handling message', error);
-          const errorResponse: ErrorResponse = { succ: false, error: 'Error handling message.' };
-          return errorResponse;
+      async (message: MessageRequest): Promise<MessageResponse> =>
+        this.handlePopupMessage(message).fallback('Error handling message', {
+          succ: false,
+          error: 'Error handling message.',
         })
-    );
-
-    // Context menu setup
-    browser.runtime.onInstalled.addListener(() =>
-      browser.contextMenus.create({
-        id: 'addToWorkspace',
-        title: i('addToWorkspaces'),
-      })
     );
   }
 
   private windowListeners() {
-    // Handle window events for session management
     browser.windows.onRemoved.addListener(async (windowId) => {
       // Check if this window belongs to a workspace
       const workspace = await $windowWorkspace(windowId);
@@ -142,7 +123,7 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    browser.tabs.onCreated.addListener(async (tab) => this.manager.addWindowTab(tab));
+    browser.tabs.onCreated.addListener((tab) => this.manager.addWindowTab(tab));
 
     // # cases of refresh
     browser.tabs.onAttached.addListener((_tabId, info) => this.refreshTab(info));
@@ -150,7 +131,7 @@ class WorkspaceBackground {
     browser.tabs.onMoved.addListener((_tabId, info) => this.refreshTab(info));
     browser.tabs.onRemoved.addListener((_tabId, info) => this.refreshTab(info));
     browser.tabs.onUpdated.addListener(async (_tabId, info, tab) => {
-      if (info.status === TabChangeStatus.Complete || info.status === TabChangeStatus.Loading) {
+      if ((info.status === 'complete' || info.status === 'loading') && tab) {
         await this.refreshTab({ windowId: tab.windowId });
       }
     });
@@ -168,42 +149,32 @@ class WorkspaceBackground {
     }
   }
 
-  private async handlePopupMessage(message: MessageRequest): Promise<MessageResponseMap[Action]> {
-    const action = message.action;
-    if (action === Action.GetState) {
-      const state = (await browser.storage.local.get()) as State;
-      const response: MessageResponseMap[typeof action] = { succ: true, data: state };
-      return response;
+  private async handlePopupMessage(message: MessageRequest): Promise<MessageResponse> {
+    switch (message.action) {
+      case Action.Open: {
+        const data = await this.manager.open(message.workspace);
+
+        // todo 改成了WINDOW_ID_NONE。看看接收方需不需要改造
+        const response: OpenResponse = {
+          succ: data.id !== browser.windows.WINDOW_ID_NONE,
+          data,
+        };
+        return response;
+      }
+      case Action.Import: {
+        await this.manager.importData(message.data);
+        return { succ: true } satisfies ImportResponse;
+      }
+      default:
+        message satisfies never;
+        break;
     }
-
-    if (action === Action.Open) {
-      const window = await this.manager
-        .open(message.workspace)
-        .fallback('Failed to open workspace in window:', null);
-
-      const response: MessageResponseMap[typeof action] = {
-        succ: window !== null,
-        data: window === null ? { id: NaN } : { id: window.id },
-      };
-      return response;
-    }
-
-    if (action === Action.Import) {
-      await this.manager.importData(message.data);
-      const response: MessageResponseMap[typeof action] = {
-        succ: true,
-      };
-      return response;
-    }
-
-    action satisfies never;
 
     // Error
-    const errorResponse: ErrorResponse = {
+    return {
       succ: false,
-      error: 'Unknown action: ' + String(action),
+      error: 'Unknown message: ' + String(message),
     };
-    return errorResponse;
   }
 
   private async startSyncTask() {

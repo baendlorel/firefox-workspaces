@@ -24,9 +24,7 @@ export function $lget(...args: LocalKey[]): Promise<any> {
   if (args.length === 0) {
     return browser.storage.local.get();
   }
-  // always get timestamp
-  args.push('timestamp');
-  return browser.storage.local.get(args);
+  return browser.storage.local.get([...args, 'timestamp']); // always get timestamp
 }
 
 export const $lpset = async (data: Partial<Persist>) => {

@@ -44,10 +44,10 @@ class PopupService {
   async delete(workspace: Workspace) {
     const { workspaces } = await $lget('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
-    if (index === -1) {
+    if (index !== -1) {
       workspaces.splice(index, 1);
+      await $lpset({ workspaces });
     }
-    await $lpset({ workspaces });
   }
 
   /**
