@@ -1,6 +1,6 @@
 import { i, $windowWorkspace, $notify } from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
-import { Action, Switch, Sym, Theme } from './lib/consts.js';
+import { Action, Switch, Theme, NotProvided } from './lib/consts.js';
 import { $sleep, $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
@@ -33,26 +33,22 @@ class WorkspaceBackground {
     const sync = await store.syncGet();
 
     const {
-      workspaces: sworkspaces = Sym.NotProvided,
-      settings: ssettings = Sym.NotProvided,
-      timestamp: stimestamp = Sym.NotProvided,
+      workspaces: sworkspaces = NotProvided,
+      settings: ssettings = NotProvided,
+      timestamp: stimestamp = NotProvided,
     } = sync;
 
     const local = await store.localGet();
-    const {
-      workspaces = Sym.NotProvided,
-      settings = Sym.NotProvided,
-      timestamp = Sym.NotProvided,
-    } = local;
+    const { workspaces = NotProvided, settings = NotProvided, timestamp = NotProvided } = local;
 
     // Brand new
-    if (timestamp === Sym.NotProvided && stimestamp === Sym.NotProvided) {
+    if (timestamp === NotProvided && stimestamp === NotProvided) {
       logger.info('No existing data found, initializing with default values');
       await this.initLocalWith({});
-    } else if (timestamp === Sym.NotProvided && Number.isSafeInteger(stimestamp)) {
+    } else if (timestamp === NotProvided && Number.isSafeInteger(stimestamp)) {
       logger.info('sync data found');
       await this.initLocalWith({ workspaces: sworkspaces, settings: ssettings });
-    } else if (Number.isSafeInteger(timestamp) && stimestamp === Sym.NotProvided) {
+    } else if (Number.isSafeInteger(timestamp) && stimestamp === NotProvided) {
       logger.info('local data found');
       await this.initLocalWith({ workspaces, settings });
     } else if (Number.isSafeInteger(timestamp) && Number.isSafeInteger(stimestamp)) {
@@ -77,17 +73,17 @@ class WorkspaceBackground {
   }
 
   private async initLocalWith(data: { workspaces?: unknown; settings?: unknown } = {}) {
-    let { workspaces = Sym.NotProvided, settings = Sym.NotProvided } = data as any;
+    let { workspaces = NotProvided, settings = NotProvided } = data as any;
 
     if (!isValidWorkspaces(workspaces)) {
-      if (workspaces !== Sym.NotProvided) {
+      if (workspaces !== NotProvided) {
         logger.error('data.workspaces must be Workspace[]', workspaces);
       }
       workspaces = [] satisfies Workspace[];
     }
 
     if (!isValidSettings(settings)) {
-      if (settings !== Sym.NotProvided) {
+      if (settings !== NotProvided) {
         logger.error('data.settings must be Settings object', settings);
       }
       settings = { theme: Theme.Auto, sync: Switch.On } satisfies Settings;
@@ -147,8 +143,8 @@ class WorkspaceBackground {
   }
 
   private async refreshTab(info: Partial<ChangeInfo>) {
-    const windowId = info.windowId ?? info.newWindowId ?? info.oldWindowId ?? Sym.NotProvided;
-    if (windowId === Sym.NotProvided) {
+    const windowId = info.windowId ?? info.newWindowId ?? info.oldWindowId ?? NotProvided;
+    if (windowId === NotProvided) {
       return;
     }
 

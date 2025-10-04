@@ -48,17 +48,17 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     }
   };
 
-  // * reserved
-  const activateHighlight = (activated: string[]) => {
-    for (let i = 0; i < lis.length; i++) {
-      const li = lis[i];
-      if (activated.includes(li.dataset.id)) {
-        li.classList.add('activated');
-      } else {
-        li.classList.remove('activated');
-      }
-    }
-  };
+  // $ reserved
+  // const activateHighlight = (activated: string[]) => {
+  //   for (let i = 0; i < lis.length; i++) {
+  //     const li = lis[i];
+  //     if (activated.includes(li.dataset.id)) {
+  //       li.classList.add('activated');
+  //     } else {
+  //       li.classList.remove('activated');
+  //     }
+  //   }
+  // };
 
   bus.on('render-list', async () => {
     const { workspaces } = await store.localGet('workspaces');

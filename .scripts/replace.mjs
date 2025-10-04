@@ -1,6 +1,7 @@
 // @ts-check
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+
 /**
  * @type {import('../package.json')}
  */

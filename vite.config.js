@@ -10,6 +10,7 @@ import tailwindcssPostcss from '@tailwindcss/postcss';
 import autoprefixer from 'autoprefixer';
 
 import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
+import { enumReplaceOpts } from './.scripts/inline-enum.mjs';
 
 const tsconfig = './tsconfig.build.json';
 
@@ -21,7 +22,7 @@ export default defineConfig({
       preventAssignment: false,
       delimiters: ['', ''],
       // & replace loggers
-      values: replaceLiteralOpts,
+      values: { ...replaceLiteralOpts, ...enumReplaceOpts },
     }),
     replace(replaceOpts),
     funcMacro(),
