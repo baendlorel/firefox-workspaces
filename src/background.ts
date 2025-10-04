@@ -14,8 +14,7 @@ type ChangeInfo = browser.tabs._OnUpdatedChangeInfo &
 
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
-  private sync: Switch;
-  private syncTimer: ReturnType<typeof setTimeout> | null = null;
+  private syncer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     const updatedAt = new Date('__DATE_TIME__');
@@ -24,7 +23,6 @@ class WorkspaceBackground {
     const time = min < 1 ? i('justNow') : i('minutesAgo', min);
     logger.info('Updated before ' + time);
 
-    this.sync = Switch.Off;
     this.manager = new WorkspaceManager();
     this.init();
   }
@@ -70,14 +68,10 @@ class WorkspaceBackground {
 
     await this.registerListeners();
 
-    // todo 新增逻辑，但可能无必要
-    {
-      const { settings } = await $lget('settings');
-      this.sync = isValidSettings(settings) ? settings.sync : Switch.On;
-
-      if (this.sync === Switch.On) {
-        this.initSync();
-      }
+    // # start sync if enabled
+    const { settings: realSettings } = await $lget('settings');
+    if (isValidSettings(realSettings) ? realSettings.sync === Switch.On : true) {
+      await this.initSync();
     }
   }
 
@@ -187,32 +181,33 @@ class WorkspaceBackground {
   async initSync() {
     const EVERY_X_MINUTES = 5;
     // Avoid scheduling multiple concurrent timers
-    if (this.syncTimer !== null) {
+    if (this.syncer !== null) {
       return;
     }
 
     const task = async () => {
-      try {
-        if (this.sync) {
-          logger.verbose('Sync storage on', $thm());
+      logger.verbose('Sync storage on', $thm());
 
-          // * Might change if more features are added
-          const local = await $lget('workspaces', 'settings');
-          await $sset(local);
-        }
-      } catch (e) {
-        logger.error('Error while syncing', e);
-      } finally {
-        // schedule next run
+      // * Might change if more features are added
+      const local = await $lget('workspaces', 'settings').catch((e) => {
+        logger.error('Error while syncing, loading local', e);
+        return null;
+      });
+
+      if (local === null) {
         scheduleNext();
+        return;
       }
+
+      await $sset(local).catch((e) => logger.error('Error while syncing, saving sync', e));
+      scheduleNext();
     };
 
     const scheduleNext = () => {
       const minute = new Date().getMinutes();
       const delta = EVERY_X_MINUTES - (minute % EVERY_X_MINUTES);
       // store timer id so it can be cancelled
-      this.syncTimer = setTimeout(task, delta * 60000);
+      this.syncer = setTimeout(task, delta * 60000);
     };
 
     // first schedule
@@ -220,17 +215,16 @@ class WorkspaceBackground {
   }
 
   async startSync() {
-    this.sync = Switch.On;
-    if (this.syncTimer === null) {
-      this.initSync();
+    if (this.syncer === null) {
+      await this.initSync();
     }
   }
 
+  // todo 增加一个togglesync的事件来让后台做
   async stopSync() {
-    this.sync = Switch.Off;
-    if (this.syncTimer !== null) {
-      clearTimeout(this.syncTimer);
-      this.syncTimer = null;
+    if (this.syncer !== null) {
+      clearTimeout(this.syncer);
+      this.syncer = null;
     }
   }
 }
