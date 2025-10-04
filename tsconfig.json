@@ -12,7 +12,9 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
-      "@web/*": ["src/web/*"]
+      "@web/*": ["src/web/*"],
+      "@assets/*": ["src/web/assets/*"],
+      "@comp/*": ["src/web/components/*"]
     }
   },
   "include": ["src/**/*.ts", "tests/**/*.ts"]

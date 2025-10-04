@@ -9,6 +9,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, 'src'),
+      '@assets': path.resolve(import.meta.dirname, 'src', 'web', 'assets'),
+      '@comp': path.resolve(import.meta.dirname, 'src', 'web', 'components'),
       '@tests': path.resolve(import.meta.dirname, 'tests'),
     },
   },

@@ -3,6 +3,7 @@ import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { i, $lget, $send } from '@/lib/ext-apis.js';
+import { $tdtDashed } from '@/lib/utils.js';
 import popupService from '@web/popup.service.js';
 
 import { Menu } from '@web/components/menu/index.js';
@@ -73,7 +74,7 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `firefox-workspaces-${new Date().toISOString().split('T')[0]}.json`;
+        a.download = `kskb-workspaces-${$tdtDashed()}.json`;
         a.click();
         URL.revokeObjectURL(url);
         this.close();
