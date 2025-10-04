@@ -1,6 +1,6 @@
 import '@/lib/promise-ext.js';
 import { i, $lget, $lset, $sget, $sset, $windowWorkspace } from './lib/ext-apis.js';
-import { Action, Consts, TabChangeStatus, RandomNameLang, Sym, Theme } from './lib/consts.js';
+import { Action, Consts, TabChangeStatus, Sym, Theme } from './lib/consts.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
 
@@ -84,7 +84,7 @@ class WorkspaceBackground {
 
     if (!isValidSettings(settings)) {
       logger.error('data.settings must be Settings object', settings);
-      settings = { theme: Theme.Auto, randomNameLang: RandomNameLang.Auto };
+      settings = { theme: Theme.Auto };
     }
 
     $lset({ workspaces, settings, _workspaceWindows, _windowTabs });

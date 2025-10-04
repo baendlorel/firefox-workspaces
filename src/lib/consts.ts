@@ -31,12 +31,6 @@ export const enum Theme {
   Dark = 'dark',
 }
 
-export const enum RandomNameLang {
-  Auto = 'auto',
-  Zh = 'zh',
-  En = 'en',
-}
-
 export const enum Action {
   GetState,
   Open,

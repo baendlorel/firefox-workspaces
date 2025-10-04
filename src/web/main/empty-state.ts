@@ -10,8 +10,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
   const el = div('empty-state', [
     icon,
-    h('p', '', i('noWorkspacesYet')),
-    h('p', '', i('createWorkspaceToGetStarted')),
+    h('p', 'mt-3', i('noWorkspacesYet')),
+    h('p', 'mt-3', i('createWorkspaceToGetStarted')),
   ]);
 
   bus.on('toggle-empty-state', (visible) => (el.style.display = visible ? 'block' : 'none'));

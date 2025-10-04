@@ -25,6 +25,7 @@ class PopupService {
       if (formData.tabs.length > 0) {
         await this.open(newWorkspace);
       }
+      return;
     }
 
     const exists = workspaces.find((w) => w.id === formData.id);
