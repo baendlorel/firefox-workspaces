@@ -1,8 +1,6 @@
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
-import { Sym } from './lib/consts.js';
 import { $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
-import { $sleep } from './lib/utils.js';
 import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {
@@ -16,7 +14,9 @@ export class WorkspaceManager {
       logger.error('No tabs found for windowId', windowId);
       return [];
     }
-    return browserTabs.map(createWorkspaceTab);
+    return browserTabs // & ensure that tab.id is valid, or createWorkspaceTab will throw
+      .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== browser.tabs.TAB_ID_NONE)
+      .map(createWorkspaceTab);
   }
 
   async addWindowTab(browserTab: browser.tabs.Tab) {

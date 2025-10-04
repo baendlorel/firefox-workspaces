@@ -64,7 +64,9 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   // # register events
   bus.on('edit', (workspace: Workspace | null = null, tabs: browser.tabs.Tab[] = []) => {
     editingWorkspace = workspace;
-    currentTabs = tabs.map(createWorkspaceTab);
+    currentTabs = tabs // & ensure that tab.id is valid, or createWorkspaceTab will throw
+      .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== browser.tabs.TAB_ID_NONE)
+      .map(createWorkspaceTab);
 
     if (workspace) {
       inputName.value = workspace.name;
