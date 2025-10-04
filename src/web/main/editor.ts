@@ -4,7 +4,7 @@ import { btn, div, h, svg } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
 import { $randItem } from '@/lib/utils.js';
 import { i } from '@/lib/ext-apis.js';
-import { createWorkspaceTab } from '@/lib/workspace-tab.js';
+import { createWorkspaceTab } from '@/lib/workspace.js';
 
 import { confirmation, danger, info } from '@web/components/dialog/alerts.js';
 import { createDialog } from '@web/components/dialog/index.js';

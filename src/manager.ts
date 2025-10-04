@@ -3,8 +3,7 @@ import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
 import { $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
-import { createWorkspaceTab } from './lib/workspace-tab.js';
-import { isValidWorkspace } from './lib/workspace.js';
+import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {
   /**

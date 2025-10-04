@@ -1,9 +1,8 @@
 import './toolbar.css';
 import { Action, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
-import { createWorkspaceTab } from '@/lib/workspace-tab.js';
 import locale from '../../_locales/en/messages.json' with { type: 'json' };
-import { createWorkspace } from '@/lib/workspace.js';
+import { createWorkspace, createWorkspaceTab } from '@/lib/workspace.js';
 
 // # Mock browser API in dev mode
 
