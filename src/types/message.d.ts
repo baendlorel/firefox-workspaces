@@ -24,9 +24,7 @@ declare global {
     error: string;
   }
 
-  interface OpenResponse extends BaseResponse {
-    data: { id: number } | null;
-  }
+  interface OpenResponse extends BaseResponse {}
 
   interface ImportResponse extends BaseResponse {}
 

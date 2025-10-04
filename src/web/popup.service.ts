@@ -51,17 +51,14 @@ class PopupService {
   }
 
   /**
-   * ## Warn
    * !! Codes below `$send` are not accessible.
    *
-   * ## Reason
+   * Reason:
    * 1. New window causes popup page to be unfocused.
    * 2. Unfocused popup is basically deleted.
    * 3. Click plugin button again creates a new popup page.
    */
   open(workspace: Workspace): Promise<OpenResponse> {
-    // & We couldn't stop opening while tabs.length === 0, because you must open it to add new tabs
-    // if the new workspace window is not created by 'create from current tabs', it will not trigger the opening
     return $send<OpenRequest>({
       action: Action.Open,
       workspace,

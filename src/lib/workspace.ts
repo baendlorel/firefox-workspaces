@@ -1,6 +1,6 @@
 import { Color } from './color.js';
 import { $genId } from './utils.js';
-import { WorkspaceTab } from './workspace-tab.js';
+import { isValidWorkspaceTab } from './workspace-tab.js';
 
 export const createWorkspace = (formData: WorkspaceFormData): Workspace => ({
   id: $genId(),
@@ -22,7 +22,7 @@ export const isValidWorkspace = (o: Workspace) => {
     typeof o.name === 'string' &&
     Color.valid(o.color) &&
     Array.isArray(o.tabs) &&
-    o.tabs.every(WorkspaceTab.valid)
+    o.tabs.every(isValidWorkspaceTab)
   );
 };
 

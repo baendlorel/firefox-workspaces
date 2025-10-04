@@ -1,7 +1,7 @@
 import './toolbar.css';
 import { Action, WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
-import { WorkspaceTab } from '@/lib/workspace-tab.js';
+import { createWorkspaceTab } from '@/lib/workspace-tab.js';
 import locale from '../../_locales/en/messages.json' with { type: 'json' };
 import { createWorkspace } from '@/lib/workspace.js';
 
@@ -67,7 +67,7 @@ export class MockBrowser {
     return createWorkspace({ id: null, name, color, tabs: [] });
   }
 
-  private createSampleTab(): WorkspaceTab {
+  private createSampleTab(): WorkspaceTabPlain {
     const sampleTabs = [
       { title: 'GitHub', url: 'https://github.com', favIconUrl: 'https://github.com/favicon.ico' },
       {
@@ -84,7 +84,7 @@ export class MockBrowser {
     ];
 
     const sample = sampleTabs[Math.floor(Math.random() * sampleTabs.length)];
-    return WorkspaceTab.from({
+    return createWorkspaceTab({
       id: Math.floor(Math.random() * 100000),
       title: sample.title,
       url: sample.url,
@@ -181,7 +181,7 @@ export class MockBrowser {
 
   private triggerSetCurrent(): void {
     const tabs = [
-      WorkspaceTab.from({
+      createWorkspaceTab({
         id: 1,
         title: 'Fake Tab 1',
         url: 'https://example.com',
@@ -189,7 +189,7 @@ export class MockBrowser {
         pinned: true,
         addedAt: Date.now(),
       } as any),
-      WorkspaceTab.from({
+      createWorkspaceTab({
         id: 2,
         title: 'Fake Tab 2',
         url: 'https://github.com',

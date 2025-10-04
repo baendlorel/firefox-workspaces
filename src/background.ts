@@ -153,13 +153,7 @@ class WorkspaceBackground {
     switch (message.action) {
       case Action.Open: {
         const data = await this.manager.open(message.workspace);
-
-        // todo 改成了WINDOW_ID_NONE。看看接收方需不需要改造
-        const response: OpenResponse = {
-          succ: data.id !== browser.windows.WINDOW_ID_NONE,
-          data,
-        };
-        return response;
+        return { succ: data.id !== browser.windows.WINDOW_ID_NONE } satisfies OpenResponse;
       }
       case Action.Import: {
         await this.manager.importData(message.data);

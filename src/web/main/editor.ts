@@ -4,7 +4,7 @@ import { btn, div, h, svg } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
 import { $randItem } from '@/lib/utils.js';
 import { i } from '@/lib/ext-apis.js';
-import { WorkspaceTab } from '@/lib/workspace-tab.js';
+import { createWorkspaceTab } from '@/lib/workspace-tab.js';
 
 import { confirmation, danger, info } from '@web/components/dialog/alerts.js';
 import { createDialog } from '@web/components/dialog/index.js';
@@ -15,7 +15,7 @@ import trashSvg from '@web/assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
-  let currentTabs: WorkspaceTab[] = [];
+  let currentTabs: WorkspaceTabPlain[] = [];
 
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });
@@ -64,7 +64,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   // # register events
   bus.on('edit', (workspace: Workspace | null = null, tabs: browser.tabs.Tab[] = []) => {
     editingWorkspace = workspace;
-    currentTabs = tabs.map(WorkspaceTab.from);
+    currentTabs = tabs.map(createWorkspaceTab);
 
     if (workspace) {
       inputName.value = workspace.name;

@@ -3,21 +3,21 @@ import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
 import { $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
 import { $sleep } from './lib/utils.js';
-import { WorkspaceTab } from './lib/workspace-tab.js';
+import { createWorkspaceTab } from './lib/workspace-tab.js';
 import { isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {
   /**
    * Get the cached tabs of a window and transform to `WorkspaceTab[]`
    */
-  async getWindowTabs(windowId: number): Promise<WorkspaceTab[]> {
+  async getWindowTabs(windowId: number): Promise<WorkspaceTabPlain[]> {
     const { _windowTabs } = await $lget('_windowTabs');
     const browserTabs = _windowTabs[windowId];
     if (!browserTabs) {
       logger.error('No tabs found for windowId', windowId);
       return [];
     }
-    return browserTabs.map(WorkspaceTab.from);
+    return browserTabs.map(createWorkspaceTab);
   }
 
   async addWindowTab(browserTab: browser.tabs.Tab) {
