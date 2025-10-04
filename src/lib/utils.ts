@@ -5,7 +5,7 @@ export const $randItem = <T extends any[] | string>(items: T): T extends (infer 
   items[$randInt(items.length)];
 
 const letters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-export const $genId = (n: number = 16) => {
+export const $genId = (n: number = 6) => {
   const digits: string[] = ['kskb_', String(Date.now()), '_'];
   for (let i = 0; i < n; i++) {
     digits.push($randItem(letters));

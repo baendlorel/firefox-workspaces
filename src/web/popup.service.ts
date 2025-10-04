@@ -1,8 +1,9 @@
 import { Action } from '@/lib/consts.js';
 import { $windowWorkspace, $send } from '@/lib/ext-apis.js';
-import { $objectHash } from '@/lib/utils.js';
+import { $objectHash, $tdtDashed } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';
+import { compressToBase64 } from 'lz-string';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
@@ -66,11 +67,21 @@ class PopupService {
     });
   }
 
-  async getExportData(): Promise<ExportData> {
+  async exportData() {
     // & Let background to save the cached tabs into storage.local's persist part
     await $send<ExportRequest>({ action: Action.Export });
     const persist = await store.localGet('workspaces', 'settings');
-    return { ...persist, hash: $objectHash(persist) };
+
+    // Create and download JSON file
+    const text = JSON.stringify({ ...persist, hash: $objectHash(persist) }, null, 2);
+    const blob = new Blob([text], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `kskb-workspaces-${$tdtDashed()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    logger.info('Exported data length:', text.length, 'compressed', compressToBase64(text).length);
   }
 }
 

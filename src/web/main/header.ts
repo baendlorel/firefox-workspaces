@@ -4,7 +4,6 @@ import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { i, $send } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';
-import { $tdtDashed } from '@/lib/utils.js';
 import popupService from '@web/popup.service.js';
 
 import { Menu } from '@comp/menu/index.js';
@@ -68,16 +67,7 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: btnWithIcon(boxArrowUpSvg, i('export')),
       action: async function (this) {
-        const persist = await popupService.getExportData();
-
-        // Create and download JSON file
-        const blob = new Blob([JSON.stringify(persist, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `kskb-workspaces-${$tdtDashed()}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+        await popupService.exportData();
         this.close();
       },
     },
