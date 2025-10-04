@@ -1,13 +1,5 @@
-import {
-  i,
-  $lget,
-  $lpset,
-  $lsset,
-  $sget,
-  $sset,
-  $windowWorkspace,
-  $notify,
-} from './lib/ext-apis.js';
+import { i, $windowWorkspace, $notify } from './lib/ext-apis.js';
+import { store } from './lib/storage.js';
 import { Action, Switch, Sym, Theme } from './lib/consts.js';
 import { $sleep, $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
@@ -38,7 +30,7 @@ class WorkspaceBackground {
 
   private async init() {
     // # init storage
-    const sync = await $sget();
+    const sync = await store.syncGet();
 
     const {
       workspaces: sworkspaces = Sym.NotProvided,
@@ -46,7 +38,7 @@ class WorkspaceBackground {
       timestamp: stimestamp = Sym.NotProvided,
     } = sync;
 
-    const local = await $lget();
+    const local = await store.localGet();
     const {
       workspaces = Sym.NotProvided,
       settings = Sym.NotProvided,
@@ -78,7 +70,7 @@ class WorkspaceBackground {
     await this.registerListeners();
 
     // # start sync if enabled
-    const { settings: realSettings } = await $lget('settings');
+    const { settings: realSettings } = await store.localGet('settings');
     if (isValidSettings(realSettings) ? realSettings.sync === Switch.On : true) {
       await this.initSync();
     }
@@ -104,8 +96,8 @@ class WorkspaceBackground {
     const _workspaceWindows: Record<string, number> = {};
     const _windowTabs: Record<string, browser.tabs.Tab[]> = {};
 
-    await $lpset({ workspaces, settings });
-    await $lsset({ _workspaceWindows, _windowTabs });
+    await store.localPersistSet({ workspaces, settings });
+    await store.localStateSet({ _workspaceWindows, _windowTabs });
   }
 
   private registerListeners() {
@@ -275,7 +267,7 @@ class WorkspaceBackground {
       logger.verbose('Sync storage on', $thm());
 
       // * Might change if more features are added
-      const local = await $lget('workspaces', 'settings').catch((e) => {
+      const local = await store.localGet('workspaces', 'settings').catch((e) => {
         logger.error('Error while syncing, loading local', e);
         return null;
       });
@@ -285,7 +277,7 @@ class WorkspaceBackground {
         return;
       }
 
-      await $sset(local).catch((e) => logger.error('Error while syncing, saving sync', e));
+      await store.syncSet(local).catch((e) => logger.error('Error while syncing, saving sync', e));
       scheduleNext();
     };
 

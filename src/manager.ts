@@ -1,5 +1,6 @@
 import { Color } from './lib/color.js';
-import { $aboutBlank, $lget, $lpset, $lsset } from './lib/ext-apis.js';
+import { $aboutBlank } from './lib/ext-apis.js';
+import { store } from './lib/storage.js';
 import { isValidSettings } from './lib/settings.js';
 import { $objectHash } from './lib/utils.js';
 import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';
@@ -9,7 +10,7 @@ export class WorkspaceManager {
    * Get the cached tabs of a window and transform to `WorkspaceTab[]`
    */
   async getWindowTabs(windowId: number): Promise<WorkspaceTabPlain[]> {
-    const { _windowTabs } = await $lget('_windowTabs');
+    const { _windowTabs } = await store.localGet('_windowTabs');
     const browserTabs = _windowTabs[windowId];
     if (!browserTabs) {
       logger.error('No tabs found for windowId', windowId);
@@ -21,7 +22,10 @@ export class WorkspaceManager {
   }
 
   async addTabToWindow(browserTab: browser.tabs.Tab) {
-    const { _workspaceWindows, _windowTabs } = await $lget('_workspaceWindows', '_windowTabs');
+    const { _workspaceWindows, _windowTabs } = await store.localGet(
+      '_workspaceWindows',
+      '_windowTabs'
+    );
     const windowId = browserTab.windowId;
     if (windowId === undefined) {
       return;
@@ -38,11 +42,14 @@ export class WorkspaceManager {
     } else {
       _windowTabs[windowId] = [browserTab];
     }
-    await $lsset({ _windowTabs });
+    await store.localStateSet({ _windowTabs });
   }
 
   async refreshWindowTab(windowId: number | undefined) {
-    const { _workspaceWindows, _windowTabs } = await $lget('_workspaceWindows', '_windowTabs');
+    const { _workspaceWindows, _windowTabs } = await store.localGet(
+      '_workspaceWindows',
+      '_windowTabs'
+    );
     const entry = Object.entries(_workspaceWindows).find(([, wid]) => wid === windowId);
     if (!entry) {
       return;
@@ -50,39 +57,39 @@ export class WorkspaceManager {
 
     const tabs = await browser.tabs.query({ windowId });
     _windowTabs[windowId as number] = tabs;
-    await $lsset({ _windowTabs });
+    await store.localStateSet({ _windowTabs });
   }
 
   async saveAllTab() {
-    const { workspaces, _workspaceWindows, _windowTabs } = await $lget(
+    const { workspaces, _workspaceWindows, _windowTabs } = await store.localGet(
       'workspaces',
       '_workspaceWindows',
       '_windowTabs'
     );
 
-    await $lpset({ workspaces });
+    await store.localPersistSet({ workspaces });
   }
 
   /**
    * Remove the pair of `workspaceToWindow` in store
    */
   async deactivate(id: string) {
-    const { _workspaceWindows } = await $lget('_workspaceWindows');
+    const { _workspaceWindows } = await store.localGet('_workspaceWindows');
     delete _workspaceWindows[id];
-    await $lsset({ _workspaceWindows });
+    await store.localStateSet({ _workspaceWindows });
   }
 
   async save(workspace: Workspace) {
-    const { workspaces } = await $lget('workspaces');
+    const { workspaces } = await store.localGet('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     workspaces[index === -1 ? workspaces.length : index] = workspace;
-    await $lpset({ workspaces });
+    await store.localPersistSet({ workspaces });
   }
 
   // Open workspace in new window
   async open(workspace: Workspace): Promise<{ id: number }> {
     // If group already has an active window, focus it
-    const { _workspaceWindows } = await $lget('_workspaceWindows');
+    const { _workspaceWindows } = await store.localGet('_workspaceWindows');
 
     // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
     const windowId = _workspaceWindows[workspace.id];
@@ -154,7 +161,7 @@ export class WorkspaceManager {
   ) {
     this.setBadge(workspace, window.id);
     _workspaceWindows[workspace.id] = window.id;
-    await $lsset({ _workspaceWindows });
+    await store.localStateSet({ _workspaceWindows });
     return { id: window.id };
   }
 
@@ -206,7 +213,7 @@ export class WorkspaceManager {
     }
 
     // 4. Get current data
-    const { workspaces: currentWorkspaces } = await $lget('workspaces', 'settings');
+    const { workspaces: currentWorkspaces } = await store.localGet('workspaces', 'settings');
 
     // 5. Merge workspaces (only add new ones, don't overwrite)
     const existingIds = new Set(currentWorkspaces.map((w) => w.id));
@@ -214,7 +221,7 @@ export class WorkspaceManager {
     const mergedWorkspaces = [...currentWorkspaces, ...newWorkspaces];
 
     // 6. Save merged data
-    await $lpset({ workspaces: mergedWorkspaces, settings });
+    await store.localPersistSet({ workspaces: mergedWorkspaces, settings });
 
     logger.info('Import completed', {
       total: workspaces.length,

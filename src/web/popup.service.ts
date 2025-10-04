@@ -1,6 +1,7 @@
 import { Action } from '@/lib/consts.js';
-import { $windowWorkspace, $lget, $lpset, $send } from '@/lib/ext-apis.js';
+import { $windowWorkspace, $send } from '@/lib/ext-apis.js';
 import { $objectHash } from '@/lib/utils.js';
+import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';
 
 class PopupService {
@@ -13,14 +14,14 @@ class PopupService {
    * Save workspace (create or update)
    */
   async save(formData: WorkspaceFormData) {
-    const { workspaces } = await $lget('workspaces');
+    const { workspaces } = await store.localGet('workspaces');
 
     // handle create
     if (formData.id === null) {
       const newWorkspace = createWorkspace(formData);
       workspaces.push(newWorkspace);
 
-      await $lpset({ workspaces });
+      await store.localPersistSet({ workspaces });
 
       if (formData.tabs.length > 0) {
         await this.open(newWorkspace);
@@ -37,16 +38,16 @@ class PopupService {
     exists.name = formData.name;
     exists.color = formData.color;
     exists.tabs = formData.tabs;
-    await $lpset({ workspaces });
+    await store.localPersistSet({ workspaces });
   }
 
   // Delete workspace
   async delete(workspace: Workspace) {
-    const { workspaces } = await $lget('workspaces');
+    const { workspaces } = await store.localGet('workspaces');
     const index = workspaces.findIndex((w) => w.id === workspace.id);
     if (index !== -1) {
       workspaces.splice(index, 1);
-      await $lpset({ workspaces });
+      await store.localPersistSet({ workspaces });
     }
   }
 
@@ -68,7 +69,7 @@ class PopupService {
   async getExportData(): Promise<ExportData> {
     // & Let background to save the cached tabs into storage.local's persist part
     await $send<ExportRequest>({ action: Action.Export });
-    const persist = await $lget('workspaces', 'settings');
+    const persist = await store.localGet('workspaces', 'settings');
     return { ...persist, hash: $objectHash(persist) };
   }
 }

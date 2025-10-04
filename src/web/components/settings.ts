@@ -1,5 +1,6 @@
 import { Action, Switch, Theme } from '@/lib/consts.js';
-import { i, $lget, $lpset, $send } from '@/lib/ext-apis.js';
+import { i, $send } from '@/lib/ext-apis.js';
+import { store } from '@/lib/storage.js';
 import { confirmation } from './dialog/alerts.js';
 import { createDialog } from './dialog/index.js';
 import { h, div, btn } from '@/lib/dom.js';
@@ -49,7 +50,7 @@ export default () => {
     logger.info('Saving settings', { theme, sync });
 
     // Persist settings
-    await $lpset({ settings: { theme, sync } });
+    await store.localPersistSet({ settings: { theme, sync } });
 
     // apply sync setting
     await $send<ToggleSyncRequest>({ action: Action.ToggleSync, sync });
@@ -70,7 +71,7 @@ export default () => {
 
   // # load settings for editing
   dialog.bus.on('show', async () => {
-    const { settings } = await $lget('settings');
+    const { settings } = await store.localGet('settings');
     selectRadioValue(themeRadio, settings.theme ?? Theme.Auto);
     selectRadioValue(syncRadio, settings.sync ?? Switch.On);
   });

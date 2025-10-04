@@ -1,4 +1,5 @@
 import { MockBrowser } from '@/__mock__/toolbar.js';
+import { store } from './storage.js';
 
 if (__IS_DEV__) {
   new MockBrowser();
@@ -35,7 +36,7 @@ export async function $windowWorkspace(
   if (windowId === undefined) {
     return undefined;
   }
-  const { workspaces, _workspaceWindows } = await $lget('workspaces', '_workspaceWindows');
+  const { workspaces, _workspaceWindows } = await store.localGet('workspaces', '_workspaceWindows');
   const entry = Object.entries(_workspaceWindows).find(([, wid]) => wid === windowId);
   if (entry === undefined) {
     return undefined;

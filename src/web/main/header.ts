@@ -2,7 +2,8 @@ import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
-import { i, $lget, $send } from '@/lib/ext-apis.js';
+import { i, $send } from '@/lib/ext-apis.js';
+import { store } from '@/lib/storage.js';
 import { $tdtDashed } from '@/lib/utils.js';
 import popupService from '@web/popup.service.js';
 
@@ -84,7 +85,7 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: btnWithIcon(bugSvg, i('debugInfo')),
       action: async () => {
-        const workspaces = await $lget('workspaces');
+        const { workspaces } = await store.localGet('workspaces');
         logger.debug('workspaces', stringify(workspaces));
       },
     },

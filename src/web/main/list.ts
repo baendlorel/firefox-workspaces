@@ -1,6 +1,6 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, h, svg } from '@/lib/dom.js';
-import { $lget } from '@/lib/ext-apis.js';
+import { store } from '@/lib/storage.js';
 import popupService from '@web/popup.service.js';
 
 import editIcon from '@assets/3-dots.svg?raw';
@@ -61,7 +61,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   };
 
   bus.on('render-list', async () => {
-    const { workspaces } = await $lget('workspaces');
+    const { workspaces } = await store.localGet('workspaces');
     renderList(workspaces);
     bus.emit('toggle-empty-state', workspaces.length === 0);
   });
