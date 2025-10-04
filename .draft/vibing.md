@@ -185,3 +185,15 @@ invalid的value会变为白色
    - 可以将Create事件扩展为可以传输tabs数组，已有的触发createworkspace事件的地方对tabs传入空数组；
    - 创建workspace完成后将其打开；
 4. 美化about.ts，要美观、简洁、酷炫、层次分明
+
+---
+
+因为popup用inputfile会直接失去焦点被销毁。所以现在只能用content.js了。你帮我完成:
+
+1. background.ts的onmessage收到Action.import后，主动把content.js注入当前活跃的页面，并立刻打开一个inputfile；
+2. inputfile要求是json格式;
+3. 用户选择、确认后，将文本读取出来，传递到background.ts进行导入逻辑
+4. 导入时校验hash；
+5. 导入完成后，可以消除content.js注入
+6. 在background.ts里弹一个notification来展示导入结果。
+7. 导入逻辑中，workspaces字段只新增不覆盖，settings字段覆盖
