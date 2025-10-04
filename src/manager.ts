@@ -9,7 +9,7 @@ export class WorkspaceManager {
   /**
    * Get the cached tabs of a window and transform to `WorkspaceTab[]`
    */
-  async getWindowTabs(windowId: number): Promise<WorkspaceTabPlain[]> {
+  async getWindowTabs(windowId: number): Promise<WorkspaceTab[]> {
     const { _windowTabs } = await store.localGet('_windowTabs');
     const browserTabs = _windowTabs[windowId];
     if (!browserTabs) {

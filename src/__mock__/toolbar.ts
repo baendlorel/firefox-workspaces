@@ -66,7 +66,7 @@ export class MockBrowser {
     return createWorkspace({ id: null, name, color, tabs: [] });
   }
 
-  private createSampleTab(): WorkspaceTabPlain {
+  private createSampleTab(): WorkspaceTab {
     const sampleTabs = [
       { title: 'GitHub', url: 'https://github.com', favIconUrl: 'https://github.com/favicon.ico' },
       {

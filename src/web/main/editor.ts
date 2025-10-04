@@ -15,7 +15,7 @@ import trashSvg from '@assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
-  let currentTabs: WorkspaceTabPlain[] = [];
+  let currentTabs: WorkspaceTab[] = [];
 
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });

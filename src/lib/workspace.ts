@@ -29,7 +29,7 @@ export const isValidWorkspaces = (o: Workspace[]): o is Workspace[] => {
   return Array.isArray(o) && o.every((w) => isValidWorkspace(w));
 };
 
-export const createWorkspaceTab = (tab: browser.tabs.Tab): WorkspaceTabPlain => {
+export const createWorkspaceTab = (tab: browser.tabs.Tab): WorkspaceTab => {
   if (tab.id === undefined || tab.id === browser.tabs.TAB_ID_NONE) {
     throw new TypeError('WorkspaceTab: browserTab.id is undefined or TAB_ID_NONE');
   }
@@ -42,7 +42,7 @@ export const createWorkspaceTab = (tab: browser.tabs.Tab): WorkspaceTabPlain => 
   };
 };
 
-export const isValidWorkspaceTab = (o: any): o is WorkspaceTabPlain => {
+export const isValidWorkspaceTab = (o: any): o is WorkspaceTab => {
   return (
     Number.isSafeInteger(o.id) &&
     o.id >= 0 &&

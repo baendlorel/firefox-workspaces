@@ -13,7 +13,7 @@ interface WorkspaceFormData {
   id: string | null;
   name: string;
   color: HexColor;
-  tabs: WorkspaceTabPlain[];
+  tabs: WorkspaceTab[];
 }
 
 interface TabArgs {

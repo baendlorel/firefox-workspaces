@@ -24,12 +24,12 @@ declare global {
     id: string;
     name: string;
     color: HexColor;
-    tabs: WorkspaceTabPlain[];
+    tabs: WorkspaceTab[];
     createdAt: number;
     lastOpened: number;
   }
 
-  interface WorkspaceTabPlain {
+  interface WorkspaceTab {
     id: number; // OnCreated
     index: number; // OnCreated
     title: string; // OnCreated
@@ -41,7 +41,7 @@ declare global {
     id: string | null;
     name: string;
     color: HexColor;
-    tabs: WorkspaceTabPlain[];
+    tabs: WorkspaceTab[];
   }
 
   interface Settings {
