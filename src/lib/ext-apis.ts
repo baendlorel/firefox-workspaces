@@ -25,29 +25,6 @@ export const $notify = (message: string, title: string, time: number = 5000) =>
     })
     .then((notificationId) => setTimeout(() => browser.notifications.clear(notificationId), time));
 
-// # storage
-export function $lget(): Promise<Local>;
-export function $lget<T extends LocalKey>(key: T): Promise<{ [K in T]: Local[T] }>;
-export function $lget<T extends LocalKey[]>(...keys: T): Promise<PartialLocal<T>>;
-export function $lget(...args: LocalKey[]): Promise<any> {
-  if (args.length === 0) {
-    return browser.storage.local.get();
-  }
-  return browser.storage.local.get([...args, 'timestamp']); // always get timestamp
-}
-
-export const $lpset = async (data: Partial<Persist>) => {
-  data.timestamp = Date.now();
-  await browser.storage.local.set(data);
-};
-export const $lsset = (state: Partial<State>) => browser.storage.local.set(state);
-
-export const $sget = (): Promise<Persist> => browser.storage.sync.get() as any;
-export const $sset = async (persist: Persist) => {
-  persist.timestamp = Date.now();
-  await browser.storage.sync.set(persist);
-};
-
 // # common services
 /**
  * Get workspace by `windowId`

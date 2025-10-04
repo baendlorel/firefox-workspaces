@@ -67,10 +67,10 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: btnWithIcon(boxArrowUpSvg, i('export')),
       action: async function (this) {
-        const state = await popupService.getExportData();
+        const persist = await popupService.getExportData();
 
         // Create and download JSON file
-        const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+        const blob = new Blob([JSON.stringify(persist, null, 2)], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
