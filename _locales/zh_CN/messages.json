@@ -79,6 +79,12 @@
     "message": "生成随机名称",
     "description": "Random name button tooltip"
   },
+  "randomNamePart1": {
+    "message": "赤焰,碧蓝,金辉,银月,翠影,午夜,静谧,隐秘,明亮,流浪,孤独,疾风,安静,勇敢"
+  },
+  "randomNamePart2": {
+    "message": "港湾,避风港,绿洲,圣地,宝库,花园,树林,码头,车站,传送门,枢纽,熔炉,连接点,领域"
+  },
   "delete": {
     "message": "删除",
     "description": "Delete button"

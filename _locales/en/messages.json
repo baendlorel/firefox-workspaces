@@ -79,6 +79,12 @@
     "message": "Generate a random name",
     "description": "Random name button tooltip"
   },
+  "randomNamePart1": {
+    "message": "Crimson,Azure,Golden,Silver,Emerald,Midnight,Silent,Hidden,Bright,Wandering,Lonely,Rapid,Calm,Bold"
+  },
+  "randomNamePart2": {
+    "message": "Haven,Harbor,Oasis,Sanctum,Vault,Garden,Grove,Pier,Station,Portal,Hub,Forge,Nexus,Realm"
+  },
   "delete": {
     "message": "Delete",
     "description": "Delete button"

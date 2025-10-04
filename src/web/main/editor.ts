@@ -1,5 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
-import { RANDOM_NAME_EN_A, RANDOM_NAME_EN_B, WORKSPACE_COLORS } from '@/lib/consts.js';
+import { WORKSPACE_COLORS } from '@/lib/consts.js';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
 import { $randItem } from '@/lib/utils.js';
@@ -84,8 +84,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   });
 
   randomNameBtn.addEventListener('click', () => {
-    const part1 = $randItem(RANDOM_NAME_EN_A);
-    const part2 = $randItem(RANDOM_NAME_EN_B);
+    const part1 = $randItem(i('randomNamePart1').split(','));
+    const part2 = $randItem(i('randomNamePart2').split(','));
     inputName.value = `${part1} ${part2}`;
   });
 
