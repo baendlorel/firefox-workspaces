@@ -3,7 +3,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    // setupFiles: ['./src/macros.ts'],
+    setupFiles: ['./tests/macros.ts'],
     include: ['**/*.{test,spec,e2e-spec}.?(c|m)[jt]s?(x)'],
   },
   resolve: {
