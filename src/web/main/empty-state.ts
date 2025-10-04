@@ -2,7 +2,7 @@ import { EventBus } from 'minimal-event-bus';
 import { div, h } from '@/lib/dom.js';
 import { i } from '@/lib/ext-apis.js';
 
-import folderIcon from '@web/assets/folder.svg?raw';
+import folderIcon from '@assets/folder.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const icon = div('empty-state-icon');

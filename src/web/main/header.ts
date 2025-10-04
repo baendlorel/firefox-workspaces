@@ -6,22 +6,22 @@ import { i, $lget, $send } from '@/lib/ext-apis.js';
 import { $tdtDashed } from '@/lib/utils.js';
 import popupService from '@web/popup.service.js';
 
-import { Menu } from '@web/components/menu/index.js';
-import about from '@web/components/about.js';
-import donate from '@web/components/donate.js';
-import settings from '@web/components/settings.js';
+import { Menu } from '@comp/menu/index.js';
+import about from '@comp/about.js';
+import donate from '@comp/donate.js';
+import settings from '@comp/settings.js';
 import { btnWithIcon } from './icon.js';
 import { stringify } from './debug.js';
 
-import plusSvg from '@web/assets/workspace-plus.svg?raw';
-import listSvg from '@web/assets/list.svg?raw';
-import bookmarkPlusSvg from '@web/assets/bookmark-plus.svg?raw';
-import boxArrowDownSvg from '@web/assets/box-arrow-down.svg?raw';
-import boxArrowUpSvg from '@web/assets/box-arrow-up.svg?raw';
-import bugSvg from '@web/assets/bug.svg?raw';
-import heartSvg from '@web/assets/heart.svg?raw';
-import gearSvg from '@web/assets/gear.svg?raw';
-import workspaceSvg from '@web/assets/workspace.svg?raw';
+import plusSvg from '@assets/workspace-plus.svg?raw';
+import listSvg from '@assets/list.svg?raw';
+import bookmarkPlusSvg from '@assets/bookmark-plus.svg?raw';
+import boxArrowDownSvg from '@assets/box-arrow-down.svg?raw';
+import boxArrowUpSvg from '@assets/box-arrow-up.svg?raw';
+import bugSvg from '@assets/bug.svg?raw';
+import heartSvg from '@assets/heart.svg?raw';
+import gearSvg from '@assets/gear.svg?raw';
+import workspaceSvg from '@assets/workspace.svg?raw';
 
 const importData = async () =>
   $send<ImportRequest>({

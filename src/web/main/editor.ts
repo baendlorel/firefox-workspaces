@@ -6,12 +6,12 @@ import { $randItem } from '@/lib/utils.js';
 import { i } from '@/lib/ext-apis.js';
 import { createWorkspaceTab } from '@/lib/workspace.js';
 
-import { confirmation, danger, info } from '@web/components/dialog/alerts.js';
-import { createDialog } from '@web/components/dialog/index.js';
-import colorPicker from '@web/components/color/index.js';
+import { confirmation, danger, info } from '@comp/dialog/alerts.js';
+import { createDialog } from '@comp/dialog/index.js';
+import colorPicker from '@comp/color/index.js';
 import popupService from '@web/popup.service.js';
 
-import trashSvg from '@web/assets/trash.svg?raw';
+import trashSvg from '@assets/trash.svg?raw';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;

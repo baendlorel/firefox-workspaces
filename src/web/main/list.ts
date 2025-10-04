@@ -3,7 +3,7 @@ import { btn, h, svg } from '@/lib/dom.js';
 import { $lget } from '@/lib/ext-apis.js';
 import popupService from '@web/popup.service.js';
 
-import editIcon from '@web/assets/3-dots.svg?raw';
+import editIcon from '@assets/3-dots.svg?raw';
 import listItem from './list-item.js';
 
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };

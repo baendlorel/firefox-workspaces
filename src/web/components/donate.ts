@@ -1,7 +1,7 @@
 import { createDialog } from './dialog/index.js';
 import { i } from '@/lib/ext-apis.js';
 import { div, h } from '@/lib/dom.js';
-import donateEnPng from '@web/assets/donate-small.png';
+import donateEnPng from '@assets/donate-small.png';
 
 /**
  * About dialog component
