@@ -18,7 +18,6 @@ declare global {
 
   interface OpenFileInputRequest {
     action: Action.OpenFileInput;
-    requestId: string;
   }
 
   interface ReturnFileDataRequest {

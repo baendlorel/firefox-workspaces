@@ -15,6 +15,16 @@ export const $aboutBlank = (): Promise<WindowWithId> =>
     type: 'normal',
   }) as Promise<WindowWithId>;
 
+export const $notify = (message: string, title: string, time: number = 5000) =>
+  browser.notifications
+    .create({
+      type: 'basic',
+      iconUrl: browser.runtime.getURL('./icon-128.png'),
+      title,
+      message,
+    })
+    .then((notificationId) => setTimeout(() => browser.notifications.clear(notificationId), time));
+
 // # storage
 export function $lget(): Promise<Local>;
 export function $lget<T extends LocalKey>(key: T): Promise<{ [K in T]: Local[T] }>;

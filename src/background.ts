@@ -1,6 +1,6 @@
-import { i, $lget, $lset, $sget, $sset, $windowWorkspace } from './lib/ext-apis.js';
+import { i, $lget, $lset, $sget, $sset, $windowWorkspace, $notify } from './lib/ext-apis.js';
 import { Action, Switch, Sym, Theme } from './lib/consts.js';
-import { $genId, $sleep, $thm } from './lib/utils.js';
+import { $sleep, $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
 
@@ -246,20 +246,13 @@ class WorkspaceBackground {
       await $sleep(200);
 
       // Trigger file import in content script
-      const req: OpenFileInputRequest = { action: Action.OpenFileInput, requestId: $genId() };
-      await browser.tabs.sendMessage(tab.id, req);
+      const request: OpenFileInputRequest = { action: Action.OpenFileInput };
+      const reply = await browser.tabs.sendMessage(tab.id, request);
+      logger.succ('Message reply from content script:', reply);
+      $notify('Message reply from content script', 'Import');
     } catch (error) {
       logger.error('Failed to inject content script:', error);
-
-      // Show error notification
-      const notificationId = await browser.notifications.create({
-        type: 'basic',
-        iconUrl: browser.runtime.getURL('public/icon-128.png'),
-        title: 'Import Failed',
-        message: 'Failed to inject content script',
-      });
-
-      setTimeout(() => browser.notifications.clear(notificationId), 5000);
+      $notify('Failed to inject content script', 'Import');
     }
   }
 

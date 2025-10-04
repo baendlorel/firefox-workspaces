@@ -18,16 +18,19 @@ import { Consts, Action } from './lib/consts.js';
     }
 
     private setupMessageListener() {
-      browser.runtime.onMessage.addListener(async (message: OpenFileInputRequest) => {
-        if (message.action === Action.OpenFileInput) {
-          this.openFileSelector(message.requestId);
-          return { succ: true, from: 'content' };
-        }
-        return { succ: false, from: 'content' };
-      });
+      const handler = async (message: OpenFileInputRequest) =>
+        new Promise((resolve) => {
+          if (message.action === Action.OpenFileInput) {
+            this.openFileSelector().then((text) => resolve({ succ: true, text }));
+          } else {
+            resolve({ succ: false, text: null });
+          }
+        });
+
+      browser.runtime.onMessage.addListener(handler);
     }
 
-    private openFileSelector(requestId: string) {
+    private openFileSelector() {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.json,application/json';
@@ -42,14 +45,7 @@ import { Consts, Action } from './lib/consts.js';
           }
 
           // todo 看看能不能包一个大promise直接包回去
-          const text = await file.text();
-          const message: ReturnFileDataRequest = {
-            action: Action.ReturnFileData,
-            succ: true,
-            data: text,
-            requestId,
-          };
-          await browser.runtime.sendMessage(message);
+          file.text().then(resolve);
         };
         document.body.appendChild(input);
         input.click();
