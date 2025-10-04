@@ -3,7 +3,7 @@ import { i, $lget, $lset, $send } from '@/lib/ext-apis.js';
 import { confirmation } from './dialog/alerts.js';
 import { createDialog } from './dialog/index.js';
 import { h, div, btn } from '@/lib/dom.js';
-import { getRadioValue, radio, selectRadioValue } from './radio.js';
+import { radio, getRadioValue, selectRadioValue } from './radio.js';
 
 /**
  * Settings dialog component
@@ -11,26 +11,27 @@ import { getRadioValue, radio, selectRadioValue } from './radio.js';
  */
 export default () => {
   // Theme selection
-  const themeRadio = div('flex gap-2', [
-    radio('theme', Theme.Auto, i('autoSystem')),
-    radio('theme', Theme.Light, i('light')),
-    radio('theme', Theme.Dark, i('dark')),
+  const themeRadio = div('form-group', [
+    h('label', { for: 'theme' }, i('theme')),
+    div('flex gap-2', [
+      radio('theme', Theme.Auto, i('autoSystem')),
+      radio('theme', Theme.Light, i('light')),
+      radio('theme', Theme.Dark, i('dark')),
+    ]),
   ]);
-  const themeRadioGroup = div('form-group', [h('label', { for: 'theme' }, i('theme')), themeRadio]);
 
   // Sync toggle
-  const syncRadio = div('flex gap-2', [
-    radio('sync', 'on', i('on')),
-    radio('sync', 'off', i('off')),
+  const syncRadio = div('form-group', [
+    h('label', { for: 'sync' }, [i('syncData'), h('div', 'description', i('syncDataDescription'))]),
+    div('flex gap-2', [radio('sync', 'on', i('on')), radio('sync', 'off', i('off'))]),
   ]);
-  const syncRadioGroup = div('form-group', [h('label', { for: 'sync' }, i('syncData')), syncRadio]);
 
   const resetBtn = btn('btn btn-secondary', i('reset'));
   const saveBtn = btn('btn btn-primary ms-2', i('save'));
 
   const { dialog, closeBtn } = createDialog(
     i('settings'),
-    [themeRadioGroup, syncRadioGroup],
+    [themeRadio, syncRadio],
     [resetBtn, saveBtn]
   );
   dialog.setAttribute('aria-label', i('firefoxWorkspacesSettings'));
@@ -43,6 +44,8 @@ export default () => {
 
     // Apply theme immediately
     applyTheme(theme);
+
+    logger.info('Saving settings', { theme, sync });
 
     // Persist settings
     await $lset({ settings: { theme, sync } });
@@ -67,8 +70,8 @@ export default () => {
   // # load settings for editing
   dialog.bus.on('show', async () => {
     const { settings } = await $lget('settings');
-    selectRadioValue(themeRadio, settings.theme);
-    selectRadioValue(syncRadio, settings.sync);
+    selectRadioValue(themeRadio, settings.theme ?? Theme.Auto);
+    selectRadioValue(syncRadio, settings.sync ?? Switch.On);
   });
 
   document.body.appendChild(dialog);

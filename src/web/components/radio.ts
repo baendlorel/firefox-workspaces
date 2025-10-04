@@ -7,21 +7,17 @@ export const radio = (name: string, value: string, label: string) =>
   ]);
 
 export const selectRadioValue = (el: HTMLElement, value: string) => {
-  const len = el.children.length;
-  for (let i = 0; i < len; i++) {
-    const c = el.children[i];
-    if (c instanceof HTMLInputElement && c.type === 'radio') {
-      c.checked = c.value === value;
-    }
+  const radios = el.querySelectorAll('input[type="radio"]') as NodeListOf<HTMLInputElement>;
+  for (let i = 0; i < radios.length; i++) {
+    radios[i].checked = radios[i].value === value;
   }
 };
 
 export const getRadioValue = (el: HTMLElement, defaultValue: string = '') => {
-  const len = el.children.length;
-  for (let i = 0; i < len; i++) {
-    const c = el.children[i];
-    if (c instanceof HTMLInputElement && c.type === 'radio' && c.checked) {
-      return c.value;
+  const radios = el.querySelectorAll('input[type="radio"]') as NodeListOf<HTMLInputElement>;
+  for (let i = 0; i < radios.length; i++) {
+    if (radios[i].checked) {
+      return radios[i].value;
     }
   }
   return defaultValue;

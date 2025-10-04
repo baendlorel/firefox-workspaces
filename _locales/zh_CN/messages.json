@@ -310,6 +310,9 @@
     "message": "同步数据",
     "description": "是否启用通过 browser.storage.sync 同步数据"
   },
+  "syncDataDescription": {
+    "message": "在您的不同设备之间同步工作区数据"
+  },
   "failedToLoadState": {
     "message": "加载插件数据失败",
     "description": "Load state error message"

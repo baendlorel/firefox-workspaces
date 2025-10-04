@@ -307,8 +307,11 @@
     "message": "last updated at"
   },
   "syncData": {
-    "message": "Sync data",
+    "message": "Synchroize",
     "description": "Toggle to enable data sync via browser.storage.sync"
+  },
+  "syncDataDescription": {
+    "message": "Synchroize your workspace data across different devices"
   },
   "failedToLoadState": {
     "message": "Failed to load plugin state data",
