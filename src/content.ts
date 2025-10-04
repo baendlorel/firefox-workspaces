@@ -18,40 +18,42 @@ import { Consts, Action } from './lib/consts.js';
     }
 
     private setupMessageListener() {
-      browser.runtime.onMessage.addListener(async (message: any) => {
-        if (message.action === Action.TriggerImport) {
-          this.openFileSelector();
+      browser.runtime.onMessage.addListener(async (message: OpenFileInputRequest) => {
+        if (message.action === Action.OpenFileInput) {
+          this.openFileSelector(message.requestId);
           return { succ: true, from: 'content' };
         }
         return { succ: false, from: 'content' };
       });
     }
 
-    private openFileSelector() {
+    private openFileSelector(requestId: string) {
       const input = document.createElement('input');
       input.type = 'file';
       input.accept = '.json,application/json';
       input.style.display = 'none';
-
-      input.onchange = async () => {
-        const file = input.files?.[0];
-        if (!file) {
-          return;
-        }
-
-        const text = await file.text();
-        const message: FileImportDataRequest = {
-          action: Action.FileImportData,
-          succ: true,
-          data: text,
-        };
-        await browser.runtime.sendMessage(message);
-      };
-
       input.oncancel = () => input.remove();
 
-      document.body.appendChild(input);
-      input.click();
+      return new Promise((resolve) => {
+        input.onchange = async () => {
+          const file = input.files?.[0];
+          if (!file) {
+            return;
+          }
+
+          // todo 看看能不能包一个大promise直接包回去
+          const text = await file.text();
+          const message: ReturnFileDataRequest = {
+            action: Action.ReturnFileData,
+            succ: true,
+            data: text,
+            requestId,
+          };
+          await browser.runtime.sendMessage(message);
+        };
+        document.body.appendChild(input);
+        input.click();
+      });
     }
   }
 

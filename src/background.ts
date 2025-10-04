@@ -1,6 +1,6 @@
 import { i, $lget, $lset, $sget, $sset, $windowWorkspace } from './lib/ext-apis.js';
 import { Action, Switch, Sym, Theme } from './lib/consts.js';
-import { $thm } from './lib/utils.js';
+import { $genId, $sleep, $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
 
@@ -173,11 +173,30 @@ class WorkspaceBackground {
         // Inject content script to active tab and trigger file import
         await this.injectContentScriptAndImport();
         return { succ: true };
-      case Action.TriggerImport:
+      case Action.OpenFileInput:
         return { succ: false, from: 'background' };
-      case Action.FileImportData: {
+      case Action.ReturnFileData: {
         // Handle the actual import data from content script
-        const result = await this.manager.importData(message.data);
+        let obj: any = null;
+        try {
+          obj = JSON.parse(message.data);
+        } catch (error) {
+          // Show notification
+          const notificationId = await browser.notifications.create({
+            type: 'basic',
+            iconUrl: browser.runtime.getURL('public/icon-128.png'),
+            title: 'Import Failed',
+            message: error instanceof Error ? error.message : String(error),
+          });
+          setTimeout(() => browser.notifications.clear(notificationId), 5000);
+          return {
+            succ: false,
+            message: '',
+            addedCount: 0,
+          };
+        }
+
+        const result = await this.manager.importData(obj);
 
         // Show notification
         const notificationId = await browser.notifications.create({
@@ -190,8 +209,6 @@ class WorkspaceBackground {
               ? `Imported ${result.addedCount || 0} workspace(s)`
               : 'Failed to import data'),
         });
-
-        // Auto-clear notification after 5 seconds
         setTimeout(() => browser.notifications.clear(notificationId), 5000);
 
         return result;
@@ -212,26 +229,25 @@ class WorkspaceBackground {
     try {
       // Get active tab
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-      const activeTab = tabs[0];
+      const tab = tabs[0];
 
-      if (!activeTab || !activeTab.id) {
+      if (!tab || !tab.id) {
         logger.error('No active tab found');
         return;
       }
 
       // Inject content script
       await browser.scripting.executeScript({
-        target: { tabId: activeTab.id },
-        files: ['src/content.js'],
+        target: { tabId: tab.id },
+        files: ['dist/content.js'],
       });
 
       // Wait a bit for content script to initialize
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await $sleep(200);
 
       // Trigger file import in content script
-      await browser.tabs.sendMessage(activeTab.id, {
-        action: Action.TriggerImport,
-      });
+      const req: OpenFileInputRequest = { action: Action.OpenFileInput, requestId: $genId() };
+      await browser.tabs.sendMessage(tab.id, req);
     } catch (error) {
       logger.error('Failed to inject content script:', error);
 

@@ -16,14 +16,16 @@ declare global {
     action: Action.Import;
   }
 
-  interface TriggerImportRequest {
-    action: Action.TriggerImport;
+  interface OpenFileInputRequest {
+    action: Action.OpenFileInput;
+    requestId: string;
   }
 
-  interface FileImportDataRequest {
-    action: Action.FileImportData;
+  interface ReturnFileDataRequest {
+    action: Action.ReturnFileData;
     succ: boolean;
     data: string;
+    requestId: string;
   }
 
   // Union type for all possible requests
@@ -31,8 +33,8 @@ declare global {
     | OpenRequest
     | ToggleSyncRequest
     | ImportRequest
-    | TriggerImportRequest
-    | FileImportDataRequest;
+    | OpenFileInputRequest
+    | ReturnFileDataRequest;
 
   // # responses
   interface ErrorResponse {
@@ -49,18 +51,18 @@ declare global {
     addedCount: number;
   }
 
-  interface TriggerImportResponse {
+  interface OpenFileInputResponse {
     succ: boolean;
     from: 'content' | 'background' | 'popup';
   }
 
-  type MessageResponse = CommonResponse | ErrorResponse | ImportResponse | TriggerImportResponse;
+  type MessageResponse = CommonResponse | ErrorResponse | ImportResponse | OpenFileInputResponse;
 
   type MessageResponseMap = {
     [Action.Open]: CommonResponse;
     [Action.ToggleSync]: CommonResponse;
     [Action.Import]: CommonResponse;
-    [Action.TriggerImport]: TriggerImportResponse;
-    [Action.FileImportData]: ImportResponse;
+    [Action.OpenFileInput]: OpenFileInputResponse;
+    [Action.ReturnFileData]: ImportResponse;
   };
 }

@@ -36,8 +36,8 @@ export const enum Action {
   Open,
   ToggleSync,
   Import,
-  TriggerImport,
-  FileImportData,
+  OpenFileInput,
+  ReturnFileData,
 }
 
 export class Sym extends null {
