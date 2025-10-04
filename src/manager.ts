@@ -1,5 +1,3 @@
-import { get, set, has, remove, hasByValue } from 'flat-pair';
-
 import './lib/promise-ext.js';
 import { Color } from './lib/color.js';
 import { Sym } from './lib/consts.js';
@@ -14,29 +12,43 @@ export class WorkspaceManager {
    */
   async getWindowTabs(windowId: number): Promise<WorkspaceTab[]> {
     const { _windowTabs } = await $lget('_windowTabs');
-    const browserTabs = get<number, browser.tabs.Tab[]>(_windowTabs, windowId) ?? [];
+    const browserTabs = _windowTabs[windowId];
+    if (!browserTabs) {
+      logger.error('No tabs found for windowId', windowId);
+      return [];
+    }
     return browserTabs.map(WorkspaceTab.from);
   }
 
   async addWindowTab(browserTab: browser.tabs.Tab) {
     const { _workspaceWindows, _windowTabs } = await $lget('_workspaceWindows', '_windowTabs');
-    if (browserTab.windowId === undefined || !has(_workspaceWindows, browserTab.windowId)) {
+    const windowId = browserTab.windowId;
+    if (windowId === undefined) {
+      return;
+    }
+    const workspaceId = _workspaceWindows[windowId];
+    if (workspaceId === undefined) {
       return;
     }
 
-    const rawTabs = get<number, browser.tabs.Tab[]>(_windowTabs, browserTab.windowId);
-    rawTabs ? rawTabs.push(browserTab) : set(_windowTabs, browserTab.windowId, [browserTab]);
+    const rawTabs = _windowTabs[windowId];
+    if (rawTabs) {
+      rawTabs.push(browserTab);
+    } else {
+      _windowTabs[windowId] = [browserTab];
+    }
     await $lsset({ _windowTabs });
   }
 
   async refreshWindowTab(windowId: number | undefined) {
     const { _workspaceWindows, _windowTabs } = await $lget('_workspaceWindows', '_windowTabs');
-    if (!hasByValue(_workspaceWindows, windowId)) {
+    const entry = Object.entries(_workspaceWindows).find(([, wid]) => wid === windowId);
+    if (!entry) {
       return;
     }
 
     const tabs = await browser.tabs.query({ windowId });
-    set(_windowTabs, windowId as number, tabs);
+    _windowTabs[windowId as number] = tabs;
     await $lsset({ _windowTabs });
   }
 
@@ -45,7 +57,7 @@ export class WorkspaceManager {
    */
   async deactivate(id: string) {
     const { _workspaceWindows } = await $lget('_workspaceWindows');
-    remove(_workspaceWindows, id);
+    delete _workspaceWindows[id];
     await $lsset({ _workspaceWindows });
   }
 
@@ -62,7 +74,7 @@ export class WorkspaceManager {
     const { _workspaceWindows } = await $lget('_workspaceWindows');
 
     // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
-    const windowId = get<string, number>(_workspaceWindows, workspace.id);
+    const windowId = _workspaceWindows[workspace.id];
     if (windowId) {
       // Check if window still exists
       const result = await browser.windows
@@ -111,10 +123,10 @@ export class WorkspaceManager {
   private async openIniter(
     workspace: Workspace,
     window: WindowWithId,
-    _workspaceWindows: (string | number)[]
+    _workspaceWindows: State['_workspaceWindows']
   ) {
     this.setBadge(workspace, window.id);
-    set<string, number>(_workspaceWindows, workspace.id, window.id);
+    _workspaceWindows[workspace.id] = window.id;
     await $lsset({ _workspaceWindows });
     return { id: window.id };
   }

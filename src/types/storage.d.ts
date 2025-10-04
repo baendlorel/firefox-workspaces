@@ -6,17 +6,8 @@ interface Persist {
 }
 
 interface State {
-  /**
-   * A flat pair array of windowId -> workspaceId
-   * @see https://www.npmjs.com/package/flat-pair
-   */
-  _workspaceWindows: (string | number)[];
-
-  /**
-   * A flat pair array of windowId -> browser.tabs.Tab[]
-   * @see https://www.npmjs.com/package/flat-pair
-   */
-  _windowTabs: (number | browser.tabs.Tab[])[];
+  _workspaceWindows: Record<string, number>;
+  _windowTabs: Record<number, browser.tabs.Tab[]>;
 }
 
 type Local = Persist & State;

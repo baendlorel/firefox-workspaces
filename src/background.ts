@@ -73,8 +73,8 @@ class WorkspaceBackground {
     let {
       workspaces = Sym.NotProvided,
       settings = Sym.NotProvided,
-      _workspaceWindows = [],
-      _windowTabs = [],
+      _workspaceWindows = {},
+      _windowTabs = {},
     } = data;
 
     if (!isValidWorkspaces(workspaces)) {
