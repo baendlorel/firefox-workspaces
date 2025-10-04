@@ -193,6 +193,7 @@ class WorkspaceBackground {
     if (this.syncer !== null) {
       return;
     }
+    logger.info('start sync');
 
     const task = async () => {
       logger.verbose('Sync storage on', $thm());
@@ -225,6 +226,7 @@ class WorkspaceBackground {
 
   async stopSync() {
     if (this.syncer !== null) {
+      logger.info('stop sync');
       clearTimeout(this.syncer);
       this.syncer = null;
     }

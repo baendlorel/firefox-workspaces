@@ -19,6 +19,7 @@ export default () => {
       radio('theme', Theme.Dark, i('dark')),
     ]),
   ]);
+  themeRadio.style.display = 'none'; // # hide theme setting for now
 
   // Sync toggle
   const syncRadio = div('form-group', [
