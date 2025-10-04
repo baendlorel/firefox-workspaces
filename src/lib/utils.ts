@@ -76,13 +76,17 @@ export function $objectHash(obj: any): string {
     return sorted;
   };
 
-  // & FNV-1a（Fowler–Noll–Vo hash, variant 1a）
+  // & FNV1 composed with FNV-1a
   const sorted = sortObject(obj);
   const str = JSON.stringify(sorted);
-  let hash = 0x811c9dc5; // FNV offset basis
+  let h1 = 0x811c9dc5; // FNV1-32 offset basis
+  let h2 = 0xcbf29ce4; // FNV1a-32 offset basis
   for (let i = 0; i < str.length; i++) {
-    hash ^= str.charCodeAt(i);
-    hash = (hash * 0x01000193) >>> 0; // FNV prime, 保持32位
+    const char = str.charCodeAt(i);
+    h1 = (h1 * 0x01000193) ^ char;
+    h1 = h1 >>> 0;
+    h2 = (h2 ^ char) * 0x01000193;
+    h2 = h2 >>> 0;
   }
-  return hash.toString(16);
+  return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0');
 }

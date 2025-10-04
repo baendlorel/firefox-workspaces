@@ -66,6 +66,13 @@ export class WorkspaceManager {
       '_workspaceWindows',
       '_windowTabs'
     );
+    for (let i = 0; i < workspaces.length; i++) {
+      const w = workspaces[i];
+      const tabs = _windowTabs[_workspaceWindows[w.id]];
+      if (tabs) {
+        w.tabs = tabs.map(createWorkspaceTab);
+      }
+    }
 
     await store.localPersistSet({ workspaces });
   }
