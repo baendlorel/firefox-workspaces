@@ -49,7 +49,7 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
   // Update indicator color and position indicators
   const updateIndicator = () => {
     const color = Color.create(currentHue, currentSaturation, currentValue, currentAlpha);
-    const hexa = color.toHexWithAlpha();
+    const hexa = color.toHexa();
     indicator.value = hexa;
     indicator.style.backgroundColor = hexa;
     indicator.style.color = color.brightness > 128 ? 'var(--dark)' : 'var(--light)';
