@@ -1,7 +1,5 @@
 // Content script for Workspaces extension
 // This script runs on all web pages to provide additional functionality
-import { Consts } from './lib/consts.js';
-
 (function () {
   'use strict';
 

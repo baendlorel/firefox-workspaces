@@ -1,5 +1,5 @@
 import './toolbar.css';
-import { Action, WORKSPACE_COLORS } from '@/lib/consts.js';
+import { WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
 import locale from '../../_locales/en/messages.json' with { type: 'json' };
 import { createWorkspace, createWorkspaceTab } from '@/lib/workspace.js';

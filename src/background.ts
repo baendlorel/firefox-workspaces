@@ -1,6 +1,6 @@
 import { i, $windowWorkspace, $notify } from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
-import { Action, Switch, Theme, NotProvided } from './lib/consts.js';
+import { NotProvided } from './lib/consts.js';
 import { $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';

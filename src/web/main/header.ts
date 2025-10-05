@@ -1,6 +1,5 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
-import { Consts, Action } from '@/lib/consts.js';
 import { Color } from '@/lib/color.js';
 import { i, $send } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';

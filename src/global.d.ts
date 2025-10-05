@@ -1,5 +1,4 @@
 import 'rollup-plugin-func-macro';
-import { Switch, Theme } from './lib/consts.ts';
 import type I18NEnMessage from '../_locales/en/messages.json';
 import type I18NZhMessage from '../_locales/zh_CN/messages.json';
 

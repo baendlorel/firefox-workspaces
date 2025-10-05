@@ -1,4 +1,3 @@
-import { Action, Switch, Theme } from '@/lib/consts.js';
 import { i, $send } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';
 import { confirmation } from './dialog/alerts.js';

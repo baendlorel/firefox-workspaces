@@ -1,5 +1,3 @@
-import { Action } from '@/lib/consts.js';
-
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('import') as HTMLInputElement;
 

@@ -1,44 +1,46 @@
-export const enum Consts {
-  InjectionFlag = 'kasukabe_tsumugi:workspaces',
-  DefaultColor = '#2da191',
-}
+declare global {
+  const enum Consts {
+    InjectionFlag = 'kasukabe_tsumugi:workspaces',
+    DefaultColor = '#2da191',
+  }
 
-export const enum Switch {
-  On = 'on',
-  Off = 'off',
-}
+  const enum Action {
+    /**
+     * Open workspace in a new window
+     */
+    Open,
 
-export const enum Theme {
-  Auto = 'auto',
-  Light = 'light',
-  Dark = 'dark',
-}
+    /**
+     * Toggle data synchronize
+     */
+    ToggleSync,
 
-export const enum Action {
-  /**
-   * Open workspace in a new window
-   */
-  Open,
+    /**
+     * Need this because tabs info can only be accessed in background script
+     */
+    Export,
 
-  /**
-   * Toggle data synchronize
-   */
-  ToggleSync,
+    /**
+     * The import file page sends data to background
+     */
+    ReturnFileData,
 
-  /**
-   * Need this because tabs info can only be accessed in background script
-   */
-  Export,
+    /**
+     * Used to open about and donate page
+     */
+    OpenPage,
+  }
 
-  /**
-   * The import file page sends data to background
-   */
-  ReturnFileData,
+  const enum Switch {
+    On = 'on',
+    Off = 'off',
+  }
 
-  /**
-   * Used to open about and donate page
-   */
-  OpenPage,
+  const enum Theme {
+    Auto = 'auto',
+    Light = 'light',
+    Dark = 'dark',
+  }
 }
 
 export const WORKSPACE_COLORS: HexColor[] = [

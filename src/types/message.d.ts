@@ -1,4 +1,4 @@
-import { Action, Switch } from '@/lib/consts.js';
+export {};
 
 declare global {
   // # requests

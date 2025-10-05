@@ -1,5 +1,3 @@
-import { Switch, Theme } from './consts.js';
-
 export const isValidSettings = (settings: Settings): settings is Settings => {
   if (typeof settings !== 'object' || settings === null) {
     return false;

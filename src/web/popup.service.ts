@@ -1,4 +1,3 @@
-import { Action } from '@/lib/consts.js';
 import { $windowWorkspace, $send } from '@/lib/ext-apis.js';
 import { $objectHash, $tdtDashed } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';

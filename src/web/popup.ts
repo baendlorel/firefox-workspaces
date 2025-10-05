@@ -1,5 +1,4 @@
 import { createView } from './view.js';
-import { Consts } from '@/lib/consts.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   createView();
