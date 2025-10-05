@@ -6,9 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
   for (let i = 0; i < list.length; i++) {
     const e = list[i];
     const key = (e as HTMLElement).dataset?.i18n;
+    if (key === 'about.version') {
+      e.textContent = 'v__VERSION__';
+    }
     if (typeof key === 'string') {
       e.textContent = $i(key as any);
-      logger.verbose(key, $i(key as any));
     }
   }
 });

@@ -341,13 +341,12 @@
   "import.opener": {
     "message": "选择文件"
   },
+  "about.title": {
+    "message": "关于"
+  },
   "about.name": {
     "message": "Firefox 工作区",
     "description": "About page app name"
-  },
-  "about.version": {
-    "message": "v0.0.0",
-    "description": "About page version"
   },
   "about.tagline": {
     "message": "在 FireFox 中实现类似 Edge 浏览器的工作区功能",

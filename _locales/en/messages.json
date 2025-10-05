@@ -340,13 +340,12 @@
   "import.opener": {
     "message": "Choose File"
   },
+  "about.title": {
+    "message": "About"
+  },
   "about.name": {
     "message": "Firefox Workspaces",
     "description": "About page app name"
-  },
-  "about.version": {
-    "message": "v0.0.0",
-    "description": "About page version"
   },
   "about.tagline": {
     "message": "Implement workspace feature similar to Edge browser in FireFox",
