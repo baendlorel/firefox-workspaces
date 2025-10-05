@@ -225,7 +225,7 @@ class WorkspaceBackground {
       const tabs = await browser.tabs.query({ active: true, currentWindow: true });
       const tab = tabs[0];
 
-      if (!tab || !tab.id) {
+      if (!tab || tab.id === undefined) {
         logger.error('No active tab found');
         return;
       }

@@ -23,10 +23,12 @@ import heartSvg from '@assets/heart.svg?raw';
 import gearSvg from '@assets/gear.svg?raw';
 import workspaceSvg from '@assets/workspace.svg?raw';
 
-const importData = async () =>
-  $send<ImportRequest>({
+const importData = function (this: Menu) {
+  this.close();
+  return $send<ImportRequest>({
     action: Action.Import,
   }).catch((e) => logger.error('Failed to trigger import:', e));
+};
 
 function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const contextMenu = new Menu([
