@@ -25,7 +25,7 @@
     "default_title": "Workspace Manager"
   },
   "icons": {
-    "128": "dist/icon-128.png"
+    "128": "dist/assets/icon-128.png"
   },
   "content_scripts": [
     {

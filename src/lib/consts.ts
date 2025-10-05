@@ -15,11 +15,30 @@ export const enum Theme {
 }
 
 export const enum Action {
+  /**
+   * Open workspace in a new window
+   */
   Open,
+
+  /**
+   * Toggle data synchronize
+   */
   ToggleSync,
+
+  /**
+   * Need this because tabs info can only be accessed in background script
+   */
   Export,
-  Import,
+
+  /**
+   * The import file page sends data to background
+   */
   ReturnFileData,
+
+  /**
+   * Used to open about and donate page
+   */
+  OpenPage,
 }
 
 export const WORKSPACE_COLORS: HexColor[] = [

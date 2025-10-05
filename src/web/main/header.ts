@@ -7,8 +7,6 @@ import { store } from '@/lib/storage.js';
 import popupService from '@web/popup.service.js';
 
 import { Menu } from '@comp/menu/index.js';
-import about from '@comp/about.js';
-import donate from '@comp/donate.js';
 import settings from '@comp/settings.js';
 import { btnWithIcon } from './icon.js';
 import { stringify } from './debug.js';
@@ -22,13 +20,6 @@ import bugSvg from '@assets/bug.svg?raw';
 import heartSvg from '@assets/heart.svg?raw';
 import gearSvg from '@assets/gear.svg?raw';
 import workspaceSvg from '@assets/workspace.svg?raw';
-
-const importData = function (this: Menu) {
-  this.close();
-  return $send<ImportRequest>({
-    action: Action.Import,
-  }).catch((e) => logger.error('Failed to trigger import:', e));
-};
 
 function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const contextMenu = new Menu([
@@ -57,14 +48,15 @@ function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
 }
 
 function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
-  const aboutDialog = about();
-  const donateDialog = donate();
   const settingsDialog = settings();
 
   const contextMenu = new Menu([
     {
       label: btnWithIcon(boxArrowDownSvg, i('import')),
-      action: importData,
+      action: function (this: Menu) {
+        this.close();
+        $send<OpenPageRequest>({ action: Action.OpenPage, page: 'import' });
+      },
     },
     {
       label: btnWithIcon(boxArrowUpSvg, i('export')),
@@ -92,15 +84,15 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
     {
       label: btnWithIcon(heartSvg, i('donate')),
       action: function (this) {
-        donateDialog.bus.emit('show');
         this.close();
+        $send<OpenPageRequest>({ action: Action.OpenPage, page: 'donate' });
       },
     },
     {
       label: btnWithIcon(workspaceSvg, i('about')),
       action: function (this) {
-        aboutDialog.bus.emit('show');
         this.close();
+        $send<OpenPageRequest>({ action: Action.OpenPage, page: 'about' });
       },
     },
   ]);

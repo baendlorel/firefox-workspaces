@@ -16,13 +16,14 @@ declare global {
     action: Action.Export;
   }
 
-  interface ImportRequest {
-    action: Action.Import;
-  }
-
   interface ReturnFileDataRequest {
     action: Action.ReturnFileData;
     data: string;
+  }
+
+  interface OpenPageRequest {
+    action: Action.OpenPage;
+    page: 'about' | 'donate' | 'import';
   }
 
   // Union type for all possible requests
@@ -30,8 +31,8 @@ declare global {
     | OpenRequest
     | ToggleSyncRequest
     | ExportRequest
-    | ImportRequest
-    | ReturnFileDataRequest;
+    | ReturnFileDataRequest
+    | OpenPageRequest;
 
   // # responses
   interface ErrorResponse {
@@ -54,7 +55,7 @@ declare global {
     [Action.Open]: CommonResponse;
     [Action.ToggleSync]: CommonResponse;
     [Action.Export]: CommonResponse;
-    [Action.Import]: CommonResponse;
     [Action.ReturnFileData]: ImportResponse;
+    [Action.OpenPage]: CommonResponse;
   };
 }

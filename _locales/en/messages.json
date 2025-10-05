@@ -336,5 +336,48 @@
   },
   "popup.file-input.opener": {
     "message": "Choose File"
+  },
+  "about.name": {
+    "message": "Firefox Workspaces",
+    "description": "About page app name"
+  },
+  "about.version": {
+    "message": "v0.0.0",
+    "description": "About page version"
+  },
+  "about.tagline": {
+    "message": "Implement workspace feature similar to Edge browser in FireFox",
+    "description": "About page tagline"
+  },
+  "about.subtitle": {
+    "message": "Organize and switch tab groups easily — import/export, color-coded workspaces, and create from open tabs.",
+    "description": "About page subtitle"
+  },
+  "about.features.fast": {
+    "message": "Lightning fast workspace switching"
+  },
+  "about.features.color": {
+    "message": "Beautiful color-coded organization"
+  },
+  "about.features.importExport": {
+    "message": "Import/Export your workspaces"
+  },
+  "about.features.createFromTabs": {
+    "message": "Create workspaces from current tabs"
+  },
+  "about.links.repository": {
+    "message": "Repository"
+  },
+  "about.links.reportIssues": {
+    "message": "Report Issues"
+  },
+  "about.links.changelog": {
+    "message": "Changelog"
+  },
+  "about.copyright": {
+    "message": "© Kasukabe Tsumugi • Licensed under MIT"
+  },
+  "about.contact": {
+    "message": "Contact: futami16237@gmail.com"
   }
 }

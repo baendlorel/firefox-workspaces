@@ -173,13 +173,11 @@ class WorkspaceBackground {
         await this.manager.saveAllTab();
         return { succ: true };
 
-      case Action.Import:
-        // Inject content script to active tab and trigger file import
-        await this.openFileInput();
+      case Action.OpenPage:
+        await this.openPage(message.page);
         return { succ: true };
 
       case Action.ReturnFileData: {
-        // Handle the actual import data from content script
         let obj: any = null;
         try {
           obj = JSON.parse(message.data);
@@ -219,6 +217,15 @@ class WorkspaceBackground {
   private openFileInput() {
     return browser.windows.create({
       url: 'dist/popup.file-input.html',
+      type: 'popup',
+      width: 320,
+      height: 350,
+    });
+  }
+
+  private openPage(fileName: string) {
+    return browser.windows.create({
+      url: `dist/${fileName}.html`,
       type: 'popup',
       width: 320,
       height: 350,

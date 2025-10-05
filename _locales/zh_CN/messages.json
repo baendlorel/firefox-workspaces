@@ -337,5 +337,48 @@
   },
   "popup.file-input.opener": {
     "message": "选择文件"
+  },
+  "about.name": {
+    "message": "Firefox 工作区",
+    "description": "About page app name"
+  },
+  "about.version": {
+    "message": "v0.0.0",
+    "description": "About page version"
+  },
+  "about.tagline": {
+    "message": "在 FireFox 中实现类似 Edge 浏览器的工作区功能",
+    "description": "About page tagline"
+  },
+  "about.subtitle": {
+    "message": "组织并快速切换标签组 — 导入/导出、颜色编码工作区，并从打开的标签创建工作区。",
+    "description": "About page subtitle"
+  },
+  "about.features.fast": {
+    "message": "闪电般快速的工作区切换"
+  },
+  "about.features.color": {
+    "message": "美观的颜色编码组织"
+  },
+  "about.features.importExport": {
+    "message": "导入/导出您的工作区"
+  },
+  "about.features.createFromTabs": {
+    "message": "从当前标签页创建工作区"
+  },
+  "about.links.repository": {
+    "message": "代码仓库"
+  },
+  "about.links.reportIssues": {
+    "message": "报告问题"
+  },
+  "about.links.changelog": {
+    "message": "更新日志"
+  },
+  "about.copyright": {
+    "message": "© Kasukabe Tsumugi • MIT 许可"
+  },
+  "about.contact": {
+    "message": "联系方式: futami16237@gmail.com"
   }
 }
