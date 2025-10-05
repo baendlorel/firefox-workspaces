@@ -15,11 +15,11 @@
     <img class="logo" src="./assets/logo.png">
     <label for="import" id="intro" data-i18n="import.intro"></label>
     <input type="file" id="import" accept=".json,application/json">
-    <button id="open-file-input" class="btn" style="margin-top:12px" data-i18n="import.opener"></button>
+    <button id="open-file-input" class="btn" style="margin-top:12px" data-i18n="import.opener" onclick="import.click()"></button>
   </div>
 
-  <script type="module" crossorigin src="./common.js"></script>
-  <script type="module" crossorigin src="./import.js"></script>
+  <script type="module" crossorigin src="/pages/common.ts"></script>
+  <script type="module" crossorigin src="/pages/import.ts"></script>
 </body>
 
 </html>

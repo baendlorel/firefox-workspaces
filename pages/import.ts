@@ -1,5 +1,8 @@
+import { Action } from '@/lib/consts.js';
+
 document.addEventListener('DOMContentLoaded', () => {
-  const input = document.getElementById('import');
+  const input = document.getElementById('import') as HTMLInputElement;
+
   input.addEventListener('change', async () => {
     if (!input.files || input.files.length === 0) {
       console.warn('No file selected');
@@ -17,7 +20,4 @@ document.addEventListener('DOMContentLoaded', () => {
     // todo 移动到一个新的文件夹里，专门放这些文件
     // todo 导入完成给个提示
   });
-
-  const opener = document.getElementById('open-file-input');
-  opener.onclick = () => input.click();
 });

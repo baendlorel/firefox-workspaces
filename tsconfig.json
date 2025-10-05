@@ -17,5 +17,5 @@
       "@comp/*": ["src/web/components/*"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts"]
+  "include": ["src/**/*.ts", "tests/**/*.ts", "pages/**/*.ts"]
 }

@@ -43,10 +43,11 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve('index.html'),
+        import: resolve('pages/import.html'),
+        about: resolve('pages/about.html'),
         background: resolve('src/background.ts'),
         content: resolve('src/content.ts'),
         popup: resolve('src/web/popup.ts'),
-        common: resolve('src/common.ts'),
       },
       output: {
         entryFileNames: '[name].js',
