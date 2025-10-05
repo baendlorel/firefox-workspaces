@@ -7,9 +7,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const file = input.files[0];
 
-    const data = await file.text();
-    console.log('file content', data);
-    browser.runtime.sendMessage({ action: Action.ReturnFileData, data });
+    try {
+      const text = await file.text();
+      const data = JSON.parse(text);
+      const result = await browser.runtime.sendMessage({ action: Action.ReturnFileData, data });
+    } catch (error) {
+      // display error
+    }
+    // todo 移动到一个新的文件夹里，专门放这些文件
     // todo 导入完成给个提示
   });
 

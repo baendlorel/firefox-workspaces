@@ -96,6 +96,7 @@ class WorkspaceBackground {
     await store.localStateSet({ _workspaceWindows, _windowTabs });
   }
 
+  // # listeners
   private registerListeners() {
     this.runtimeListeners();
     this.tabListeners();
@@ -105,8 +106,8 @@ class WorkspaceBackground {
   private runtimeListeners() {
     browser.runtime.onStartup.addListener(() => this.init());
     browser.runtime.onInstalled.addListener(() => this.init());
-    browser.runtime.onMessage.addListener(async (message) =>
-      this.handlePopupMessage(message).catch((e) => {
+    browser.runtime.onMessage.addListener(async (message, sender) =>
+      this.handlePopupMessage(message, sender).catch((e) => {
         logger.error('onMessage Error', e);
         return { succ: false, error: 'Error handling message.' };
       })
@@ -142,6 +143,7 @@ class WorkspaceBackground {
     });
   }
 
+  // # helpers
   private async refreshTab(info: Partial<ChangeInfo>) {
     const windowId = info.windowId ?? info.newWindowId ?? info.oldWindowId ?? NotProvided;
     if (windowId === NotProvided) {
@@ -154,7 +156,10 @@ class WorkspaceBackground {
     }
   }
 
-  private async handlePopupMessage(message: MessageRequest): Promise<MessageResponse> {
+  private async handlePopupMessage(
+    message: MessageRequest,
+    sender: browser.runtime.MessageSender
+  ): Promise<MessageResponse> {
     switch (message.action) {
       case Action.Open: {
         const data = await this.manager.open(message.workspace);
@@ -178,26 +183,7 @@ class WorkspaceBackground {
         return { succ: true };
 
       case Action.ReturnFileData: {
-        let obj: any = null;
-        try {
-          obj = JSON.parse(message.data);
-        } catch (error) {
-          // Show notification
-          const notificationId = await browser.notifications.create({
-            type: 'basic',
-            iconUrl: browser.runtime.getURL('public/icon-128.png'),
-            title: 'Import Failed',
-            message: error instanceof Error ? error.message : String(error),
-          });
-          setTimeout(() => browser.notifications.clear(notificationId), 5000);
-          return {
-            succ: false,
-            message: '',
-            addedCount: 0,
-          };
-        }
-
-        const result = await this.manager.importData(obj);
+        const result = await this.manager.importData(message.data as ExportData);
         $notify(result.message, 'Import');
         return result;
       }

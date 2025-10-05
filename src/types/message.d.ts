@@ -18,7 +18,7 @@ declare global {
 
   interface ReturnFileDataRequest {
     action: Action.ReturnFileData;
-    data: string;
+    data: unknown;
   }
 
   interface OpenPageRequest {
