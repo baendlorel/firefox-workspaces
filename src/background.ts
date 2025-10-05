@@ -41,7 +41,7 @@ class WorkspaceBackground {
     const local = await store.localGet();
     const { workspaces = NotProvided, settings = NotProvided, timestamp = NotProvided } = local;
 
-    // Brand new
+    // pattern matching
     if (timestamp === NotProvided && stimestamp === NotProvided) {
       logger.info('No existing data found, initializing with default values');
       await this.initLocalWith({});
@@ -250,6 +250,15 @@ class WorkspaceBackground {
     }
   }
 
+  private async openFileInput() {
+    browser.windows.create({
+      url: 'dist/src/web/popup.file-input.html',
+      type: 'popup',
+      width: 480,
+      height: 640,
+    });
+  }
+
   async initSync() {
     const EVERY_X_MINUTES = 5;
 
@@ -257,34 +266,23 @@ class WorkspaceBackground {
     if (this.syncer !== null) {
       return;
     }
-    logger.info('start sync');
 
     const task = async () => {
       logger.verbose('Sync storage on', $thm());
 
       // * Might change if more features are added
-      const local = await store.localGet('workspaces', 'settings').catch((e) => {
-        logger.error('Error while syncing, loading local', e);
-        return null;
-      });
-
-      if (local === null) {
-        scheduleNext();
-        return;
-      }
-
-      await store.syncSet(local).catch((e) => logger.error('Error while syncing, saving sync', e));
+      const local = await store.localGet('workspaces', 'settings');
+      await store.syncSet(local);
       scheduleNext();
     };
 
     const scheduleNext = () => {
-      const minute = new Date().getMinutes();
-      const delta = EVERY_X_MINUTES - (minute % EVERY_X_MINUTES);
-      // store timer id so it can be cancelled
+      const delta = EVERY_X_MINUTES - (new Date().getMinutes() % EVERY_X_MINUTES);
       this.syncer = setTimeout(task, delta * 60000);
     };
 
     // first schedule
+    logger.info('start sync');
     scheduleNext();
   }
 
