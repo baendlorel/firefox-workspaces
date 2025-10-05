@@ -55,8 +55,8 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1
       rollup-plugin-const-enum:
-        specifier: ^1.0.1
-        version: 1.0.1
+        specifier: ^1.1.0
+        version: 1.1.0
       rollup-plugin-func-macro:
         specifier: ^1.1.0
         version: 1.1.0(rollup@4.52.0)
@@ -1050,8 +1050,8 @@ packages:
     engines: {node: 20 || >=22}
     hasBin: true
 
-  rollup-plugin-const-enum@1.0.1:
-    resolution: {integrity: sha512-Le8p/dpwKOkFCxTDwhHcizUsH7JPwZW6l3awtPEGIsUw+m++E2GIVjtbH9vRxGSIUNibjzYTZeXJly3SYp5pKg==}
+  rollup-plugin-const-enum@1.1.0:
+    resolution: {integrity: sha512-raggTZfQNelomd9yZFOmeRaSVOqOlsJvCoK9NzyWXnPVbPipH3AQevmSPxdKzBK1OQeYhJoMnwkKIYyRF1vHPg==}
 
   rollup-plugin-func-macro@1.1.0:
     resolution: {integrity: sha512-PmkUBeB0c0sUo4JXrXgq1z/97I1+ZFO17HB9XM8lHwzxmBeQPRKums0M3tWaik7jxT2to+ItvK9rDmSd6AwBnw==}
@@ -2066,7 +2066,7 @@ snapshots:
       glob: 11.0.3
       package-json-from-dist: 1.0.1
 
-  rollup-plugin-const-enum@1.0.1: {}
+  rollup-plugin-const-enum@1.1.0: {}
 
   rollup-plugin-func-macro@1.1.0(rollup@4.52.0):
     dependencies:

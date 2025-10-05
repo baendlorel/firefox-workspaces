@@ -19,6 +19,26 @@
   </div>
 
   <script type="module" crossorigin src="./common.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const input = document.getElementById('import');
+      input.addEventListener('change', async () => {
+        if (!input.files || input.files.length === 0) {
+          logger.warn('No file selected');
+          return;
+        }
+        const file = input.files[0];
+
+        const data = await file.text();
+        logger.info('file content', data);
+        browser.runtime.sendMessage({ action: Action.ReturnFileData, data });
+        // todo 导入完成给个提示
+      });
+
+      const opener = document.getElementById('open-file-input');
+      opener.onclick = () => input.click();
+    });
+  </script>
 </body>
 
 </html>

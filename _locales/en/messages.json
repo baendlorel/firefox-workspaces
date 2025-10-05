@@ -331,13 +331,13 @@
   "new": {
     "message": "New"
   },
-  "popup.file-input.title": {
+  "import.title": {
     "message": "Workspace Data Import"
   },
-  "popup.file-input.intro": {
+  "import.intro": {
     "message": "Choose the file to import your workspace data"
   },
-  "popup.file-input.opener": {
+  "import.opener": {
     "message": "Choose File"
   },
   "about.name": {

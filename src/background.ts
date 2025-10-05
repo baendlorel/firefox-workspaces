@@ -214,15 +214,6 @@ class WorkspaceBackground {
     };
   }
 
-  private openFileInput() {
-    return browser.windows.create({
-      url: 'dist/popup.file-input.html',
-      type: 'popup',
-      width: 320,
-      height: 350,
-    });
-  }
-
   private openPage(fileName: string) {
     return browser.windows.create({
       url: `dist/${fileName}.html`,

@@ -332,13 +332,13 @@
   "new": {
     "message": "新建"
   },
-  "popup.file-input.title": {
+  "import.title": {
     "message": "工作区数据导入"
   },
-  "popup.file-input.intro": {
+  "import.intro": {
     "message": "选择文件来导入你的工作区数据"
   },
-  "popup.file-input.opener": {
+  "import.opener": {
     "message": "选择文件"
   },
   "about.name": {

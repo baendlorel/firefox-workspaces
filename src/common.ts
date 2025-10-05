@@ -4,7 +4,7 @@ import { i } from '@/lib/ext-apis.js';
 
 function createFileInput() {
   const label = $id('intro');
-  label.textContent = i('popup.file-input.intro');
+  label.textContent = i('import.intro');
 
   const input = $id('import') as HTMLInputElement;
   input.addEventListener('change', () => {
@@ -22,13 +22,13 @@ function createFileInput() {
 
   const opener = $id('open-file-input') as HTMLButtonElement;
   opener.onclick = () => input.click();
-  opener.textContent = i('popup.file-input.opener');
+  opener.textContent = i('import.opener');
 }
 
 document.addEventListener('load', () => {
   const title = document.querySelector('title');
   if (title) {
-    title.textContent = i('popup.file-input.title');
+    title.textContent = i('import.title');
   }
 });
 
