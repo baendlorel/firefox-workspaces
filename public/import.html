@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>File Input</title>
+  <title data-i18n="import.title">File Input</title>
   <link rel="stylesheet" href="./style.css">
   <link rel="shortcut icon" href="./assets/icon-128.png" type="image/x-icon">
 </head>
@@ -13,32 +13,13 @@
 
   <div id="app">
     <img class="logo" src="./assets/logo.png">
-    <label for="import" id="intro"></label>
+    <label for="import" id="intro" data-i18n="import.intro"></label>
     <input type="file" id="import" accept=".json,application/json">
-    <button id="open-file-input" class="btn" style="margin-top:12px"></button>
+    <button id="open-file-input" class="btn" style="margin-top:12px" data-i18n="import.opener"></button>
   </div>
 
   <script type="module" crossorigin src="./common.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const input = document.getElementById('import');
-      input.addEventListener('change', async () => {
-        if (!input.files || input.files.length === 0) {
-          logger.warn('No file selected');
-          return;
-        }
-        const file = input.files[0];
-
-        const data = await file.text();
-        logger.info('file content', data);
-        browser.runtime.sendMessage({ action: Action.ReturnFileData, data });
-        // todo 导入完成给个提示
-      });
-
-      const opener = document.getElementById('open-file-input');
-      opener.onclick = () => input.click();
-    });
-  </script>
+  <script type="module" crossorigin src="./import.js"></script>
 </body>
 
 </html>
