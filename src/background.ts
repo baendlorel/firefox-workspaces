@@ -175,7 +175,7 @@ class WorkspaceBackground {
 
       case Action.Import:
         // Inject content script to active tab and trigger file import
-        await this.injectContentScriptAndImport();
+        await this.openFileInput();
         return { succ: true };
 
       case Action.OpenFileInput:
@@ -219,40 +219,9 @@ class WorkspaceBackground {
     };
   }
 
-  private async injectContentScriptAndImport() {
-    try {
-      // Get active tab
-      const tabs = await browser.tabs.query({ active: true, currentWindow: true });
-      const tab = tabs[0];
-
-      if (!tab || tab.id === undefined) {
-        logger.error('No active tab found');
-        return;
-      }
-
-      // Inject content script
-      await browser.scripting.executeScript({
-        target: { tabId: tab.id },
-        files: ['dist/content.js'],
-      });
-
-      // Wait a bit for content script to initialize
-      await $sleep(200);
-
-      // Trigger file import in content script
-      const request: OpenFileInputRequest = { action: Action.OpenFileInput };
-      const reply = await browser.tabs.sendMessage(tab.id, request);
-      logger.succ('Message reply from content script:', reply);
-      $notify('Message reply from content script', 'Import');
-    } catch (error) {
-      logger.error('Failed to inject content script:', error);
-      $notify('Failed to inject content script', 'Import');
-    }
-  }
-
   private async openFileInput() {
     browser.windows.create({
-      url: 'dist/src/web/popup.file-input.html',
+      url: 'dist/popup.file-input.html',
       type: 'popup',
       width: 480,
       height: 640,

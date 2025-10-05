@@ -26,9 +26,7 @@ declare global {
 
   interface ReturnFileDataRequest {
     action: Action.ReturnFileData;
-    succ: boolean;
     data: string;
-    requestId: string;
   }
 
   // Union type for all possible requests
