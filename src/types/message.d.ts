@@ -20,10 +20,6 @@ declare global {
     action: Action.Import;
   }
 
-  interface OpenFileInputRequest {
-    action: Action.OpenFileInput;
-  }
-
   interface ReturnFileDataRequest {
     action: Action.ReturnFileData;
     data: string;
@@ -35,7 +31,6 @@ declare global {
     | ToggleSyncRequest
     | ExportRequest
     | ImportRequest
-    | OpenFileInputRequest
     | ReturnFileDataRequest;
 
   // # responses
@@ -53,19 +48,13 @@ declare global {
     addedCount: number;
   }
 
-  interface OpenFileInputResponse {
-    succ: boolean;
-    from: 'content' | 'background' | 'popup';
-  }
-
-  type MessageResponse = CommonResponse | ErrorResponse | ImportResponse | OpenFileInputResponse;
+  type MessageResponse = CommonResponse | ErrorResponse | ImportResponse;
 
   type MessageResponseMap = {
     [Action.Open]: CommonResponse;
     [Action.ToggleSync]: CommonResponse;
     [Action.Export]: CommonResponse;
     [Action.Import]: CommonResponse;
-    [Action.OpenFileInput]: OpenFileInputResponse;
     [Action.ReturnFileData]: ImportResponse;
   };
 }

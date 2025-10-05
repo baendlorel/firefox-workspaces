@@ -178,9 +178,6 @@ class WorkspaceBackground {
         await this.openFileInput();
         return { succ: true };
 
-      case Action.OpenFileInput:
-        return { succ: false, from: 'background' };
-
       case Action.ReturnFileData: {
         // Handle the actual import data from content script
         let obj: any = null;
@@ -219,8 +216,8 @@ class WorkspaceBackground {
     };
   }
 
-  private async openFileInput() {
-    browser.windows.create({
+  private openFileInput() {
+    return browser.windows.create({
       url: 'dist/popup.file-input.html',
       type: 'popup',
       width: 320,

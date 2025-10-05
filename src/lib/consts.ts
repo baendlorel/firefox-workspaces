@@ -19,7 +19,6 @@ export const enum Action {
   ToggleSync,
   Export,
   Import,
-  OpenFileInput,
   ReturnFileData,
 }
 
