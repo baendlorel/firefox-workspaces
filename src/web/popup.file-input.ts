@@ -1,13 +1,12 @@
 import { Action } from '@/lib/consts.js';
-import { h } from '@/lib/dom.js';
+import { $id } from '@/lib/dom.js';
+import { i } from '@/lib/ext-apis.js';
 
 function createFileInput() {
-  const h1 = h('h1', '', 'InputFile');
-  const input = h('input', {
-    type: 'file',
-    accept: '.json,application/json',
-  });
+  const label = $id('intro');
+  label.textContent = i('popup.file-input.intro');
 
+  const input = $id('import') as HTMLInputElement;
   input.addEventListener('change', () => {
     if (!input.files || input.files.length === 0) {
       logger.warn('No file selected');
@@ -21,10 +20,17 @@ function createFileInput() {
     });
   });
 
-  document.body.append(h1, input);
-
-  input.click();
+  const opener = $id('open-file-input') as HTMLButtonElement;
+  opener.onclick = () => input.click();
+  opener.textContent = i('popup.file-input.opener');
 }
+
+document.addEventListener('load', () => {
+  const title = document.querySelector('title');
+  if (title) {
+    title.textContent = i('popup.file-input.title');
+  }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   createFileInput();

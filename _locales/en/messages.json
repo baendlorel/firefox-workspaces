@@ -327,5 +327,14 @@
   },
   "new": {
     "message": "New"
+  },
+  "popup.file-input.title": {
+    "message": "Workspace Data Import"
+  },
+  "popup.file-input.intro": {
+    "message": "Choose the file to import your workspace data"
+  },
+  "popup.file-input.opener": {
+    "message": "Choose File"
   }
 }

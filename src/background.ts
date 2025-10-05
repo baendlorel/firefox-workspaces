@@ -223,8 +223,8 @@ class WorkspaceBackground {
     browser.windows.create({
       url: 'dist/popup.file-input.html',
       type: 'popup',
-      width: 480,
-      height: 640,
+      width: 320,
+      height: 350,
     });
   }
 

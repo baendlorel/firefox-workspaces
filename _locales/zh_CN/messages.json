@@ -328,5 +328,14 @@
   },
   "new": {
     "message": "新建"
+  },
+  "popup.file-input.title": {
+    "message": "工作区数据导入"
+  },
+  "popup.file-input.intro": {
+    "message": "选择文件来导入你的工作区数据"
+  },
+  "popup.file-input.opener": {
+    "message": "选择文件"
   }
 }
