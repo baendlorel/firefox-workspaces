@@ -46,6 +46,7 @@ export default defineConfig({
         background: resolve('src/background.ts'),
         content: resolve('src/content.ts'),
         popup: resolve('src/web/popup.ts'),
+        common: resolve('src/common.ts'),
       },
       output: {
         entryFileNames: '[name].js',

@@ -1,4 +1,7 @@
 {
+  "lang": {
+    "message": "zh"
+  },
   "extensionName": {
     "message": "Firefox 工作区",
     "description": "Extension name"

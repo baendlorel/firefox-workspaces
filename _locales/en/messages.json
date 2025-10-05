@@ -1,4 +1,7 @@
 {
+  "lang": {
+    "message": "en"
+  },
   "extensionName": {
     "message": "Firefox Workspaces",
     "description": "Extension name"
