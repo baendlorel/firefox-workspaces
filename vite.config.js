@@ -5,12 +5,12 @@ import { resolve } from 'path';
 import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import funcMacro from 'rollup-plugin-func-macro';
+import constEnum from 'rollup-plugin-const-enum';
 import tailwindcss from '@tailwindcss/vite';
 import tailwindcssPostcss from '@tailwindcss/postcss';
 import autoprefixer from 'autoprefixer';
 
 import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
-import { enumReplaceOpts } from './.scripts/inline-enum.mjs';
 
 const tsconfig = './tsconfig.build.json';
 
@@ -18,11 +18,12 @@ export default defineConfig({
   base: './',
   plugins: [
     typescript({ tsconfig }),
+    constEnum(),
     replace({
       preventAssignment: false,
       delimiters: ['', ''],
       // & replace loggers
-      values: { ...replaceLiteralOpts, ...enumReplaceOpts },
+      values: { ...replaceLiteralOpts },
     }),
     replace(replaceOpts),
     funcMacro(),

@@ -54,6 +54,9 @@ importers:
       rimraf:
         specifier: ^6.0.1
         version: 6.0.1
+      rollup-plugin-const-enum:
+        specifier: ^1.0.1
+        version: 1.0.1
       rollup-plugin-func-macro:
         specifier: ^1.1.0
         version: 1.1.0(rollup@4.52.0)
@@ -1046,6 +1049,9 @@ packages:
     resolution: {integrity: sha512-9dkvaxAsk/xNXSJzMgFqqMCuFgt2+KsOFek3TMLfo8NCPfWpBmqwyNn5Y+NX56QUYfCtsyhF3ayiboEoUmJk/A==}
     engines: {node: 20 || >=22}
     hasBin: true
+
+  rollup-plugin-const-enum@1.0.1:
+    resolution: {integrity: sha512-Le8p/dpwKOkFCxTDwhHcizUsH7JPwZW6l3awtPEGIsUw+m++E2GIVjtbH9vRxGSIUNibjzYTZeXJly3SYp5pKg==}
 
   rollup-plugin-func-macro@1.1.0:
     resolution: {integrity: sha512-PmkUBeB0c0sUo4JXrXgq1z/97I1+ZFO17HB9XM8lHwzxmBeQPRKums0M3tWaik7jxT2to+ItvK9rDmSd6AwBnw==}
@@ -2059,6 +2065,8 @@ snapshots:
     dependencies:
       glob: 11.0.3
       package-json-from-dist: 1.0.1
+
+  rollup-plugin-const-enum@1.0.1: {}
 
   rollup-plugin-func-macro@1.1.0(rollup@4.52.0):
     dependencies:
