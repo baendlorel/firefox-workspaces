@@ -102,16 +102,19 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
 }
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const addBtn = btn({ class: 'btn-text', title: i('workspace.new') }, i('button.new'));
-  const moreBtn = btn({ class: 'btn-text ms-1', title: i('button.more-actions') }, [
-    svg(listSvg, undefined, 18),
-  ]);
   const createMenu = createCreateMenu(bus);
   const moreActionMenu = createMoreActionMenu(bus);
 
-  const syncIcon = new SyncIcon();
   const title = h('h2', 'wb-header-title', i('workspace.title'));
-  const header = div('wb-header', [title, syncIcon.el, addBtn, moreBtn]);
+  const syncIcon = new SyncIcon();
+  const syncDiv = div({ title: i('workspace.sync-icon-title', { minute: Consts.SyncInterval }) }, [
+    syncIcon.el,
+  ]);
+  const addBtn = btn('btn-text', i('button.new'));
+  const moreBtn = btn({ class: 'btn-text', style: 'margin-top:2px' }, [
+    svg(listSvg, undefined, 18),
+  ]);
+  const header = div('wb-header', [title, syncDiv, addBtn, moreBtn]);
 
   bus.on('change-sync-state', (...args) => syncIcon.setStatus(...args));
 

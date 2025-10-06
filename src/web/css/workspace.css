@@ -13,10 +13,10 @@
 /* Sync Indicator */
 .sync-indicator {
   @apply flex items-center justify-center;
-  margin: 4px 0px; /* margin-top/bottom is same as btn's padding */
+  margin: 4px 0px 0px 0px; /* margin-top/bottom is same as btn's padding */
   width: 18px;
   height: 18px;
-  opacity: 0.4;
+  opacity: 0;
   color: #f7f8fa;
   transition:
     color 0.8s ease,

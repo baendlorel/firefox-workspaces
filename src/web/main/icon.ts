@@ -10,4 +10,4 @@ export const wbicon = (color: HexColor): HTMLSpanElement => {
 };
 
 export const btnWithIcon = (svgStr: string, label: string) =>
-  btn('btn-with-icon', [svg(svgStr, '#283343', 18), label]);
+  btn('btn-with-icon', [svg(svgStr, '#283343', 16), label]);
