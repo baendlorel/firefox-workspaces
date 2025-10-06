@@ -214,3 +214,14 @@ invalid的value会变为白色
 6. 同步成功时，syncIcon是绿色，8秒后又变回透明,可以用tansition 0.8s来做到
 7. 同步失败时，syncIcon是红色，不变透明。点击它会弹出info对话框，显示失败原因
 8. 如果settings.sync = off，那么这个syncIcon就看不见
+
+---
+
+syncIndicator导出是完全没必要的，我已经该回去了,header(bus)依然只需要返回header元素本身即可。然后，使用bus的事件触发来做到修改syncicon状态的效果，思路是：
+
+1. 在const.ts里新建const enum为可SyncState
+2. 在web.d.ts里增加一个事件类型为`change-sync-state`，可传入一个参数为SyncState类型
+3. 现在假设后台发起了一次同步
+4. background获取当前的popup页面，并调用其中的emit成员来触发`change-sync-state`事件，传入表示正在同步的信息；
+5. header.ts监听这个事件，并根据传入的状态来修改syncicon的状态
+6. 如果syncIcon正在转，请保持它至少转满1.2秒

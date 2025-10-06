@@ -30,4 +30,5 @@ type WorkspaceEditorEventMap = {
   'toggle-empty-state': (visible: boolean) => void;
   edit: (workspace: Workspace | null, tabs?: browser.tabs.Tab[]) => void;
   open: (workspace: Workspace) => void;
+  'change-sync-state': (state: SyncState) => void;
 };

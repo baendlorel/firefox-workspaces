@@ -10,6 +10,43 @@
   @apply font-medium text-shadow-lg/10 flex-1;
 }
 
+/* Sync Indicator */
+.sync-indicator {
+  @apply flex items-center justify-center;
+  display: none;
+  width: 18px;
+  height: 18px;
+  opacity: 0.6;
+  color: transparent;
+  transition:
+    color 0.8s ease,
+    opacity 0.3s ease;
+  cursor: default;
+}
+
+.sync-indicator.syncing {
+  color: currentColor;
+  animation: sync-rotate 1s linear infinite;
+}
+
+.sync-indicator.success {
+  color: #10b981; /* green-500 */
+}
+
+.sync-indicator.error {
+  color: #ef4444; /* red-500 */
+  cursor: pointer;
+}
+
+@keyframes sync-rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .wb-ul {
   @apply m-0 p-0 max-h-96 overflow-y-auto;
 }

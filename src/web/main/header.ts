@@ -4,6 +4,7 @@ import { Color } from '@/lib/color.js';
 import { i, $send } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';
 import popupService from '@web/popup.service.js';
+import { info } from '@comp/dialog/alerts.js';
 
 import { Menu } from '@comp/menu/index.js';
 import settings from '@comp/settings.js';
@@ -109,8 +110,67 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const moreActionMenu = createMoreActionMenu(bus);
 
   const syncIcon = svg(arrowRepeatSvg, null, 18);
+  syncIcon.classList.add('sync-indicator');
   const title = h('h2', 'wb-header-title', i('workspace.title'));
-  const header = div('wb-header', [title, addBtn, moreBtn]);
+  const header = div('wb-header', [title, syncIcon, addBtn, moreBtn]);
+
+  // Sync indicator state management
+  let errorMessage = '';
+  let successTimeout: number | null = null;
+  let syncingStartTime: number | null = null;
+  const MIN_SYNCING_DURATION = 1200; // 1.2 seconds
+
+  function setStatus(state: SyncState, errorMsg?: string) {
+    if (state === SyncState.Syncing) {
+      // Clear previous state
+      syncIcon.classList.remove('syncing', 'success', 'error');
+      if (successTimeout) {
+        clearTimeout(successTimeout);
+        successTimeout = null;
+      }
+      // Start syncing
+      syncIcon.classList.add('syncing');
+      syncingStartTime = Date.now();
+    } else {
+      // Calculate remaining time to meet minimum syncing duration
+      const syncingElapsed = syncingStartTime
+        ? Date.now() - syncingStartTime
+        : MIN_SYNCING_DURATION;
+      const remainingTime = Math.max(0, MIN_SYNCING_DURATION - syncingElapsed);
+
+      setTimeout(() => {
+        syncIcon.classList.remove('syncing', 'success', 'error');
+        if (successTimeout) {
+          clearTimeout(successTimeout);
+          successTimeout = null;
+        }
+
+        // Set new state
+        syncIcon.classList.add(state);
+
+        if (state === SyncState.Success) {
+          // Auto hide after 8 seconds
+          successTimeout = window.setTimeout(() => {
+            syncIcon.classList.remove('success');
+          }, 8000);
+        } else if (state === SyncState.Error) {
+          errorMessage = errorMsg || 'Unknown sync error';
+        }
+
+        syncingStartTime = null;
+      }, remainingTime);
+    }
+  }
+
+  // Handle sync icon click (show error details)
+  syncIcon.addEventListener('click', () => {
+    if (syncIcon.classList.contains('error')) {
+      info(errorMessage, i('dialog.type.danger'));
+    }
+  });
+
+  // todo syncicon改成class组件
+  bus.on('change-sync-state', setStatus);
 
   // # register events
   popupService.getWorkspaceOfCurrentWindow().then((workspace) => {

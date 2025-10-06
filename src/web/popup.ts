@@ -1,6 +1,17 @@
 import { createView } from './view.js';
 
-document.addEventListener('DOMContentLoaded', () => {
-  createView();
-  Reflect.set(window, Consts.InjectionFlag, true);
-});
+class Popup {
+  emit: ReturnType<typeof createView>['emit'];
+  on: ReturnType<typeof createView>['on'];
+  constructor() {
+    const view = createView();
+    this.emit = view.emit;
+    this.on = view.on;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => (window.popup = new Popup()));
+
+declare global {
+  var popup: Popup;
+}

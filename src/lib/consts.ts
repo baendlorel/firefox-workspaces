@@ -47,6 +47,12 @@ declare global {
     Light = 'light',
     Dark = 'dark',
   }
+
+  const enum SyncState {
+    Syncing,
+    Success,
+    Error,
+  }
 }
 
 export const WORKSPACE_COLORS: HexColor[] = [
