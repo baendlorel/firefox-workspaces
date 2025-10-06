@@ -13,5 +13,7 @@ class Popup {
 document.addEventListener('DOMContentLoaded', () => (window.popup = new Popup()));
 
 declare global {
-  var popup: Popup;
+  interface Window {
+    popup: Popup;
+  }
 }

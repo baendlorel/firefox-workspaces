@@ -211,6 +211,15 @@ class WorkspaceBackground {
     });
   }
 
+  private setSyncState(state: SyncState, errorMsg: string = '') {
+    const w = browser.extension.getViews({ type: 'popup' }).find((w) => w.popup);
+    if (!w) {
+      logger.info('Popup not opened, will not update sync state');
+      return;
+    }
+    w.popup.emit('change-sync-state', state, errorMsg);
+  }
+
   async initSync() {
     const EVERY_X_MINUTES = 5;
 
@@ -220,12 +229,18 @@ class WorkspaceBackground {
     }
 
     const task = async () => {
-      logger.verbose('Sync storage on', $thm());
+      try {
+        logger.verbose('Sync storage on', $thm());
 
-      // * Might change if more features are added
-      const local = await store.localGet('workspaces', 'settings');
-      await store.syncSet(local);
-      scheduleNext();
+        // * Might change if more features are added
+        const local = await store.localGet('workspaces', 'settings');
+        await store.syncSet(local);
+        this.setSyncState(SyncState.Success);
+      } catch (error) {
+        this.setSyncState(SyncState.Error, error instanceof Error ? error.message : String(error));
+      } finally {
+        scheduleNext();
+      }
     };
 
     const scheduleNext = () => {
