@@ -21,7 +21,7 @@ export const $notify = (message: string, time: number = 12000) =>
     .create({
       type: 'basic',
       iconUrl: browser.runtime.getURL('dist/assets/icon-128.png'),
-      title: i('extensionName'),
+      title: i('extension.name'),
       message,
     })
     .then((notificationId) => setTimeout(() => browser.notifications.clear(notificationId), time));

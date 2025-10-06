@@ -2,50 +2,50 @@
   "lang": {
     "message": "en"
   },
-  "extensionName": {
+  "extension.name": {
     "message": "Workspaces",
     "description": "Extension name"
   },
-  "extensionDescription": {
+  "extension.description": {
     "message": "A powerful workspace manager",
     "description": "Extension description"
   },
-  "workspace": {
+  "workspace.title": {
     "message": "Workspaces",
     "description": "Header title"
   },
-  "newWorkspace": {
+  "workspace.new": {
     "message": "Create a workspace"
   },
-  "createWithCurrentTabs": {
+  "workspace.create-with-current-tabs": {
     "message": "Save tabs to a workspace",
     "description": "Context menu item"
   },
-  "moreActions": {
+  "button.more-actions": {
     "message": "More Actions",
     "description": "More actions button tooltip"
   },
-  "noWorkspacesYet": {
+  "workspace.empty.no-workspaces": {
     "message": "No workspaces yet.",
     "description": "Empty state message"
   },
-  "createWorkspaceToGetStarted": {
+  "workspace.empty.get-started": {
     "message": "Create a new workspace to get started!",
     "description": "Empty state call to action"
   },
-  "import": {
+  "menu.import": {
     "message": "Import Data",
     "description": "Context menu item"
   },
-  "export": {
+  "menu.export": {
     "message": "Export Data",
     "description": "Context menu item"
   },
-  "debugInfo": {
+  "menu.debug-info": {
     "message": "Debug Info",
     "description": "Context menu item"
   },
-  "settings": {
+  "menu.settings": {
     "message": "Settings",
     "description": "Context menu item"
   },
@@ -59,66 +59,66 @@
   "donate.welcome": {
     "message": "If you interested in my work, welcome to my homepage to discover more projects!"
   },
-  "donate.clickhere": {
+  "donate.click-here": {
     "message": "Click here to visit"
   },
-  "editWorkspace": {
+  "dialog.workspace.edit": {
     "message": "Edit Workspace",
     "description": "Edit workspace dialog title"
   },
-  "newWorkspaceWithTabs": {
+  "dialog.workspace.new-with-tabs": {
     "message": "New Workspace with tabs",
     "description": "New workspace with tabs dialog title"
   },
-  "name": {
+  "workspace.field.name": {
     "message": "Name"
   },
-  "color": {
+  "workspace.field.color": {
     "message": "Color"
   },
-  "random": {
+  "button.random": {
     "message": "Random",
     "description": "Random name button"
   },
-  "generateRandomName": {
+  "button.generate-random-name": {
     "message": "Generate a random name",
     "description": "Random name button tooltip"
   },
-  "randomNamePart1": {
+  "workspace.random-name.part1": {
     "message": "Crimson,Azure,Golden,Silver,Emerald,Midnight,Silent,Hidden,Bright,Wandering,Lonely,Rapid,Calm,Bold"
   },
-  "randomNamePart2": {
+  "workspace.random-name.part2": {
     "message": " Haven, Harbor, Oasis, Sanctum, Vault, Garden, Grove, Pier, Station, Portal, Hub, Forge, Nexus, Realm"
   },
-  "delete": {
+  "button.delete": {
     "message": "Delete",
     "description": "Delete button"
   },
-  "deleteWorkspace": {
+  "button.delete-workspace": {
     "message": "Delete the workspace",
     "description": "Delete button tooltip"
   },
-  "cancel": {
+  "button.cancel": {
     "message": "Cancel",
     "description": "Cancel button"
   },
-  "cancelAndClose": {
+  "button.cancel-and-close": {
     "message": "Cancel and close dialog",
     "description": "Cancel button tooltip"
   },
-  "save": {
+  "button.save": {
     "message": "Save",
     "description": "Save button"
   },
-  "saveWorkspace": {
+  "button.save-workspace": {
     "message": "Save workspace",
     "description": "Save button tooltip"
   },
-  "pleaseEnterGroupName": {
+  "message.validation.enter-group-name": {
     "message": "Please enter a group name",
     "description": "Validation message"
   },
-  "confirmDeleteWorkspace": {
+  "message.confirm.delete-workspace": {
     "message": "Are you sure you want to delete \"{name}\"?",
     "description": "Delete confirmation message",
     "placeholders": {
@@ -128,124 +128,92 @@
       }
     }
   },
-  "theme": {
+  "settings.theme.label": {
     "message": "Theme",
     "description": "Theme setting label"
   },
-  "autoSystem": {
+  "settings.theme.auto": {
     "message": "Auto (System)",
     "description": "Auto theme option"
   },
-  "light": {
+  "settings.theme.light": {
     "message": "Light",
     "description": "Light theme option"
   },
-  "dark": {
+  "settings.theme.dark": {
     "message": "Dark",
     "description": "Dark theme option"
   },
-  "reset": {
+  "button.reset": {
     "message": "Reset",
     "description": "Reset button"
   },
-  "firefoxWorkspacesSettings": {
+  "dialog.settings.title": {
     "message": "Workspaces Settings",
     "description": "Settings dialog aria label"
   },
-  "closeSettingsDialog": {
+  "dialog.settings.close": {
     "message": "Close settings dialog",
     "description": "Close settings dialog tooltip"
   },
-  "resetSettings": {
+  "dialog.settings.reset": {
     "message": "Reset Settings",
     "description": "Reset settings confirmation title"
   },
-  "areYouSure": {
+  "message.confirm.are-you-sure": {
     "message": "Are you sure?",
     "description": "General confirmation message"
   },
-  "organizeTabs": {
-    "message": "Organize your tabs like a pro ✨",
-    "description": "About dialog subtitle"
-  },
-  "lightningFast": {
-    "message": "Lightning fast workspace switching",
-    "description": "Feature description"
-  },
-  "beautifulColorCoded": {
-    "message": "Beautiful color-coded organization",
-    "description": "Feature description"
-  },
-  "importExport": {
-    "message": "Import/Export your workspaces",
-    "description": "Feature description"
-  },
-  "createFromTabs": {
-    "message": "Create workspaces from current tabs",
-    "description": "Feature description"
-  },
-  "repository": {
-    "message": "Repository",
-    "description": "Repository link text"
-  },
-  "reportIssues": {
-    "message": "Report Issues",
-    "description": "Report issues link text"
-  },
-  "changelog": {
-    "message": "Changelog",
-    "description": "Changelog link text"
-  },
-  "information": {
+  "dialog.type.information": {
     "message": "Information",
     "description": "Information dialog title"
   },
-  "warning": {
+  "dialog.type.warning": {
     "message": "Warning",
     "description": "Warning dialog title"
   },
-  "danger": {
+  "dialog.type.danger": {
     "message": "Danger",
     "description": "Danger dialog title"
   },
-  "confirm": {
+  "dialog.type.confirm": {
     "message": "Confirm",
     "description": "Confirmation dialog title"
   },
-  "yes": {
+  "button.yes": {
     "message": "Yes",
     "description": "Yes button"
   },
-  "no": {
+  "button.no": {
     "message": "No",
     "description": "No button"
   },
-  "importSuccessful": {
+  "message.import.success": {
     "message": "Import successful!",
     "description": "Import success message"
   },
-  "import.summary": {
+  "message.import.summary": {
     "message": "Successfully imported {added} workspace(s)",
     "description": "Summary message after import"
   },
-  "import.summary-skipped": {
+  "message.import.summary-skipped": {
     "message": ". {skipped} workspace(s) skipped (already exists)",
     "description": "Summary message after import"
   },
-  "import.invalid-hash": {
+  "message.import.invalid-hash": {
     "message": "Hash validation failed, your data might be corrupted."
   },
-  "import.invalid-workspaces": {
+  "message.import.invalid-workspaces": {
     "message": "Workspaces array data validation failed, your data might be corrupted."
   },
-  "import.invalid-settings": {
+  "message.import.invalid-settings": {
     "message": "Settings validation failed, your data might be corrupted."
   },
-  "exportFailed": {
+  "message.export.failed": {
     "message": "Export failed",
     "description": "Export failed message"
   },
-  "failedToParseFile": {
+  "message.error.parse-file": {
     "message": "Failed to parse file: {error}",
     "description": "File parse error message",
     "placeholders": {
@@ -255,27 +223,27 @@
       }
     }
   },
-  "failedToLoadWorkGroups": {
+  "message.error.load-workgroups": {
     "message": "Failed to load work groups",
     "description": "Load error message"
   },
-  "failedToSaveWorkspace": {
+  "message.error.save-workspace": {
     "message": "Failed to save workspace, Please try again.",
     "description": "Save error message"
   },
-  "failedToDeleteWorkspace": {
+  "message.error.delete-workspace": {
     "message": "Failed to delete workspace, Please try again.",
     "description": "Delete error message"
   },
-  "addToWorkspaces": {
+  "menu.add-to-workspaces": {
     "message": "Add to Workspaces",
     "description": "Browser context menu item"
   },
-  "justNow": {
+  "time.just-now": {
     "message": "just now",
     "description": "Time indicator"
   },
-  "minutesAgo": {
+  "time.minutes-ago": {
     "message": "{minutes} minute(s) ago",
     "description": "Time indicator",
     "placeholders": {
@@ -285,67 +253,67 @@
       }
     }
   },
-  "clearCache": {
+  "debug.clear-cache": {
     "message": "Clear Cache",
     "description": "Debug: clear cache button"
   },
-  "clearAllMockData": {
+  "debug.clear-all-mock-data": {
     "message": "Clear all mock workspace data from localStorage",
     "description": "Debug: clear cache tooltip"
   },
-  "randomWorkspaces": {
+  "debug.random-workspaces": {
     "message": "Random 3 WS",
     "description": "Debug: create random workspaces button"
   },
-  "setCurrent": {
+  "debug.set-current": {
     "message": "Set Current",
     "description": "Debug: set current button"
   },
-  "success": {
+  "debug.success": {
     "message": "Success",
     "description": "Debug: success checkbox label"
   },
-  "failedToInitialize": {
+  "message.error.initialize": {
     "message": "Failed to initialize",
     "description": "Initialization error message"
   },
-  "confirmSelection": {
+  "button.confirm-selection": {
     "message": "Confirm selection",
     "description": "Confirm selection tooltip"
   },
-  "lastUpdatedAt": {
+  "time.last-updated-at": {
     "message": "last updated at"
   },
-  "syncData": {
+  "settings.sync.label": {
     "message": "Synchroize",
     "description": "Toggle to enable data sync via browser.storage.sync"
   },
-  "syncDataDescription": {
+  "settings.sync.description": {
     "message": "Synchroize your workspace data across different devices"
   },
-  "failedToLoadState": {
+  "message.error.load-state": {
     "message": "Failed to load plugin state data",
     "description": "Load state error message"
   },
-  "on": {
+  "settings.toggle.on": {
     "message": "On"
   },
-  "off": {
+  "settings.toggle.off": {
     "message": "Off"
   },
-  "new": {
+  "button.new": {
     "message": "New"
   },
-  "import.title": {
+  "dialog.import.title": {
     "message": "Workspace Data Import"
   },
-  "import.intro": {
+  "dialog.import.intro": {
     "message": "Choose the file to import your workspace data"
   },
-  "import.opener": {
+  "dialog.import.choose-file": {
     "message": "Choose File"
   },
-  "about": {
+  "menu.about": {
     "message": "About",
     "description": "Context menu item"
   },
@@ -367,25 +335,25 @@
     "message": "Organize and switch tab groups easily — import/export, color-coded workspaces, and create from open tabs.",
     "description": "About page subtitle"
   },
-  "about.features.fast": {
+  "about.feature.fast": {
     "message": "Lightning fast workspace switching"
   },
-  "about.features.color": {
+  "about.feature.color": {
     "message": "Beautiful color-coded organization"
   },
-  "about.features.importExport": {
+  "about.feature.import-export": {
     "message": "Import/Export your workspaces"
   },
-  "about.features.createFromTabs": {
+  "about.feature.create-from-tabs": {
     "message": "Create workspaces from current tabs"
   },
-  "about.links.repository": {
+  "about.link.repository": {
     "message": "Repository"
   },
-  "about.links.reportIssues": {
+  "about.link.report-issues": {
     "message": "Report Issues"
   },
-  "about.links.changelog": {
+  "about.link.changelog": {
     "message": "Changelog"
   },
   "about.copyright": {

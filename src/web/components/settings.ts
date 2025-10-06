@@ -12,31 +12,37 @@ import { radio, getRadioValue, selectRadioValue } from './radio.js';
 export default () => {
   // Theme selection
   const themeRadio = div('form-group', [
-    h('label', { for: 'theme' }, i('theme')),
+    h('label', { for: 'theme' }, i('settings.theme.label')),
     div('flex gap-2', [
-      radio('theme', Theme.Auto, i('autoSystem')),
-      radio('theme', Theme.Light, i('light')),
-      radio('theme', Theme.Dark, i('dark')),
+      radio('theme', Theme.Auto, i('settings.theme.auto')),
+      radio('theme', Theme.Light, i('settings.theme.light')),
+      radio('theme', Theme.Dark, i('settings.theme.dark')),
     ]),
   ]);
   themeRadio.style.display = 'none'; // # hide theme setting for now
 
   // Sync toggle
   const syncRadio = div('form-group', [
-    h('label', { for: 'sync' }, [i('syncData'), h('div', 'description', i('syncDataDescription'))]),
-    div('flex gap-2', [radio('sync', 'on', i('on')), radio('sync', 'off', i('off'))]),
+    h('label', { for: 'sync' }, [
+      i('settings.sync.label'),
+      h('div', 'description', i('settings.sync.description')),
+    ]),
+    div('flex gap-2', [
+      radio('sync', 'on', i('settings.toggle.on')),
+      radio('sync', 'off', i('settings.toggle.off')),
+    ]),
   ]);
 
-  const resetBtn = btn('btn btn-secondary', i('reset'));
-  const saveBtn = btn('btn btn-primary ms-2', i('save'));
+  const resetBtn = btn('btn btn-secondary', i('button.reset'));
+  const saveBtn = btn('btn btn-primary ms-2', i('button.save'));
 
   const { dialog, closeBtn } = createDialog(
-    i('settings'),
+    i('menu.settings'),
     [themeRadio, syncRadio],
     [resetBtn, saveBtn]
   );
-  dialog.setAttribute('aria-label', i('firefoxWorkspacesSettings'));
-  closeBtn.title = i('closeSettingsDialog');
+  dialog.setAttribute('aria-label', i('dialog.settings.title'));
+  closeBtn.title = i('dialog.settings.close');
 
   // # register events
   saveBtn.addEventListener('click', async () => {
@@ -58,7 +64,7 @@ export default () => {
   });
 
   resetBtn.addEventListener('click', async () => {
-    const yes = await confirmation(i('resetSettings'), i('areYouSure'));
+    const yes = await confirmation(i('dialog.settings.reset'), i('message.confirm.are-you-sure'));
     if (!yes) {
       return;
     }

@@ -4,5 +4,5 @@ import { i } from '@/lib/ext-apis.js';
 export default () =>
   div('version', [
     h('p', '', ['v', `__VERSION__`]),
-    h('p', '', `${i('lastUpdatedAt')} __DATE_TIME__`),
+    h('p', '', `${i('time.last-updated-at')} __DATE_TIME__`),
   ]);

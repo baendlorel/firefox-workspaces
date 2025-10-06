@@ -2,7 +2,7 @@ import { btn } from '@/lib/dom.js';
 import { i } from '@/lib/ext-apis.js';
 import { createDialog } from './index.js';
 
-export const info = (message: string, title: string = i('information')) => {
+export const info = (message: string, title: string = i('dialog.type.information')) => {
   return new Promise<void>((resolve) => {
     const dialog = createDialog(title, message).dialog;
     dialog.bus.on('closed', resolve);
@@ -11,7 +11,7 @@ export const info = (message: string, title: string = i('information')) => {
   });
 };
 
-export const warning = (message: string, title: string = i('warning')) => {
+export const warning = (message: string, title: string = i('dialog.type.warning')) => {
   return new Promise<void>((resolve) => {
     const dialog = createDialog(title, message).dialog;
     dialog.bus.on('closed', resolve);
@@ -21,7 +21,7 @@ export const warning = (message: string, title: string = i('warning')) => {
   });
 };
 
-export const danger = (message: string, title: string = i('danger')) => {
+export const danger = (message: string, title: string = i('dialog.type.danger')) => {
   return new Promise<void>((resolve) => {
     const dialog = createDialog(title, message).dialog;
     dialog.bus.on('closed', resolve);
@@ -34,12 +34,12 @@ export const danger = (message: string, title: string = i('danger')) => {
 /**
  * Since `confirm` is taken
  */
-export const confirmation = (message: string, title: string = i('confirm')) => {
+export const confirmation = (message: string, title: string = i('dialog.type.confirm')) => {
   return new Promise<boolean>((resolve) => {
-    const yesBtn = btn('btn btn-primary ms-2', i('yes'));
-    yesBtn.title = i('yes');
-    const noBtn = btn('btn btn-secondary', i('no'));
-    yesBtn.title = i('no');
+    const yesBtn = btn('btn btn-primary ms-2', i('button.yes'));
+    yesBtn.title = i('button.yes');
+    const noBtn = btn('btn btn-secondary', i('button.no'));
+    yesBtn.title = i('button.no');
     const dialog = createDialog(title, message, [noBtn, yesBtn]).dialog;
 
     yesBtn.onclick = () => {

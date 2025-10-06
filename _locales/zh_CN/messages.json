@@ -2,51 +2,51 @@
   "lang": {
     "message": "zh"
   },
-  "extensionName": {
+  "extension.name": {
     "message": "工作区",
     "description": "Extension name"
   },
-  "extensionDescription": {
+  "extension.description": {
     "message": "一个强大的工作区管理器",
     "description": "Extension description"
   },
-  "workspace": {
+  "workspace.title": {
     "message": "工作区",
     "description": "Header title"
   },
-  "newWorkspace": {
+  "workspace.new": {
     "message": "创建工作区",
     "description": "New workspace button tooltip"
   },
-  "createWithCurrentTabs": {
+  "workspace.create-with-current-tabs": {
     "message": "将选项卡保存到工作区",
     "description": "Context menu item"
   },
-  "moreActions": {
+  "button.more-actions": {
     "message": "更多操作",
     "description": "More actions button tooltip"
   },
-  "noWorkspacesYet": {
+  "workspace.empty.no-workspaces": {
     "message": "还没有工作区。",
     "description": "Empty state message"
   },
-  "createWorkspaceToGetStarted": {
+  "workspace.empty.get-started": {
     "message": "创建一个新工作区开始使用！",
     "description": "Empty state call to action"
   },
-  "import": {
+  "menu.import": {
     "message": "导入数据",
     "description": "Context menu item"
   },
-  "export": {
+  "menu.export": {
     "message": "导出数据",
     "description": "Context menu item"
   },
-  "debugInfo": {
+  "menu.debug-info": {
     "message": "调试信息",
     "description": "Context menu item"
   },
-  "settings": {
+  "menu.settings": {
     "message": "设置",
     "description": "Context menu item"
   },
@@ -60,66 +60,66 @@
   "donate.welcome": {
     "message": "如果你对本插件感兴趣，欢迎访问我的主页，发现更多有趣的项目！"
   },
-  "donate.clickhere": {
+  "donate.click-here": {
     "message": "点此访问"
   },
-  "editWorkspace": {
+  "dialog.workspace.edit": {
     "message": "编辑工作区",
     "description": "Edit workspace dialog title"
   },
-  "newWorkspaceWithTabs": {
+  "dialog.workspace.new-with-tabs": {
     "message": "新建工作区（包含标签页）",
     "description": "New workspace with tabs dialog title"
   },
-  "name": {
+  "workspace.field.name": {
     "message": "名称"
   },
-  "color": {
+  "workspace.field.color": {
     "message": "颜色"
   },
-  "random": {
+  "button.random": {
     "message": "随机",
     "description": "Random name button"
   },
-  "generateRandomName": {
+  "button.generate-random-name": {
     "message": "生成随机名称",
     "description": "Random name button tooltip"
   },
-  "randomNamePart1": {
+  "workspace.random-name.part1": {
     "message": "赤焰,碧蓝,金辉,银月,翠影,午夜,静谧,隐秘,明亮,流浪,孤独,疾风,安静,勇敢"
   },
-  "randomNamePart2": {
+  "workspace.random-name.part2": {
     "message": "港湾,避风港,绿洲,圣地,宝库,花园,树林,码头,车站,传送门,枢纽,熔炉,连接点,领域"
   },
-  "delete": {
+  "button.delete": {
     "message": "删除",
     "description": "Delete button"
   },
-  "deleteWorkspace": {
+  "button.delete-workspace": {
     "message": "删除工作区",
     "description": "Delete button tooltip"
   },
-  "cancel": {
+  "button.cancel": {
     "message": "取消",
     "description": "Cancel button"
   },
-  "cancelAndClose": {
+  "button.cancel-and-close": {
     "message": "取消并关闭对话框",
     "description": "Cancel button tooltip"
   },
-  "save": {
+  "button.save": {
     "message": "保存",
     "description": "Save button"
   },
-  "saveWorkspace": {
+  "button.save-workspace": {
     "message": "保存工作区",
     "description": "Save button tooltip"
   },
-  "pleaseEnterGroupName": {
+  "message.validation.enter-group-name": {
     "message": "请输入组名称",
     "description": "Validation message"
   },
-  "confirmDeleteWorkspace": {
+  "message.confirm.delete-workspace": {
     "message": "确定要删除「{name}」吗？",
     "description": "Delete confirmation message",
     "placeholders": {
@@ -129,124 +129,92 @@
       }
     }
   },
-  "theme": {
+  "settings.theme.label": {
     "message": "主题",
     "description": "Theme setting label"
   },
-  "autoSystem": {
+  "settings.theme.auto": {
     "message": "自动（跟随系统）",
     "description": "Auto theme option"
   },
-  "light": {
+  "settings.theme.light": {
     "message": "浅色",
     "description": "Light theme option"
   },
-  "dark": {
+  "settings.theme.dark": {
     "message": "深色",
     "description": "Dark theme option"
   },
-  "reset": {
+  "button.reset": {
     "message": "重置",
     "description": "Reset button"
   },
-  "firefoxWorkspacesSettings": {
+  "dialog.settings.title": {
     "message": "工作区设置",
     "description": "Settings dialog aria label"
   },
-  "closeSettingsDialog": {
+  "dialog.settings.close": {
     "message": "关闭设置对话框",
     "description": "Close settings dialog tooltip"
   },
-  "resetSettings": {
+  "dialog.settings.reset": {
     "message": "重置设置",
     "description": "Reset settings confirmation title"
   },
-  "areYouSure": {
+  "message.confirm.are-you-sure": {
     "message": "您确定吗？",
     "description": "General confirmation message"
   },
-  "organizeTabs": {
-    "message": "像专家一样管理你的标签页 ✨",
-    "description": "About dialog subtitle"
-  },
-  "lightningFast": {
-    "message": "闪电般快速的工作区切换",
-    "description": "Feature description"
-  },
-  "beautifulColorCoded": {
-    "message": "美观的颜色编码组织",
-    "description": "Feature description"
-  },
-  "importExport": {
-    "message": "导入/导出您的工作区",
-    "description": "Feature description"
-  },
-  "createFromTabs": {
-    "message": "从当前标签页创建工作区",
-    "description": "Feature description"
-  },
-  "repository": {
-    "message": "代码仓库",
-    "description": "Repository link text"
-  },
-  "reportIssues": {
-    "message": "报告问题",
-    "description": "Report issues link text"
-  },
-  "changelog": {
-    "message": "更新日志",
-    "description": "Changelog link text"
-  },
-  "information": {
+  "dialog.type.information": {
     "message": "信息",
     "description": "Information dialog title"
   },
-  "warning": {
+  "dialog.type.warning": {
     "message": "警告",
     "description": "Warning dialog title"
   },
-  "danger": {
+  "dialog.type.danger": {
     "message": "危险",
     "description": "Danger dialog title"
   },
-  "confirm": {
+  "dialog.type.confirm": {
     "message": "确认",
     "description": "Confirmation dialog title"
   },
-  "yes": {
+  "button.yes": {
     "message": "是",
     "description": "Yes button"
   },
-  "no": {
+  "button.no": {
     "message": "否",
     "description": "No button"
   },
-  "importSuccessful": {
+  "message.import.success": {
     "message": "导入成功！",
     "description": "Import success message"
   },
-  "import.summary": {
+  "message.import.summary": {
     "message": "成功导入 {added} 个工作区",
     "description": "Summary message after import"
   },
-  "import.summary-skipped": {
+  "message.import.summary-skipped": {
     "message": "，忽略了已存在的 {skipped} 个工作区",
     "description": "Summary message after import"
   },
-  "import.invalid-hash": {
+  "message.import.invalid-hash": {
     "message": "Hash校验失败，文件内容无效"
   },
-  "import.invalid-workspaces": {
+  "message.import.invalid-workspaces": {
     "message": "Workspaces字段校验失败，文件内容无效"
   },
-  "import.invalid-settings": {
+  "message.import.invalid-settings": {
     "message": "Settings字段校验失败，文件内容无效"
   },
-  "exportFailed": {
+  "message.export.failed": {
     "message": "导出失败",
     "description": "Export failed message"
   },
-  "failedToParseFile": {
+  "message.error.parse-file": {
     "message": "解析文件失败：{error}",
     "description": "File parse error message",
     "placeholders": {
@@ -256,27 +224,27 @@
       }
     }
   },
-  "failedToLoadWorkGroups": {
+  "message.error.load-workgroups": {
     "message": "加载工作组失败",
     "description": "Load error message"
   },
-  "failedToSaveWorkspace": {
+  "message.error.save-workspace": {
     "message": "保存工作区失败，请重试。",
     "description": "Save error message"
   },
-  "failedToDeleteWorkspace": {
+  "message.error.delete-workspace": {
     "message": "删除工作区失败，请重试。",
     "description": "Delete error message"
   },
-  "addToWorkspaces": {
+  "menu.add-to-workspaces": {
     "message": "添加到工作区",
     "description": "Browser context menu item"
   },
-  "justNow": {
+  "time.just-now": {
     "message": "刚刚",
     "description": "Time indicator"
   },
-  "minutesAgo": {
+  "time.minutes-ago": {
     "message": "{minutes} 分钟前",
     "description": "Time indicator",
     "placeholders": {
@@ -286,67 +254,67 @@
       }
     }
   },
-  "clearCache": {
+  "debug.clear-cache": {
     "message": "清除缓存",
     "description": "Debug: clear cache button"
   },
-  "clearAllMockData": {
+  "debug.clear-all-mock-data": {
     "message": "从本地存储中清除所有模拟工作区数据",
     "description": "Debug: clear cache tooltip"
   },
-  "randomWorkspaces": {
+  "debug.random-workspaces": {
     "message": "随机 3 个工作区",
     "description": "Debug: create random workspaces button"
   },
-  "setCurrent": {
+  "debug.set-current": {
     "message": "设为当前",
     "description": "Debug: set current button"
   },
-  "success": {
+  "debug.success": {
     "message": "成功",
     "description": "Debug: success checkbox label"
   },
-  "failedToInitialize": {
+  "message.error.initialize": {
     "message": "初始化失败",
     "description": "Initialization error message"
   },
-  "confirmSelection": {
+  "button.confirm-selection": {
     "message": "确认选择",
     "description": "Confirm selection tooltip"
   },
-  "lastUpdatedAt": {
+  "time.last-updated-at": {
     "message": "最近更新于"
   },
-  "syncData": {
+  "settings.sync.label": {
     "message": "同步数据",
     "description": "是否启用通过 browser.storage.sync 同步数据"
   },
-  "syncDataDescription": {
+  "settings.sync.description": {
     "message": "在您的不同设备之间同步工作区数据"
   },
-  "failedToLoadState": {
+  "message.error.load-state": {
     "message": "加载插件数据失败",
     "description": "Load state error message"
   },
-  "on": {
+  "settings.toggle.on": {
     "message": "开启"
   },
-  "off": {
+  "settings.toggle.off": {
     "message": "关闭"
   },
-  "new": {
+  "button.new": {
     "message": "新建"
   },
-  "import.title": {
+  "dialog.import.title": {
     "message": "工作区数据导入"
   },
-  "import.intro": {
+  "dialog.import.intro": {
     "message": "选择文件来导入你的工作区数据"
   },
-  "import.opener": {
+  "dialog.import.choose-file": {
     "message": "选择文件"
   },
-  "about": {
+  "menu.about": {
     "message": "关于",
     "description": "Context menu item"
   },
@@ -367,25 +335,25 @@
     "message": "组织并快速切换标签组 — 导入/导出、颜色编码工作区，并从打开的标签创建工作区。",
     "description": "About page subtitle"
   },
-  "about.features.fast": {
+  "about.feature.fast": {
     "message": "闪电般快速的工作区切换"
   },
-  "about.features.color": {
+  "about.feature.color": {
     "message": "美观的颜色编码组织"
   },
-  "about.features.importExport": {
+  "about.feature.import-export": {
     "message": "导入/导出您的工作区"
   },
-  "about.features.createFromTabs": {
+  "about.feature.create-from-tabs": {
     "message": "从当前标签页创建工作区"
   },
-  "about.links.repository": {
+  "about.link.repository": {
     "message": "代码仓库"
   },
-  "about.links.reportIssues": {
+  "about.link.report-issues": {
     "message": "报告问题"
   },
-  "about.links.changelog": {
+  "about.link.changelog": {
     "message": "更新日志"
   },
   "about.copyright": {

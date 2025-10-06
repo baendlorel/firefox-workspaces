@@ -197,3 +197,7 @@ invalid的value会变为白色
 5. 导入完成后，可以消除content.js注入
 6. 在background.ts里弹一个notification来展示导入结果。
 7. 导入逻辑中，workspaces字段只新增不覆盖，settings字段覆盖
+
+---
+
+早期由其他ai生成的`_locales`文件中，键名不是很统一，不是很规范。后来我发现，采取`xxx.aaa-bbb-ccc.xxx-yyy`这个格式，可读性是最好的，也很清晰。请你帮我把格式全部改成这种，对应文件也要修改。

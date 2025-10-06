@@ -21,7 +21,7 @@ class WorkspaceBackground {
     const updatedAt = new Date('__DATE_TIME__');
     const delta = Date.now() - updatedAt.getTime();
     const min = Math.floor(delta / 60000);
-    const time = min < 1 ? i('justNow') : i('minutesAgo', min);
+    const time = min < 1 ? i('time.just-now') : i('time.minutes-ago', min);
     logger.info('Updated before ' + time);
 
     this.manager = new WorkspaceManager();

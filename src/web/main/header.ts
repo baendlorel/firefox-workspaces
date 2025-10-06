@@ -23,7 +23,7 @@ import workspaceSvg from '@assets/workspace.svg?raw';
 function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const contextMenu = new Menu([
     {
-      label: btnWithIcon(bookmarkPlusSvg, i('createWithCurrentTabs')),
+      label: btnWithIcon(bookmarkPlusSvg, i('workspace.create-with-current-tabs')),
       action: async function (this) {
         // Get current window tabs
         const currentWindow = await browser.windows.getCurrent();
@@ -35,7 +35,7 @@ function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
       },
     },
     {
-      label: btnWithIcon(plusSvg, i('newWorkspace')),
+      label: btnWithIcon(plusSvg, i('workspace.new')),
       action: async function (this) {
         bus.emit('edit', null);
         this.close();
@@ -51,14 +51,14 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
 
   const contextMenu = new Menu([
     {
-      label: btnWithIcon(boxArrowDownSvg, i('import')),
+      label: btnWithIcon(boxArrowDownSvg, i('menu.import')),
       action: function (this: Menu) {
         this.close();
         $send<OpenPageRequest>({ action: Action.OpenPage, page: PopupPage.Import });
       },
     },
     {
-      label: btnWithIcon(boxArrowUpSvg, i('export')),
+      label: btnWithIcon(boxArrowUpSvg, i('menu.export')),
       action: async function (this) {
         await popupService.exportData();
         this.close();
@@ -66,14 +66,14 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
     },
     Menu.Divider,
     {
-      label: btnWithIcon(bugSvg, i('debugInfo')),
+      label: btnWithIcon(bugSvg, i('menu.debug-info')),
       action: async () => {
         const { workspaces } = await store.localGet('workspaces');
         logger.debug('workspaces', stringify(workspaces));
       },
     },
     {
-      label: btnWithIcon(gearSvg, i('settings')),
+      label: btnWithIcon(gearSvg, i('menu.settings')),
       action: function (this) {
         settingsDialog.bus.emit('show');
         this.close();
@@ -88,7 +88,7 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
       },
     },
     {
-      label: btnWithIcon(workspaceSvg, i('about')),
+      label: btnWithIcon(workspaceSvg, i('menu.about')),
       action: function (this) {
         this.close();
         $send<OpenPageRequest>({ action: Action.OpenPage, page: PopupPage.About });
@@ -100,17 +100,19 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
 }
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const addBtn = btn({ class: 'btn-text', title: i('newWorkspace') }, i('new'));
-  const moreBtn = btn({ class: 'btn-text', title: i('moreActions') }, [svg(listSvg, '#fff', 18)]);
+  const addBtn = btn({ class: 'btn-text', title: i('workspace.new') }, i('button.new'));
+  const moreBtn = btn({ class: 'btn-text', title: i('button.more-actions') }, [
+    svg(listSvg, '#fff', 18),
+  ]);
   const createMenu = createCreateMenu(bus);
   const moreActionMenu = createMoreActionMenu(bus);
 
-  const title = h('h2', 'wb-header-title', i('workspace'));
+  const title = h('h2', 'wb-header-title', i('workspace.title'));
   const header = div('wb-header', [title, addBtn, moreBtn]);
 
   // # register events
   popupService.getWorkspaceOfCurrentWindow().then((workspace) => {
-    title.textContent = workspace?.name ?? i('workspace');
+    title.textContent = workspace?.name ?? i('workspace.title');
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);
     const darken = color.adjustBrightness(-0.36);
     const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;
