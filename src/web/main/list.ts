@@ -1,26 +1,32 @@
 import { EventBus } from 'minimal-event-bus';
-import { btn, h, svg } from '@/lib/dom.js';
+import { btn, div, h, svg } from '@/lib/dom.js';
 import { store } from '@/lib/storage.js';
 import popupService from '@web/popup.service.js';
-
-import editIcon from '@assets/3-dots.svg?raw';
 import listItem from './list-item.js';
+
+import threeDotsSvg from '@assets/3-dots.svg?raw';
+import upSvg from '@assets/chevron-compact-up.svg?raw';
+import downSvg from '@assets/chevron-compact-down.svg?raw';
 
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const container = h('ul', 'wb-ul');
+  const ul = h('ul', 'wb-ul');
   const lis: WorkspaceLi[] = [];
+
+  const up = div('wb-ul-scroller', [svg(upSvg, undefined, 16)]);
+  const down = div('wb-ul-scroller', [svg(downSvg, undefined, 16)]);
+  const container = div('wb-ul-container', [up, ul, down]);
 
   const renderList = (workspaces: Workspace[]) => {
     // clear all children
-    container.textContent = '';
+    ul.textContent = '';
     lis.length = 0;
     if (workspaces.length === 0) {
-      container.style.display = 'none';
+      ul.style.display = 'none';
       return;
     } else {
-      container.style.display = 'block';
+      ul.style.display = 'block';
     }
 
     for (let i = 0; i < workspaces.length; i++) {
@@ -28,7 +34,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
       // & wb means workspace block
       const editBtn = btn({ class: 'btn btn-trans', style: 'padding:4px 5px' }, [
-        svg(editIcon, 'var(--dark)', 16),
+        svg(threeDotsSvg, 'var(--dark)', 16),
       ]);
       const wbli = listItem(workspace, [editBtn]);
 
@@ -46,21 +52,21 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       });
 
       lis.push(li);
-      container.appendChild(li);
+      ul.appendChild(li);
     }
   };
 
   // $ reserved
-  // const activateHighlight = (activated: string[]) => {
-  //   for (let i = 0; i < lis.length; i++) {
-  //     const li = lis[i];
-  //     if (activated.includes(li.dataset.id)) {
-  //       li.classList.add('activated');
-  //     } else {
-  //       li.classList.remove('activated');
-  //     }
-  //   }
-  // };
+  const _activateHighlight = (activated: string[]) => {
+    for (let i = 0; i < lis.length; i++) {
+      const li = lis[i];
+      if (activated.includes(li.dataset.id)) {
+        li.classList.add('activated');
+      } else {
+        li.classList.remove('activated');
+      }
+    }
+  };
 
   bus.on('render-list', async () => {
     const { workspaces } = await store.localGet('workspaces');

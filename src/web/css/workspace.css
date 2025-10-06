@@ -81,10 +81,47 @@ footer p {
   }
 }
 
-.wb-ul {
+.wb-ul-container {
+  @apply relative;
   --wbli-height: 33px;
+  --wbul-scroller-height: 20px;
+}
+
+.wb-ul {
   @apply m-0 p-0 overflow-y-auto;
   max-height: calc(10 * var(--wbli-height)); /* 10*entryheight */
+
+  /* scrollbar styles */
+  scrollbar-width: none;
+}
+
+.wb-ul-scroller {
+  @apply absolute;
+  /* margin-top: calc(0px - var(--wbul-scroller-height)); */
+  padding: 3px 0px;
+  width: 100%;
+  height: var(--wbul-scroller-height);
+  z-index: 10;
+  transition: all 0.3s;
+}
+.wb-ul-scroller:last-child {
+  margin-top: calc(0px - var(--wbul-scroller-height));
+}
+
+.wb-ul-scroller svg {
+  margin: 0px auto;
+}
+
+.wb-ul-scroller:hover {
+  cursor: pointer;
+  background-color: #a1a1a128;
+  border-radius: 0px 0px 6px 6px;
+}
+
+.wb-ul-scroller:active {
+  cursor: pointer;
+  background-color: #a1a1a146;
+  border-radius: 0px 0px 6px 6px;
 }
 
 .wb-li {
@@ -122,9 +159,6 @@ footer p {
 .selected.wb-item,
 .wb-item:active {
   background-color: var(--wb-item-active-bg);
-}
-
-.wb-icon {
 }
 
 .wb-title {
