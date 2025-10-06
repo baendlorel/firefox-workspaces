@@ -16,13 +16,6 @@ body {
   border-radius: var(--border-radius);
 }
 
-.body {
-  background-image: url(/assets/folder.svg);
-  background-repeat: no-repeat;
-  background-position: center center;
-  background-size: 50%;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;

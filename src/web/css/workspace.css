@@ -3,7 +3,7 @@
 header {
   --header-color: var(--dark);
   @apply relative flex;
-  padding: 0px;
+  padding: 0px 10px;
   gap: 2px;
   background: transparent;
   color: var(--header-color);
@@ -14,36 +14,45 @@ header .header-title {
   padding: 10px 0px 10px 45px;
   font-weight: bold;
   background-image: url(/assets/icon-128.png);
-  background-position: 12px 9px;
+  background-position: 4px 9px;
   background-repeat: no-repeat;
   background-size: 21px 21px;
 }
 
+header .btn,
 header .sync {
-}
-
-header .btn {
   margin: 8px 0px;
   padding: 2px 8px;
   font-weight: bold;
 }
 
+main {
+  background-image: url(/assets/folder.svg);
+  background-repeat: no-repeat;
+  background-position: center 12px;
+  background-size: 50%;
+}
+
+footer {
+  @apply right-2.5 bottom-1.5 p-1.5 text-right text-xs;
+  color: var(--secondary-light);
+}
+
+footer p {
+  @apply my-0.5 mx-0;
+}
+
 /* Sync Indicator */
 .sync-indicator {
-  @apply flex items-center justify-center;
-  margin: 4px 0px 0px 0px; /* margin-top/bottom is same as btn's padding */
-  width: 18px;
-  height: 18px;
   opacity: 0;
   transition:
     color 0.8s ease,
     opacity 0.8s ease;
-  cursor: default;
 }
 .sync-indicator:hover {
   opacity: 0.6;
   cursor: pointer;
-  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+  filter: drop-shadow(0 0 3px rgba(31, 31, 31, 0.8));
 }
 .sync-indicator:active {
   opacity: 0.9;
@@ -169,14 +178,6 @@ header .btn {
   @apply text-center py-10 px-5;
   display: none;
   color: var(--secondary-light);
-}
-
-.version {
-  @apply right-2.5 bottom-1.5 p-1.5 text-right text-xs;
-  color: var(--secondary-light);
-}
-.version p {
-  @apply my-0.5 mx-0;
 }
 
 .empty-state-icon {

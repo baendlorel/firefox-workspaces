@@ -17,7 +17,7 @@ import version from './main/version.js';
 
 export function createView() {
   const { bus, emit, on } = EventBus.create<WorkspaceEditorEventMap>();
-  const body = h('div', 'body', [list(bus), emptyState(bus)]);
+  const body = h('main', '', [list(bus), emptyState(bus)]);
   const children = [
     // header
     header(bus),

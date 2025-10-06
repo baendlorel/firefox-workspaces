@@ -109,7 +109,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const syncIcon = new SyncIcon();
   const syncDiv = div(
     {
-      class: 'btn btn-trans sync',
+      class: 'sync',
       title: i('workspace.sync-icon-title', { minute: Consts.SyncInterval }),
     },
     [syncIcon.el]
@@ -124,7 +124,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
 
   // # register events
   popupService.getWorkspaceOfCurrentWindow().then((workspace) => {
-    title.textContent = workspace?.name ?? i('workspace.title');
+    title.textContent = workspace?.name ?? ''; // i('workspace.title');
     const color = Color.from(workspace?.color ?? Consts.DefaultColor);
     const darken = color.adjustBrightness(-0.36);
     const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;

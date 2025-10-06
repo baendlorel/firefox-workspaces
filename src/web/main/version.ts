@@ -1,3 +1,3 @@
-import { div, h } from '@/lib/dom.js';
+import { h } from '@/lib/dom.js';
 
-export default () => div('version', [h('p', '', `v__VERSION__ - __DATE__`)]);
+export default () => h('footer', '', [h('p', '', `v__VERSION__ - __DATE__`)]);
