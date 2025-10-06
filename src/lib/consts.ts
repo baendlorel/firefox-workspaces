@@ -1,6 +1,9 @@
 declare global {
   const enum Consts {
     InjectionFlag = 'kasukabe_tsumugi:workspaces',
+
+    PolyfillFlag = 'kasukabe_tsumugi:browser-polyfill',
+
     DefaultColor = '#2da191',
 
     /**
