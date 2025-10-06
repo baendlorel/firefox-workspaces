@@ -82,19 +82,23 @@ footer p {
 }
 
 .wb-ul {
-  @apply m-0 p-0 max-h-96 overflow-y-auto;
+  @apply m-0 p-0 overflow-y-auto;
 }
 
 .wb-li {
-  @apply m-1;
+  margin: 0px 4px;
 }
 
 .wb-item {
-  @apply grid gap-2.5 px-3 py-2 rounded-md items-center cursor-pointer;
+  @apply grid items-center;
   grid-template-columns: auto 1fr auto;
-  border-left: 3px solid transparent;
-  border-bottom: 1px solid var(--color-slate-200);
+  gap: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border-left: 0px solid transparent;
+  border-bottom: 0px solid var(--color-slate-200);
   background-color: transparent;
+  cursor: pointer;
   transition: all var(--transition-duration);
 }
 
@@ -107,6 +111,10 @@ footer p {
   background-color: var(--wb-item-hover-bg);
 }
 
+.wb-item .btn:hover {
+  background-color: var(--light);
+}
+
 .selected .wb-item,
 .selected.wb-item,
 .wb-item:active {
@@ -114,64 +122,24 @@ footer p {
 }
 
 .wb-icon {
-  @apply w-5 h-5;
+  width: 20px;
+  height: 20px;
   border-radius: 6px;
 }
 
 .wb-title {
-  @apply font-medium;
+  font-weight: bold;
   color: var(--dark);
 }
 
 .wb-count {
-  @apply text-sm text-gray-600 px-1.5 py-0.5 rounded-full;
+  @apply text-gray-600 px-1.5 py-0.5;
+  font-size: var(--font-size-normal);
 }
 
 .wb-actions {
   flex: 1;
   text-align: right;
-}
-
-.tab-item {
-  @apply flex items-center py-2 border-b border-gray-200 cursor-pointer;
-}
-
-.tab-item:last-child {
-  @apply border-b-0;
-}
-
-.tab-favicon {
-  @apply w-4 h-4 mr-2.5 rounded-sm;
-}
-
-.tab-info {
-  @apply flex-1 min-w-0;
-}
-
-.tab-title {
-  @apply font-medium text-gray-800 whitespace-nowrap overflow-hidden text-ellipsis text-base;
-}
-
-.tab-url {
-  @apply text-gray-600 text-sm whitespace-nowrap overflow-hidden text-ellipsis;
-}
-
-.tab-actions {
-  @apply flex gap-1.5 opacity-0 transition-opacity duration-200;
-}
-
-.tab-item:hover .tab-actions {
-  opacity: 1;
-}
-
-.pinned-indicator {
-  color: #ffc107;
-  font-size: 14px;
-  margin-left: 5px;
-}
-
-#workspaceForm {
-  padding: 20px 24px 24px;
 }
 
 .empty-state {
@@ -183,15 +151,6 @@ footer p {
 .empty-state-icon {
   @apply mx-auto opacity-60;
   width: 61.8%;
-}
-
-.drag-over {
-  background: #e3f2fd !important;
-  border: 2px dashed #2196f3 !important;
-}
-
-.dragging {
-  @apply opacity-50;
 }
 
 .bookmark {

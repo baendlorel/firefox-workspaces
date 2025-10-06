@@ -300,7 +300,8 @@ export class MockBrowser {
       return locale[s].message;
     };
 
-    const self = this;
+    const getPersist = () => this.getPersist();
+    const savePersist = (p: Partial<Persist> & Partial<State>) => this.savePersist(p);
 
     return new Proxy(function () {}, {
       get(_, key) {
@@ -327,7 +328,7 @@ export class MockBrowser {
         }
         if (key === 'storage.local.get' || key === 'storage.sync.get') {
           const arg = args[0];
-          const persist = self.getPersist();
+          const persist = getPersist();
           if (arg === undefined) {
             return Promise.resolve(persist);
           }
@@ -367,7 +368,7 @@ export class MockBrowser {
           const arg = args[0] || {};
           // Save partial persist
           try {
-            self.savePersist(arg as Partial<Persist> & Partial<State>);
+            savePersist(arg as Partial<Persist> & Partial<State>);
             return Promise.resolve();
           } catch (e) {
             return Promise.reject(e);

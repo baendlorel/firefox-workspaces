@@ -3,21 +3,18 @@ import { i, $send } from '@/lib/polyfilled-api.js';
 
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
-import { store } from '@/lib/storage.js';
 import popupService from '@web/popup.service.js';
 
 import { Menu } from '@comp/menu/index.js';
 import settings from '@comp/settings.js';
 import { btnWithIcon } from './icon.js';
 import { SyncIcon } from './sync-icon.js';
-import { stringify } from './debug.js';
 
 import plusSvg from '@assets/workspace-plus.svg?raw';
 import listSvg from '@assets/list.svg?raw';
 import bookmarkPlusSvg from '@assets/bookmark-plus.svg?raw';
 import boxArrowDownSvg from '@assets/box-arrow-down.svg?raw';
 import boxArrowUpSvg from '@assets/box-arrow-up.svg?raw';
-import bugSvg from '@assets/bug.svg?raw';
 import heartSvg from '@assets/heart.svg?raw';
 import gearSvg from '@assets/gear.svg?raw';
 import workspaceSvg from '@assets/workspace.svg?raw';
