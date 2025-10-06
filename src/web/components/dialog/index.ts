@@ -46,7 +46,7 @@ export function createDialog(
   const setTitle = (text: string) => (title.textContent = text);
 
   // # header
-  const closeBtn = btn('btn-text dialog-close scale-200', [svg(closeSvg, undefined, 5, 5)]);
+  const closeBtn = btn('btn-text dialog-close scale-200', [svg(closeSvg, undefined, 5)]);
   closeBtn.title = 'Close the dialog';
 
   const title = h('h2', 'wb-header-title', header ?? '');

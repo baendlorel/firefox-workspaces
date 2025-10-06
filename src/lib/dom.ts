@@ -1,5 +1,7 @@
 // # DOM
-
+/**
+ * ! This throws when element is not found
+ */
 export const $id = <E extends HTMLElement = HTMLElement>(id: string): E => {
   const element = document.getElementById(id);
   if (!element) {
@@ -74,18 +76,13 @@ export const btn = (
 ): HTMLButtonElement => h('button', className, children);
 
 const parser = new DOMParser();
-export const svg = (
-  str: string,
-  color: string | null = null,
-  width: number = 16,
-  height: number = width
-): SVGElement => {
-  color = color ?? 'currentColor';
-  str = str.replace('<svg ', '<svg width="' + width + '" height="' + height + '" ');
+export function svg(str: string, color?: string, size?: number): SVGElement {
+  if (size !== undefined) {
+    str = str.replace('<svg ', '<svg width="' + size + '" height="' + size + '" ');
+  }
   if (color) {
     str = str.replaceAll('currentColor', color);
   }
   const svgDoc = parser.parseFromString(str, 'image/svg+xml');
-  logger.info('svg', svgDoc.documentElement);
   return svgDoc.documentElement as unknown as SVGElement;
-};
+}

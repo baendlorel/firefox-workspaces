@@ -10,7 +10,7 @@ export class SyncIcon {
   readonly el: SVGElement;
 
   constructor() {
-    this.el = svg(arrowRepeatSvg, null, 18);
+    this.el = svg(arrowRepeatSvg, undefined, 18);
     this.el.classList.add('sync-indicator');
 
     // Handle sync icon click (show error details)
