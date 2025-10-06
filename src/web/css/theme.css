@@ -117,20 +117,3 @@
 .btn-with-icon svg {
   margin-top: 4px;
 }
-
-.icon-btn {
-  padding: 5px;
-  border-radius: 4px;
-  background-color: transparent;
-  transition: background-color 0.3s;
-}
-
-.icon-btn:hover {
-  background-color: var(--light);
-  cursor: pointer;
-}
-
-.icon-btn:active {
-  background-color: var(--light);
-  opacity: 0.9;
-}

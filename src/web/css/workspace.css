@@ -82,7 +82,9 @@ footer p {
 }
 
 .wb-ul {
+  --wbli-height: 33px;
   @apply m-0 p-0 overflow-y-auto;
+  max-height: calc(10 * var(--wbli-height)); /* 10*entryheight */
 }
 
 .wb-li {
@@ -93,6 +95,7 @@ footer p {
   @apply grid items-center;
   grid-template-columns: auto 1fr auto;
   gap: 8px;
+  height: var(--wbli-height);
   padding: 4px 10px;
   border-radius: 6px;
   border-left: 0px solid transparent;
@@ -122,9 +125,6 @@ footer p {
 }
 
 .wb-icon {
-  width: 20px;
-  height: 20px;
-  border-radius: 6px;
 }
 
 .wb-title {
