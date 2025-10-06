@@ -13,20 +13,28 @@
 /* Sync Indicator */
 .sync-indicator {
   @apply flex items-center justify-center;
-  display: none;
+  margin: 4px 0px; /* margin-top/bottom is same as btn's padding */
   width: 18px;
   height: 18px;
-  opacity: 0.6;
-  color: transparent;
+  opacity: 0.4;
+  color: #f7f8fa;
   transition:
     color 0.8s ease,
-    opacity 0.3s ease;
+    opacity 0.8s ease;
   cursor: default;
+}
+.sync-indicator:hover {
+  opacity: 0.6;
+  cursor: pointer;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.8));
+}
+.sync-indicator:active {
+  opacity: 0.9;
 }
 
 .sync-indicator.syncing {
   color: currentColor;
-  animation: sync-rotate 1s linear infinite;
+  animation: sync-rotate 1.6s linear infinite;
 }
 
 .sync-indicator.success {

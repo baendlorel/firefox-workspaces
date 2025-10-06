@@ -1,7 +1,7 @@
 import { i, $windowWorkspace, $notify } from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
 import { NotProvided } from './lib/consts.js';
-import { $thm } from './lib/utils.js';
+import { $sleep, $thm } from './lib/utils.js';
 import { isValidWorkspaces } from './lib/workspace.js';
 import { isValidSettings } from './lib/settings.js';
 
@@ -230,11 +230,13 @@ class WorkspaceBackground {
 
     const task = async () => {
       try {
+        this.setSyncState(SyncState.Syncing);
         logger.verbose('Sync storage on', $thm());
 
         // * Might change if more features are added
         const local = await store.localGet('workspaces', 'settings');
         await store.syncSet(local);
+        await $sleep(500);
         this.setSyncState(SyncState.Success);
       } catch (error) {
         this.setSyncState(SyncState.Error, error instanceof Error ? error.message : String(error));

@@ -1,4 +1,4 @@
-import { info } from '@comp/dialog/alerts.js';
+import { danger, info } from '@comp/dialog/alerts.js';
 import { svg } from '@/lib/dom.js';
 import { i } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';
@@ -15,8 +15,10 @@ export class SyncIcon {
 
     // Handle sync icon click (show error details)
     this.el.addEventListener('click', () => {
-      if (this.el.classList.contains('error')) {
-        info(this.errorMsg, i('dialog.type.danger'));
+      if (this.el.classList.contains('error') && this.errorMsg) {
+        danger(this.errorMsg);
+      } else {
+        info(i('workspace.sync-icon-title'));
       }
     });
 
@@ -33,7 +35,7 @@ export class SyncIcon {
   }
 
   toggle(switcher: Switch) {
-    this.el.style.display = switcher === Switch.On ? 'inline-block' : 'none';
+    this.el.style.display = switcher === Switch.On ? '' : 'none';
   }
 
   setStatus(state: SyncState, errorMsg: string = '') {

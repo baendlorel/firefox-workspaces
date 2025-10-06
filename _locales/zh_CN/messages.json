@@ -14,6 +14,9 @@
     "message": "工作区",
     "description": "Header title"
   },
+  "workspace.sync-icon-title": {
+    "message": "同步已开启，将在每个整{minute}分钟自动同步"
+  },
   "workspace.new": {
     "message": "创建工作区",
     "description": "New workspace button tooltip"

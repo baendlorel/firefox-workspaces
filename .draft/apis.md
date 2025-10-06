@@ -82,26 +82,26 @@
 - **browser.i18n.getMessage()** - 获取国际化消息
   - Chrome对应: `chrome.i18n.getMessage()`
 
-## Detailed File Usage
+## 详细文件使用情况
 
 ### src/background.ts
 ```typescript
-// Type definitions
+// 类型定义
 browser.tabs._OnUpdatedChangeInfo
 browser.tabs._OnAttachedAttachInfo
 browser.tabs._OnMovedMoveInfo
 browser.tabs._OnRemovedRemoveInfo
 browser.tabs._OnDetachedDetachInfo
 
-// Runtime events
+// 运行时事件
 browser.runtime.onStartup.addListener()
 browser.runtime.onInstalled.addListener()
 browser.runtime.onMessage.addListener()
 
-// Window events
+// 窗口事件
 browser.windows.onRemoved.addListener()
 
-// Tab events
+// 标签页事件
 browser.tabs.onCreated.addListener()
 browser.tabs.onAttached.addListener()
 browser.tabs.onDetached.addListener()
@@ -109,31 +109,31 @@ browser.tabs.onMoved.addListener()
 browser.tabs.onRemoved.addListener()
 browser.tabs.onUpdated.addListener()
 
-// Window operations
+// 窗口操作
 browser.windows.create()
 browser.windows.WINDOW_ID_NONE
 
-// Data structures
+// 数据结构
 browser.tabs.Tab[]
 ```
 
 ### src/manager.ts
 ```typescript
-// Tab operations
+// 标签页操作
 browser.tabs.query()
 browser.tabs.Tab
 browser.tabs.TAB_ID_NONE
 
-// Window operations
+// 窗口操作
 browser.windows.update()
 browser.windows.getCurrent()
 browser.windows.WINDOW_ID_NONE
 
-// Tab event listeners
+// 标签页事件监听器
 browser.tabs.onUpdated.addListener()
 browser.tabs.onUpdated.removeListener()
 
-// Action badge operations
+// 操作徽章操作
 browser.action.setBadgeTextColor()
 browser.action.setBadgeBackgroundColor()
 browser.action.setBadgeText()
@@ -141,84 +141,91 @@ browser.action.setBadgeText()
 
 ### src/lib/ext-apis.ts
 ```typescript
-// Message passing
+// 消息传递
 browser.runtime.sendMessage()
 
-// Window operations
+// 窗口操作
 browser.windows.create()
 
-// Notification operations
+// 通知操作
 browser.notifications.create()
 browser.notifications.clear()
 
-// Internationalization
+// 国际化
 browser.i18n.getMessage()
 
-// Runtime utilities
+// 运行时工具
 browser.runtime.getURL()
 ```
 
 ### src/lib/storage.ts
 ```typescript
-// Local storage
+// 本地存储
 browser.storage.local.get()
 browser.storage.local.set()
 
-// Sync storage
+// 同步存储
 browser.storage.sync.get()
 browser.storage.sync.set()
 ```
 
 ### src/lib/workspace.ts
 ```typescript
-// Tab operations
+// 标签页操作
 browser.tabs.Tab
 browser.tabs.TAB_ID_NONE
 ```
 
 ### src/web/main/header.ts
 ```typescript
-// Window operations
+// 窗口操作
 browser.windows.getCurrent()
 
-// Tab operations
+// 标签页操作
 browser.tabs.query()
 
-// Storage events
+// 存储事件
 browser.storage.onChanged.addListener()
 ```
 
 ### src/web/popup.service.ts
 ```typescript
-// Window operations
+// 窗口操作
 browser.windows.getCurrent()
 ```
 
 ### src/web/main/editor.ts
 ```typescript
-// Tab operations
+// 标签页操作
 browser.tabs.Tab[]
 browser.tabs.TAB_ID_NONE
 ```
 
-### Type Definitions
+### 类型定义
 
 **src/global.d.ts**
-- `browser.storage.sync` - Sync storage reference
-- `browser.windows.Window` - Window type with id
+- `browser.storage.sync` - 同步存储引用
+- `browser.windows.Window` - 带ID的窗口类型
 
 **src/types/storage.d.ts**
-- `browser.tabs.Tab[]` - Tab array type
+- `browser.tabs.Tab[]` - 标签页数组类型
 
 **src/types/web.d.ts**
-- `browser.tabs.Tab[]` - Tab array parameter type
+- `browser.tabs.Tab[]` - 标签页数组参数类型
 
-## Usage Patterns
+## 使用模式
 
-1. **Event-Driven Architecture**: Heavy use of `.addListener()` for browser events
-2. **Storage Management**: Both local and sync storage APIs used
-3. **Tab Management**: Extensive tab querying and event handling
-4. **Window Management**: Window creation, querying, and event handling
-5. **Extension UI**: Action badges and notifications for user feedback
-6. **Internationalization**: Message localization support
-7. **Message Passing**: Runtime messaging between extension components
+1. **事件驱动架构**: 大量使用 `.addListener()` 监听浏览器事件
+2. **存储管理**: 同时使用本地和同步存储API
+3. **标签页管理**: 广泛的标签页查询和事件处理
+4. **窗口管理**: 窗口创建、查询和事件处理
+5. **扩展UI**: 使用操作徽章和通知提供用户反馈
+6. **国际化**: 支持消息本地化
+7. **消息传递**: 扩展组件间的运行时消息传递
+
+## 浏览器兼容性说明
+
+- 所有 `browser.*` API 在Firefox扩展中可直接使用
+- 对应的 `chrome.*` API 在Chrome扩展中功能相同，可直接替换
+- 大部分API在两个浏览器中行为一致，少数API可能有细微差异
+- 建议在跨浏览器扩展中使用 `browser.*` 前缀以保持兼容性
