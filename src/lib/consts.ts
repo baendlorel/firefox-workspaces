@@ -2,6 +2,11 @@ declare global {
   const enum Consts {
     InjectionFlag = 'kasukabe_tsumugi:workspaces',
     DefaultColor = '#2da191',
+
+    /**
+     * Synchronize in 05,10,15... each hour
+     */
+    SyncInterval = 5,
   }
 
   const enum PopupPage {

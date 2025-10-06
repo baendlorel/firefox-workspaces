@@ -18,7 +18,7 @@ export class SyncIcon {
       if (this.el.classList.contains('error') && this.errorMsg) {
         danger(this.errorMsg);
       } else {
-        info(i('workspace.sync-icon-title'));
+        info(i('workspace.sync-icon-title', { minute: Consts.SyncInterval }));
       }
     });
 

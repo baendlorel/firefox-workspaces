@@ -221,8 +221,6 @@ class WorkspaceBackground {
   }
 
   async initSync() {
-    const EVERY_X_MINUTES = 5;
-
     // Avoid scheduling multiple concurrent timers
     if (this.syncer !== null) {
       return;
@@ -246,7 +244,7 @@ class WorkspaceBackground {
     };
 
     const scheduleNext = () => {
-      const delta = EVERY_X_MINUTES - (new Date().getMinutes() % EVERY_X_MINUTES);
+      const delta = Consts.SyncInterval - (new Date().getMinutes() % Consts.SyncInterval);
       this.syncer = setTimeout(task, delta * 60000);
     };
 
