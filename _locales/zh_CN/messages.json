@@ -226,12 +226,21 @@
     "description": "Import success message"
   },
   "import.summary": {
-    "message": "成功导入 {added} 个工作区。 {skipped} 个工作区被忽略（已存在）。",
+    "message": "成功导入 {added} 个工作区",
     "description": "Summary message after import"
   },
-  "importFailed": {
-    "message": "导入失败",
-    "description": "Import failed message"
+  "import.summary-skipped": {
+    "message": "，忽略了已存在的 {skipped} 个工作区",
+    "description": "Summary message after import"
+  },
+  "import.invalid-hash": {
+    "message": "Hash校验失败，文件内容无效"
+  },
+  "import.invalid-workspaces": {
+    "message": "Workspaces字段校验失败，文件内容无效"
+  },
+  "import.invalid-settings": {
+    "message": "Settings字段校验失败，文件内容无效"
   },
   "exportFailed": {
     "message": "导出失败",

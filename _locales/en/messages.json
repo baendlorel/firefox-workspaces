@@ -225,12 +225,21 @@
     "description": "Import success message"
   },
   "import.summary": {
-    "message": "Successfully imported {added} workspace(s). {skipped} workspace(s) skipped (already exists).",
+    "message": "Successfully imported {added} workspace(s)",
     "description": "Summary message after import"
   },
-  "importFailed": {
-    "message": "Import failed",
-    "description": "Import failed message"
+  "import.summary-skipped": {
+    "message": ". {skipped} workspace(s) skipped (already exists)",
+    "description": "Summary message after import"
+  },
+  "import.invalid-hash": {
+    "message": "Hash validation failed, your data might be corrupted."
+  },
+  "import.invalid-workspaces": {
+    "message": "Workspaces array data validation failed, your data might be corrupted."
+  },
+  "import.invalid-settings": {
+    "message": "Settings validation failed, your data might be corrupted."
   },
   "exportFailed": {
     "message": "Export failed",

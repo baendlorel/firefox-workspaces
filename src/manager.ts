@@ -191,30 +191,27 @@ export class WorkspaceManager {
     const calculatedHash = $objectHash(dataWithoutHash);
 
     if (hash !== calculatedHash) {
-      logger.error('Hash validation failed', { expected: hash, calculated: calculatedHash });
       return {
         succ: false,
-        message: 'Data integrity check failed. The file may be corrupted.',
+        message: i('import.invalid-hash'),
         addedCount: 0,
       };
     }
 
     // 2. Validate workspaces
     if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
-      logger.error('Invalid workspaces data', workspaces);
       return {
         succ: false,
-        message: 'Invalid workspace data format.',
+        message: i('import.invalid-workspaces'),
         addedCount: 0,
       };
     }
 
     // 3. Validate settings
     if (!isValidSettings(settings)) {
-      logger.error('Invalid settings data', settings);
       return {
         succ: false,
-        message: 'Invalid settings data format.',
+        message: i('import.invalid-settings'),
         addedCount: 0,
       };
     }
@@ -230,18 +227,15 @@ export class WorkspaceManager {
     // 6. Save merged data
     await store.localPersistSet({ workspaces: mergedWorkspaces, settings });
 
-    logger.info('Import completed', {
-      total: workspaces.length,
-      added: newWorkspaces.length,
-      skipped: workspaces.length - newWorkspaces.length,
-    });
+    const added = newWorkspaces.length;
+    const skipped = workspaces.length - newWorkspaces.length;
 
-    const added = String(newWorkspaces.length);
-    const skipped = String(workspaces.length - newWorkspaces.length);
+    const summary = i('import.summary', { added });
+    const skippedMessage = skipped === 0 ? '' : i('import.summary-skipped', { skipped });
 
     return {
       succ: true,
-      message: i('import.summary', { added, skipped }),
+      message: summary + skippedMessage,
       addedCount: newWorkspaces.length,
     };
   }
