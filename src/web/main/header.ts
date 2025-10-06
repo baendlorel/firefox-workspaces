@@ -105,16 +105,20 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const createMenu = createCreateMenu(bus);
   const moreActionMenu = createMoreActionMenu(bus);
 
-  const title = h('h2', 'wb-header-title', i('workspace.title'));
+  const title = h('h2', 'header-title'); // i('workspace.title')
   const syncIcon = new SyncIcon();
-  const syncDiv = div({ title: i('workspace.sync-icon-title', { minute: Consts.SyncInterval }) }, [
-    syncIcon.el,
-  ]);
-  const addBtn = btn('btn-text', i('button.new'));
-  const moreBtn = btn({ class: 'btn-text', style: 'margin-top:2px' }, [
-    svg(listSvg, undefined, 18),
-  ]);
-  const header = div('wb-header', [title, syncDiv, addBtn, moreBtn]);
+  const syncDiv = div(
+    {
+      class: 'btn btn-trans sync',
+      title: i('workspace.sync-icon-title', { minute: Consts.SyncInterval }),
+    },
+    [syncIcon.el]
+  );
+  const addBtn = btn('btn btn-trans', i('button.new'));
+  const moreBtn = btn({ class: 'btn btn-trans', style: '' }, [svg(listSvg, undefined, 18)]);
+
+  // todo 这里要改成logo小图标放在最左边，背景是白的
+  const header = h('header', '', [title, syncDiv, addBtn, moreBtn]);
 
   bus.on('change-sync-state', (...args) => syncIcon.setStatus(...args));
 

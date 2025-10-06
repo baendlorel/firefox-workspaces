@@ -70,12 +70,12 @@
 }
 
 .btn-trans {
-  @apply text-shadow-lg/10;
-  background: #ffffff1c;
+  color: var(--dark);
+  background: transparent;
 }
 
 .btn-trans:hover {
-  background: #ffffff36;
+  background: rgba(217, 217, 217, 0.436);
 }
 
 .btn-small {
@@ -108,6 +108,10 @@
   display: grid;
   grid-template-columns: auto auto;
   gap: 8px;
+}
+
+.btn-with-icon:hover {
+  cursor: pointer;
 }
 
 .btn-with-icon svg {

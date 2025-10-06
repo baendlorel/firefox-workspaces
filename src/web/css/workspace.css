@@ -1,13 +1,31 @@
 @import 'tailwindcss';
 
-.wb-header {
-  @apply relative flex gap-2.5 px-5 py-2.5;
-  color: var(--light);
-  background: var(--header-darken-gradient);
+header {
+  --header-color: var(--dark);
+  @apply relative flex;
+  padding: 0px;
+  gap: 2px;
+  background: transparent;
+  color: var(--header-color);
 }
 
-.wb-header-title {
-  @apply font-medium text-shadow-lg/10 flex-1;
+header .header-title {
+  @apply font-medium flex-1;
+  padding: 10px 0px 10px 45px;
+  font-weight: bold;
+  background-image: url(/assets/icon-128.png);
+  background-position: 12px 9px;
+  background-repeat: no-repeat;
+  background-size: 21px 21px;
+}
+
+header .sync {
+}
+
+header .btn {
+  margin: 8px 0px;
+  padding: 2px 8px;
+  font-weight: bold;
 }
 
 /* Sync Indicator */
@@ -17,7 +35,6 @@
   width: 18px;
   height: 18px;
   opacity: 0;
-  color: #f7f8fa;
   transition:
     color 0.8s ease,
     opacity 0.8s ease;
