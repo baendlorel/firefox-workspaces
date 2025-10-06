@@ -225,6 +225,20 @@
     "message": "导入成功！",
     "description": "Import success message"
   },
+  "import.summary": {
+    "message": "成功导入 {added} 个工作区。 {skipped} 个工作区被忽略（已存在）。",
+    "description": "Summary message after import",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "3"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "1"
+      }
+    }
+  },
   "importFailed": {
     "message": "导入失败",
     "description": "Import failed message"
@@ -326,6 +340,9 @@
   },
   "import.title": {
     "message": "工作区数据导入"
+  },
+  "import.notification-title": {
+    "message": "导入"
   },
   "import.intro": {
     "message": "选择文件来导入你的工作区数据"

@@ -224,6 +224,20 @@
     "message": "Import successful!",
     "description": "Import success message"
   },
+  "import.summary": {
+    "message": "Successfully imported {added} workspace(s). {skipped} workspace(s) skipped (already exists).",
+    "description": "Summary message after import",
+    "placeholders": {
+      "added": {
+        "content": "$1",
+        "example": "3"
+      },
+      "skipped": {
+        "content": "$2",
+        "example": "1"
+      }
+    }
+  },
   "importFailed": {
     "message": "Import failed",
     "description": "Import failed message"
@@ -325,6 +339,9 @@
   },
   "import.title": {
     "message": "Workspace Data Import"
+  },
+  "import.notification-title": {
+    "message": "Import"
   },
   "import.intro": {
     "message": "Choose the file to import your workspace data"

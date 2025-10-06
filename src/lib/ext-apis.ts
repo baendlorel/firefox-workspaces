@@ -16,7 +16,7 @@ export const $aboutBlank = (): Promise<WindowWithId> =>
     type: 'normal',
   }) as Promise<WindowWithId>;
 
-export const $notify = (message: string, title: string, time: number = 5000) =>
+export const $notify = (message: string, title: string, time: number = 12000) =>
   browser.notifications
     .create({
       type: 'basic',

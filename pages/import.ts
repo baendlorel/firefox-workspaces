@@ -1,3 +1,5 @@
+import { $notify, i } from '@/lib/ext-apis.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('import') as HTMLInputElement;
 
@@ -11,12 +13,14 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const text = await file.text();
       const data = JSON.parse(text);
-      const result = await browser.runtime.sendMessage({ action: Action.ReturnFileData, data });
+      await browser.runtime.sendMessage({ action: Action.ReturnFileData, data });
+      const cur = await browser.tabs.getCurrent();
+      if (cur?.id !== undefined) {
+        browser.tabs.remove(cur.id);
+      }
     } catch (error) {
-      // display error
+      $notify('Failed to import data: ' + (error as Error).message, i('import.notification-title'));
     }
-    // todo 移动到一个新的文件夹里，专门放这些文件
-    // todo 导入完成给个提示
   });
 
   const openBtn = document.getElementById('open-file-input');

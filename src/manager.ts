@@ -1,5 +1,5 @@
 import { Color } from './lib/color.js';
-import { $aboutBlank } from './lib/ext-apis.js';
+import { $aboutBlank, i } from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
 import { isValidSettings } from './lib/settings.js';
 import { $objectHash } from './lib/utils.js';
@@ -236,9 +236,12 @@ export class WorkspaceManager {
       skipped: workspaces.length - newWorkspaces.length,
     });
 
+    const added = String(newWorkspaces.length);
+    const skipped = String(workspaces.length - newWorkspaces.length);
+
     return {
       succ: true,
-      message: `Successfully imported ${newWorkspaces.length} workspace(s). ${workspaces.length - newWorkspaces.length} workspace(s) skipped (already exists).`,
+      message: i('import.summary', [added, skipped]),
       addedCount: newWorkspaces.length,
     };
   }

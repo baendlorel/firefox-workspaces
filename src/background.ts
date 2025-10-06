@@ -106,8 +106,8 @@ class WorkspaceBackground {
   private runtimeListeners() {
     browser.runtime.onStartup.addListener(() => this.init());
     browser.runtime.onInstalled.addListener(() => this.init());
-    browser.runtime.onMessage.addListener(async (message, sender) =>
-      this.handlePopupMessage(message, sender).catch((e) => {
+    browser.runtime.onMessage.addListener(async (message) =>
+      this.handlePopupMessage(message).catch((e) => {
         logger.error('onMessage Error', e);
         return { succ: false, error: 'Error handling message.' };
       })
@@ -156,10 +156,7 @@ class WorkspaceBackground {
     }
   }
 
-  private async handlePopupMessage(
-    message: MessageRequest,
-    sender: browser.runtime.MessageSender
-  ): Promise<MessageResponse> {
+  private async handlePopupMessage(message: MessageRequest): Promise<MessageResponse> {
     switch (message.action) {
       case Action.Open: {
         const data = await this.manager.open(message.workspace);
@@ -184,7 +181,7 @@ class WorkspaceBackground {
 
       case Action.ReturnFileData: {
         const result = await this.manager.importData(message.data as ExportData);
-        $notify(result.message, 'Import');
+        $notify(result.message, i('import.notification-title'));
         return result;
       }
 
