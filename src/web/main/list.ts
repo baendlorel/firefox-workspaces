@@ -10,13 +10,111 @@ import downSvg from '@assets/chevron-compact-down.svg?raw';
 
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
-export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const ul = h('ul', 'wb-ul');
-  const lis: WorkspaceLi[] = [];
+function createScroller(ul: HTMLUListElement) {
+  const ROW_HEIGHT = 33; // & same as var(--wbli-height)
 
   const up = div('wb-ul-scroller', [svg(upSvg, undefined, 16)]);
   const down = div('wb-ul-scroller', [svg(downSvg, undefined, 16)]);
-  const container = div('wb-ul-container', [up, ul, down]);
+  up.style.top = '-10px';
+  down.style.bottom = '-10px';
+
+  // Scroll helpers
+  const showEl = (el: HTMLElement) => {
+    el.hidden = false;
+    el.style.display = '';
+  };
+  const hideEl = (el: HTMLElement) => {
+    el.hidden = true;
+    el.style.display = 'none';
+  };
+
+  const updateScrollerVisibility = () => {
+    // If list not visible or empty, hide both
+    if (ul.style.display === 'none' || ul.scrollHeight <= ul.clientHeight) {
+      hideEl(up);
+      hideEl(down);
+      return;
+    }
+
+    // at top
+    if (ul.scrollTop <= 1) {
+      hideEl(up);
+    } else {
+      showEl(up);
+    }
+
+    // at bottom
+    if (ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1) {
+      hideEl(down);
+    } else {
+      showEl(down);
+    }
+  };
+
+  const doScroll = (direction: -1 | 1) => {
+    ul.scrollBy({ top: direction * ROW_HEIGHT, left: 0, behavior: 'auto' });
+    // update visibility after scroll (some browsers may need RAF)
+    requestAnimationFrame(updateScrollerVisibility);
+  };
+
+  // Continuous hold behavior: 5 times per second => 200ms interval
+  const makeScrollerBehavior = (el: HTMLElement, direction: -1 | 1) => {
+    let holding = false;
+    let intervalId: number | null = null;
+    let justHeld = false;
+
+    const clearHold = () => {
+      holding = false;
+      if (intervalId !== null) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+      justHeld = true;
+      // avoid a following click firing immediately after hold
+      setTimeout(() => (justHeld = false), 250);
+    };
+
+    el.addEventListener('mousedown', (e) => {
+      e.preventDefault();
+      if (holding) return;
+      holding = true;
+      // immediate scroll once
+      doScroll(direction);
+      intervalId = window.setInterval(() => doScroll(direction), 200);
+    });
+
+    // pointerup / leave handlers
+    ['mouseup', 'mouseleave', 'mouseout', 'pointerup', 'pointercancel'].forEach((ev) => {
+      el.addEventListener(ev, () => {
+        if (holding) {
+          clearHold();
+        }
+      });
+    });
+
+    // click for single step (ignore if it was a hold)
+    el.addEventListener('click', (e) => {
+      if ((e as MouseEvent).defaultPrevented) return;
+      if (justHeld) return;
+      doScroll(direction);
+    });
+  };
+
+  makeScrollerBehavior(up, -1);
+  makeScrollerBehavior(down, 1);
+
+  // update visibility on manual scrolls
+  ul.addEventListener('scroll', () => requestAnimationFrame(updateScrollerVisibility));
+
+  return { up, down, updateScrollerVisibility };
+}
+
+export default (bus: EventBus<WorkspaceEditorEventMap>) => {
+  const ul = h('ul', 'wb-ul');
+  const lis: WorkspaceLi[] = [];
+  const { up, down, updateScrollerVisibility } = createScroller(ul);
+
+  const container = div('wb-ul-container', [ul, up, down]);
 
   const renderList = (workspaces: Workspace[]) => {
     // clear all children
@@ -54,6 +152,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       lis.push(li);
       ul.appendChild(li);
     }
+
+    updateScrollerVisibility();
   };
 
   // $ reserved

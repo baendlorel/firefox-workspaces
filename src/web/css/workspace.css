@@ -104,9 +104,6 @@ footer p {
   z-index: 10;
   transition: all 0.3s;
 }
-.wb-ul-scroller:last-child {
-  margin-top: calc(0px - var(--wbul-scroller-height));
-}
 
 .wb-ul-scroller svg {
   margin: 0px auto;
