@@ -1,10 +1,4 @@
-/**
- * Chrome compatibility polyfill layer
- * This file provides a browser object that works in both Firefox and Chrome
- */
-
 /// <reference types="chrome" />
-
 (() => {
   if (Reflect.has(globalThis, Consts.PolyfillFlag)) {
     return;

@@ -1,4 +1,4 @@
-import { $windowWorkspace, $send, $windows } from '@/lib/polyfilled-api.js';
+import { $windowWorkspace, $send } from '@/lib/polyfilled-api.js';
 import { $objectHash, $tdtDashed } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';
@@ -6,7 +6,7 @@ import { compressToBase64 } from 'lz-string';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
-    const currentWindow = await $windows.getCurrent();
+    const currentWindow = await browser.windows.getCurrent();
     return $windowWorkspace(currentWindow.id);
   }
 
