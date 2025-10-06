@@ -225,3 +225,13 @@ syncIndicator导出是完全没必要的，我已经该回去了,header(bus)依�
 4. background获取当前的popup页面，并调用其中的emit成员来触发`change-sync-state`事件，传入表示正在同步的信息；
 5. header.ts监听这个事件，并根据传入的状态来修改syncicon的状态
 6. 如果syncIcon正在转，请保持它至少转满1.2秒
+
+---
+
+我制作的是火狐的插件，但我也希望兼容chrome。我知道有npm包能做到，但是那个包已经一年多没更新，我不信任。请你帮我写一个兼容层：
+
+1. 写在src/lib/polyfill.ts里；
+2. 扫描所有src/和pages/下的ts文件，检测browser对象的使用
+3. 根据browser的使用，在polyfill.ts里写对应的chrome实现
+4. 只需要实现我用到的那些api
+5. 不要改动我的其他代码，你只需要写polyfill.ts
