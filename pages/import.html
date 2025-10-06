@@ -12,10 +12,19 @@
 <body>
 
   <main>
-    <img class="logo" src="/assets/logo.png">
-    <label for="import" id="intro" data-i18n="import.intro"></label>
-    <input type="file" id="import" accept=".json,application/json">
-    <button id="open-file-input" class="btn" style="margin-top:12px" data-i18n="import.opener"></button>
+    <header class="page-header">
+      <img class="page-logo" src="/assets/logo.png">
+      <h1 class="page-title" data-i18n="import.title">Import</h1>
+    </header>
+
+    <section class="page-description">
+      <p data-i18n="import.intro"></p>
+    </section>
+
+    <section class="import-controls" style="text-align:center">
+      <input type="file" id="import" accept=".json,application/json" style="display:none">
+      <button id="open-file-input" class="btn" data-i18n="import.opener"></button>
+    </section>
   </main>
 
   <script type="module" crossorigin src="/pages/common.ts"></script>
