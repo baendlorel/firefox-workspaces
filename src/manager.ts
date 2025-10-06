@@ -1,5 +1,16 @@
 import { Color } from './lib/color.js';
-import { $aboutBlank, i } from './lib/ext-apis.js';
+import {
+  $aboutBlank,
+  i,
+  $tabsQuery,
+  $windowsUpdate,
+  $windowsCreate,
+  $tabsCreate,
+  $tabsEvents,
+  $actionSetBadge,
+  TAB_ID_NONE,
+  WINDOW_ID_NONE,
+} from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
 import { isValidSettings } from './lib/settings.js';
 import { $objectHash } from './lib/utils.js';
@@ -17,7 +28,7 @@ export class WorkspaceManager {
       return [];
     }
     return browserTabs // & ensure that tab.id is valid, or createWorkspaceTab will throw
-      .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== browser.tabs.TAB_ID_NONE)
+      .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== TAB_ID_NONE)
       .map(createWorkspaceTab);
   }
 
@@ -55,7 +66,7 @@ export class WorkspaceManager {
       return;
     }
 
-    const tabs = await browser.tabs.query({ windowId });
+    const tabs = await $tabsQuery({ windowId });
     _windowTabs[windowId as number] = tabs;
     await store.localStateSet({ _windowTabs });
   }
@@ -102,10 +113,10 @@ export class WorkspaceManager {
     const windowId = _workspaceWindows[workspace.id];
     if (windowId) {
       // Check if window still exists
-      const result = await browser.windows.update(windowId, { focused: true }).catch(() => null);
+      const result = await $windowsUpdate(windowId, { focused: true }).catch(() => null);
       if (result === null) {
         logger.error('__func__: Window update failed');
-        return { id: browser.windows.WINDOW_ID_NONE };
+        return { id: WINDOW_ID_NONE };
       }
       return { id: windowId };
     }
@@ -117,9 +128,9 @@ export class WorkspaceManager {
     }
 
     // Create new window with first URL
-    const window = (await browser.windows
-      .create({ url: tabs[0].url, type: 'normal' })
-      .catch((e) => (logger.error(e), $aboutBlank()))) as WindowWithId;
+    const window = (await $windowsCreate({ url: tabs[0].url, type: 'normal' }).catch(
+      (e) => (logger.error(e), $aboutBlank())
+    )) as WindowWithId;
 
     const waitToMuchTime = await this.waitForWindowReady(window);
     if (waitToMuchTime) {
@@ -128,9 +139,11 @@ export class WorkspaceManager {
 
     // Open remaining URLs as tabs
     for (let i = 1; i < tabs.length; i++) {
-      const tab = await browser.tabs
-        .create({ windowId: window.id, url: tabs[i].url, index: tabs[i].index })
-        .catch((e) => e);
+      const tab = await $tabsCreate({
+        windowId: window.id,
+        url: tabs[i].url,
+        index: tabs[i].index,
+      }).catch((e) => e);
 
       if (!tab || tab.id === undefined) {
         logger.error('Tab creation failed, skipping to next', tab);
@@ -150,10 +163,10 @@ export class WorkspaceManager {
       ) => {
         if (tab && tab.windowId === window.id) {
           resolve(false);
-          browser.tabs.onUpdated.removeListener(checker);
+          $tabsEvents.onUpdated.removeListener(checker);
         }
       };
-      browser.tabs.onUpdated.addListener(checker);
+      $tabsEvents.onUpdated.addListener(checker);
       setTimeout(() => resolve(true), timeout);
     });
   }
@@ -178,9 +191,12 @@ export class WorkspaceManager {
     const short = spaceIndex === -1 ? name.slice(0, 2) : name[0] + name[spaceIndex + 1];
 
     const color = Color.from(workspace.color).brightness < 128 ? '#F8F9FA' : '#212729';
-    browser.action.setBadgeTextColor({ color, windowId });
-    browser.action.setBadgeBackgroundColor({ color: workspace.color, windowId });
-    browser.action.setBadgeText({ text: short, windowId });
+    $actionSetBadge({
+      text: short,
+      color,
+      backgroundColor: workspace.color,
+      windowId,
+    });
   }
 
   async importData(data: ExportData): Promise<ImportResponse> {
