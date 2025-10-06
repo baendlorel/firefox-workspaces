@@ -35,7 +35,7 @@ export default defineConfig({
     },
   },
   server: {
-    open: 'index.html',
+    open: 'pages/index.html',
   },
   build: {
     outDir: 'dist',
@@ -43,7 +43,7 @@ export default defineConfig({
     rollupOptions: {
       input: {
         // pages
-        index: resolve('index.html'),
+        index: resolve('pages/index.html'),
         import: resolve('pages/import.html'),
         about: resolve('pages/about.html'),
         donate: resolve('pages/donate.html'),

@@ -21,8 +21,8 @@
     "type": "module"
   },
   "action": {
-    "default_popup": "dist/index.html",
-    "default_title": "Workspace Manager"
+    "default_popup": "dist/pages/index.html",
+    "default_title": "Workspace"
   },
   "icons": {
     "128": "dist/assets/icon-128.png"
