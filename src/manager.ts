@@ -1,16 +1,6 @@
+import '@/lib/polyfill.js';
 import { Color } from './lib/color.js';
-import {
-  $aboutBlank,
-  i,
-  $tabsQuery,
-  $windowsUpdate,
-  $windowsCreate,
-  $tabsCreate,
-  $tabsEvents,
-  $actionSetBadge,
-  TAB_ID_NONE,
-  WINDOW_ID_NONE,
-} from './lib/ext-apis.js';
+import { $aboutBlank, $setBadge, i } from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
 import { isValidSettings } from './lib/settings.js';
 import { $objectHash } from './lib/utils.js';
@@ -28,7 +18,7 @@ export class WorkspaceManager {
       return [];
     }
     return browserTabs // & ensure that tab.id is valid, or createWorkspaceTab will throw
-      .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== TAB_ID_NONE)
+      .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== browser.tabs.TAB_ID_NONE)
       .map(createWorkspaceTab);
   }
 
@@ -66,7 +56,7 @@ export class WorkspaceManager {
       return;
     }
 
-    const tabs = await $tabsQuery({ windowId });
+    const tabs = await browser.tabs.query({ windowId });
     _windowTabs[windowId as number] = tabs;
     await store.localStateSet({ _windowTabs });
   }
@@ -113,10 +103,10 @@ export class WorkspaceManager {
     const windowId = _workspaceWindows[workspace.id];
     if (windowId) {
       // Check if window still exists
-      const result = await $windowsUpdate(windowId, { focused: true }).catch(() => null);
+      const result = await browser.windows.update(windowId, { focused: true }).catch(() => null);
       if (result === null) {
         logger.error('__func__: Window update failed');
-        return { id: WINDOW_ID_NONE };
+        return { id: browser.windows.WINDOW_ID_NONE };
       }
       return { id: windowId };
     }
@@ -128,9 +118,9 @@ export class WorkspaceManager {
     }
 
     // Create new window with first URL
-    const window = (await $windowsCreate({ url: tabs[0].url, type: 'normal' }).catch(
-      (e) => (logger.error(e), $aboutBlank())
-    )) as WindowWithId;
+    const window = (await browser.windows
+      .create({ url: tabs[0].url, type: 'normal' })
+      .catch((e) => (logger.error(e), $aboutBlank()))) as WindowWithId;
 
     const waitToMuchTime = await this.waitForWindowReady(window);
     if (waitToMuchTime) {
@@ -139,11 +129,13 @@ export class WorkspaceManager {
 
     // Open remaining URLs as tabs
     for (let i = 1; i < tabs.length; i++) {
-      const tab = await $tabsCreate({
-        windowId: window.id,
-        url: tabs[i].url,
-        index: tabs[i].index,
-      }).catch((e) => e);
+      const tab = await browser.tabs
+        .create({
+          windowId: window.id,
+          url: tabs[i].url,
+          index: tabs[i].index,
+        })
+        .catch((e) => e);
 
       if (!tab || tab.id === undefined) {
         logger.error('Tab creation failed, skipping to next', tab);
@@ -163,10 +155,10 @@ export class WorkspaceManager {
       ) => {
         if (tab && tab.windowId === window.id) {
           resolve(false);
-          $tabsEvents.onUpdated.removeListener(checker);
+          browser.tabs.onUpdated.removeListener(checker);
         }
       };
-      $tabsEvents.onUpdated.addListener(checker);
+      browser.tabs.onUpdated.addListener(checker);
       setTimeout(() => resolve(true), timeout);
     });
   }
@@ -187,16 +179,12 @@ export class WorkspaceManager {
 
   private setBadge(workspace: Workspace, windowId: number) {
     const name = workspace.name;
+    const backgroundColor = workspace.color;
     const spaceIndex = name.indexOf(' ');
-    const short = spaceIndex === -1 ? name.slice(0, 2) : name[0] + name[spaceIndex + 1];
+    const text = spaceIndex === -1 ? name.slice(0, 2) : name[0] + name[spaceIndex + 1];
 
-    const color = Color.from(workspace.color).brightness < 128 ? '#F8F9FA' : '#212729';
-    $actionSetBadge({
-      text: short,
-      color,
-      backgroundColor: workspace.color,
-      windowId,
-    });
+    const color = Color.from(backgroundColor).brightness < 128 ? '#F8F9FA' : '#212729';
+    $setBadge({ text, color, backgroundColor, windowId });
   }
 
   async importData(data: ExportData): Promise<ImportResponse> {

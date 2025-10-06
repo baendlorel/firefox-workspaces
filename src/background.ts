@@ -1,14 +1,5 @@
-import {
-  i,
-  $windowWorkspace,
-  $notify,
-  $runtimeEvents,
-  $tabsEvents,
-  $windowsEvents,
-  $windowsCreate,
-  $extensionGetViews,
-  WINDOW_ID_NONE,
-} from './lib/ext-apis.js';
+import '@/lib/polyfill.js';
+import { i, $windowWorkspace, $notify } from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
 import { NotProvided } from './lib/consts.js';
 import { $sleep, $thm } from './lib/utils.js';
@@ -114,9 +105,9 @@ class WorkspaceBackground {
   }
 
   private runtimeListeners() {
-    $runtimeEvents.onStartup.addListener(() => this.init());
-    $runtimeEvents.onInstalled.addListener(() => this.init());
-    $runtimeEvents.onMessage.addListener(async (message) =>
+    browser.runtime.onStartup.addListener(() => this.init());
+    browser.runtime.onInstalled.addListener(() => this.init());
+    browser.runtime.onMessage.addListener(async (message) =>
       this.handlePopupMessage(message).catch((e) => {
         logger.error('onMessage Error', e);
         return { succ: false, error: 'Error handling message.' };
@@ -125,7 +116,7 @@ class WorkspaceBackground {
   }
 
   private windowListeners() {
-    $windowsEvents.onRemoved.addListener(async (windowId) => {
+    browser.windows.onRemoved.addListener(async (windowId) => {
       // Check if this window belongs to a workspace
       const workspace = await $windowWorkspace(windowId);
       if (!workspace) {
@@ -139,14 +130,14 @@ class WorkspaceBackground {
   }
 
   private tabListeners() {
-    $tabsEvents.onCreated.addListener((tab) => this.manager.addTabToWindow(tab));
+    browser.tabs.onCreated.addListener((tab) => this.manager.addTabToWindow(tab));
 
     // # cases of refresh
-    $tabsEvents.onAttached.addListener((_tabId, info) => this.refreshTab(info));
-    $tabsEvents.onDetached.addListener((_tabId, info) => this.refreshTab(info));
-    $tabsEvents.onMoved.addListener((_tabId, info) => this.refreshTab(info));
-    $tabsEvents.onRemoved.addListener((_tabId, info) => this.refreshTab(info));
-    $tabsEvents.onUpdated.addListener(async (_tabId, info, tab) => {
+    browser.tabs.onAttached.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onDetached.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onMoved.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onRemoved.addListener((_tabId, info) => this.refreshTab(info));
+    browser.tabs.onUpdated.addListener(async (_tabId, info, tab) => {
       if ((info.status === 'complete' || info.status === 'loading') && tab) {
         await this.refreshTab({ windowId: tab.windowId });
       }
@@ -170,7 +161,7 @@ class WorkspaceBackground {
     switch (message.action) {
       case Action.Open: {
         const data = await this.manager.open(message.workspace);
-        return { succ: data.id !== WINDOW_ID_NONE };
+        return { succ: data.id !== browser.windows.WINDOW_ID_NONE };
       }
 
       case Action.ToggleSync:
@@ -214,7 +205,7 @@ class WorkspaceBackground {
       [PopupPage.About]: { width: 800, height: 740 },
     };
 
-    return $windowsCreate({
+    return browser.windows.create({
       url: `dist/pages/${fileName}.html`,
       type: 'popup',
       ...wh[fileName],
@@ -222,7 +213,7 @@ class WorkspaceBackground {
   }
 
   private setSyncState(state: SyncState, errorMsg: string = '') {
-    const w = $extensionGetViews({ type: 'popup' }).find((w) => w.popup);
+    const w = browser.extension.getViews({ type: 'popup' }).find((w) => w.popup);
     if (!w) {
       logger.info('Popup not opened, will not update sync state');
       return;

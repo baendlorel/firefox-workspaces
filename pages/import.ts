@@ -1,4 +1,5 @@
-import { $notify, $send, $tabsGetCurrent, $tabsRemove } from '@/lib/ext-apis.js';
+import '@/lib/polyfill.js';
+import { $notify, $send } from '@/lib/ext-apis.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('import') as HTMLInputElement;
@@ -14,9 +15,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const text = await file.text();
       const data = JSON.parse(text);
       await $send({ action: Action.ReturnFileData, data });
-      const cur = await $tabsGetCurrent();
+      const cur = await browser.tabs.getCurrent();
       if (cur?.id !== undefined) {
-        $tabsRemove(cur.id);
+        browser.tabs.remove(cur.id);
       }
     } catch (error) {
       $notify('Failed to import data: ' + (error as Error).message);

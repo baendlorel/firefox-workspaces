@@ -1,3 +1,5 @@
+import '@/lib/polyfill.js';
+
 class Storage {
   localGet(): Promise<Local>;
   localGet<T extends LocalKey>(key: T): Promise<{ [K in T]: Local[T] }>;

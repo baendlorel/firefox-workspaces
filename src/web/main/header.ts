@@ -1,7 +1,7 @@
 import { EventBus } from 'minimal-event-bus';
+import { i, $send } from '@/lib/ext-apis.js';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
-import { $windowsGetCurrent, $tabsQuery, i, $send } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';
 import popupService from '@web/popup.service.js';
 
@@ -27,8 +27,8 @@ function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
       label: btnWithIcon(bookmarkPlusSvg, i('workspace.create-with-current-tabs')),
       action: async function (this) {
         // Get current window tabs
-        const currentWindow = await $windowsGetCurrent();
-        const tabs = await $tabsQuery({ windowId: currentWindow.id });
+        const currentWindow = await browser.windows.getCurrent();
+        const tabs = await browser.tabs.query({ windowId: currentWindow.id });
 
         // Emit edit event with tabs
         bus.emit('edit', null, tabs);

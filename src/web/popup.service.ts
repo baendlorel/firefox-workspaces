@@ -1,4 +1,4 @@
-import { $windowWorkspace, $send, $windowsGetCurrent } from '@/lib/ext-apis.js';
+import { $windowWorkspace, $send, $windows } from '@/lib/ext-apis.js';
 import { $objectHash, $tdtDashed } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';
@@ -6,7 +6,7 @@ import { compressToBase64 } from 'lz-string';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
-    const currentWindow = await $windowsGetCurrent();
+    const currentWindow = await $windows.getCurrent();
     return $windowWorkspace(currentWindow.id);
   }
 

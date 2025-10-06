@@ -5,15 +5,13 @@
 
 /// <reference types="chrome" />
 
-// Check if we're running in Chrome or Firefox
-const isChrome =
-  typeof (globalThis as any).chrome !== 'undefined' && !!(globalThis as any).chrome.runtime;
-const isFirefox =
-  typeof (globalThis as any).browser !== 'undefined' && !!(globalThis as any).browser.runtime;
+const isObject = (o: unknown) => typeof o === 'object' && o !== null;
 
-/**
- * Convert Chrome callback-based API to Promise-based API
- */
+// Check if we're running in Chrome or Firefox
+const isChrome = isObject(globalThis.chrome?.runtime);
+const isFirefox = isObject(globalThis.browser?.runtime);
+
+// Convert Chrome callback-based API to Promise-based API
 function promisify<T>(fn: Function, context?: any): (...args: any[]) => Promise<T> {
   return function (...args: any[]): Promise<T> {
     return new Promise((resolve, reject) => {
@@ -31,7 +29,7 @@ function promisify<T>(fn: Function, context?: any): (...args: any[]) => Promise<
 
 if (!isFirefox && isChrome) {
   // Chrome: create browser object from chrome
-  const chromeApi = (globalThis as any).chrome;
+  const chromeApi = globalThis.chrome;
 
   const browserPolyfill = {
     // tabs API
@@ -92,7 +90,7 @@ if (!isFirefox && isChrome) {
     // action API (Chrome uses action, Firefox uses browserAction for MV2)
     action: {
       setBadgeTextColor: promisify<void>(
-        chromeApi.action?.setBadgeTextColor ?? chromeApi.browserAction?.setBadgeTextColor,
+        chromeApi.action?.setBadgeTextColor,
         chromeApi.action ?? chromeApi.browserAction
       ),
       setBadgeBackgroundColor: promisify<void>(

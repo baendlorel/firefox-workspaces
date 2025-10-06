@@ -1,6 +1,7 @@
+import '@/lib/polyfill.js';
 import { danger, info } from '@comp/dialog/alerts.js';
 import { svg } from '@/lib/dom.js';
-import { $storageEvents, i } from '@/lib/ext-apis.js';
+import { i } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';
 
 import arrowRepeatSvg from '@assets/arrow-repeat.svg?raw';
@@ -24,7 +25,7 @@ export class SyncIcon {
 
     store.localGet('settings').then((local) => this.toggle(local.settings.sync));
 
-    $storageEvents.onChanged.addListener((changes, area) => {
+    browser.storage.onChanged.addListener((changes, area) => {
       if (area === 'local' && changes.settings) {
         const newSync = changes.settings.newValue?.sync;
         if (newSync !== undefined) {
