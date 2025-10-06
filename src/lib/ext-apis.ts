@@ -16,12 +16,12 @@ export const $aboutBlank = (): Promise<WindowWithId> =>
     type: 'normal',
   }) as Promise<WindowWithId>;
 
-export const $notify = (message: string, title: string, time: number = 12000) =>
+export const $notify = (message: string, time: number = 12000) =>
   browser.notifications
     .create({
       type: 'basic',
-      iconUrl: browser.runtime.getURL('./icon-128.png'),
-      title,
+      iconUrl: browser.runtime.getURL('dist/assets/icon-128.png'),
+      title: i('extensionName'),
       message,
     })
     .then((notificationId) => setTimeout(() => browser.notifications.clear(notificationId), time));
@@ -46,4 +46,16 @@ export async function $windowWorkspace(
 
 // # i18n
 true satisfies IsSameType<I18NEnKey, I18NZhKey>;
-export const i = browser.i18n.getMessage as (messageName: I18NKey, substitutions?: any) => string;
+export const i: (messageName: I18NKey, substitutions?: any) => string = (
+  key: I18NKey,
+  substitutions?: any
+) => {
+  const msg = browser.i18n.getMessage(key);
+  if (typeof substitutions === 'object' && substitutions !== null) {
+    return Object.entries(substitutions).reduce(
+      (str, [k, v]) => str.replace(`{${k}}`, v as string),
+      msg
+    );
+  }
+  return msg;
+};

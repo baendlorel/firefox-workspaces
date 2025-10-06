@@ -241,7 +241,7 @@ export class WorkspaceManager {
 
     return {
       succ: true,
-      message: i('import.summary', [added, skipped]),
+      message: i('import.summary', { added, skipped }),
       addedCount: newWorkspaces.length,
     };
   }

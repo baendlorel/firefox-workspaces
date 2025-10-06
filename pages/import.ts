@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
         browser.tabs.remove(cur.id);
       }
     } catch (error) {
-      $notify('Failed to import data: ' + (error as Error).message, i('import.notification-title'));
+      $notify('Failed to import data: ' + (error as Error).message);
     }
   });
 
