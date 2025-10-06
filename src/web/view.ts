@@ -6,7 +6,7 @@ import './css/form.css';
 
 // packages
 import { EventBus } from 'minimal-event-bus';
-import { $id } from '@/lib/dom.js';
+import { $id, h } from '@/lib/dom.js';
 
 // components
 import header from './main/header.js';
@@ -17,22 +17,21 @@ import version from './main/version.js';
 
 export function createView() {
   const { bus, emit, on } = EventBus.create<WorkspaceEditorEventMap>();
+  const body = h('div', 'body', [list(bus), emptyState(bus)]);
   const children = [
     // header
     header(bus),
 
     // body
-    list(bus),
-    emptyState(bus),
+    body,
 
     // footer
     version(),
-
-    // other components
-    editor(bus),
   ];
 
   $id('app').append(...children);
+
+  document.body.appendChild(editor(bus));
 
   // # initial render
   emit('render-list');

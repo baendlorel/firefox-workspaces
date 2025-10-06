@@ -12,8 +12,6 @@ import { createDialog } from '@comp/dialog/index.js';
 import colorPicker from '@comp/color/index.js';
 import popupService from '@web/popup.service.js';
 
-import trashSvg from '@assets/trash.svg?raw';
-
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   let editingWorkspace: Workspace | null = null;
   let currentTabs: WorkspaceTab[] = [];

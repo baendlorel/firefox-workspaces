@@ -103,7 +103,7 @@ export class Menu {
     const rect = button.getBoundingClientRect();
     const drect = this.getBoundingClientRect();
     const x = rect.x - drect.width - 1;
-    const y = rect.y + rect.height - 1;
+    const y = rect.y - 1;
     this.show(x, y);
   }
 }
