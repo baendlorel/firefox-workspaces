@@ -8,8 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const key = (e as HTMLElement).dataset?.i18n;
     if (key === 'about.version') {
       e.textContent = 'v__VERSION__';
-    }
-    if (typeof key === 'string') {
+    } else if (typeof key === 'string') {
       e.textContent = $i(key as any);
     }
   }

@@ -15,8 +15,7 @@
       border-radius: 14px;
     }
 
-    .thank {
-      margin-bottom: 15px;
+    .text {
       font-size: 18px;
       text-align: center;
     }
@@ -25,7 +24,12 @@
 
 <body>
   <div id="app">
-    <p class="thank" data-i18n="donate.message"></p>
+    <div class="text" data-i18n="donate.message"></div>
+    <div>
+      <span class="text" data-i18n="donate.welcome">
+      </span>
+      <a style="margin-left:4px" target="_blank" href="https://baendlorel.github.io/" data-i18n="donate.clickhere"></a>
+    </div>
     <img class="donate-img" src="/assets/donate-small.png" alt="Donate" />
   </div>
 

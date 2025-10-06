@@ -56,6 +56,12 @@
   "donate.message": {
     "message": "Your support motivates me to keep creating 🌟"
   },
+  "donate.welcome": {
+    "message": "If you interested in my work, welcome to my homepage to discover more projects!"
+  },
+  "donate.clickhere": {
+    "message": "Click here to visit"
+  },
   "about": {
     "message": "About",
     "description": "Context menu item"

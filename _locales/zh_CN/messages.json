@@ -57,6 +57,12 @@
   "donate.message": {
     "message": "你的支持是我前进的动力！ 🌟"
   },
+  "donate.welcome": {
+    "message": "如果你对本插件感兴趣，欢迎访问我的主页，发现更多有趣的项目！"
+  },
+  "donate.clickhere": {
+    "message": "点此访问"
+  },
   "about": {
     "message": "关于",
     "description": "Context menu item"

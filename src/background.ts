@@ -203,8 +203,8 @@ class WorkspaceBackground {
   private openPage(fileName: PopupPage) {
     const wh: { [k in PopupPage]: { width: number; height: number } } = {
       [PopupPage.Import]: { width: 320, height: 350 },
-      [PopupPage.Donate]: { width: 320, height: 400 },
-      [PopupPage.About]: { width: 800, height: 660 },
+      [PopupPage.Donate]: { width: 380, height: 460 },
+      [PopupPage.About]: { width: 800, height: 700 },
     };
 
     return browser.windows.create({
