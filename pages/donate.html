@@ -6,32 +6,29 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title data-i18n="donate.title"></title>
   <link rel="stylesheet" href="/pages/style.css" />
+  <link rel="stylesheet" href="/pages/donate.css" />
   <link rel="shortcut icon" href="/assets/icon-128.png" type="image/x-icon">
-  <style>
-    .donate-img {
-      margin: auto;
-      border: 4px dashed #CCD3D9;
-      width: 70%;
-      border-radius: 14px;
-    }
-
-    .text {
-      font-size: 18px;
-      text-align: center;
-    }
-  </style>
 </head>
 
 <body>
-  <div id="app">
-    <div class="text" data-i18n="donate.message"></div>
-    <div>
-      <span class="text" data-i18n="donate.welcome">
-      </span>
-      <a style="margin-left:4px" target="_blank" href="https://baendlorel.github.io/" data-i18n="donate.clickhere"></a>
-    </div>
-    <img class="donate-img" src="/assets/donate-small.png" alt="Donate" />
-  </div>
+  <main>
+    <header class="page-header">
+      <div class="page-logo">💖</div>
+      <h1 class="page-title" data-i18n="donate.title"></h1>
+    </header>
+
+    <section class="page-description">
+      <p class="page-tagline" data-i18n="donate.message"></p>
+      <p class="page-subtitle">
+        <span data-i18n="donate.welcome"></span>
+        <a class="link" target="_blank" href="https://baendlorel.github.io/" data-i18n="donate.clickhere"></a>
+      </p>
+    </section>
+
+    <section class="donate-visual">
+      <img class="donate-img" src="/assets/donate-small.png" alt="Donate" />
+    </section>
+  </main>
 
   <script type="module" src="/pages/common.ts"></script>
 </body>

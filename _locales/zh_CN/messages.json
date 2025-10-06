@@ -63,10 +63,6 @@
   "donate.clickhere": {
     "message": "点此访问"
   },
-  "about": {
-    "message": "关于",
-    "description": "Context menu item"
-  },
   "editWorkspace": {
     "message": "编辑工作区",
     "description": "Edit workspace dialog title"
@@ -76,12 +72,10 @@
     "description": "New workspace with tabs dialog title"
   },
   "name": {
-    "message": "名称",
-    "description": "Name label"
+    "message": "名称"
   },
   "color": {
-    "message": "颜色",
-    "description": "Color label"
+    "message": "颜色"
   },
   "random": {
     "message": "随机",
@@ -202,10 +196,6 @@
   "changelog": {
     "message": "更新日志",
     "description": "Changelog link text"
-  },
-  "closeAboutDialog": {
-    "message": "关闭关于对话框",
-    "description": "Close about dialog tooltip"
   },
   "information": {
     "message": "信息",
@@ -343,6 +333,13 @@
   "import.opener": {
     "message": "选择文件"
   },
+  "about": {
+    "message": "关于",
+    "description": "Context menu item"
+  },
+  "about.homepage": {
+    "message": "访问主页"
+  },
   "about.title": {
     "message": "关于"
   },
@@ -351,8 +348,7 @@
     "description": "About page app name"
   },
   "about.tagline": {
-    "message": "在 FireFox 中实现类似 Edge 浏览器的工作区功能",
-    "description": "About page tagline"
+    "message": "复刻 Edge 浏览器的工作区功能"
   },
   "about.subtitle": {
     "message": "组织并快速切换标签组 — 导入/导出、颜色编码工作区，并从打开的标签创建工作区。",

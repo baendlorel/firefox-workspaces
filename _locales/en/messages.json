@@ -62,10 +62,6 @@
   "donate.clickhere": {
     "message": "Click here to visit"
   },
-  "about": {
-    "message": "About",
-    "description": "Context menu item"
-  },
   "editWorkspace": {
     "message": "Edit Workspace",
     "description": "Edit workspace dialog title"
@@ -75,12 +71,10 @@
     "description": "New workspace with tabs dialog title"
   },
   "name": {
-    "message": "Name",
-    "description": "Name label"
+    "message": "Name"
   },
   "color": {
-    "message": "Color",
-    "description": "Color label"
+    "message": "Color"
   },
   "random": {
     "message": "Random",
@@ -201,10 +195,6 @@
   "changelog": {
     "message": "Changelog",
     "description": "Changelog link text"
-  },
-  "closeAboutDialog": {
-    "message": "Close about dialog",
-    "description": "Close about dialog tooltip"
   },
   "information": {
     "message": "Information",
@@ -342,6 +332,13 @@
   "import.opener": {
     "message": "Choose File"
   },
+  "about": {
+    "message": "About",
+    "description": "Context menu item"
+  },
+  "about.homepage": {
+    "message": "Visit Homepage"
+  },
   "about.title": {
     "message": "About"
   },
@@ -350,7 +347,7 @@
     "description": "About page app name"
   },
   "about.tagline": {
-    "message": "Implement workspace feature similar to Edge browser in FireFox",
+    "message": "Implement workspace feature similar to Edge browser",
     "description": "About page tagline"
   },
   "about.subtitle": {
