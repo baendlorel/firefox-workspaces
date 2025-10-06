@@ -47,18 +47,18 @@ dialog:focus {
   /* Enhanced animation setup */
   transform: scale(0.8) translateY(-30px) rotateX(10deg);
   transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  filter: blur(8px);
+  /* filter: blur(8px); */
 }
 
 .dialog-container[open] {
   @apply opacity-100;
   transform: scale(1) translateY(0) rotateX(0deg);
-  filter: blur(0);
+  /* filter: blur(0); */
 }
 
 .dialog-container::backdrop {
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px) saturate(1.2);
+  backdrop-filter: saturate(1.2); /* blur(8px) */
   opacity: 0;
   transition: all 0.35s ease-out;
 }
@@ -76,22 +76,22 @@ dialog:focus {
 @keyframes backdropFadeIn {
   from {
     opacity: 0;
-    backdrop-filter: blur(0) saturate(1);
+    backdrop-filter: saturate(1); /*blur(0)*/
   }
   to {
     opacity: 1;
-    backdrop-filter: blur(8px) saturate(1.2);
+    backdrop-filter: saturate(1.2); /*blur(8px)*/
   }
 }
 
 @keyframes backdropFadeOut {
   from {
     opacity: 1;
-    backdrop-filter: blur(8px) saturate(1.2);
+    backdrop-filter: saturate(1.2); /*blur(8px)*/
   }
   to {
     opacity: 0;
-    backdrop-filter: blur(0) saturate(1);
+    backdrop-filter: saturate(1); /*blur(0)*/
   }
 }
 

@@ -101,7 +101,7 @@ input.palette {
 
 .palette-container::backdrop {
   background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px) saturate(1.2);
+  backdrop-filter: saturate(1.2); /* blur(8px) */
   opacity: 0;
   transition: all 0.35s ease-out;
 }

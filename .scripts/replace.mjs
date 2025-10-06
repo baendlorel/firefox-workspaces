@@ -7,7 +7,7 @@ import { join } from 'node:path';
  */
 const pkg = JSON.parse(readFileSync(join(import.meta.dirname, '..', 'package.json'), 'utf-8'));
 
-function formatDateFull(dt = new Date()) {
+function formatDateTimeFull(dt = new Date()) {
   const y = dt.getFullYear();
   const m = String(dt.getMonth() + 1).padStart(2, '0');
   const d = String(dt.getDate()).padStart(2, '0');
@@ -17,8 +17,15 @@ function formatDateFull(dt = new Date()) {
   const ms = String(dt.getMilliseconds()).padStart(3, '0');
   return `${y}.${m}.${d} ${hh}:${mm}:${ss}.${ms}`;
 }
+function formatDateFull(dt = new Date()) {
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, '0');
+  const d = String(dt.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
+}
 
-const __DATE_TIME__ = formatDateFull();
+const __DATE_TIME__ = formatDateTimeFull();
+const __DATE__ = formatDateFull();
 const __KEBAB_NAME__ = pkg.name.replace('rollup-plugin-', '');
 const __NAME__ = __KEBAB_NAME__.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
 
@@ -48,8 +55,7 @@ export const replaceOpts = {
     __VERSION__: pkg.version,
     v__VERSION__: 'v' + pkg.version,
     __DATE_TIME__,
-    // __OPTS__: `Rollup${__NAME__}Options`,
-    // __STRICT_OPTS__: `Rollup${__NAME__}StrictOptions`,
+    __DATE__,
   },
 };
 

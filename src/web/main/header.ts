@@ -67,13 +67,13 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
       },
     },
     Menu.Divider,
-    {
-      label: btnWithIcon(bugSvg, i('menu.debug-info')),
-      action: async () => {
-        const { workspaces } = await store.localGet('workspaces');
-        logger.debug('workspaces', stringify(workspaces));
-      },
-    },
+    // {
+    //   label: btnWithIcon(bugSvg, i('menu.debug-info')),
+    //   action: async () => {
+    //     const { workspaces } = await store.localGet('workspaces');
+    //     logger.debug('workspaces', stringify(workspaces));
+    //   },
+    // },
     {
       label: btnWithIcon(gearSvg, i('menu.settings')),
       action: function (this) {
@@ -103,7 +103,7 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const addBtn = btn({ class: 'btn-text', title: i('workspace.new') }, i('button.new'));
-  const moreBtn = btn({ class: 'btn-text', title: i('button.more-actions') }, [
+  const moreBtn = btn({ class: 'btn-text ms-1', title: i('button.more-actions') }, [
     svg(listSvg, undefined, 18),
   ]);
   const createMenu = createCreateMenu(bus);
