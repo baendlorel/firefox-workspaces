@@ -10,6 +10,7 @@ import settings from '@comp/settings.js';
 import { btnWithIcon } from './icon.js';
 import { stringify } from './debug.js';
 
+import arrowRepeatSvg from '@assets/arrow-repeat.svg?raw';
 import plusSvg from '@assets/workspace-plus.svg?raw';
 import listSvg from '@assets/list.svg?raw';
 import bookmarkPlusSvg from '@assets/bookmark-plus.svg?raw';
@@ -102,11 +103,12 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const addBtn = btn({ class: 'btn-text', title: i('workspace.new') }, i('button.new'));
   const moreBtn = btn({ class: 'btn-text', title: i('button.more-actions') }, [
-    svg(listSvg, '#fff', 18),
+    svg(listSvg, null, 18),
   ]);
   const createMenu = createCreateMenu(bus);
   const moreActionMenu = createMoreActionMenu(bus);
 
+  const syncIcon = svg(arrowRepeatSvg, null, 18);
   const title = h('h2', 'wb-header-title', i('workspace.title'));
   const header = div('wb-header', [title, addBtn, moreBtn]);
 

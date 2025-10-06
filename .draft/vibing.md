@@ -201,3 +201,16 @@ invalid的value会变为白色
 ---
 
 早期由其他ai生成的`_locales`文件中，键名不是很统一，不是很规范。后来我发现，采取`xxx.aaa-bbb-ccc.xxx-yyy`这个格式，可读性是最好的，也很清晰。请你帮我把格式全部改成这种，对应文件也要修改。
+
+---
+
+新增功能：同步指示器，要求如下:
+
+1. 我在header.ts里写了一个变量为`syncIcon`，用它做指示器
+2. syncIcon放在header里，放在右侧的两个按钮的左边，样式不要太显眼，可以透明一些
+3. syncIcon有三种状态，分别是同步中、同步成功、同步失败
+4. syncIcon平时颜色是transparent，也就是看不到。
+5. 同步中时，syncIcon的颜色为空，也就是默认颜色。它会旋转，表示正在同步
+6. 同步成功时，syncIcon是绿色，8秒后又变回透明,可以用tansition 0.8s来做到
+7. 同步失败时，syncIcon是红色，不变透明。点击它会弹出info对话框，显示失败原因
+8. 如果settings.sync = off，那么这个syncIcon就看不见

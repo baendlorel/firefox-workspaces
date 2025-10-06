@@ -76,13 +76,15 @@ export const btn = (
 const dummy = div();
 export const svg = (
   svg: string,
-  color: string | undefined,
+  color: string | null = null,
   width: number = 16,
   height: number = width
 ): SVGElement => {
   color = color ?? 'currentColor';
-  dummy.innerHTML = svg
-    .replace('<svg ', '<svg width="' + width + '" height="' + height + '" ')
-    .replaceAll('currentColor', color);
+  let html = svg.replace('<svg ', '<svg width="' + width + '" height="' + height + '" ');
+  if (color) {
+    html = html.replaceAll('currentColor', color);
+  }
+  dummy.innerHTML = html;
   return dummy.firstElementChild as SVGElement;
 };
