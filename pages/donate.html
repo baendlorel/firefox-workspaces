@@ -5,13 +5,27 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title data-i18n="donate.title"></title>
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="/pages/style.css" />
   <link rel="shortcut icon" href="/assets/icon-128.png" type="image/x-icon">
+  <style>
+    .donate-img {
+      margin: auto;
+      border: 4px dashed #CCD3D9;
+      width: 70%;
+      border-radius: 14px;
+    }
+
+    .thank {
+      margin-bottom: 15px;
+      font-size: 18px;
+      text-align: center;
+    }
+  </style>
 </head>
 
 <body>
   <div id="app">
-    <p class="mb-4" data-i18n="donate.message"></p>
+    <p class="thank" data-i18n="donate.message"></p>
     <img class="donate-img" src="/assets/donate-small.png" alt="Donate" />
   </div>
 

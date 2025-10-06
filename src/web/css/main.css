@@ -24,9 +24,3 @@ body {
   white-space: nowrap;
   border: 0;
 }
-
-.donate-img {
-  @apply m-auto border-4 border-gray-300 border-dashed;
-  width: 70%;
-  border-radius: 14px;
-}
