@@ -94,7 +94,7 @@
     "message": " Haven, Harbor, Oasis, Sanctum, Vault, Garden, Grove, Pier, Station, Portal, Hub, Forge, Nexus, Realm"
   },
   "button.delete": {
-    "message": "Delete",
+    "message": "Delete this workspace",
     "description": "Delete button"
   },
   "button.delete-workspace": {

@@ -155,7 +155,7 @@
 }
 
 .version {
-  @apply absolute right-2.5 bottom-1.5 py-1.5 px-0 text-right text-xs;
+  @apply right-2.5 bottom-1.5 p-1.5 px-0 text-right text-xs;
   color: var(--secondary-light);
 }
 .version p {

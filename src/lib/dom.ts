@@ -73,18 +73,19 @@ export const btn = (
   children: (HTMLElement | SVGElement | string)[] | string = ''
 ): HTMLButtonElement => h('button', className, children);
 
-const dummy = div();
+const parser = new DOMParser();
 export const svg = (
-  svg: string,
+  str: string,
   color: string | null = null,
   width: number = 16,
   height: number = width
 ): SVGElement => {
   color = color ?? 'currentColor';
-  let html = svg.replace('<svg ', '<svg width="' + width + '" height="' + height + '" ');
+  str = str.replace('<svg ', '<svg width="' + width + '" height="' + height + '" ');
   if (color) {
-    html = html.replaceAll('currentColor', color);
+    str = str.replaceAll('currentColor', color);
   }
-  dummy.innerHTML = html;
-  return dummy.firstElementChild as SVGElement;
+  const svgDoc = parser.parseFromString(str, 'image/svg+xml');
+  logger.info('svg', svgDoc.documentElement);
+  return svgDoc.documentElement as unknown as SVGElement;
 };
