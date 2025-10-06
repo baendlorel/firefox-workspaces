@@ -54,7 +54,7 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
       label: btnWithIcon(boxArrowDownSvg, i('import')),
       action: function (this: Menu) {
         this.close();
-        $send<OpenPageRequest>({ action: Action.OpenPage, page: 'import' });
+        $send<OpenPageRequest>({ action: Action.OpenPage, page: PopupPage.Import });
       },
     },
     {
@@ -81,17 +81,17 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
     },
     Menu.Divider,
     {
-      label: btnWithIcon(heartSvg, i('donate')),
+      label: btnWithIcon(heartSvg, i('donate.title')),
       action: function (this) {
         this.close();
-        $send<OpenPageRequest>({ action: Action.OpenPage, page: 'donate' });
+        $send<OpenPageRequest>({ action: Action.OpenPage, page: PopupPage.Donate });
       },
     },
     {
       label: btnWithIcon(workspaceSvg, i('about')),
       action: function (this) {
         this.close();
-        $send<OpenPageRequest>({ action: Action.OpenPage, page: 'about' });
+        $send<OpenPageRequest>({ action: Action.OpenPage, page: PopupPage.About });
       },
     },
   ]);

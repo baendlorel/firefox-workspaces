@@ -3,11 +3,11 @@
     "message": "zh"
   },
   "extensionName": {
-    "message": "Firefox 工作区",
+    "message": "工作区",
     "description": "Extension name"
   },
   "extensionDescription": {
-    "message": "一个强大的 Firefox 工作区管理器",
+    "message": "一个强大的工作区管理器",
     "description": "Extension description"
   },
   "workspace": {
@@ -50,9 +50,12 @@
     "message": "设置",
     "description": "Context menu item"
   },
-  "donate": {
+  "donate.title": {
     "message": "捐赠",
     "description": "Context menu item"
+  },
+  "donate.message": {
+    "message": "你的支持是我前进的动力！ 🌟"
   },
   "about": {
     "message": "关于",
@@ -147,7 +150,7 @@
     "description": "Reset button"
   },
   "firefoxWorkspacesSettings": {
-    "message": "Firefox 工作区设置",
+    "message": "工作区设置",
     "description": "Settings dialog aria label"
   },
   "closeSettingsDialog": {
@@ -161,10 +164,6 @@
   "areYouSure": {
     "message": "您确定吗？",
     "description": "General confirmation message"
-  },
-  "aboutFirefoxWorkspaces": {
-    "message": "关于 Firefox 工作区",
-    "description": "About dialog title"
   },
   "organizeTabs": {
     "message": "像专家一样管理你的标签页 ✨",
@@ -326,9 +325,6 @@
   "off": {
     "message": "关闭"
   },
-  "donateThank": {
-    "message": "你的支持是我前进的动力！ 🌟"
-  },
   "new": {
     "message": "新建"
   },
@@ -345,7 +341,7 @@
     "message": "关于"
   },
   "about.name": {
-    "message": "Firefox 工作区",
+    "message": "工作区",
     "description": "About page app name"
   },
   "about.tagline": {

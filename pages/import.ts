@@ -18,4 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // todo 移动到一个新的文件夹里，专门放这些文件
     // todo 导入完成给个提示
   });
+
+  const openBtn = document.getElementById('open-file-input');
+  if (openBtn) {
+    openBtn.addEventListener('click', () => input.click());
+  }
 });

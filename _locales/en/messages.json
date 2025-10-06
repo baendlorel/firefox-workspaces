@@ -3,11 +3,11 @@
     "message": "en"
   },
   "extensionName": {
-    "message": "Firefox Workspaces",
+    "message": "Workspaces",
     "description": "Extension name"
   },
   "extensionDescription": {
-    "message": "A powerful workspace manager for Firefox",
+    "message": "A powerful workspace manager",
     "description": "Extension description"
   },
   "workspace": {
@@ -49,9 +49,12 @@
     "message": "Settings",
     "description": "Context menu item"
   },
-  "donate": {
+  "donate.title": {
     "message": "Donate",
     "description": "Context menu item"
+  },
+  "donate.message": {
+    "message": "Your support motivates me to keep creating 🌟"
   },
   "about": {
     "message": "About",
@@ -146,7 +149,7 @@
     "description": "Reset button"
   },
   "firefoxWorkspacesSettings": {
-    "message": "Firefox Workspaces Settings",
+    "message": "Workspaces Settings",
     "description": "Settings dialog aria label"
   },
   "closeSettingsDialog": {
@@ -160,10 +163,6 @@
   "areYouSure": {
     "message": "Are you sure?",
     "description": "General confirmation message"
-  },
-  "aboutFirefoxWorkspaces": {
-    "message": "About Firefox Workspaces",
-    "description": "About dialog title"
   },
   "organizeTabs": {
     "message": "Organize your tabs like a pro ✨",
@@ -325,9 +324,6 @@
   "off": {
     "message": "Off"
   },
-  "donateThank": {
-    "message": "Your support motivates me to keep creating 🌟"
-  },
   "new": {
     "message": "New"
   },
@@ -344,7 +340,7 @@
     "message": "About"
   },
   "about.name": {
-    "message": "Firefox Workspaces",
+    "message": "Workspaces",
     "description": "About page app name"
   },
   "about.tagline": {

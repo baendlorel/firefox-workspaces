@@ -42,9 +42,13 @@ export default defineConfig({
     minify: false,
     rollupOptions: {
       input: {
+        // pages
         index: resolve('index.html'),
         import: resolve('pages/import.html'),
         about: resolve('pages/about.html'),
+        donate: resolve('pages/donate.html'),
+
+        // js
         background: resolve('src/background.ts'),
         content: resolve('src/content.ts'),
         popup: resolve('src/web/popup.ts'),

@@ -23,7 +23,7 @@ declare global {
 
   interface OpenPageRequest {
     action: Action.OpenPage;
-    page: 'about' | 'donate' | 'import';
+    page: PopupPage;
   }
 
   // Union type for all possible requests

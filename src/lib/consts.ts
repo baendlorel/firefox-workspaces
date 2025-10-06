@@ -4,6 +4,12 @@ declare global {
     DefaultColor = '#2da191',
   }
 
+  const enum PopupPage {
+    Donate = 'donate',
+    About = 'about',
+    Import = 'import',
+  }
+
   const enum Action {
     /**
      * Open workspace in a new window

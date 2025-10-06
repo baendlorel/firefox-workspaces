@@ -200,12 +200,17 @@ class WorkspaceBackground {
     };
   }
 
-  private openPage(fileName: string) {
+  private openPage(fileName: PopupPage) {
+    const wh: { [k in PopupPage]: { width: number; height: number } } = {
+      [PopupPage.Import]: { width: 320, height: 350 },
+      [PopupPage.Donate]: { width: 400, height: 600 },
+      [PopupPage.About]: { width: 800, height: 520 },
+    };
+
     return browser.windows.create({
-      url: `dist/${fileName}.html`,
+      url: `dist/pages/${fileName}.html`,
       type: 'popup',
-      width: 320,
-      height: 350,
+      ...wh[fileName],
     });
   }
 
