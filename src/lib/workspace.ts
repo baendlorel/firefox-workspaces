@@ -1,6 +1,6 @@
+import '@/lib/polyfill.js';
 import { Color } from './color.js';
 import { $genId } from './utils.js';
-import { TAB_ID_NONE } from './ext-apis.js';
 
 export const createWorkspace = (formData: WorkspaceFormData): Workspace => ({
   id: $genId(),
@@ -31,7 +31,7 @@ export const isValidWorkspaces = (o: Workspace[]): o is Workspace[] => {
 };
 
 export const createWorkspaceTab = (tab: browser.tabs.Tab): WorkspaceTab => {
-  if (tab.id === undefined || tab.id === TAB_ID_NONE) {
+  if (tab.id === undefined || tab.id === browser.tabs.TAB_ID_NONE) {
     throw new TypeError('WorkspaceTab: browserTab.id is undefined or TAB_ID_NONE');
   }
   return {

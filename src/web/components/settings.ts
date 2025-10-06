@@ -1,4 +1,5 @@
-import { i, $send } from '@/lib/ext-apis.js';
+import { i, $send } from '@/lib/polyfilled-api.js';
+
 import { store } from '@/lib/storage.js';
 import { confirmation } from './dialog/alerts.js';
 import { createDialog } from './dialog/index.js';

@@ -1,5 +1,5 @@
+import { i } from '@/lib/polyfilled-api.js';
 import { div, h } from '@/lib/dom.js';
-import { i } from '@/lib/ext-apis.js';
 
 export default () =>
   div('version', [

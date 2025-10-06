@@ -1,5 +1,5 @@
-import '@/lib/polyfill.js';
-import { i, $windowWorkspace, $notify } from './lib/ext-apis.js';
+import { i, $windowWorkspace, $notify } from './lib/polyfilled-api.js';
+
 import { store } from './lib/storage.js';
 import { NotProvided } from './lib/consts.js';
 import { $sleep, $thm } from './lib/utils.js';

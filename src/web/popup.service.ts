@@ -1,4 +1,4 @@
-import { $windowWorkspace, $send, $windows } from '@/lib/ext-apis.js';
+import { $windowWorkspace, $send, $windows } from '@/lib/polyfilled-api.js';
 import { $objectHash, $tdtDashed } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';

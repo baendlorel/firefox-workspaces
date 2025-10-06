@@ -1,7 +1,6 @@
-import '@/lib/polyfill.js';
+import { i } from '@/lib/polyfilled-api.js';
 import { danger, info } from '@comp/dialog/alerts.js';
 import { svg } from '@/lib/dom.js';
-import { i } from '@/lib/ext-apis.js';
 import { store } from '@/lib/storage.js';
 
 import arrowRepeatSvg from '@assets/arrow-repeat.svg?raw';

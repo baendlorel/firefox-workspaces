@@ -1,9 +1,10 @@
 import { EventBus } from 'minimal-event-bus';
+import { i } from '@/lib/polyfilled-api.js';
+
 import { WORKSPACE_COLORS } from '@/lib/consts.js';
-import { btn, div, h, svg } from '@/lib/dom.js';
+import { btn, div, h } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
 import { $randItem } from '@/lib/utils.js';
-import { i } from '@/lib/ext-apis.js';
 import { createWorkspaceTab } from '@/lib/workspace.js';
 
 import { confirmation, danger, info } from '@comp/dialog/alerts.js';

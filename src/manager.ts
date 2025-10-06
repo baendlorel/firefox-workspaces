@@ -1,6 +1,6 @@
-import '@/lib/polyfill.js';
+import { i, $aboutBlank, $setBadge } from './lib/polyfilled-api.js';
+
 import { Color } from './lib/color.js';
-import { $aboutBlank, $setBadge, i } from './lib/ext-apis.js';
 import { store } from './lib/storage.js';
 import { isValidSettings } from './lib/settings.js';
 import { $objectHash } from './lib/utils.js';

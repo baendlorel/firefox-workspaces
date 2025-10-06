@@ -1,5 +1,6 @@
+import { i } from '@/lib/polyfilled-api.js';
+
 import { btn, h } from '@/lib/dom.js';
-import { i } from '@/lib/ext-apis.js';
 import { createDialog } from './index.js';
 
 export default async (config: {

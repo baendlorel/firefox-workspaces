@@ -1,5 +1,6 @@
+import { i } from '@/lib/polyfilled-api.js';
+
 import { btn } from '@/lib/dom.js';
-import { i } from '@/lib/ext-apis.js';
 import { createDialog } from './index.js';
 
 export const info = (message: string, title: string = i('dialog.type.information')) => {

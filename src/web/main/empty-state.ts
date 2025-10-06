@@ -1,6 +1,7 @@
 import { EventBus } from 'minimal-event-bus';
+import { i } from '@/lib/polyfilled-api.js';
+
 import { div, h } from '@/lib/dom.js';
-import { i } from '@/lib/ext-apis.js';
 
 import folderIcon from '@assets/folder.svg?raw';
 

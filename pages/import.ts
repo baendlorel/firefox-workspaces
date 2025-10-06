@@ -1,5 +1,4 @@
-import '@/lib/polyfill.js';
-import { $notify, $send } from '@/lib/ext-apis.js';
+import { $notify, $send } from '@/lib/polyfilled-api.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   const input = document.getElementById('import') as HTMLInputElement;

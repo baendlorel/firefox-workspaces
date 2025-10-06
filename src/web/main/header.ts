@@ -1,5 +1,6 @@
 import { EventBus } from 'minimal-event-bus';
-import { i, $send } from '@/lib/ext-apis.js';
+import { i, $send } from '@/lib/polyfilled-api.js';
+
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { Color } from '@/lib/color.js';
 import { store } from '@/lib/storage.js';
