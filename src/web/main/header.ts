@@ -117,7 +117,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
   const addBtn = btn('btn btn-trans', i('button.new'));
   const moreBtn = btn({ class: 'btn btn-trans', style: '' }, [svg(listSvg, undefined, 18)]);
 
-  // todo 这里要改成logo小图标放在最左边，背景是白的
   const header = h('header', '', [title, syncDiv, addBtn, moreBtn]);
 
   bus.on('change-sync-state', (...args) => syncIcon.setStatus(...args));

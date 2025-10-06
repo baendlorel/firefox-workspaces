@@ -25,10 +25,12 @@ export class MockBrowser {
       const stored = localStorage.getItem(this.storageKey);
       if (!stored) return [];
 
-      const parsedData = JSON.parse(stored);
-      // Convert plain objects back to Workspace instances
-      return parsedData.map((data: any) => {
-        const workspace = createWorkspace(data);
+      const parsed = JSON.parse(stored) as Partial<Persist> | null;
+      if (!parsed) return [];
+      const workspaces = parsed.workspaces ?? [];
+      // Rehydrate workspace objects
+      return workspaces.map((data: any) => {
+        const workspace = createWorkspace(data as any);
         workspace.id = data.id;
         workspace.tabs = data.tabs || [];
         workspace.createdAt = data.createdAt;
@@ -41,11 +43,59 @@ export class MockBrowser {
     }
   }
 
-  private saveWorkspaces(workspaces: Workspace[]): void {
+  private getPersist(): Persist & Partial<State> {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(workspaces));
+      const stored = localStorage.getItem(this.storageKey);
+      if (!stored) {
+        // return defaults
+        return {
+          timestamp: Date.now(),
+          workspaces: [],
+          settings: { theme: Theme.Auto, sync: Switch.Off },
+          _workspaceWindows: {},
+          _windowTabs: {},
+        } as Persist & Partial<State>;
+      }
+
+      const parsed = JSON.parse(stored) as any;
+      return {
+        timestamp: parsed.timestamp ?? Date.now(),
+        workspaces: parsed.workspaces ?? [],
+        settings: parsed.settings ?? { theme: Theme.Auto, sync: Switch.Off },
+        _workspaceWindows: parsed._workspaceWindows ?? {},
+        _windowTabs: parsed._windowTabs ?? {},
+      } as Persist & Partial<State>;
     } catch (error) {
-      console.error('Failed to save workspaces to storage:', error);
+      console.error('Failed to parse persist from storage:', error);
+      return {
+        timestamp: Date.now(),
+        workspaces: [],
+        settings: { theme: Theme.Auto, sync: Switch.Off },
+        _workspaceWindows: {},
+        _windowTabs: {},
+      } as Persist & Partial<State>;
+    }
+  }
+
+  private savePersist(p: Partial<Persist> & Partial<State>) {
+    try {
+      const cur = this.getPersist();
+      const merged: any = {
+        timestamp: Date.now(),
+        workspaces: cur.workspaces.slice(),
+        settings: cur.settings,
+        _workspaceWindows: cur._workspaceWindows ?? {},
+        _windowTabs: cur._windowTabs ?? {},
+      };
+
+      if (p.workspaces) merged.workspaces = p.workspaces;
+      if (p.settings) merged.settings = p.settings;
+      if ((p as any)._workspaceWindows) merged._workspaceWindows = (p as any)._workspaceWindows;
+      if ((p as any)._windowTabs) merged._windowTabs = (p as any)._windowTabs;
+
+      localStorage.setItem(this.storageKey, JSON.stringify(merged));
+    } catch (error) {
+      console.error('Failed to save persist to storage:', error);
     }
   }
 
@@ -153,11 +203,11 @@ export class MockBrowser {
   private clearCache(): void {
     localStorage.removeItem(this.storageKey);
     console.log('Mock workspace cache cleared');
-    alert('Cache cleared!');
   }
 
   private createRandomWorkspaces(): void {
-    const workspaces = this.getStoredWorkspaces();
+    const persist = this.getPersist();
+    const workspaces = persist.workspaces.slice();
 
     for (let i = 0; i < 3; i++) {
       const workspace = this.generateRandomWorkspace();
@@ -173,9 +223,8 @@ export class MockBrowser {
       workspaces.push(workspace);
     }
 
-    this.saveWorkspaces(workspaces);
+    this.savePersist({ workspaces });
     console.log('Created 3 random workspaces');
-    alert('Created 3 random workspaces!');
   }
 
   private triggerSetCurrent(): void {
@@ -213,7 +262,8 @@ export class MockBrowser {
     }
 
     const action = request.action;
-    const workspaces = this.getStoredWorkspaces();
+    const persist = this.getPersist();
+    const workspaces = persist.workspaces;
 
     switch (action) {
       case Action.Open: {
@@ -229,7 +279,7 @@ export class MockBrowser {
 
         // Update last opened time
         workspace.lastOpened = Date.now();
-        this.saveWorkspaces(workspaces);
+        this.savePersist({ workspaces });
 
         return { succ: true };
       }
@@ -249,6 +299,8 @@ export class MockBrowser {
     const mocki = (s: I18NKey) => {
       return locale[s].message;
     };
+
+    const self = this;
 
     return new Proxy(function () {}, {
       get(_, key) {
@@ -272,6 +324,54 @@ export class MockBrowser {
         }
         if (key === 'i18n.getMessage') {
           return mocki(args[0]);
+        }
+        if (key === 'storage.local.get' || key === 'storage.sync.get') {
+          const arg = args[0];
+          const persist = self.getPersist();
+          if (arg === undefined) {
+            return Promise.resolve(persist);
+          }
+          // If an array of keys requested
+          if (Array.isArray(arg)) {
+            const res: any = {};
+            for (const k of arg) {
+              if (k === 'timestamp') res.timestamp = persist.timestamp;
+              else if (k === 'workspaces') res.workspaces = persist.workspaces;
+              else if (k === 'settings') res.settings = persist.settings;
+              else if (k === '_workspaceWindows') res._workspaceWindows = persist._workspaceWindows;
+              else if (k === '_windowTabs') res._windowTabs = persist._windowTabs;
+            }
+            return Promise.resolve(res);
+          }
+          // If a string key
+          if (typeof arg === 'string') {
+            const k = arg;
+            if (k === 'timestamp') return Promise.resolve({ timestamp: persist.timestamp });
+            if (k === 'workspaces') return Promise.resolve({ workspaces: persist.workspaces });
+            if (k === 'settings') return Promise.resolve({ settings: persist.settings });
+            if (k === '_workspaceWindows')
+              return Promise.resolve({ _workspaceWindows: persist._workspaceWindows });
+            if (k === '_windowTabs') return Promise.resolve({ _windowTabs: persist._windowTabs });
+            return Promise.resolve({});
+          }
+          // If object defaults passed, merge with persist
+          if (typeof arg === 'object') {
+            const res = { ...arg };
+            for (const k of Object.keys(res)) {
+              if (k in persist) (res as any)[k] = (persist as any)[k];
+            }
+            return Promise.resolve(res);
+          }
+        }
+        if (key === 'storage.local.set' || key === 'storage.sync.set') {
+          const arg = args[0] || {};
+          // Save partial persist
+          try {
+            self.savePersist(arg as Partial<Persist> & Partial<State>);
+            return Promise.resolve();
+          } catch (e) {
+            return Promise.reject(e);
+          }
         }
 
         return createProxy(path); // 调用后还能继续链式访问
