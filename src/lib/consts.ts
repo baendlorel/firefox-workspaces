@@ -49,9 +49,9 @@ declare global {
   }
 
   const enum SyncState {
-    Syncing,
-    Success,
-    Error,
+    Syncing = 'syncing',
+    Success = 'success',
+    Error = 'error',
   }
 }
 
