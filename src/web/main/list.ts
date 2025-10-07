@@ -11,6 +11,7 @@ import downSvg from '@assets/chevron-compact-down.svg?raw';
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
 function createScroller(ul: HTMLUListElement) {
+  const LI_COUNT_CAP = 10; // same as it is in css file
   const START_STEP = 1;
   const MAX_STEP = 2.1;
 
@@ -19,16 +20,25 @@ function createScroller(ul: HTMLUListElement) {
   up.style.top = '-10px';
   down.style.bottom = '-10px';
 
-  const updateScrollerVisibility = () => {
-    // If list not visible or empty, hide both
-    if (ul.style.display === 'none' || ul.scrollHeight <= ul.clientHeight) {
-      up.classList.remove('hidden');
-      down.classList.remove('hidden');
+  const updateScrollerVisibility = (liCount: number) => {
+    if (liCount <= LI_COUNT_CAP) {
+      up.classList.add('opacity-0');
+      down.classList.add('opacity-0');
       return;
     }
 
-    up.classList.toggle('hidden', ul.scrollTop <= 1);
-    down.classList.toggle('hidden', ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1);
+    if (
+      liCount <= LI_COUNT_CAP ||
+      ul.scrollHeight <= ul.clientHeight ||
+      ul.style.display === 'none'
+    ) {
+      up.classList.add('opacity-0');
+      down.classList.add('opacity-0');
+      return;
+    }
+
+    up.classList.toggle('opacity-0', ul.scrollTop <= 1);
+    down.classList.toggle('opacity-0', ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1);
   };
 
   // Continuous hold behavior: 5 times per second => 200ms interval
@@ -37,14 +47,18 @@ function createScroller(ul: HTMLUListElement) {
     let step = START_STEP;
 
     const doScroll = (direction: -1 | 1) => {
+      if (getComputedStyle(el).opacity === '0') {
+        scrolling = false;
+      }
+
       if (!scrolling) {
         return;
       }
+
       if (step < MAX_STEP) {
         step += 0.005;
       }
       ul.scrollTop = ul.scrollTop + direction * step;
-      console.log(direction * step);
       requestAnimationFrame(() => doScroll(direction));
     };
 
@@ -113,7 +127,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       ul.appendChild(li);
     }
 
-    updateScrollerVisibility();
+    updateScrollerVisibility(lis.length);
   };
 
   // $ reserved
