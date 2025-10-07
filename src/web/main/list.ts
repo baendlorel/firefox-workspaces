@@ -11,92 +11,52 @@ import downSvg from '@assets/chevron-compact-down.svg?raw';
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
 function createScroller(ul: HTMLUListElement) {
-  const ROW_HEIGHT = 33; // & same as var(--wbli-height)
+  const START_STEP = 1;
+  const MAX_STEP = 2.1;
 
   const up = div('wb-ul-scroller', [svg(upSvg, undefined, 16)]);
   const down = div('wb-ul-scroller', [svg(downSvg, undefined, 16)]);
   up.style.top = '-10px';
   down.style.bottom = '-10px';
 
-  // Scroll helpers
-  const showEl = (el: HTMLElement) => {
-    el.hidden = false;
-    el.style.display = '';
-  };
-  const hideEl = (el: HTMLElement) => {
-    el.hidden = true;
-    el.style.display = 'none';
-  };
-
   const updateScrollerVisibility = () => {
     // If list not visible or empty, hide both
     if (ul.style.display === 'none' || ul.scrollHeight <= ul.clientHeight) {
-      hideEl(up);
-      hideEl(down);
+      up.classList.remove('hidden');
+      down.classList.remove('hidden');
       return;
     }
 
-    // at top
-    if (ul.scrollTop <= 1) {
-      hideEl(up);
-    } else {
-      showEl(up);
-    }
-
-    // at bottom
-    if (ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1) {
-      hideEl(down);
-    } else {
-      showEl(down);
-    }
-  };
-
-  const doScroll = (direction: -1 | 1) => {
-    ul.scrollBy({ top: direction * ROW_HEIGHT, left: 0, behavior: 'auto' });
-    // update visibility after scroll (some browsers may need RAF)
-    requestAnimationFrame(updateScrollerVisibility);
+    up.classList.toggle('hidden', ul.scrollTop <= 1);
+    down.classList.toggle('hidden', ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1);
   };
 
   // Continuous hold behavior: 5 times per second => 200ms interval
   const makeScrollerBehavior = (el: HTMLElement, direction: -1 | 1) => {
-    let holding = false;
-    let intervalId: number | null = null;
-    let justHeld = false;
+    let scrolling = false;
+    let step = START_STEP;
 
-    const clearHold = () => {
-      holding = false;
-      if (intervalId !== null) {
-        clearInterval(intervalId);
-        intervalId = null;
+    const doScroll = (direction: -1 | 1) => {
+      if (!scrolling) {
+        return;
       }
-      justHeld = true;
-      // avoid a following click firing immediately after hold
-      setTimeout(() => (justHeld = false), 250);
+      if (step < MAX_STEP) {
+        step += 0.005;
+      }
+      ul.scrollTop = ul.scrollTop + direction * step;
+      console.log(direction * step);
+      requestAnimationFrame(() => doScroll(direction));
     };
 
     el.addEventListener('mousedown', (e) => {
       e.preventDefault();
-      if (holding) return;
-      holding = true;
-      // immediate scroll once
+      scrolling = true;
+      step = START_STEP;
       doScroll(direction);
-      intervalId = window.setInterval(() => doScroll(direction), 200);
     });
 
-    // pointerup / leave handlers
     ['mouseup', 'mouseleave', 'mouseout', 'pointerup', 'pointercancel'].forEach((ev) => {
-      el.addEventListener(ev, () => {
-        if (holding) {
-          clearHold();
-        }
-      });
-    });
-
-    // click for single step (ignore if it was a hold)
-    el.addEventListener('click', (e) => {
-      if ((e as MouseEvent).defaultPrevented) return;
-      if (justHeld) return;
-      doScroll(direction);
+      el.addEventListener(ev, () => (scrolling = false));
     });
   };
 

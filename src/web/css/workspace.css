@@ -29,7 +29,7 @@ header .sync {
 main {
   background-image: url(/assets/folder.svg);
   background-repeat: no-repeat;
-  background-position: center 12px;
+  background-position: center 32%;
   background-size: 50%;
 }
 
@@ -97,7 +97,6 @@ footer p {
 
 .wb-ul-scroller {
   @apply absolute;
-  /* margin-top: calc(0px - var(--wbul-scroller-height)); */
   padding: 3px 0px;
   width: 100%;
   height: var(--wbul-scroller-height);

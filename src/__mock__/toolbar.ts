@@ -306,12 +306,12 @@ export class MockBrowser {
     return new Proxy(function () {}, {
       get(_, key) {
         const newPath = [...path, key];
-        console.log('get:', newPath.join('.'));
+        // console.log('get:', newPath.join('.'));
         return createProxy(newPath);
       },
       set(_, key, value) {
         const newPath = [...path, key];
-        console.log('set:', newPath.join('.'), '=', value);
+        // console.log('set:', newPath.join('.'), '=', value);
         return true;
       },
       apply(_0, _1, args) {
