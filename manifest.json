@@ -11,8 +11,7 @@
     "sessions",
     "activeTab",
     "storage",
-    "notifications",
-    "scripting"
+    "notifications"
   ],
   "background": {
     "scripts": [
