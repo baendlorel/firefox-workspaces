@@ -1,5 +1,6 @@
 .vscode/settings.json
 vite-example
+web-ext-artifacts
 
 # Logs
 logs
