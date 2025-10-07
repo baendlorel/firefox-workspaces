@@ -33,7 +33,7 @@
   "scripts": {
     "lines": "clear && find ./src -type f \\( -name \"*.ts\" -o -name \"*.tsx\" -o -name \"*.js\" -o -name \"*.mjs\" -o -name \"*.cjs\" -o -name \"*.cpp\" -o -name \"*.h\" -o -name \"*.py\"  -o -name \"*.css\" -o -name \"*.rs\" -o -name \"*.rc\" \\) | xargs wc -l",
     "zip": "tsx .scripts/zip.ts",
-    "pack": "rimraf web-ext-artifacts && web-ext build && tsx .scripts/zip.ts",
+    "pack": "tsx .scripts/pack.ts",
     "dev": "vite",
     "build": "tsx .scripts/prebuild.ts && tsc && vite build",
     "preview": "vite preview",

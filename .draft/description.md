@@ -1,22 +1,25 @@
-Firefox Workspaces — 功能概述
+Firefox Workspaces — Summary
 
-这是一个将标签页按“工作区”组织和管理的 Firefox 扩展，模仿 Microsoft Edge 的 Workspace 概念。核心要点：
+Firefox Workspaces organizes browser tabs into named "workspaces" so users can save, restore, and switch between groups of tabs. The extension models the Workspace concept found in Microsoft Edge and is focused on making tab grouping and session recovery simple and reliable.
 
-- 工作区是标签页的集合：每个工作区保存一组标签（URL、标题等）。
-- 新建 / 删除工作区：可以为工作区命名并指定颜色以便识别。
-- 从当前窗口创建工作区：一键将当前窗口的全部标签保存为新工作区。
-- 在工作区之间移动标签：实际上是打开两个工作区，然后把tab移动到另一个浏览器窗口。
-- 打开工作区即在新的浏览窗口中恢复该组标签，并能将已打开窗口与对应工作区关联。
-- 自动保存与恢复：关闭与重新打开关联窗口时会保存并恢复工作区内标签的当前状态。
-- 导入 / 导出：支持以 JSON 形式导入与导出工作区数据，便于备份与迁移。
-- 用户界面：提供 popup（弹出面板）用于管理与快速操作， content script 是预留的，并不需要使用。
+Key features
 
-核心权限说明（用于审核/说明）
+- Workspaces as tab collections: each workspace stores a set of tabs with their URL, title, and pinned state.
+- Create and remove workspaces: users can name workspaces and assign a color for easy identification.
+- Create from current window: create a new workspace from all tabs in the current browser window with one action.
+- Move tabs between workspaces: drag-and-drop support to move tabs or remove them from a workspace.
+- Pinned tab handling: preserve pinned tabs when opening or restoring a workspace.
+- Open workspace in a new window: restore the full set of tabs (pinned and unpinned) in a new browser window and maintain an association between that window and the workspace.
+- Automatic save and restore: when a workspace-associated window closes, the extension records the current tabs (including pinned state) so the workspace can be restored later.
+- Import / Export: JSON import and export of workspaces for backup or migration.
+- User interface: a popup UI for workspace management and quick actions; content scripts are used only when necessary (for example file selection during import).
 
-- tabs：读取与操作浏览器标签（创建、移动、查询标签信息）。
-- sessions：在窗口/标签关闭时保存状态以便恢复。
-- activeTab：获取当前活动标签权限。
-- storage：持久化保存工作区与设置。
-- notifications：在重要操作（例如导入完成）后向用户展示通知。
+Permissions and rationale (for reviewers)
 
-本描述适合放入源码归档随附给审核者，便于快速理解扩展的用途与权限需求。
+- tabs: required to read and manipulate browser tabs (open, move, query tab info).
+- sessions: used to store and recover window/tab state when a workspace window closes.
+- activeTab & scripting: used to inject a small content script when needed (for import flow) and to access the active tab temporarily.
+- storage: persist workspaces and settings locally.
+- notifications: show user-facing notifications for important events such as import results.
+
+This summary is intended for inclusion with the source archive for reviewers, so they can quickly understand the extension’s purpose, main features, and why each permission is requested.
