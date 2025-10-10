@@ -1,28 +1,24 @@
 @import 'tailwindcss';
 
 .form-group {
-  @apply grid mb-4;
-  grid-template-areas:
-    'top'
-    '1fr';
-}
-
-.form-group.form-group-with-btn {
-  grid-template-areas:
-    'top top'
-    '1fr auto';
+  @apply mb-3;
 }
 
 .form-group label {
   @apply block mb-2 text-gray-700 text-sm font-medium;
   grid-area: top;
 }
+.form-group label[required]::before {
+  content: '*';
+  color: var(--danger);
+  margin-right: 2px;
+}
 .form-group label .description {
   @apply mt-1 text-xs text-gray-500;
 }
 
 .form-group input {
-  @apply w-full px-2 py-1 text-sm border-2 border-gray-300 rounded-lg transition-all duration-200 box-border;
+  @apply w-full px-2 py-1 text-sm border-1 border-gray-300 rounded-lg transition-all duration-200 box-border;
 }
 
 .form-group input:focus {
@@ -33,6 +29,14 @@
 
 .form-group input:invalid {
   border-color: var(--danger);
+}
+
+.input-with-btn {
+  display: flex;
+}
+
+.input-with-btn button {
+  margin-left: 8px;
 }
 
 .radio {

@@ -9,6 +9,10 @@ export const createWorkspace = (formData: WorkspaceFormData): Workspace => ({
   tabs: formData.tabs,
   createdAt: Date.now(),
   lastOpened: 0,
+  password: formData.password,
+  passpeek: formData.passpeek,
+  failedAttempts: NaN,
+  lockUntil: NaN,
 });
 
 export const isValidWorkspace = (o: Workspace) => {
@@ -17,13 +21,33 @@ export const isValidWorkspace = (o: Workspace) => {
   }
 
   // & ignores createdAt and lastOpened, since they are not necessary
-  return (
+  const basicValid =
     typeof o.id === 'string' &&
     typeof o.name === 'string' &&
     Color.valid(o.color) &&
     Array.isArray(o.tabs) &&
-    o.tabs.every(isValidWorkspaceTab)
-  );
+    o.tabs.every(isValidWorkspaceTab);
+
+  if (!basicValid) {
+    return false;
+  }
+
+  // Validate required password fields (now required for hidden class optimization)
+  if (typeof o.password !== 'string') {
+    return false;
+  }
+  if (typeof o.passpeek !== 'string') {
+    return false;
+  }
+  // Allow NaN for numeric fields (indicates no attempts/lock)
+  if (typeof o.failedAttempts !== 'number') {
+    return false;
+  }
+  if (typeof o.lockUntil !== 'number') {
+    return false;
+  }
+
+  return true;
 };
 
 export const isValidWorkspaces = (o: Workspace[]): o is Workspace[] => {

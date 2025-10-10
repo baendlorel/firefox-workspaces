@@ -3,6 +3,7 @@ import { WORKSPACE_COLORS } from '@/lib/consts.js';
 import { h } from '@/lib/dom.js';
 import locale from '../../_locales/en/messages.json' with { type: 'json' };
 import { createWorkspace, createWorkspaceTab } from '@/lib/workspace.js';
+import { $sha256 } from '@/lib/utils.js';
 
 // # Mock browser API in dev mode
 
@@ -17,29 +18,6 @@ export class MockBrowser {
       console.log('MockBrowser init');
     } else {
       console.log('No need for MockBrowser');
-    }
-  }
-
-  private getStoredWorkspaces(): Workspace[] {
-    try {
-      const stored = localStorage.getItem(this.storageKey);
-      if (!stored) return [];
-
-      const parsed = JSON.parse(stored) as Partial<Persist> | null;
-      if (!parsed) return [];
-      const workspaces = parsed.workspaces ?? [];
-      // Rehydrate workspace objects
-      return workspaces.map((data: any) => {
-        const workspace = createWorkspace(data as any);
-        workspace.id = data.id;
-        workspace.tabs = data.tabs || [];
-        workspace.createdAt = data.createdAt;
-        workspace.lastOpened = data.lastOpened;
-        return workspace;
-      });
-    } catch (error) {
-      console.error('Failed to load workspaces from storage:', error);
-      return [];
     }
   }
 
@@ -113,7 +91,14 @@ export class MockBrowser {
     const name = names[Math.floor(Math.random() * names.length)];
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
 
-    return createWorkspace({ id: null, name, color, tabs: [] });
+    return createWorkspace({
+      id: null,
+      name,
+      color,
+      tabs: [],
+      password: '', // No password by default
+      passpeek: '', // No hint by default
+    });
   }
 
   private createSampleTab(): WorkspaceTab {
@@ -157,7 +142,7 @@ export class MockBrowser {
 
     const createBtn = h('button', 'mock-browser-btn mock-browser-btn--create', 'Random 3 WS');
     createBtn.title = 'Create 3 random workspaces with random tabs';
-    createBtn.addEventListener('click', () => this.createRandomWorkspaces());
+    createBtn.addEventListener('click', () => void this.createRandomWorkspaces());
 
     const setCurrentBtn = h(
       'button',
@@ -205,7 +190,7 @@ export class MockBrowser {
     console.log('Mock workspace cache cleared');
   }
 
-  private createRandomWorkspaces(): void {
+  private async createRandomWorkspaces(): Promise<void> {
     const persist = this.getPersist();
     const workspaces = persist.workspaces.slice();
 
@@ -220,6 +205,23 @@ export class MockBrowser {
         }
         workspace.tabs.push(tab); // Always push to tabs array
       }
+      // For the third generated workspace, add a mock password
+      if (i === 2) {
+        // use fixed plaintext password for mock: '123456'
+        const plain = '123456';
+        const passpeek = plain.substring(0, 3);
+        try {
+          const hash = await $sha256(plain);
+          // assign password fields (use NaN for no lockout)
+          (workspace as any).password = hash;
+          (workspace as any).passpeek = passpeek;
+          (workspace as any).failedAttempts = NaN;
+          (workspace as any).lockUntil = NaN;
+        } catch (e) {
+          console.warn('Failed to generate password hash for mock workspace', e);
+        }
+      }
+
       workspaces.push(workspace);
     }
 
@@ -249,7 +251,14 @@ export class MockBrowser {
     // Create a fake workspace
     const name = `Fake Workspace ${new Date().toLocaleTimeString()}`;
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
-    const fakeWorkspace = createWorkspace({ id: null, name, color, tabs: [] });
+    const fakeWorkspace = createWorkspace({
+      id: null,
+      name,
+      color,
+      tabs: [],
+      password: '', // No password for fake workspace
+      passpeek: '', // No hint for fake workspace
+    });
     fakeWorkspace.tabs = tabs;
   }
 

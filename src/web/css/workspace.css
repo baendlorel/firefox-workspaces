@@ -137,7 +137,6 @@ footer p {
   cursor: pointer;
   transition: all var(--transition-duration);
 }
-
 .wb-item.with-action-btns {
   grid-template-columns: auto 1fr auto auto;
 }
@@ -160,6 +159,15 @@ footer p {
 .wb-title {
   font-weight: bold;
   color: var(--dark);
+}
+.wb-title.with-password::after {
+  position: absolute;
+  content: '';
+  margin: 4px 0px 0px 2px;
+  width: 13px;
+  height: 13px;
+  scale: 0.7;
+  background-image: url(/assets/lock.svg);
 }
 
 .wb-count {

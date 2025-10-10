@@ -1,6 +1,8 @@
 import { EventBus } from 'minimal-event-bus';
 import { btn, div, h, svg } from '@/lib/dom.js';
 import { store } from '@/lib/storage.js';
+import { i } from '@/lib/polyfilled-api.js';
+import { passwordPrompt, info } from '@comp/dialog/alerts.js';
 import popupService from '@web/popup.service.js';
 import listItem from './list-item.js';
 
@@ -100,8 +102,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       ul.style.display = 'block';
     }
 
-    for (let i = 0; i < workspaces.length; i++) {
-      const workspace = workspaces[i];
+    for (let j = 0; j < workspaces.length; j++) {
+      const workspace = workspaces[j];
 
       // & wb means workspace block
       const editBtn = btn({ class: 'btn btn-trans', style: 'padding:4px 5px' }, [
@@ -114,10 +116,53 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       li.dataset.id = workspace.id;
 
       // # register events
-      li.addEventListener('click', () => popupService.open(workspace));
+      li.addEventListener('click', async () => {
+        // Check if workspace has password (empty string = no password)
+        if (workspace.password !== '') {
+          // Check if locked
+          const lockTime = popupService.getRemainingLockTime(workspace);
+          if (lockTime > 0) {
+            info(
+              i('dialog.workspace-locked.message', lockTime.toString()),
+              i('dialog.workspace-locked.title')
+            );
+            return;
+          }
+
+          // Prompt for password
+          const password = await passwordPrompt(workspace);
+          if (password === null) {
+            // User cancelled
+            return;
+          }
+
+          const result = await popupService.verifyPassword(workspace, password);
+          if (result === 'locked') {
+            const lockTime = popupService.getRemainingLockTime(workspace);
+            info(
+              i('dialog.workspace-locked.message', lockTime.toString()),
+              i('dialog.workspace-locked.title')
+            );
+            return;
+          } else if (result === 'incorrect') {
+            const remainingAttempts = 3 - (workspace.failedAttempts || 0);
+            if (remainingAttempts > 0) {
+              info(
+                i('dialog.incorrect-password.message', remainingAttempts.toString()),
+                i('dialog.incorrect-password.title')
+              );
+            } else {
+              info(i('dialog.incorrect-password.locked'), i('dialog.workspace-locked.title'));
+            }
+            return;
+          }
+          // If result is 'correct', continue to open
+        }
+
+        popupService.open(workspace);
+      });
 
       editBtn.addEventListener('click', (e) => {
-        // todo 这里要能够设置密码，设置密码以后，所有的操作都需要密码
         // Prevent triggering li click event, which opens the workspace
         e.stopPropagation();
         bus.emit('edit', workspace);

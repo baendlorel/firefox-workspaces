@@ -14,6 +14,16 @@ interface WorkspaceFormData {
   name: string;
   color: HexColor;
   tabs: WorkspaceTab[];
+
+  /**
+   * SHA-256 hash, empty string = no password
+   */
+  password: string;
+
+  /**
+   * First 3 chars of password
+   */
+  passpeek: string;
 }
 
 interface TabArgs {

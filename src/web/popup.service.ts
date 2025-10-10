@@ -1,5 +1,5 @@
 import { $windowWorkspace, $send } from '@/lib/polyfilled-api.js';
-import { $objectHash, $tdtDashed } from '@/lib/utils.js';
+import { $objectHash, $tdtDashed, $sha256 } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';
 import { compressToBase64 } from 'lz-string';
@@ -11,6 +11,70 @@ class PopupService {
   }
 
   /**
+   * Verify password for a workspace
+   * Returns:
+   *  - 'locked': workspace is locked due to too many failed attempts
+   *  - 'incorrect': password is incorrect
+   *  - 'correct': password is correct
+   */
+  async verifyPassword(
+    workspace: Workspace,
+    password: string
+  ): Promise<'locked' | 'incorrect' | 'correct'> {
+    // Check if workspace is locked (NaN < any number is false, so NaN lockUntil won't lock)
+    if (Date.now() < workspace.lockUntil) {
+      return 'locked';
+    }
+
+    const passwordHash = await $sha256(password);
+
+    if (passwordHash === workspace.password) {
+      // Reset failed attempts on successful login (use NaN for "no attempts")
+      if (!isNaN(workspace.failedAttempts) || !isNaN(workspace.lockUntil)) {
+        workspace.failedAttempts = NaN;
+        workspace.lockUntil = NaN;
+        const { workspaces } = await store.localGet('workspaces');
+        const idx = workspaces.findIndex((w) => w.id === workspace.id);
+        if (idx !== -1) {
+          workspaces[idx] = workspace;
+          await store.localPersistSet({ workspaces });
+        }
+      }
+      return 'correct';
+    }
+
+    // Increment failed attempts (treat NaN as 0)
+    const failedAttempts = (isNaN(workspace.failedAttempts) ? 0 : workspace.failedAttempts) + 1;
+    workspace.failedAttempts = failedAttempts;
+
+    // Lock after 3 failed attempts
+    if (failedAttempts >= 3) {
+      workspace.lockUntil = Date.now() + 60000; // Lock for 60 seconds
+    }
+
+    // Update workspace in storage
+    const { workspaces } = await store.localGet('workspaces');
+    const idx = workspaces.findIndex((w) => w.id === workspace.id);
+    if (idx !== -1) {
+      workspaces[idx] = workspace;
+      await store.localPersistSet({ workspaces });
+    }
+
+    return 'incorrect';
+  }
+
+  /**
+   * Get remaining lock time in seconds
+   */
+  getRemainingLockTime(workspace: Workspace): number {
+    // NaN comparison returns false, so NaN lockUntil returns 0
+    if (Date.now() >= workspace.lockUntil) {
+      return 0;
+    }
+    return Math.ceil((workspace.lockUntil - Date.now()) / 1000);
+  }
+
+  /**
    * Save workspace (create or update)
    */
   async save(formData: WorkspaceFormData) {
@@ -19,6 +83,8 @@ class PopupService {
     // handle create
     if (formData.id === null) {
       const newWorkspace = createWorkspace(formData);
+      // Password fields are already initialized in createWorkspace
+      // formData.password will be hashed and set via createWorkspace
       workspaces.push(newWorkspace);
 
       await store.localPersistSet({ workspaces });
@@ -38,6 +104,22 @@ class PopupService {
     exists.name = formData.name;
     exists.color = formData.color;
     exists.tabs = formData.tabs;
+
+    // Update password fields (formData.password is always a string, empty = no password)
+    if (formData.password !== '') {
+      exists.password = formData.password;
+      exists.passpeek = formData.passpeek;
+      // Reset failed attempts when password is changed
+      exists.failedAttempts = NaN;
+      exists.lockUntil = NaN;
+    } else {
+      // Remove password if empty string is provided
+      exists.password = '';
+      exists.passpeek = '';
+      exists.failedAttempts = NaN;
+      exists.lockUntil = NaN;
+    }
+
     await store.localPersistSet({ workspaces });
   }
 
