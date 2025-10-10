@@ -46,7 +46,7 @@ function tar() {
     execFileSync('tar', args, { cwd: root, stdio: 'inherit' });
     console.log(`Created ${outFile}`);
   } catch (err: any) {
-    console.error('Failed to create tarball:', err && err.message ? err.message : err);
+    console.log('Failed to create tarball:', err && err.message ? err.message : err);
     process.exit(err && err.status ? err.status : 1);
   }
 }
