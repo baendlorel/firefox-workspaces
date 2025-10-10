@@ -19,7 +19,7 @@ import heartSvg from '@assets/heart.svg?raw';
 import gearSvg from '@assets/gear.svg?raw';
 import workspaceSvg from '@assets/workspace.svg?raw';
 
-function createCreateMenu(bus: EventBus<WorkspaceEditorEventMap>) {
+function createCreatorMenu(bus: EventBus<WorkspaceEditorEventMap>) {
   const contextMenu = new Menu([
     {
       label: btnWithIcon(bookmarkPlusSvg, i('workspace.create-with-current-tabs')),
@@ -99,22 +99,20 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
 }
 
 export default (bus: EventBus<WorkspaceEditorEventMap>) => {
-  const createMenu = createCreateMenu(bus);
+  const creatorMenu = createCreatorMenu(bus);
   const moreActionMenu = createMoreActionMenu(bus);
 
-  const title = h('h2', 'header-title'); // i('workspace.title')
   const syncIcon = new SyncIcon();
-  const syncDiv = div(
-    {
-      class: 'sync',
-      title: i('workspace.sync-icon-title', { minute: Consts.SyncInterval }),
-    },
-    [syncIcon.el]
-  );
-  const addBtn = btn('btn btn-trans', i('button.new'));
-  const moreBtn = btn({ class: 'btn btn-trans', style: '' }, [svg(listSvg, undefined, 18)]);
+  let addBtn: HTMLButtonElement;
+  let moreBtn: HTMLButtonElement;
 
-  const header = h('header', '', [title, syncDiv, addBtn, moreBtn]);
+  let title: HTMLHeadingElement;
+  const header = h('header', '', [
+    (title = h('h2', 'header-title')),
+    div('sync', [syncIcon.el]),
+    (addBtn = btn('btn btn-trans', i('button.new'))),
+    (moreBtn = btn({ class: 'btn btn-trans', style: '' }, [svg(listSvg, undefined, 18)])),
+  ]);
 
   bus.on('change-sync-state', (...args) => syncIcon.setStatus(...args));
 
@@ -127,7 +125,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     header.style.setProperty('--header-darken-gradient', gradient);
   });
 
-  addBtn.addEventListener('click', () => createMenu.showBeside(addBtn));
+  addBtn.addEventListener('click', () => creatorMenu.showBeside(addBtn));
   moreBtn.addEventListener('click', () => moreActionMenu.showBeside(moreBtn));
 
   return header;

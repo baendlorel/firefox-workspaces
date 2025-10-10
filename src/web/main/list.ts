@@ -11,15 +11,18 @@ import downSvg from '@assets/chevron-compact-down.svg?raw';
 type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
 function createScroller(ul: HTMLUListElement) {
+  // # template
+  const up = div({ class: 'wb-ul-scroller opacity-0', style: 'top:-10px' }, [
+    svg(upSvg, undefined, 16),
+  ]);
+  const down = div({ class: 'wb-ul-scroller opacity-0', style: 'bottom:-10px' }, [
+    svg(downSvg, undefined, 16),
+  ]);
+
+  // # register events
   const LI_COUNT_CAP = 10; // same as it is in css file
   const START_STEP = 1;
   const MAX_STEP = 2.1;
-
-  const up = div('wb-ul-scroller opacity-0', [svg(upSvg, undefined, 16)]);
-  const down = div('wb-ul-scroller opacity-0', [svg(downSvg, undefined, 16)]);
-  up.style.top = '-10px';
-  down.style.bottom = '-10px';
-
   const updateScrollerVisibility = (liCount: number) => {
     if (liCount <= LI_COUNT_CAP) {
       up.classList.add('opacity-0');
@@ -40,8 +43,6 @@ function createScroller(ul: HTMLUListElement) {
     up.classList.toggle('opacity-0', ul.scrollTop <= 1);
     down.classList.toggle('opacity-0', ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1);
   };
-
-  // Continuous hold behavior: 5 times per second => 200ms interval
   const makeScrollerBehavior = (el: HTMLElement, direction: -1 | 1) => {
     let scrolling = false;
     let step = START_STEP;
@@ -73,11 +74,9 @@ function createScroller(ul: HTMLUListElement) {
       el.addEventListener(ev, () => (scrolling = false));
     });
   };
-
   makeScrollerBehavior(up, -1);
   makeScrollerBehavior(down, 1);
 
-  // update visibility on manual scrolls
   ul.addEventListener('scroll', () => requestAnimationFrame(updateScrollerVisibility));
 
   return { up, down, updateScrollerVisibility };
@@ -118,6 +117,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       li.addEventListener('click', () => popupService.open(workspace));
 
       editBtn.addEventListener('click', (e) => {
+        // todo 这里要能够设置密码，设置密码以后，所有的操作都需要密码
         // Prevent triggering li click event, which opens the workspace
         e.stopPropagation();
         bus.emit('edit', workspace);
@@ -128,18 +128,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     }
 
     updateScrollerVisibility(lis.length);
-  };
-
-  // $ reserved
-  const _activateHighlight = (activated: string[]) => {
-    for (let i = 0; i < lis.length; i++) {
-      const li = lis[i];
-      if (activated.includes(li.dataset.id)) {
-        li.classList.add('activated');
-      } else {
-        li.classList.remove('activated');
-      }
-    }
   };
 
   bus.on('render-list', async () => {
