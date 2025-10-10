@@ -58,7 +58,7 @@ function pack() {
       }
     }
   } catch (e) {
-    // ignore and use default
+    console.log('error', e);
   }
 
   const finalName = `workspace-${version}-source.zip`;
