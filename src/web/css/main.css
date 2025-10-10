@@ -10,9 +10,8 @@ body {
 #app {
   @apply relative grid overflow-hidden;
   grid-template-rows: auto 1fr auto;
-  width: 320px;
-  max-height: 520px;
-  min-height: 260px;
+  width: 380px;
+  height: 520px;
   border-radius: var(--border-radius);
 }
 

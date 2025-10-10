@@ -15,8 +15,8 @@ function createScroller(ul: HTMLUListElement) {
   const START_STEP = 1;
   const MAX_STEP = 2.1;
 
-  const up = div('wb-ul-scroller', [svg(upSvg, undefined, 16)]);
-  const down = div('wb-ul-scroller', [svg(downSvg, undefined, 16)]);
+  const up = div('wb-ul-scroller opacity-0', [svg(upSvg, undefined, 16)]);
+  const down = div('wb-ul-scroller opacity-0', [svg(downSvg, undefined, 16)]);
   up.style.top = '-10px';
   down.style.bottom = '-10px';
 
