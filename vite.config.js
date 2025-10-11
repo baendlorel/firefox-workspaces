@@ -6,9 +6,6 @@ import typescript from '@rollup/plugin-typescript';
 import replace from '@rollup/plugin-replace';
 import funcMacro from 'rollup-plugin-func-macro';
 import constEnum from 'rollup-plugin-const-enum';
-import tailwindcss from '@tailwindcss/vite';
-import tailwindcssPostcss from '@tailwindcss/postcss';
-import autoprefixer from 'autoprefixer';
 
 import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
 
@@ -27,13 +24,7 @@ export default defineConfig({
     }),
     replace(replaceOpts),
     funcMacro(),
-    tailwindcss(),
   ],
-  css: {
-    postcss: {
-      plugins: [autoprefixer, tailwindcssPostcss],
-    },
-  },
   server: {
     open: 'pages/index.html',
   },

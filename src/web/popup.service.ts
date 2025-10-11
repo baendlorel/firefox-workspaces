@@ -2,7 +2,6 @@ import { $windowWorkspace, $send } from '@/lib/polyfilled-api.js';
 import { $objectHash, $tdtDashed, $sha256 } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';
-import { compressToBase64 } from 'lz-string';
 
 class PopupService {
   async getWorkspaceOfCurrentWindow() {
@@ -159,7 +158,6 @@ class PopupService {
     a.download = `kskb-workspaces-${$tdtDashed()}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    logger.info('Exported data length:', text.length, 'compressed', compressToBase64(text).length);
   }
 }
 
