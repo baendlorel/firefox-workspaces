@@ -1,12 +1,19 @@
-@import 'tailwindcss';
-
 dialog,
 dialog:focus {
-  @apply outline-0;
+  outline: 0;
 }
 
 .menu {
-  @apply fixed m-0 p-1 transform-none border-0 rounded-md shadow-lg bg-gray-100;
+  position: fixed;
+  margin: 0;
+  padding: 4px;
+  transform: none;
+  border: 0;
+  border-radius: 6px;
+  box-shadow:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  background: #f3f4f6;
 }
 
 .menu::backdrop {
@@ -14,11 +21,17 @@ dialog:focus {
 }
 
 .menu-option {
-  @apply px-2 py-1 rounded-md hover:bg-gray-200;
+  padding: 4px 8px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: all 0.3s;
+  transition: all var(--transition-duration);
+}
+
+.menu-option:hover {
+  background: #e5e7eb;
 }
 
 .menu hr {
-  @apply my-1 border-t border-gray-300;
+  margin: 4px 0;
+  border-top: 1px solid #d1d5db;
 }

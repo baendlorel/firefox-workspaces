@@ -30,7 +30,7 @@
 
 .btn {
   font-size: var(--font-size-normal);
-  padding: 4px 10px;
+  padding: 6px 10px;
   border-radius: 6px;
   border: none;
   cursor: pointer;
@@ -115,4 +115,9 @@
 
 .btn-with-icon svg {
   margin-top: 4px;
+}
+
+.title {
+  font-size: var(--font-size-big);
+  font-weight: bold;
 }

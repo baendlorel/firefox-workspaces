@@ -14,7 +14,7 @@ export default () => {
   // Theme selection
   const themeRadio = div('form-group', [
     h('label', { for: 'theme' }, i('settings.theme.label')),
-    div('flex gap-2', [
+    div('gap-flex', [
       radio('theme', Theme.Auto, i('settings.theme.auto')),
       radio('theme', Theme.Light, i('settings.theme.light')),
       radio('theme', Theme.Dark, i('settings.theme.dark')),

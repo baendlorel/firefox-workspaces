@@ -70,7 +70,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const deleteBtn = btn('btn btn-danger', i('button.delete'));
   const cancelBtn = btn('btn btn-secondary', i('button.cancel'));
   const saveBtn = btn('btn btn-primary', i('button.save'));
-  const footer = div({ class: 'gap-flex ml-auto', style: 'width: fit-content;' }, [
+  const footer = div({ class: 'gap-flex', style: 'margin-left:auto; width: fit-content;' }, [
     deleteBtn,
     cancelBtn,
     saveBtn,

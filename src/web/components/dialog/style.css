@@ -1,12 +1,13 @@
-@import 'tailwindcss';
-
 dialog,
 dialog:focus {
-  @apply outline-0;
+  outline: 0;
 }
 
 .dialog-container .dialog-header {
-  @apply flex justify-between items-center border-b border-gray-200;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
   padding: 8px 14px 10px 14px;
   background: var(--primary-gradient);
   color: var(--light);
@@ -25,17 +26,24 @@ dialog:focus {
 }
 
 .dialog-footer {
-  @apply text-right;
+  text-align: right;
   padding: 4px 20px 14px 20px;
 }
 
 .dialog-content {
-  @apply p-0 bg-white rounded-xl;
+  padding: 0;
+  background: white;
+  border-radius: 12px;
 }
 
 /* Modern Dialog Styles with Enhanced Animations */
 .dialog-container {
-  @apply m-auto p-0 border-none bg-gray-50 overflow-hidden opacity-0;
+  margin: auto;
+  padding: 0;
+  border: none;
+  background: #f9fafb;
+  overflow: hidden;
+  opacity: 0;
   border-radius: var(--border-radius);
   box-shadow:
     0 32px 64px -12px rgba(0, 0, 0, 0.25),
@@ -51,7 +59,7 @@ dialog:focus {
 }
 
 .dialog-container[open] {
-  @apply opacity-100;
+  opacity: 1;
   transform: scale(1) translateY(0) rotateX(0deg);
   /* filter: blur(0); */
 }
@@ -104,14 +112,11 @@ dialog:focus {
 }
 
 .dialog-close {
-  @apply me-1 mt-0.5 w-5 h-5;
+  width: 20px;
+  height: 20px;
   opacity: 0.65;
+  color: var(--light);
 }
-
-.dialog-close svg {
-  @apply m-auto;
-}
-
 .dialog-close:hover {
   opacity: 0.9;
 }
@@ -120,12 +125,26 @@ dialog:focus {
   opacity: 1;
 }
 
+.dialog-close svg {
+  margin: 5px 0px 0px 0px;
+}
+
 .dialog-ul-options {
-  @apply m-0 p-0 overflow-hidden;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
 
 .dialog-li-option {
-  @apply list-none my-1.5 mx-0 px-3 py-2 rounded-md border-b border-slate-200 text-gray-800 bg-gray-50 cursor-pointer transition-all duration-300;
+  list-style: none;
+  margin: 6px 0;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-bottom: 1px solid #e2e8f0;
+  color: #1f2937;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: all 0.3s;
 }
 
 .dialog-li-option:hover {

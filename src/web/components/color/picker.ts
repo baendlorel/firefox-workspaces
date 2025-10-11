@@ -2,6 +2,8 @@ import { Color } from '@/lib/color.js';
 import { h, div } from '@/lib/dom.js';
 import { autoPopOutDialog } from '../pop/index.js';
 
+// fixme 第一个选择器很大有36px
+// fixme 选中后没有高光特效了
 export const createPicker = (id: string, onChange: (color: HexColor) => void) => {
   const indicator = h('input', { id, class: 'palette-indicator' });
   const picker = div('palette-picker');

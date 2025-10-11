@@ -1,8 +1,7 @@
-@import 'tailwindcss';
-
 header {
   --header-color: var(--dark);
-  @apply relative flex;
+  position: relative;
+  display: flex;
   padding: 0px 10px;
   gap: 2px;
   background: transparent;
@@ -10,7 +9,7 @@ header {
 }
 
 header .header-title {
-  @apply font-medium flex-1;
+  flex: 1;
   padding: 10px 0px 10px 45px;
   font-weight: bold;
   background-image: url(/assets/icon-128.png);
@@ -34,12 +33,16 @@ main {
 }
 
 footer {
-  @apply right-2.5 bottom-1.5 p-1.5 text-right text-xs;
+  right: 10px;
+  bottom: 6px;
+  padding: 6px;
+  text-align: right;
+  font-size: var(--font-size-normal);
   color: var(--secondary-light);
 }
 
 footer p {
-  @apply my-0.5 mx-0;
+  margin: 2px 0;
 }
 
 /* Sync Indicator */
@@ -82,21 +85,23 @@ footer p {
 }
 
 .wb-ul-container {
-  @apply relative;
+  position: relative;
   --wbli-height: 33px;
   --wbul-scroller-height: 20px;
 }
 
 .wb-ul {
-  @apply m-0 p-0 overflow-y-auto;
+  margin: 0;
+  padding: 0;
   max-height: calc(10 * var(--wbli-height)); /* 10*entryheight */
 
+  overflow-y: auto;
   /* scrollbar styles */
   scrollbar-width: none;
 }
 
 .wb-ul-scroller {
-  @apply absolute;
+  position: absolute;
   padding: 3px 0px;
   width: 100%;
   height: var(--wbul-scroller-height);
@@ -125,7 +130,8 @@ footer p {
 }
 
 .wb-item {
-  @apply grid items-center;
+  display: grid;
+  align-items: center;
   grid-template-columns: auto 1fr auto;
   gap: 8px;
   height: var(--wbli-height);
@@ -171,7 +177,8 @@ footer p {
 }
 
 .wb-count {
-  @apply text-gray-600 px-1.5 py-0.5;
+  color: #6b7280;
+  padding: 2px 6px;
   font-size: var(--font-size-normal);
 }
 
@@ -181,16 +188,25 @@ footer p {
 }
 
 .empty-state {
-  @apply text-center py-10 px-5;
+  text-align: center;
+  padding: 40px 20px;
   display: none;
   color: var(--secondary-light);
 }
 
 .empty-state-icon {
-  @apply mx-auto opacity-60;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.6;
   width: 61.8%;
 }
 
 .bookmark {
-  @apply absolute top-0 right-12 border-0 m-0 p-0 bg-transparent;
+  position: absolute;
+  top: 0;
+  right: 48px;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  background: transparent;
 }

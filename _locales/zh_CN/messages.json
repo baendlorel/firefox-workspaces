@@ -95,7 +95,7 @@
     "message": "港湾,避风港,绿洲,圣地,宝库,花园,树林,码头,车站,传送门,枢纽,熔炉,连接点,领域"
   },
   "button.delete": {
-    "message": "删除这个工作区",
+    "message": "删除",
     "description": "Delete button"
   },
   "button.delete-workspace": {

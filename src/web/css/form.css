@@ -1,12 +1,15 @@
-@import 'tailwindcss';
-
 .form-group {
-  @apply mb-3;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
 }
 
 .form-group label {
-  @apply block mb-2 text-gray-700 text-sm font-medium;
-  grid-area: top;
+  display: block;
+  font-weight: bold;
+  color: var(--dark);
+  font-size: var(--font-size-normal);
 }
 .form-group label[required]::before {
   content: '*';
@@ -14,15 +17,23 @@
   margin-right: 2px;
 }
 .form-group label .description {
-  @apply mt-1 text-xs text-gray-500;
+  margin-top: 4px;
+  font-size: var(--font-size-small);
+  color: #6b7280;
 }
 
 .form-group input {
-  @apply w-full px-2 py-1 text-sm border-1 border-gray-300 rounded-lg transition-all duration-200 box-border;
+  width: 100%;
+  padding: 4px 8px;
+  font-size: var(--font-size-normal);
+  border: 1px solid #d1d5db;
+  border-radius: var(--border-radius);
+  transition: all 0.2s;
+  box-sizing: border-box;
 }
 
 .form-group input:focus {
-  @apply outline-none;
+  outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 0 3px rgba(45, 161, 145, 0.1);
 }
@@ -48,11 +59,12 @@
 }
 
 .radio label:hover {
-  @apply cursor-pointer;
+  cursor: pointer;
 }
 
 .radio label::before {
-  @apply absolute block;
+  position: absolute;
+  display: block;
   content: '';
   margin-top: 4px;
   margin-left: calc(-5px - var(--size));

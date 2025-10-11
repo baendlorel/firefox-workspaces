@@ -1,11 +1,19 @@
-@import 'tailwindcss';
-
 .color-selector {
-  @apply relative grid grid-cols-8 gap-1.5 mt-0;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 6px;
+  margin-top: 0;
 }
 
 .color-option {
-  @apply w-7 h-7 rounded-full cursor-pointer border-0 justify-self-center opacity-100;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 0;
+  justify-self: center;
+  opacity: 1;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
   outline-style: solid;
@@ -14,16 +22,16 @@
 }
 
 .color-option:hover {
-  @apply scale-110;
+  transform: scale(1.1);
 }
 
 .color-option.selected {
-  @apply scale-100;
+  transform: scale(1);
   outline-color: var(--primary-light);
 }
 
 .color-option.selected::after {
-  @apply absolute;
+  position: absolute;
   content: ''; /* ✓ */
   top: 50%;
   left: 50%;
@@ -46,7 +54,8 @@
 }
 
 div.palette {
-  @apply relative border-4;
+  position: relative;
+  border: 4px solid;
   background: conic-gradient(
     from 0deg,
     #ff0000 0deg,
@@ -76,7 +85,9 @@ input.palette {
 }
 
 .palette-dialog {
-  @apply bg-neutral-800 rounded-lg border-0;
+  background: #262626;
+  border-radius: var(--border-radius);
+  border: 0;
   width: 210px;
   height: 180px;
   box-shadow:
@@ -88,7 +99,9 @@ input.palette {
 }
 
 .palette-container {
-  @apply grid gap-2 p-2;
+  display: grid;
+  gap: 8px;
+  padding: 8px;
   width: 100%;
   height: 100%;
 
@@ -106,7 +119,7 @@ input.palette {
   transition: all 0.35s ease-out;
 }
 /* .palette-container::backdrop {
-  @apply block;
+  display: block;
   background-color: transparent;
 } */
 
@@ -115,31 +128,36 @@ input.palette {
 }
 
 input.palette-indicator {
-  @apply text-center rounded-sm border-0;
+  text-align: center;
+  border-radius: 2px;
+  border: 0;
   grid-area: indicator;
   height: 30px;
 }
 
 input.palette-indicator:focus {
-  @apply outline-0;
+  outline: 0;
 }
 
 .palette-picker {
-  @apply rounded-sm relative;
+  border-radius: 2px;
+  position: relative;
   grid-area: picker;
   background: linear-gradient(to bottom, transparent, black), linear-gradient(to right, white, red);
   cursor: crosshair;
 }
 
 .palette-alpha {
-  @apply rounded-sm relative;
+  border-radius: 2px;
+  position: relative;
   grid-area: alpha;
   width: 24px;
   cursor: ns-resize;
 }
 
 .palette-hue {
-  @apply rounded-sm relative;
+  border-radius: 2px;
+  position: relative;
   grid-area: hue;
   width: 24px;
   background: linear-gradient(
@@ -163,7 +181,10 @@ input.palette-indicator:focus {
 
 /* Indicators for color picker */
 .picker-indicator {
-  @apply absolute rounded-full bg-white border-2 border-gray-800;
+  position: absolute;
+  border-radius: 50%;
+  background: white;
+  border: 2px solid #1f2937;
   width: 12px;
   height: 12px;
   margin: -6px 0 0 -6px;
@@ -176,7 +197,11 @@ input.palette-indicator:focus {
 
 .alpha-indicator,
 .hue-indicator {
-  @apply absolute w-full h-1 bg-white border-1 border-gray-800;
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: white;
+  border: 1px solid #1f2937;
   margin-top: -2px;
   pointer-events: none;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);

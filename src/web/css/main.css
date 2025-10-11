@@ -1,14 +1,17 @@
 /* Workspaces Popup Styles */
-@import 'tailwindcss';
 
 body {
-  @apply m-0 p-0 bg-gray-100;
+  margin: 0;
+  padding: 0;
+  background: #f3f4f6;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 13px;
 }
 
 #app {
-  @apply relative grid overflow-hidden;
+  position: relative;
+  display: grid;
+  overflow: hidden;
   grid-template-rows: auto 1fr auto;
   width: 380px;
   height: 520px;
