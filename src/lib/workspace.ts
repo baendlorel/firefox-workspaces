@@ -43,11 +43,11 @@ export function isValidWorkspace(o: Workspace) {
     return false;
   }
   // Allow NaN for numeric fields (indicates no attempts/lock)
-  if (typeof o.failedAttempts !== 'number') {
+  if (typeof o.failedAttempts !== 'number' || o.failedAttempts === null) {
     logger.error('passpeek field invalid', o);
     return false;
   }
-  if (typeof o.lockUntil !== 'number') {
+  if (typeof o.lockUntil !== 'number' || o.failedAttempts === null) {
     logger.error('lockUntil field invalid', o);
     return false;
   }

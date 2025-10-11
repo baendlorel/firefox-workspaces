@@ -26,11 +26,31 @@ declare global {
     tabs: WorkspaceTab[];
     createdAt: number;
     lastOpened: number;
+
     // # Password protection fields
-    password: string; // SHA-256 hash of the password (empty string = no password)
-    passpeek: string; // First 3 characters of the password (empty string = no hint)
-    failedAttempts: number; // Number of consecutive failed login attempts (NaN = none)
-    lockUntil: number; // Timestamp when the workspace can be unlocked again (NaN = not locked)
+    /**
+     * SHA-256 hash of the password
+     * - empty string = no password
+     */
+    password: string;
+
+    /**
+     * First 3 characters of the password
+     * - empty string = no hint
+     */
+    passpeek: string;
+
+    /**
+     * Number of consecutive failed login attempts
+     * - `NaN` = none
+     */
+    failedAttempts: number;
+
+    /**
+     * Timestamp when the workspace can be unlocked again
+     * - `NaN` = not locked
+     */
+    lockUntil: number;
   }
 
   interface WorkspaceTab {
