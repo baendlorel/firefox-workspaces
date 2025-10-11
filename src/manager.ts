@@ -190,9 +190,18 @@ export class WorkspaceManager {
   async importData(data: ExportData): Promise<ImportResponse> {
     // 1. Validate structure
     const { workspaces, settings, timestamp } = data;
+    logger.info(`Importing with timestamp:${timestamp}, amount: ${workspaces.length}`);
 
     // 2. Validate workspaces
-    if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {
+    if (!Array.isArray(workspaces)) {
+      logger.error('data.workspaces must be an array', workspaces);
+      return {
+        succ: false,
+        message: i('message.import.invalid-workspaces'),
+        addedCount: 0,
+      };
+    }
+    if (workspaces.some((w) => !isValidWorkspace(w))) {
       return {
         succ: false,
         message: i('message.import.invalid-workspaces'),

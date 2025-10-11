@@ -15,7 +15,7 @@ export const createWorkspace = (formData: WorkspaceFormData): Workspace => ({
   lockUntil: NaN,
 });
 
-export const isValidWorkspace = (o: Workspace) => {
+export function isValidWorkspace(o: Workspace) {
   if (typeof o !== 'object' || o === null) {
     return false;
   }
@@ -29,26 +29,31 @@ export const isValidWorkspace = (o: Workspace) => {
     o.tabs.every(isValidWorkspaceTab);
 
   if (!basicValid) {
+    logger.error('basic validation failed', o);
     return false;
   }
 
   // Validate required password fields (now required for hidden class optimization)
   if (typeof o.password !== 'string') {
+    logger.error('password field invalid', o);
     return false;
   }
   if (typeof o.passpeek !== 'string') {
+    logger.error('passpeek field invalid', o);
     return false;
   }
   // Allow NaN for numeric fields (indicates no attempts/lock)
   if (typeof o.failedAttempts !== 'number') {
+    logger.error('passpeek field invalid', o);
     return false;
   }
   if (typeof o.lockUntil !== 'number') {
+    logger.error('lockUntil field invalid', o);
     return false;
   }
 
   return true;
-};
+}
 
 export const isValidWorkspaces = (o: Workspace[]): o is Workspace[] => {
   return Array.isArray(o) && o.every((w) => isValidWorkspace(w));
