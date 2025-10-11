@@ -35,7 +35,7 @@ export default () => {
   ]);
 
   const resetBtn = btn('btn btn-secondary', i('button.reset'));
-  const saveBtn = btn('btn btn-primary ms-2', i('button.save'));
+  const saveBtn = btn('btn btn-primary', i('button.save'));
 
   const { dialog, closeBtn } = createDialog(
     i('menu.settings'),

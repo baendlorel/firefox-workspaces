@@ -37,7 +37,7 @@ export const danger = (message: string, title: string = i('dialog.type.danger'))
  */
 export const confirmation = (message: string, title: string = i('dialog.type.confirm')) => {
   return new Promise<boolean>((resolve) => {
-    const yesBtn = btn('btn btn-primary ms-2', i('button.yes'));
+    const yesBtn = btn('btn btn-primary', i('button.yes'));
     yesBtn.title = i('button.yes');
     const noBtn = btn('btn btn-secondary', i('button.no'));
     yesBtn.title = i('button.no');
@@ -79,7 +79,7 @@ export const passwordPrompt = (workspace: Workspace, message?: string) => {
       : [passwordInput, forgotBtn];
 
     const cancelBtn = btn('btn btn-secondary', i('button.cancel'));
-    const submitBtn = btn('btn btn-primary ms-2', i('button.save'));
+    const submitBtn = btn('btn btn-primary', i('button.save'));
 
     const dialog = createDialog(i('dialog.unlock.title', workspace.name), bodyContent, [
       cancelBtn,

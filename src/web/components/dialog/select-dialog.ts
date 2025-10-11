@@ -35,11 +35,8 @@ export default async (config: {
   const ul = h('ul', 'dialog-ul-options', selection);
   ul.classList.toggle('use-element', useElement);
 
-  const confirmBtn = btn(
-    { class: 'btn btn-primary ms-2', type: 'button' },
-    i('dialog.type.confirm')
-  );
-  const cancelBtn = btn({ class: 'btn btn-secondary', type: 'button' }, i('button.cancel'));
+  const confirmBtn = btn('btn btn-primary', i('dialog.type.confirm'));
+  const cancelBtn = btn('btn btn-secondary', i('button.cancel'));
   confirmBtn.title = i('button.confirm-selection');
   cancelBtn.title = i('button.cancel-and-close');
 

@@ -28,7 +28,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     type: 'password',
     placeholder: i('workspace.password.placeholder-old'),
   });
-  const forgotPasswordBtn = btn('btn btn-secondary ms-2', i('button.peek-password'));
+  const forgotPasswordBtn = btn('btn btn-secondary', i('button.peek-password'));
 
   const inputPassword = h('input', {
     id: 'workspace-password',
@@ -38,7 +38,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const inputPasswordConfirm = h('input', {
     id: 'workspace-password-confirm',
     type: 'password',
-    class: 'mt-2',
     placeholder: i('workspace.password.placeholder-confirm'),
   });
   const passwordGroup = div('form-group', [

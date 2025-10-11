@@ -73,7 +73,12 @@ export const span = (
 export const btn = (
   className: string | Record<string, string> = '',
   children: (HTMLElement | SVGElement | string)[] | string = ''
-): HTMLButtonElement => h('button', className, children);
+): HTMLButtonElement => {
+  if (typeof className === 'string') {
+    className = { class: className, type: 'button' };
+  }
+  return h('button', className, children);
+};
 
 const parser = new DOMParser();
 export function svg(str: string, color?: string, size?: number): SVGElement {
