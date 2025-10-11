@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execFileSync } from 'child_process';
 
-function tar() {
+function _tar() {
   const root = process.cwd();
 
   const items = [
@@ -41,14 +41,9 @@ function tar() {
   // inside the archive are relative and do not contain absolute prefixes.
   const args = ['-cf', path.relative(root, outFile), ...existing];
 
-  try {
-    console.log('Creating tarball:', outFile);
-    execFileSync('tar', args, { cwd: root, stdio: 'inherit' });
-    console.log(`Created ${outFile}`);
-  } catch (err: any) {
-    console.log('Failed to create tarball:', err && err.message ? err.message : err);
-    process.exit(err && err.status ? err.status : 1);
-  }
+  console.log('Creating tarball:', outFile);
+  execFileSync('tar', args, { cwd: root, stdio: 'inherit' });
+  console.log(`Created ${outFile}`);
 }
 
 function zip() {
@@ -87,24 +82,15 @@ function zip() {
   }
 
   // Remove existing zip to ensure a fresh archive
-  try {
-    if (fs.existsSync(outFile)) fs.unlinkSync(outFile);
-  } catch (e) {
-    // ignore
-  }
+  if (fs.existsSync(outFile)) fs.unlinkSync(outFile);
 
   // Use system zip to avoid adding dependencies. Run from repo root so paths
   // inside the archive are relative.
   const args = ['-r', path.relative(root, outFile), ...existing];
 
-  try {
-    console.log('Creating zip archive:', outFile);
-    execFileSync('zip', args, { cwd: root, stdio: 'inherit' });
-    console.log(`Created ${outFile}`);
-  } catch (err: any) {
-    console.error('Failed to create zip archive:', err && err.message ? err.message : err);
-    process.exit(err && err.status ? err.status : 1);
-  }
+  console.log('Creating zip archive:', outFile);
+  execFileSync('zip', args, { cwd: root, stdio: 'inherit' });
+  console.log(`Created ${outFile}`);
 }
 
 zip();

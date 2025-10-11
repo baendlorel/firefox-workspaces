@@ -314,8 +314,8 @@ export class MockBrowser {
         // console.log('get:', newPath.join('.'));
         return createProxy(newPath);
       },
-      set(_, key, value) {
-        const newPath = [...path, key];
+      set(_, _key, _value) {
+        // const newPath = [...path, key];
         // console.log('set:', newPath.join('.'), '=', value);
         return true;
       },
