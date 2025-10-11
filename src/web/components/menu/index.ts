@@ -1,6 +1,6 @@
 import { autoPopOutDialog, popIn, popOut } from '../pop/index.js';
 import './style.css';
-import { h } from '@/lib/dom.js';
+import { div, h } from '@/lib/dom.js';
 
 interface MenuOption {
   label: string | HTMLElement;
@@ -19,7 +19,7 @@ export class Menu {
     // # Elements
     const ulChilren = options.map((o) => {
       if (o === Menu.Divider) {
-        return h('hr');
+        return div('divider');
       }
 
       const opt = typeof o.label === 'string' ? o.label : [o.label];

@@ -10,9 +10,7 @@ export const wbicon = (color: HexColor): HTMLSpanElement => {
 };
 
 const size = Number(
-  getComputedStyle(document.documentElement)
-    .getPropertyValue('--font-size-normal')
-    .replace('px', '')
+  getComputedStyle(document.documentElement).getPropertyValue('--font-size-big').replace('px', '')
 );
 export const btnWithIcon = (svgStr: string, label: string) =>
-  btn('btn-with-icon', [svg(svgStr, '#283343', size), label]);
+  btn('btn-text btn-with-icon', [svg(svgStr, '#283343', size), label]);

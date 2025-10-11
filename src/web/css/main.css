@@ -18,6 +18,11 @@ body {
   border-radius: var(--border-radius);
 }
 
+ul {
+  padding: 0px;
+  margin: 2px 0px;
+}
+
 .gap-flex {
   display: flex;
   gap: 10px;

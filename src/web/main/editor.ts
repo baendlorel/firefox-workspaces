@@ -18,7 +18,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });
-  const randomNameBtn = btn('btn btn-primary', i('editor.random-name'));
+  const randomNameBtn = btn(
+    { class: 'btn btn-primary', style: 'width:64px' },
+    i('editor.random-name')
+  );
   const inputNameDiv = div('gap-flex', [inputName, randomNameBtn]);
   const colorSelector = colorPicker('workspace-color');
 

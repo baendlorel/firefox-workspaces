@@ -31,7 +31,8 @@ dialog:focus {
   background: #e5e7eb;
 }
 
-.menu hr {
+.menu .divider {
   margin: 4px 0;
-  border-top: 1px solid #d1d5db;
+  max-height: 0;
+  border-top: 1px solid #c5c9cb;
 }
