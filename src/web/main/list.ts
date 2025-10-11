@@ -14,10 +14,8 @@ type WorkspaceLi = HTMLLIElement & { dataset: { id: string } };
 
 function createScroller(ul: HTMLUListElement) {
   // # template
-  const up = div({ class: 'wb-ul-scroller opacity-0', style: 'top:-10px' }, [
-    svg(upSvg, undefined, 16),
-  ]);
-  const down = div({ class: 'wb-ul-scroller opacity-0', style: 'bottom:-10px' }, [
+  const up = div({ class: 'wb-ul-scroller fold', style: 'top:-10px' }, [svg(upSvg, undefined, 16)]);
+  const down = div({ class: 'wb-ul-scroller fold', style: 'bottom:-10px' }, [
     svg(downSvg, undefined, 16),
   ]);
 
@@ -27,8 +25,8 @@ function createScroller(ul: HTMLUListElement) {
   const MAX_STEP = 2.1;
   const updateScrollerVisibility = (liCount: number) => {
     if (liCount <= LI_COUNT_CAP) {
-      up.classList.add('opacity-0');
-      down.classList.add('opacity-0');
+      up.classList.add('fold');
+      down.classList.add('fold');
       return;
     }
 
@@ -37,13 +35,13 @@ function createScroller(ul: HTMLUListElement) {
       ul.scrollHeight <= ul.clientHeight ||
       ul.style.display === 'none'
     ) {
-      up.classList.add('opacity-0');
-      down.classList.add('opacity-0');
+      up.classList.add('fold');
+      down.classList.add('fold');
       return;
     }
 
-    up.classList.toggle('opacity-0', ul.scrollTop <= 1);
-    down.classList.toggle('opacity-0', ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1);
+    up.classList.toggle('fold', ul.scrollTop <= 1);
+    down.classList.toggle('fold', ul.scrollTop + ul.clientHeight >= ul.scrollHeight - 1);
   };
   const makeScrollerBehavior = (el: HTMLElement, direction: -1 | 1) => {
     let scrolling = false;

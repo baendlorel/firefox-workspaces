@@ -82,9 +82,7 @@ export function createDialog(
 
   // # no footer
   if (!footer) {
-    const yesBtn = btn({ class: 'btn btn-primary', type: 'button' }, 'Yes');
-    yesBtn.title = 'Yes';
-
+    const yesBtn = btn('btn btn-primary', 'Yes');
     const footerDiv = div('dialog-footer', [yesBtn]);
     content.append(headerDiv, bodyDiv, footerDiv);
     dialog.appendChild(content);

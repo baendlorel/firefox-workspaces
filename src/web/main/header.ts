@@ -111,7 +111,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     (title = h('h2', 'header-title')),
     div('sync', [syncIcon.el]),
     (addBtn = btn('btn btn-trans', i('button.new'))),
-    (moreBtn = btn({ class: 'btn btn-trans', style: '' }, [svg(listSvg, undefined, 18)])),
+    (moreBtn = btn('btn btn-trans', [svg(listSvg, undefined, 18)])),
   ]);
 
   bus.on('change-sync-state', (...args) => syncIcon.setStatus(...args));

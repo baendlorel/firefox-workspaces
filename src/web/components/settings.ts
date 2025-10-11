@@ -28,7 +28,7 @@ export default () => {
       i('settings.sync.label'),
       h('div', 'description', i('settings.sync.description')),
     ]),
-    div('flex gap-2', [
+    div('gap-flex', [
       radio('sync', 'on', i('settings.toggle.on')),
       radio('sync', 'off', i('settings.toggle.off')),
     ]),
