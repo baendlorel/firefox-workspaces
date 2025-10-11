@@ -288,6 +288,24 @@
   "dialog.export.export": {
     "message": "导出"
   },
+  "dialog.export.password-incorrect-single": {
+    "message": "密码错误，请重试。"
+  },
+  "dialog.export.password-incorrect-multiple": {
+    "message": "$0 个密码错误，请重试。"
+  },
+  "dialog.export.preparing": {
+    "message": "准备导出..."
+  },
+  "dialog.export.success-full": {
+    "message": "导出成功！"
+  },
+  "dialog.export.success-partial": {
+    "message": "导出完成。$0 个工作区因密码错误未导出。"
+  },
+  "dialog.export.failed": {
+    "message": "导出失败：$0"
+  },
   "menu.about": {
     "message": "关于",
     "description": "Context menu item"

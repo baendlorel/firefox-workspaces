@@ -38,6 +38,7 @@ export default defineConfig({
         import: resolve('pages/import.html'),
         about: resolve('pages/about.html'),
         donate: resolve('pages/donate.html'),
+        export: resolve('pages/export.html'),
 
         // js
         background: resolve('src/background.ts'),

@@ -287,6 +287,24 @@
   "dialog.export.export": {
     "message": "Export"
   },
+  "dialog.export.password-incorrect-single": {
+    "message": "Password incorrect. Please try again."
+  },
+  "dialog.export.password-incorrect-multiple": {
+    "message": "$0 passwords incorrect. Please try again."
+  },
+  "dialog.export.preparing": {
+    "message": "Preparing export..."
+  },
+  "dialog.export.success-full": {
+    "message": "Export successful!"
+  },
+  "dialog.export.success-partial": {
+    "message": "Export completed. $0 workspace(s) skipped due to incorrect password."
+  },
+  "dialog.export.failed": {
+    "message": "Export failed: $0"
+  },
   "menu.about": {
     "message": "About",
     "description": "Context menu item"

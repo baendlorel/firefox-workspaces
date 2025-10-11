@@ -104,21 +104,30 @@ class Exporter {
     // Validate passwords
     const validationResults = await this.validatePasswords();
 
-    // Check if all passwords are correct
-    const allValid = validationResults.every((v) => v.valid);
-    const invalidCount = validationResults.filter((v) => !v.valid).length;
+    // Separate valid and invalid workspaces
+    const invalidWorkspaces = validationResults.filter((v) => !v.valid);
+    const excludeIds = invalidWorkspaces.map((v) => v.id);
+    const invalidWorkspaceNames = invalidWorkspaces.map((v) => {
+      const ws = this.encryptedWorkspaces.find((w) => w.id === v.id);
+      return ws?.name || v.id;
+    });
 
-    if (!allValid) {
-      this.showError(
-        invalidCount === 1
-          ? 'Password incorrect. Please try again.'
-          : `${invalidCount} passwords incorrect. Please try again.`
-      );
+    // If all passwords are correct, export all
+    if (invalidWorkspaces.length === 0) {
+      await this.performExport([]);
       return;
     }
 
-    // All passwords correct, perform export
-    await this.performExport([]);
+    // If some passwords are incorrect, show warning but still allow export
+    const invalidCount = invalidWorkspaces.length;
+    this.showError(
+      invalidCount === 1
+        ? i('dialog.export.password-incorrect-single')
+        : i('dialog.export.password-incorrect-multiple', invalidCount)
+    );
+
+    // Export valid workspaces, exclude those with incorrect passwords
+    await this.performExport(excludeIds);
   }
 
   /**
@@ -180,11 +189,12 @@ class Exporter {
 
   /**
    * Perform the actual export operation
+   * @param excludeIds - IDs of workspaces to exclude (incorrect passwords)
    */
   private async performExport(excludeIds: string[]) {
     try {
       this.exportBtn.disabled = true;
-      this.showInfo('Preparing export...', '#2da191');
+      this.showInfo(i('dialog.export.preparing'), '#2da191');
 
       // Get data from storage
       const persist = await store.localGet('workspaces', 'settings');
@@ -204,18 +214,31 @@ class Exporter {
       a.click();
       URL.revokeObjectURL(url);
 
-      this.showInfo('Export successful!', '#4ade80');
+      // Show success message
+      if (excludeIds.length === 0) {
+        // All workspaces exported successfully
+        this.showInfo(i('dialog.export.success-full'), '#4ade80');
+      } else {
+        // Partial export - some workspaces skipped
+        const message = i('dialog.export.success-partial', excludeIds.length);
+        this.showInfo(message, '#f59e0b'); // Orange color for warning
+      }
 
-      // Close window after 1.5 seconds
-      setTimeout(() => {
-        browser.tabs.getCurrent().then((tab) => {
-          if (tab?.id !== undefined) {
-            browser.tabs.remove(tab.id);
-          }
-        });
-      }, 1500);
+      // Close window after delay if fully successful, otherwise keep open for retry
+      if (excludeIds.length === 0) {
+        setTimeout(() => {
+          browser.tabs.getCurrent().then((tab) => {
+            if (tab?.id !== undefined) {
+              browser.tabs.remove(tab.id);
+            }
+          });
+        }, 1500);
+      } else {
+        // Re-enable button for retry
+        this.exportBtn.disabled = false;
+      }
     } catch (error) {
-      this.showError('Export failed: ' + (error as Error).message);
+      this.showError(i('dialog.export.failed', (error as Error).message));
       this.exportBtn.disabled = false;
     }
   }
