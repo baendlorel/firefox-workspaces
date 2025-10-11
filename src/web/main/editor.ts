@@ -19,7 +19,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });
   const randomNameBtn = btn('btn btn-primary', i('button.random'));
-  const inputNameDiv = div('input-with-btn', [inputName, randomNameBtn]);
+  const inputNameDiv = div('gap-flex', [inputName, randomNameBtn]);
   const colorSelector = colorPicker('workspace-color');
 
   // Password fields
@@ -29,7 +29,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     placeholder: i('workspace.password.placeholder-old'),
   });
   const forgotPasswordBtn = btn('btn btn-secondary ms-2', i('button.peek-password'));
-  forgotPasswordBtn.style.padding = '4px 12px';
 
   const inputPassword = h('input', {
     id: 'workspace-password',
@@ -49,7 +48,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   ]);
   const oldPasswordGroup = div('form-group form-group-with-btn', [
     h('label', { for: 'workspace-old-password' }, i('workspace.field.old-password')),
-    div('input-with-btn', [inputOldPassword, forgotPasswordBtn]),
+    div('gap-flex', [inputOldPassword, forgotPasswordBtn]),
   ]);
 
   const body = [
@@ -67,17 +66,18 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   // # footer
   // todo editor的文案全部改为使用editor前缀
-  // todo 增加一个gap flex的容器class，方便处理这种按钮组和带按钮的输入框
+  // todo 整理不必要的tailwind样式，因其过于复杂导致调试困难
   const deleteBtn = btn('btn btn-danger', i('button.delete'));
-  const cancelBtn = btn('btn btn-secondary ms-2', i('button.cancel'));
-  const saveBtn = btn('btn btn-primary ms-2', i('button.save'));
-  cancelBtn.title = i('button.cancel-and-close');
-  saveBtn.title = i('button.save-workspace');
-
-  const footer = [deleteBtn, cancelBtn, saveBtn];
+  const cancelBtn = btn('btn btn-secondary', i('button.cancel'));
+  const saveBtn = btn('btn btn-primary', i('button.save'));
+  const footer = div({ class: 'gap-flex ml-auto', style: 'width: fit-content;' }, [
+    deleteBtn,
+    cancelBtn,
+    saveBtn,
+  ]);
 
   // # Editor dialog
-  const { dialog, closeBtn, setTitle } = createDialog(i('workspace.title'), body, footer);
+  const { dialog, closeBtn, setTitle } = createDialog(i('workspace.title'), body, [footer]);
   dialog.backdropClosable = true;
   dialog.escClosable = true;
 
