@@ -64,20 +64,20 @@ declare global {
 }
 
 export const WORKSPACE_COLORS: HexColor[] = [
-  '#00b7c3',
-  '#0078d4',
-  '#0d546a',
-  '#107c10',
-  '#498205',
-  '#8661c5',
-  '#881798',
-  '#b4009e',
-  '#c90919',
-  '#ff8c00',
-  '#c84f39',
-  '#505050',
-  '#212529',
-  '#004e8c',
+  '#00b7c3ff',
+  '#0078d4ff',
+  '#0d546aff',
+  '#107c10ff',
+  '#498205ff',
+  '#8661c5ff',
+  '#881798ff',
+  '#b4009eff',
+  '#c90919ff',
+  '#ff8c00ff',
+  '#c84f39ff',
+  '#505050ff',
+  '#212529ff',
+  '#004e8cff',
 ];
 
 export const NotProvided = Symbol('NotProvided') as any;

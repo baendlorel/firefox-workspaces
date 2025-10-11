@@ -19,13 +19,8 @@ export default (id: string): HTMLColorSelectorElement => {
     return el;
   });
 
-  // todo 已经找到不显示selected的原因：1、pick和palette内部的事件产生了相互调用；2、相互调用导致原本的颜色第二次emit出来的时候，被添加了ff的alpha，导致又不一样了
   const setSelection = (color: HexColor) => {
-    colorOptions.forEach((c) => {
-      const same = color === c.dataset.color || color === `${c.dataset.color}ff`;
-      c.classList.toggle('selected', same);
-      console.trace('set selected', color, same);
-    });
+    colorOptions.forEach((c) => c.classList.toggle('selected', color === c.dataset.color));
     palette.style.setProperty('--palette-value', color);
   };
 
@@ -38,7 +33,7 @@ export default (id: string): HTMLColorSelectorElement => {
 
   const pick = (color: HexColor) => {
     setSelection(color);
-    picker.setter(color);
+    picker.setter(color, true);
   };
 
   palette.addEventListener(

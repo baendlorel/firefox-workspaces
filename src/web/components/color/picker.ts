@@ -46,15 +46,20 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
     `;
   };
 
-  // Update indicator color and position indicators
-  const updateIndicator = () => {
+  /**
+   * Can choose to mute onChange callback when updating indicator
+   * @param muted
+   */
+  const updateIndicator = (muted: boolean = false) => {
     const color = Color.create(currentHue, currentSaturation, currentValue, currentAlpha);
     const hexa = color.toHexa();
     indicator.value = hexa;
     indicator.style.backgroundColor = hexa;
     indicator.style.color = color.brightness > 128 ? 'var(--dark)' : 'var(--light)';
 
-    onChange(hexa);
+    if (!muted) {
+      onChange(hexa);
+    }
 
     // Update alpha background based on current color
     updateAlphaBackground();
@@ -81,7 +86,11 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
     }
   };
 
-  const updateWithRgba = (value: string) => {
+  /**
+   * Can choose to mute onChange callback when updating indicator
+   * @param muted
+   */
+  const updateWithRgba = (value: string, muted: boolean = false) => {
     // Parse hex color
     const color = Color.from(value);
     const { h, s, v, a } = color.toHsv();
@@ -98,7 +107,7 @@ export const createPicker = (id: string, onChange: (color: HexColor) => void) =>
     });
 
     updatePickerBackground();
-    updateIndicator();
+    updateIndicator(muted);
   };
 
   // Initialize picker background
