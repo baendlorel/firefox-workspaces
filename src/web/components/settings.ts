@@ -45,9 +45,6 @@ export default () => {
     const theme = getRadioValue(themeRadio, Theme.Auto) as Theme;
     const sync = getRadioValue(syncRadio, Switch.On) as Switch;
 
-    // Apply theme immediately
-    applyTheme(theme);
-
     logger.info('Saving settings', { theme, sync });
 
     // Persist settings
@@ -67,7 +64,6 @@ export default () => {
 
     selectRadioValue(themeRadio, Theme.Auto);
     selectRadioValue(syncRadio, Switch.On);
-    applyTheme(Theme.Auto);
   });
 
   // # load settings for editing
@@ -80,23 +76,3 @@ export default () => {
   document.body.appendChild(dialog);
   return dialog;
 };
-
-/**
- * Apply the selected theme
- */
-function applyTheme(theme: string) {
-  document.documentElement.className = '';
-
-  if (theme === 'light') {
-    document.documentElement.classList.add('light-theme');
-  } else if (theme === 'dark') {
-    document.documentElement.classList.add('dark-theme');
-  } else {
-    // Auto theme - use system preference
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      document.documentElement.classList.add('dark-theme');
-    } else {
-      document.documentElement.classList.add('light-theme');
-    }
-  }
-}

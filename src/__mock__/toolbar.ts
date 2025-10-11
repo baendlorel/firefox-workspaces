@@ -321,15 +321,15 @@ export class MockBrowser {
       },
       apply(_0, _1, args) {
         const key = path.join('.');
+        if (key === 'i18n.getMessage') {
+          return mocki(args[0]);
+        }
         console.log('apply:', key, ...args);
         if (key === 'runtime.sendMessage') {
           return Promise.resolve(createResponse(args[0]));
         }
         if (key === 'windows.getCurrent') {
           return Promise.resolve([]);
-        }
-        if (key === 'i18n.getMessage') {
-          return mocki(args[0]);
         }
         if (key === 'storage.local.get' || key === 'storage.sync.get') {
           const arg = args[0];

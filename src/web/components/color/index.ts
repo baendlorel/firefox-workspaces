@@ -19,17 +19,12 @@ export default (id: string): HTMLColorSelectorElement => {
     return el;
   });
 
+  // todo 已经找到不显示selected的原因：1、pick和palette内部的事件产生了相互调用；2、相互调用导致原本的颜色第二次emit出来的时候，被添加了ff的alpha，导致又不一样了
   const setSelection = (color: HexColor) => {
     colorOptions.forEach((c) => {
-      const same = color.toLocaleLowerCase() === c.dataset.color?.toLocaleLowerCase();
+      const same = color === c.dataset.color || color === `${c.dataset.color}ff`;
       c.classList.toggle('selected', same);
-      // fixme 选中后没有高光特效了，这里selected样式会秒被清除
-      if (same) {
-        logger.info(c.isConnected, c.classList.contains('selected'));
-        requestAnimationFrame(() => {
-          logger.info('next frame', c.isConnected, c.classList.contains('selected'));
-        });
-      }
+      console.trace('set selected', color, same);
     });
     palette.style.setProperty('--palette-value', color);
   };

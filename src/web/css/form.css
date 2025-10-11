@@ -28,7 +28,9 @@
   font-size: var(--font-size-normal);
   border: 1px solid #d1d5db;
   border-radius: var(--border-radius);
-  transition: all 0.2s;
+  transition:
+    box-shadow 0.3s,
+    border-color 0.3s;
   box-sizing: border-box;
 }
 
