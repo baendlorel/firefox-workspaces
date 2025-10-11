@@ -288,11 +288,8 @@
   "dialog.export.export": {
     "message": "导出"
   },
-  "dialog.export.password-incorrect-single": {
-    "message": "密码错误，请重试。"
-  },
-  "dialog.export.password-incorrect-multiple": {
-    "message": "$0 个密码错误，请重试。"
+  "dialog.export.password-incorrect": {
+    "message": "$0 的密码错误，请重试。"
   },
   "dialog.export.preparing": {
     "message": "准备导出..."

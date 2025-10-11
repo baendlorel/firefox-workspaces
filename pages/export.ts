@@ -3,15 +3,9 @@ import { store } from '@/lib/storage.js';
 import { $id, div, h } from '@/lib/dom.js';
 import { i } from '@/lib/polyfilled-api.js';
 
-interface EncryptedWorkspace {
-  id: string;
-  name: string;
-  password: string; // SHA-256 hash
-}
-
 class Exporter {
   // Data
-  private readonly encryptedWorkspaces: EncryptedWorkspace[] = [];
+  private readonly encrypted: Workspace[] = [];
   private readonly allWorkspaces: Workspace[] = [];
 
   // DOM elements
@@ -42,16 +36,12 @@ class Exporter {
     this.allWorkspaces.push(...workspaces);
 
     // Find encrypted workspaces
-    this.encryptedWorkspaces.push(
-      ...workspaces
-        .filter((w) => w.password && w.password.trim() !== '')
-        .map((w) => ({ id: w.id, name: w.name, password: w.password }))
-    );
+    this.encrypted.push(...workspaces.filter((w) => w.password && w.password.trim() !== ''));
 
     // If there are encrypted workspaces, show password form
-    if (this.encryptedWorkspaces.length > 0 && this.passwordSection && this.passwordForm) {
+    if (this.encrypted.length > 0 && this.passwordSection && this.passwordForm) {
       this.passwordSection.style.display = 'block';
-      this.renderPasswordForm();
+      this.renderForm();
     }
 
     // Setup export button
@@ -63,28 +53,22 @@ class Exporter {
   /**
    * Render password input form for encrypted workspaces
    */
-  private renderPasswordForm() {
+  private renderForm() {
     this.passwordForm.textContent = '';
     this.passwordInputs.clear();
 
-    for (const workspace of this.encryptedWorkspaces) {
-      const input = h('input', { class: 'password-input', type: 'password' });
-      input.dataset.workspaceId = workspace.id;
-      input.placeholder = 'Enter password...';
+    for (let j = 0; j < this.encrypted.length; j++) {
+      const workspace = this.encrypted[j];
+      const input = h('input', {
+        class: 'password-input',
+        type: 'password',
+        placeholder: i('dialog.password-hint.message', workspace.passpeek),
+      });
 
-      // Cache input element for later access
       this.passwordInputs.set(workspace.id, input);
-
-      const item = div('password-item', [h('label', 'password-label', workspace.name), input]);
-
-      // Add hint if available
-      const ws = this.allWorkspaces.find((w) => w.id === workspace.id);
-      if (ws && ws.passpeek) {
-        const hint = div('password-hint', i('dialog.password-hint.message', ws.passpeek));
-        item.appendChild(hint);
-      }
-
-      this.passwordForm.appendChild(item);
+      this.passwordForm.appendChild(
+        div('password-item', [h('label', 'password-label', workspace.name), input])
+      );
     }
   }
 
@@ -96,19 +80,18 @@ class Exporter {
     this.clearErrors();
 
     // If no encrypted workspaces, export directly
-    if (this.encryptedWorkspaces.length === 0) {
+    if (this.encrypted.length === 0) {
       await this.performExport([]);
       return;
     }
 
-    // Validate passwords
-    const validationResults = await this.validatePasswords();
+    const validationResults = await this.validate();
 
     // Separate valid and invalid workspaces
     const invalidWorkspaces = validationResults.filter((v) => !v.valid);
     const excludeIds = invalidWorkspaces.map((v) => v.id);
     const invalidWorkspaceNames = invalidWorkspaces.map((v) => {
-      const ws = this.encryptedWorkspaces.find((w) => w.id === v.id);
+      const ws = this.encrypted.find((w) => w.id === v.id);
       return ws?.name || v.id;
     });
 
@@ -118,15 +101,7 @@ class Exporter {
       return;
     }
 
-    // If some passwords are incorrect, show warning but still allow export
-    const invalidCount = invalidWorkspaces.length;
-    this.showError(
-      invalidCount === 1
-        ? i('dialog.export.password-incorrect-single')
-        : i('dialog.export.password-incorrect-multiple', invalidCount)
-    );
-
-    // Export valid workspaces, exclude those with incorrect passwords
+    this.showError(i('dialog.export.password-incorrect', invalidWorkspaceNames.join(', ')));
     await this.performExport(excludeIds);
   }
 
@@ -139,15 +114,12 @@ class Exporter {
     this.statusMessage.style.color = '';
   }
 
-  /**
-   * Validate all password inputs
-   */
-  private async validatePasswords(): Promise<
+  private async validate(): Promise<
     Array<{ id: string; input: HTMLInputElement; valid: boolean }>
   > {
     const validations: Array<{ id: string; input: HTMLInputElement; valid: boolean }> = [];
 
-    for (const encrypted of this.encryptedWorkspaces) {
+    for (const encrypted of this.encrypted) {
       const input = this.passwordInputs.get(encrypted.id);
       if (!input) continue;
 

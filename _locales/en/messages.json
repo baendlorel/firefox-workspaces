@@ -287,11 +287,8 @@
   "dialog.export.export": {
     "message": "Export"
   },
-  "dialog.export.password-incorrect-single": {
-    "message": "Password incorrect. Please try again."
-  },
-  "dialog.export.password-incorrect-multiple": {
-    "message": "$0 passwords incorrect. Please try again."
+  "dialog.export.password-incorrect": {
+    "message": "Incorrect password(s) of $0. Please try again."
   },
   "dialog.export.preparing": {
     "message": "Preparing export..."
