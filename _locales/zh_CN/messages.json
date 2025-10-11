@@ -195,14 +195,7 @@
     "description": "Export failed message"
   },
   "message.error.parse-file": {
-    "message": "解析文件失败：{error}",
-    "description": "File parse error message",
-    "placeholders": {
-      "error": {
-        "content": "$1",
-        "example": "无效的 JSON"
-      }
-    }
+    "message": "解析文件失败：{error}"
   },
   "message.error.load-workgroups": {
     "message": "加载工作组失败",
@@ -225,14 +218,7 @@
     "description": "Time indicator"
   },
   "time.minutes-ago": {
-    "message": "{minutes} 分钟前",
-    "description": "Time indicator",
-    "placeholders": {
-      "minutes": {
-        "content": "$1",
-        "example": "5"
-      }
-    }
+    "message": "{minutes} 分钟前"
   },
   "debug.clear-cache": {
     "message": "清除缓存",
@@ -381,14 +367,7 @@
     "description": "No password hint message"
   },
   "dialog.unlock.title": {
-    "message": "解锁：{name}",
-    "description": "Unlock workspace dialog title",
-    "placeholders": {
-      "name": {
-        "content": "$1",
-        "example": "我的工作区"
-      }
-    }
+    "message": "解锁：{name}"
   },
   "dialog.workspace-locked.title": {
     "message": "工作区已锁定",
@@ -396,27 +375,14 @@
   },
   "dialog.workspace-locked.message": {
     "message": "由于尝试次数过多，此工作区已被锁定。请等待 {seconds} 秒。",
-    "description": "Workspace locked message",
-    "placeholders": {
-      "seconds": {
-        "content": "$1",
-        "example": "45"
-      }
-    }
+    "description": "Workspace locked message"
   },
   "dialog.incorrect-password.title": {
     "message": "密码错误",
     "description": "Incorrect password dialog title"
   },
   "dialog.incorrect-password.message": {
-    "message": "密码错误。还剩 {attempts} 次尝试机会。",
-    "description": "Incorrect password message",
-    "placeholders": {
-      "attempts": {
-        "content": "$1",
-        "example": "2"
-      }
-    }
+    "message": "密码错误。还剩 {attempts} 次尝试机会。"
   },
   "dialog.incorrect-password.locked": {
     "message": "尝试次数过多。此工作区已被锁定 60 秒。",

@@ -194,14 +194,7 @@
     "description": "Export failed message"
   },
   "message.error.parse-file": {
-    "message": "Failed to parse file: {error}",
-    "description": "File parse error message",
-    "placeholders": {
-      "error": {
-        "content": "$1",
-        "example": "Invalid JSON"
-      }
-    }
+    "message": "Failed to parse file: {error}"
   },
   "message.error.load-workgroups": {
     "message": "Failed to load work groups",
@@ -224,14 +217,7 @@
     "description": "Time indicator"
   },
   "time.minutes-ago": {
-    "message": "{minutes} minute(s) ago",
-    "description": "Time indicator",
-    "placeholders": {
-      "minutes": {
-        "content": "$1",
-        "example": "5"
-      }
-    }
+    "message": "{minutes} minute(s) ago"
   },
   "debug.clear-cache": {
     "message": "Clear Cache",
@@ -382,27 +368,14 @@
   },
   "dialog.unlock.title": {
     "message": "Unlock: {name}",
-    "description": "Unlock workspace dialog title",
-    "placeholders": {
-      "name": {
-        "content": "$1",
-        "example": "My Workspace"
-      }
-    }
+    "description": "Unlock workspace dialog title"
   },
   "dialog.workspace-locked.title": {
     "message": "Workspace Locked",
     "description": "Workspace locked dialog title"
   },
   "dialog.workspace-locked.message": {
-    "message": "This workspace is locked due to too many failed attempts. Please wait {seconds} seconds.",
-    "description": "Workspace locked message",
-    "placeholders": {
-      "seconds": {
-        "content": "$1",
-        "example": "45"
-      }
-    }
+    "message": "This workspace is locked due to too many failed attempts. Please wait {seconds} seconds."
   },
   "dialog.incorrect-password.title": {
     "message": "Incorrect Password",
@@ -410,13 +383,7 @@
   },
   "dialog.incorrect-password.message": {
     "message": "Incorrect password. {attempts} attempt(s) remaining.",
-    "description": "Incorrect password message",
-    "placeholders": {
-      "attempts": {
-        "content": "$1",
-        "example": "2"
-      }
-    }
+    "description": "Incorrect password message"
   },
   "dialog.incorrect-password.locked": {
     "message": "Too many failed attempts. This workspace is locked for 60 seconds.",
