@@ -348,8 +348,8 @@
     "message": "Enter password",
     "description": "Unlock password input placeholder"
   },
-  "button.forgot-password": {
-    "message": "Forgot password?",
+  "button.password-hint": {
+    "message": "Hint",
     "description": "Forgot password button"
   },
   "button.peek-password": {
@@ -369,10 +369,6 @@
   "dialog.unlock.title": {
     "message": "Unlock: $0",
     "description": "Unlock workspace dialog title"
-  },
-  "dialog.workspace-locked.title": {
-    "message": "Workspace Locked",
-    "description": "Workspace locked dialog title"
   },
   "dialog.workspace-locked.message": {
     "message": "This workspace is locked due to too many failed attempts. Please wait $0 seconds."

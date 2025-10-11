@@ -61,6 +61,12 @@ declare global {
     Success = 'success',
     Error = 'error',
   }
+
+  const enum PasswordCheckResult {
+    Correct,
+    Incorrect,
+    Locked,
+  }
 }
 
 export const WORKSPACE_COLORS: HexColor[] = [

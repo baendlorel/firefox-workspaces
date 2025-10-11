@@ -118,10 +118,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
           // Check if locked
           const lockTime = popupService.getRemainingLockTime(workspace);
           if (lockTime > 0) {
-            info(
-              i('dialog.workspace-locked.message', lockTime),
-              i('dialog.workspace-locked.title')
-            );
+            info(i('dialog.workspace-locked.message', lockTime));
             return;
           }
 
@@ -133,24 +130,23 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
           }
 
           const result = await popupService.verifyPassword(workspace, password);
-          if (result === 'locked') {
-            const lockTime = popupService.getRemainingLockTime(workspace);
-            info(
-              i('dialog.workspace-locked.message', lockTime),
-              i('dialog.workspace-locked.title')
-            );
-            return;
-          } else if (result === 'incorrect') {
-            const remainingAttempts = 3 - (workspace.failedAttempts || 0);
-            if (remainingAttempts > 0) {
-              info(
-                i('dialog.incorrect-password.message', remainingAttempts),
-                i('dialog.incorrect-password.title')
-              );
-            } else {
-              info(i('dialog.incorrect-password.locked'), i('dialog.workspace-locked.title'));
+          switch (result) {
+            case PasswordCheckResult.Correct:
+              break;
+            case PasswordCheckResult.Incorrect: {
+              const remainingAttempts = 3 - (workspace.failedAttempts || 0);
+              if (remainingAttempts > 0) {
+                info(i('dialog.incorrect-password.message', remainingAttempts));
+              } else {
+                info(i('dialog.incorrect-password.locked'));
+              }
+              return;
             }
-            return;
+            case PasswordCheckResult.Locked: {
+              const lockTime = popupService.getRemainingLockTime(workspace);
+              info(i('dialog.workspace-locked.message', lockTime));
+              return;
+            }
           }
           // If result is 'correct', continue to open
         }

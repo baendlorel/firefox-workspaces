@@ -17,13 +17,10 @@ class PopupService {
    *  - 'incorrect': password is incorrect
    *  - 'correct': password is correct
    */
-  async verifyPassword(
-    workspace: Workspace,
-    password: string
-  ): Promise<'locked' | 'incorrect' | 'correct'> {
+  async verifyPassword(workspace: Workspace, password: string): Promise<PasswordCheckResult> {
     // Check if workspace is locked (NaN < any number is false, so NaN lockUntil won't lock)
     if (Date.now() < workspace.lockUntil) {
-      return 'locked';
+      return PasswordCheckResult.Locked;
     }
 
     const passwordHash = await $sha256(password);
@@ -40,7 +37,7 @@ class PopupService {
           await store.localPersistSet({ workspaces });
         }
       }
-      return 'correct';
+      return PasswordCheckResult.Correct;
     }
 
     // Increment failed attempts (treat NaN as 0)
@@ -60,7 +57,7 @@ class PopupService {
       await store.localPersistSet({ workspaces });
     }
 
-    return 'incorrect';
+    return PasswordCheckResult.Incorrect;
   }
 
   /**

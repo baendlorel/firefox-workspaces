@@ -348,8 +348,8 @@
     "message": "输入密码",
     "description": "Unlock password input placeholder"
   },
-  "button.forgot-password": {
-    "message": "忘记密码？",
+  "button.password-hint": {
+    "message": "提示",
     "description": "Forgot password button"
   },
   "button.peek-password": {
@@ -368,10 +368,6 @@
   },
   "dialog.unlock.title": {
     "message": "解锁：$0"
-  },
-  "dialog.workspace-locked.title": {
-    "message": "工作区已锁定",
-    "description": "Workspace locked dialog title"
   },
   "dialog.workspace-locked.message": {
     "message": "由于尝试次数过多，此工作区已被锁定。请等待 $0 秒。",
