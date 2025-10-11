@@ -203,6 +203,7 @@ class WorkspaceBackground {
       [PopupPage.Import]: { width: 475, height: 465 },
       [PopupPage.Donate]: { width: 475, height: 705 },
       [PopupPage.About]: { width: 800, height: 740 },
+      [PopupPage.Export]: { width: 520, height: 740 },
     };
 
     return browser.windows.create({
