@@ -104,9 +104,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       const workspace = workspaces[j];
 
       // & wb means workspace block
-      const editBtn = btn({ class: 'btn btn-trans', style: 'padding:4px 5px' }, [
-        svg(threeDotsSvg, 'var(--dark)', 16),
-      ]);
+      const editBtn = btn('btn btn-trans btn-edit', [svg(threeDotsSvg, 'var(--dark)', 16)]);
       const wbli = listItem(workspace, [editBtn]);
 
       // Create workspace item with potential highlight

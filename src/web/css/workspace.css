@@ -13,7 +13,7 @@ header .header-title {
   padding: 10px 0px 10px 45px;
   font-weight: bold;
   background-image: url(/assets/icon-128.png);
-  background-position: 4px 9px;
+  background-position: 6px 0px;
   background-repeat: no-repeat;
   background-size: 21px 21px;
 }
@@ -169,17 +169,22 @@ footer p {
 }
 
 .wb-title {
+  position: relative;
   font-weight: bold;
   color: var(--dark);
 }
 .wb-title.with-password::after {
   position: absolute;
   content: '';
-  margin: 1px 0px 0px 2px;
+  margin: 1.2px 0px 0px 4px;
   width: 16px;
   height: 15px;
   scale: 0.8;
   background-image: url(/assets/lock.svg);
+}
+
+.wb-icon svg {
+  margin-top: 5px;
 }
 
 .wb-count {
@@ -215,4 +220,8 @@ footer p {
   margin: 0;
   padding: 0;
   background: transparent;
+}
+
+.btn-edit {
+  padding: 7px 4px 4px 4px;
 }
