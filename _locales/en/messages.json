@@ -73,63 +73,44 @@
     "message": "New Workspace with tabs",
     "description": "New workspace with tabs dialog title"
   },
-  "workspace.field.name": {
+  "editor.field.name": {
     "message": "Name"
   },
-  "workspace.field.color": {
+  "editor.field.color": {
     "message": "Color"
   },
-  "button.random": {
+  "editor.random-name": {
     "message": "Random",
     "description": "Random name button"
   },
-  "button.generate-random-name": {
-    "message": "Generate a random name",
-    "description": "Random name button tooltip"
-  },
-  "workspace.random-name.part1": {
+  "editor.random-name.part1": {
     "message": "Crimson,Azure,Golden,Silver,Emerald,Midnight,Silent,Hidden,Bright,Wandering,Lonely,Rapid,Calm,Bold"
   },
-  "workspace.random-name.part2": {
+  "editor.random-name.part2": {
     "message": " Haven, Harbor, Oasis, Sanctum, Vault, Garden, Grove, Pier, Station, Portal, Hub, Forge, Nexus, Realm"
   },
-  "button.delete": {
+  "editor.delete": {
     "message": "Delete",
     "description": "Delete button"
   },
-  "button.delete-workspace": {
+  "editor.delete-workspace": {
     "message": "Delete the workspace",
     "description": "Delete button tooltip"
-  },
-  "button.cancel": {
-    "message": "Cancel",
-    "description": "Cancel button"
-  },
-  "button.cancel-and-close": {
-    "message": "Cancel and close dialog",
-    "description": "Cancel button tooltip"
   },
   "button.save": {
     "message": "Save",
     "description": "Save button"
   },
-  "button.save-workspace": {
-    "message": "Save workspace",
-    "description": "Save button tooltip"
+  "button.cancel": {
+    "message": "Cancel",
+    "description": "Cancel button"
   },
   "message.validation.enter-group-name": {
     "message": "Please enter a group name",
     "description": "Validation message"
   },
   "message.confirm.delete-workspace": {
-    "message": "Are you sure you want to delete \"{name}\"?",
-    "description": "Delete confirmation message",
-    "placeholders": {
-      "name": {
-        "content": "$1",
-        "example": "My Workspace"
-      }
-    }
+    "message": "Are you sure you want to delete \"{name}\"?"
   },
   "settings.theme.label": {
     "message": "Theme",
@@ -154,10 +135,6 @@
   "dialog.settings.title": {
     "message": "Workspaces Settings",
     "description": "Settings dialog aria label"
-  },
-  "dialog.settings.close": {
-    "message": "Close settings dialog",
-    "description": "Close settings dialog tooltip"
   },
   "dialog.settings.reset": {
     "message": "Reset Settings",
@@ -280,10 +257,6 @@
     "message": "Failed to initialize",
     "description": "Initialization error message"
   },
-  "button.confirm-selection": {
-    "message": "Confirm selection",
-    "description": "Confirm selection tooltip"
-  },
   "time.last-updated-at": {
     "message": "last updated at"
   },
@@ -365,27 +338,27 @@
   "about.contact": {
     "message": "Contact: futami16237@gmail.com"
   },
-  "workspace.field.password": {
+  "editor.field.password": {
     "message": "Password (at least 6 chars)",
     "description": "Password field label"
   },
-  "workspace.field.old-password": {
+  "editor.field.old-password": {
     "message": "Old Password",
     "description": "Old password field label"
   },
-  "workspace.password.placeholder": {
+  "editor.password.placeholder": {
     "message": "Leave empty for no password",
     "description": "Password input placeholder"
   },
-  "workspace.password.placeholder-old": {
+  "editor.password.placeholder-old": {
     "message": "Enter old password",
     "description": "Old password input placeholder"
   },
-  "workspace.password.placeholder-confirm": {
+  "editor.password.placeholder-confirm": {
     "message": "Confirm password",
     "description": "Confirm password input placeholder"
   },
-  "workspace.password.placeholder-unlock": {
+  "editor.password.placeholder-unlock": {
     "message": "Enter password",
     "description": "Unlock password input placeholder"
   },

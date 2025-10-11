@@ -13,12 +13,12 @@ import colorPicker from '@comp/color/index.js';
 import popupService from '@web/popup.service.js';
 
 export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
-  let editingWorkspace: Workspace | null = null;
+  let current: Workspace | null = null;
   let currentTabs: WorkspaceTab[] = [];
 
   // # body
   const inputName = h('input', { id: 'workspace-name', type: 'text' });
-  const randomNameBtn = btn('btn btn-primary', i('button.random'));
+  const randomNameBtn = btn('btn btn-primary', i('editor.random-name'));
   const inputNameDiv = div('gap-flex', [inputName, randomNameBtn]);
   const colorSelector = colorPicker('workspace-color');
 
@@ -26,37 +26,37 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   const inputOldPassword = h('input', {
     id: 'workspace-old-password',
     type: 'password',
-    placeholder: i('workspace.password.placeholder-old'),
+    placeholder: i('editor.password.placeholder-old'),
   });
   const forgotPasswordBtn = btn('btn btn-secondary', i('button.peek-password'));
 
   const inputPassword = h('input', {
     id: 'workspace-password',
     type: 'password',
-    placeholder: i('workspace.password.placeholder'),
+    placeholder: i('editor.password.placeholder'),
   });
   const inputPasswordConfirm = h('input', {
     id: 'workspace-password-confirm',
     type: 'password',
-    placeholder: i('workspace.password.placeholder-confirm'),
+    placeholder: i('editor.password.placeholder-confirm'),
   });
   const passwordGroup = div('form-group', [
-    h('label', { for: 'workspace-password' }, i('workspace.field.password')),
+    h('label', { for: 'workspace-password' }, i('editor.field.password')),
     inputPassword,
     inputPasswordConfirm,
   ]);
   const oldPasswordGroup = div('form-group form-group-with-btn', [
-    h('label', { for: 'workspace-old-password' }, i('workspace.field.old-password')),
+    h('label', { for: 'workspace-old-password' }, i('editor.field.old-password')),
     div('gap-flex', [inputOldPassword, forgotPasswordBtn]),
   ]);
 
   const body = [
     div('form-group form-group-with-btn', [
-      h('label', { for: 'workspace-name', required: '' }, i('workspace.field.name')),
+      h('label', { for: 'workspace-name', required: '' }, i('editor.field.name')),
       inputNameDiv,
     ]),
     div('form-group', [
-      h('label', { for: 'workspace-color', required: '' }, i('workspace.field.color')),
+      h('label', { for: 'workspace-color', required: '' }, i('editor.field.color')),
       colorSelector,
     ]),
     oldPasswordGroup,
@@ -64,8 +64,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   ];
 
   // # footer
-  // todo editor的文案全部改为使用editor前缀
-  const deleteBtn = btn('btn btn-danger', i('button.delete'));
+  const deleteBtn = btn('btn btn-danger', i('editor.delete'));
   const cancelBtn = btn('btn btn-secondary', i('button.cancel'));
   const saveBtn = btn('btn btn-primary', i('button.save'));
   const footer = div({ class: 'gap-flex', style: 'margin-left:auto; width: fit-content;' }, [
@@ -81,13 +80,13 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   // # define handlers
   const close = () => {
-    editingWorkspace = null;
+    current = null;
     dialog.bus.emit('close');
   };
 
   // # register events
   bus.on('edit', (workspace: Workspace | null = null, tabs: browser.tabs.Tab[] = []) => {
-    editingWorkspace = workspace;
+    current = workspace;
     currentTabs = tabs // & ensure that tab.id is valid, or createWorkspaceTab will throw
       .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== browser.tabs.TAB_ID_NONE)
       .map(createWorkspaceTab);
@@ -124,15 +123,15 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   });
 
   randomNameBtn.addEventListener('click', () => {
-    const part1 = $randItem(i('workspace.random-name.part1').split(','));
-    const part2 = $randItem(i('workspace.random-name.part2').split(','));
+    const part1 = $randItem(i('editor.random-name.part1').split(','));
+    const part2 = $randItem(i('editor.random-name.part2').split(','));
     inputName.value = part1 + part2;
   });
 
   forgotPasswordBtn.addEventListener('click', () => {
-    if (editingWorkspace && editingWorkspace.passpeek) {
+    if (current && current.passpeek) {
       info(
-        i('dialog.password-hint.message', { peek: editingWorkspace.passpeek }),
+        i('dialog.password-hint.message', { peek: current.passpeek }),
         i('dialog.password-hint.title')
       );
     } else {
@@ -163,12 +162,12 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     let passpeek = '';
 
     // If editing existing workspace with password (not empty string)
-    if (editingWorkspace && editingWorkspace.password !== '') {
+    if (current && current.password !== '') {
       // Check if user wants to change password
       if (newPassword || oldPassword) {
         // Verify old password
         const oldPasswordHash = await $sha256(oldPassword);
-        if (oldPasswordHash !== editingWorkspace.password) {
+        if (oldPasswordHash !== current.password) {
           info(i('message.validation.old-password-incorrect'));
           return;
         }
@@ -189,8 +188,8 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
         // else: user wants to remove password (old password verified, new password empty)
       } else {
         // Keep existing password if no changes
-        passwordHash = editingWorkspace.password;
-        passpeek = editingWorkspace.passpeek;
+        passwordHash = current.password;
+        passpeek = current.passpeek;
       }
     } else {
       // New workspace or existing workspace without password
@@ -209,7 +208,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
     }
 
     await popupService.save({
-      id: editingWorkspace === null ? null : editingWorkspace.id,
+      id: current === null ? null : current.id,
       name: name,
       color: colorSelector.value,
       tabs: currentTabs,
@@ -224,17 +223,17 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
   });
 
   deleteBtn.addEventListener('click', async () => {
-    if (!editingWorkspace) {
+    if (!current) {
       danger('No workspace selected to delete.');
       return;
     }
 
-    const yes = await confirmation(i('message.confirm.delete-workspace', editingWorkspace.name));
+    const yes = await confirmation(i('message.confirm.delete-workspace', { name: current.name }));
     if (!yes) {
       return;
     }
 
-    await popupService.delete(editingWorkspace);
+    await popupService.delete(current);
 
     close();
   });

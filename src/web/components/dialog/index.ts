@@ -47,7 +47,6 @@ export function createDialog(
 
   // # header
   const closeBtn = btn('btn-text dialog-close', [svg(closeSvg, undefined, 10)]);
-  closeBtn.title = 'Close the dialog';
 
   const title = div('title', header ?? '');
   const headerInner = typeof header === 'string' ? [title, closeBtn] : (header ?? '');

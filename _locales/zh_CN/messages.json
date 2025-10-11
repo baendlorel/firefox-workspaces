@@ -74,31 +74,27 @@
     "message": "新建工作区（包含标签页）",
     "description": "New workspace with tabs dialog title"
   },
-  "workspace.field.name": {
+  "editor.field.name": {
     "message": "名称"
   },
-  "workspace.field.color": {
+  "editor.field.color": {
     "message": "颜色"
   },
-  "button.random": {
+  "editor.random-name": {
     "message": "随机",
     "description": "Random name button"
   },
-  "button.generate-random-name": {
-    "message": "生成随机名称",
-    "description": "Random name button tooltip"
-  },
-  "workspace.random-name.part1": {
+  "editor.random-name.part1": {
     "message": "赤焰,碧蓝,金辉,银月,翠影,午夜,静谧,隐秘,明亮,流浪,孤独,疾风,安静,勇敢"
   },
-  "workspace.random-name.part2": {
+  "editor.random-name.part2": {
     "message": "港湾,避风港,绿洲,圣地,宝库,花园,树林,码头,车站,传送门,枢纽,熔炉,连接点,领域"
   },
-  "button.delete": {
+  "editor.delete": {
     "message": "删除",
     "description": "Delete button"
   },
-  "button.delete-workspace": {
+  "editor.delete-workspace": {
     "message": "删除工作区",
     "description": "Delete button tooltip"
   },
@@ -106,31 +102,16 @@
     "message": "取消",
     "description": "Cancel button"
   },
-  "button.cancel-and-close": {
-    "message": "取消并关闭对话框",
-    "description": "Cancel button tooltip"
-  },
   "button.save": {
     "message": "保存",
     "description": "Save button"
-  },
-  "button.save-workspace": {
-    "message": "保存工作区",
-    "description": "Save button tooltip"
   },
   "message.validation.enter-group-name": {
     "message": "请输入组名称",
     "description": "Validation message"
   },
   "message.confirm.delete-workspace": {
-    "message": "确定要删除「{name}」吗？",
-    "description": "Delete confirmation message",
-    "placeholders": {
-      "name": {
-        "content": "$1",
-        "example": "我的工作区"
-      }
-    }
+    "message": "确定要删除「{name}」吗？"
   },
   "settings.theme.label": {
     "message": "主题",
@@ -155,10 +136,6 @@
   "dialog.settings.title": {
     "message": "工作区设置",
     "description": "Settings dialog aria label"
-  },
-  "dialog.settings.close": {
-    "message": "关闭设置对话框",
-    "description": "Close settings dialog tooltip"
   },
   "dialog.settings.reset": {
     "message": "重置设置",
@@ -281,10 +258,6 @@
     "message": "初始化失败",
     "description": "Initialization error message"
   },
-  "button.confirm-selection": {
-    "message": "确认选择",
-    "description": "Confirm selection tooltip"
-  },
   "time.last-updated-at": {
     "message": "最近更新于"
   },
@@ -365,27 +338,27 @@
   "about.contact": {
     "message": "联系方式: futami16237@gmail.com"
   },
-  "workspace.field.password": {
+  "editor.field.password": {
     "message": "密码（至少6位）",
     "description": "Password field label"
   },
-  "workspace.field.old-password": {
+  "editor.field.old-password": {
     "message": "旧密码",
     "description": "Old password field label"
   },
-  "workspace.password.placeholder": {
+  "editor.password.placeholder": {
     "message": "留空表示不设置密码（至少6位）",
     "description": "Password input placeholder"
   },
-  "workspace.password.placeholder-old": {
+  "editor.password.placeholder-old": {
     "message": "输入旧密码",
     "description": "Old password input placeholder"
   },
-  "workspace.password.placeholder-confirm": {
+  "editor.password.placeholder-confirm": {
     "message": "确认密码",
     "description": "Confirm password input placeholder"
   },
-  "workspace.password.placeholder-unlock": {
+  "editor.password.placeholder-unlock": {
     "message": "输入密码",
     "description": "Unlock password input placeholder"
   },

@@ -137,11 +137,9 @@ export class MockBrowser {
 
     // Create buttons
     const clearBtn = h('button', 'mock-browser-btn mock-browser-btn--clear', 'Clear Cache');
-    clearBtn.title = 'Clear all mock workspace data from localStorage';
     clearBtn.addEventListener('click', () => this.clearCache());
 
     const createBtn = h('button', 'mock-browser-btn mock-browser-btn--create', 'Random 3 WS');
-    createBtn.title = 'Create 3 random workspaces with random tabs';
     createBtn.addEventListener('click', () => void this.createRandomWorkspaces());
 
     const setCurrentBtn = h(
@@ -149,12 +147,10 @@ export class MockBrowser {
       'mock-browser-btn mock-browser-btn--set-current',
       'Set Current'
     );
-    setCurrentBtn.title = 'Create a fake workspace and trigger set-current event';
     setCurrentBtn.addEventListener('click', () => this.triggerSetCurrent());
 
     // Create toggle button (replaces close button)
     const toggleBtn = h('button', 'mock-browser-btn mock-browser-btn--toggle', '−');
-    toggleBtn.title = 'Toggle toolbar collapse/expand';
 
     // Create controls container for elements that can be hidden
     const controls = h('div', 'mock-browser-controls', [

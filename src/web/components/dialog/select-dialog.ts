@@ -37,8 +37,6 @@ export default async (config: {
 
   const confirmBtn = btn('btn btn-primary', i('dialog.type.confirm'));
   const cancelBtn = btn('btn btn-secondary', i('button.cancel'));
-  confirmBtn.title = i('button.confirm-selection');
-  cancelBtn.title = i('button.cancel-and-close');
 
   const { dialog } = createDialog(title, [msg, ul], [cancelBtn, confirmBtn]);
   dialog.bus.on('closed', () => resolve(value));

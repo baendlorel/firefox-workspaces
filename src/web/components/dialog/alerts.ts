@@ -38,9 +38,7 @@ export const danger = (message: string, title: string = i('dialog.type.danger'))
 export const confirmation = (message: string, title: string = i('dialog.type.confirm')) => {
   return new Promise<boolean>((resolve) => {
     const yesBtn = btn('btn btn-primary', i('button.yes'));
-    yesBtn.title = i('button.yes');
     const noBtn = btn('btn btn-secondary', i('button.no'));
-    yesBtn.title = i('button.no');
     const dialog = createDialog(title, message, [noBtn, yesBtn]).dialog;
 
     yesBtn.onclick = () => {
@@ -64,7 +62,7 @@ export const passwordPrompt = (workspace: Workspace, message?: string) => {
   return new Promise<string | null>((resolve) => {
     const passwordInput = h('input', {
       type: 'password',
-      placeholder: i('workspace.password.placeholder-unlock'),
+      placeholder: i('editor.password.placeholder-unlock'),
       class: 'form-control',
       style: 'margin-top: 10px; width: 100%;',
     });
