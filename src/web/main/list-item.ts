@@ -10,6 +10,7 @@ export default (workspace: Workspace, actionBtns: HTMLElement[] = []) => {
     div('wb-count', workspace.tabs.length.toString()),
   ]);
 
+  // fixme hover没有颜色，但dev环境有
   // Add lock icon if workspace has password (empty string = no password)
   title.classList.toggle('with-password', workspace.password !== '');
   if (actionBtns.length > 0) {

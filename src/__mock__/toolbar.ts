@@ -225,26 +225,28 @@ export class MockBrowser {
     console.log('Created 3 random workspaces');
   }
 
-  private triggerSetCurrent(): void {
+  private async triggerSetCurrent(): Promise<void> {
+    // Create workspace-like tabs (these will also be stored as window tabs)
     const tabs = [
-      createWorkspaceTab({
+      {
         id: 1,
+        index: 0,
         title: 'Fake Tab 1',
         url: 'https://example.com',
         favIconUrl: 'https://example.com/favicon.ico',
         pinned: true,
-        addedAt: Date.now(),
-      } as any),
-      createWorkspaceTab({
+      },
+      {
         id: 2,
+        index: 1,
         title: 'Fake Tab 2',
         url: 'https://github.com',
         favIconUrl: 'https://github.com/favicon.ico',
         pinned: false,
-        addedAt: Date.now(),
-      } as any),
+      },
     ];
-    // Create a fake workspace
+
+    // Create a fake workspace object
     const name = `Fake Workspace ${new Date().toLocaleTimeString()}`;
     const color = WORKSPACE_COLORS[Math.floor(Math.random() * WORKSPACE_COLORS.length)];
     const fakeWorkspace = createWorkspace({
@@ -255,7 +257,51 @@ export class MockBrowser {
       password: '', // No password for fake workspace
       passpeek: '', // No hint for fake workspace
     });
-    fakeWorkspace.tabs = tabs;
+
+    // Convert window/tab-like objects into WorkspaceTab entries
+    fakeWorkspace.tabs = tabs.map((t) =>
+      createWorkspaceTab({
+        id: t.id,
+        index: t.index,
+        title: t.title,
+        url: t.url,
+        pinned: t.pinned,
+      } as any)
+    );
+
+    // Persist the fake workspace and mark it as current for window id = 1
+    try {
+      const persist = this.getPersist();
+      const newWorkspaces = persist.workspaces.slice();
+      newWorkspaces.push(fakeWorkspace);
+
+      const windowId = 1; // mock current window id
+      const newWorkspaceWindows = { ...(persist._workspaceWindows ?? {}) } as Record<
+        string,
+        number
+      >;
+      newWorkspaceWindows[fakeWorkspace.id] = windowId;
+
+      const newWindowTabs = { ...(persist._windowTabs ?? {}) } as Record<string, any>;
+      // store tabs in a browser.tabs-like shape so other code can read them
+      newWindowTabs[windowId] = tabs.map((t) => ({
+        id: t.id,
+        index: t.index,
+        title: t.title,
+        url: t.url,
+        pinned: t.pinned,
+        favIconUrl: t.favIconUrl,
+      }));
+
+      this.savePersist({
+        workspaces: newWorkspaces,
+        _workspaceWindows: newWorkspaceWindows,
+        _windowTabs: newWindowTabs,
+      });
+      console.log('Mock: set fake workspace as current', fakeWorkspace.id);
+    } catch (e) {
+      console.error('Mock: failed to set current workspace', e);
+    }
   }
 
   private createResponse(request: MessageRequest): MessageResponseMap[Action] {
@@ -329,7 +375,8 @@ export class MockBrowser {
           return Promise.resolve(createResponse(args[0]));
         }
         if (key === 'windows.getCurrent') {
-          return Promise.resolve([]);
+          // Return a mock window with id 1 to match triggerSetCurrent
+          return Promise.resolve({ id: 1 });
         }
         if (key === 'storage.local.get' || key === 'storage.sync.get') {
           const arg = args[0];

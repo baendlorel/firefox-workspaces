@@ -10,7 +10,8 @@ header {
 
 header .header-title {
   flex: 1;
-  padding: 10px 0px 10px 45px;
+  font-size: var(--font-size-big);
+  padding: 0px 0px 0px 36px;
   font-weight: bold;
   background-image: url(/assets/icon-128.png);
   background-position: 6px 0px;
@@ -109,10 +110,7 @@ footer p {
   transition: all 0.3s;
   overflow: hidden;
   max-height: 20px;
-}
-
-.wb-ul-scroller.fold {
-  max-height: 0px;
+  border-radius: 0px 0px 6px 6px;
 }
 
 .wb-ul-scroller svg {
@@ -122,13 +120,25 @@ footer p {
 .wb-ul-scroller:hover {
   cursor: pointer;
   background-color: #a1a1a128;
-  border-radius: 0px 0px 6px 6px;
 }
 
 .wb-ul-scroller:active {
   cursor: pointer;
   background-color: #a1a1a146;
-  border-radius: 0px 0px 6px 6px;
+}
+
+.wb-ul-scroller.fold {
+  max-height: 0px;
+}
+
+.wb-ul-scroller.fold:hover {
+  cursor: unset;
+  background-color: transparent;
+}
+
+.wb-ul-scroller.fold:active {
+  cursor: unset;
+  background-color: transparent;
 }
 
 .wb-li {
