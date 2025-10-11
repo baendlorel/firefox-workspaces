@@ -54,8 +54,11 @@
 }
 
 div.palette {
+  --palette-border: 4px;
   position: relative;
-  border: 4px solid;
+  border: var(--palette-border) solid;
+  width: calc(28px - var(--palette-border) * 2); /* = 28px - 2 * 4px */
+  height: calc(28px - var(--palette-border) * 2);
   background: conic-gradient(
     from 0deg,
     #ff0000 0deg,
@@ -101,7 +104,6 @@ input.palette {
 .palette-container {
   display: grid;
   gap: 8px;
-  padding: 8px;
   width: 100%;
   height: 100%;
 
