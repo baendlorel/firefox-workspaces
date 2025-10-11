@@ -1,8 +1,19 @@
 import { compressToBase64, decompressFromBase64 } from 'lz-string';
 
 // # field order
-const FExportData: (keyof ExportData)[] = ['hash', 'workspaces', 'settings', 'timestamp'];
-const FWorkspace: (keyof Workspace)[] = ['id', 'name', 'color', 'tabs', 'createdAt', 'lastOpened'];
+const FExportData: (keyof Persist)[] = ['workspaces', 'settings', 'timestamp'];
+const FWorkspace: (keyof Workspace)[] = [
+  'id',
+  'name',
+  'color',
+  'tabs',
+  'createdAt',
+  'lastOpened',
+  'password',
+  'passpeek',
+  'lockUntil',
+  'failedAttempts',
+];
 const FWorkspaceTabPlain: (keyof WorkspaceTab)[] = ['id', 'index', 'title', 'url', 'pinned'];
 
 function serialize<T>(obj: T, fieldOrder: (keyof T)[]): any {

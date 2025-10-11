@@ -145,19 +145,10 @@ class PopupService {
   }
 
   async exportData() {
-    // & Let background to save the cached tabs into storage.local's persist part
+    // Save current tabs before export
     await $send<ExportRequest>({ action: Action.Export });
-    const persist = await store.localGet('workspaces', 'settings');
-
-    // Create and download JSON file
-    const text = JSON.stringify({ ...persist, hash: $objectHash(persist) }, null, 2);
-    const blob = new Blob([text], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `kskb-workspaces-${$tdtDashed()}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
+    // Open export page
+    await $send<OpenPageRequest>({ action: Action.OpenPage, page: PopupPage.Export });
   }
 }
 

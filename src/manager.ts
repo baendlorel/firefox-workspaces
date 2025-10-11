@@ -188,19 +188,8 @@ export class WorkspaceManager {
   }
 
   async importData(data: ExportData): Promise<ImportResponse> {
-    // 1. Validate hash
-    const { hash, workspaces, settings, timestamp } = data;
-    const dataWithoutHash = { workspaces, settings, timestamp };
-
-    const calculatedHash = $objectHash(dataWithoutHash);
-
-    if (hash !== calculatedHash) {
-      return {
-        succ: false,
-        message: i('message.import.invalid-hash'),
-        addedCount: 0,
-      };
-    }
+    // 1. Validate structure
+    const { workspaces, settings, timestamp } = data;
 
     // 2. Validate workspaces
     if (!Array.isArray(workspaces) || workspaces.some((w) => !isValidWorkspace(w))) {

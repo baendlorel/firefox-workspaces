@@ -16,9 +16,7 @@ type Local = Persist & State;
 
 type LocalKey = keyof Local;
 
-interface ExportData extends Persist {
-  hash: string;
-}
+type ExportData = Persist;
 
 type PartialLocal<T extends LocalKey[]> = {
   [K in T[number]]: Local[K];

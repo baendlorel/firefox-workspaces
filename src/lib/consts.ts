@@ -16,6 +16,7 @@ declare global {
     Donate = 'donate',
     About = 'about',
     Import = 'import',
+    Export = 'export',
   }
 
   const enum Action {

@@ -276,6 +276,18 @@
   "dialog.import.choose-file": {
     "message": "选择文件"
   },
+  "dialog.export.title": {
+    "message": "工作区数据导出"
+  },
+  "dialog.export.intro": {
+    "message": "将你的工作区导出为 JSON 文件以备份或转移"
+  },
+  "dialog.export.password-required": {
+    "message": "部分工作区已加密。请输入密码以导出："
+  },
+  "dialog.export.export": {
+    "message": "导出"
+  },
   "menu.about": {
     "message": "关于",
     "description": "Context menu item"

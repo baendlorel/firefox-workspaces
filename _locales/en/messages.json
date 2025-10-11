@@ -275,6 +275,18 @@
   "dialog.import.choose-file": {
     "message": "Choose File"
   },
+  "dialog.export.title": {
+    "message": "Workspace Data Export"
+  },
+  "dialog.export.intro": {
+    "message": "Export your workspaces to a JSON file for backup or transfer"
+  },
+  "dialog.export.password-required": {
+    "message": "Some workspaces are encrypted. Please enter their passwords to export:"
+  },
+  "dialog.export.export": {
+    "message": "Export"
+  },
   "menu.about": {
     "message": "About",
     "description": "Context menu item"
