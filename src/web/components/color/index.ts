@@ -20,7 +20,17 @@ export default (id: string): HTMLColorSelectorElement => {
   });
 
   const setSelection = (color: HexColor) => {
-    colorOptions.forEach((c) => c.classList.toggle('selected', color === c.dataset.color));
+    colorOptions.forEach((c) => {
+      const same = color.toLocaleLowerCase() === c.dataset.color?.toLocaleLowerCase();
+      c.classList.toggle('selected', same);
+      // fixme 选中后没有高光特效了，这里selected样式会秒被清除
+      if (same) {
+        logger.info(c.isConnected, c.classList.contains('selected'));
+        requestAnimationFrame(() => {
+          logger.info('next frame', c.isConnected, c.classList.contains('selected'));
+        });
+      }
+    });
     palette.style.setProperty('--palette-value', color);
   };
 

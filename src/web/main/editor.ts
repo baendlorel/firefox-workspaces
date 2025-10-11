@@ -65,7 +65,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   // # footer
   // todo editor的文案全部改为使用editor前缀
-  // todo 整理不必要的tailwind样式，因其过于复杂导致调试困难
   const deleteBtn = btn('btn btn-danger', i('button.delete'));
   const cancelBtn = btn('btn btn-secondary', i('button.cancel'));
   const saveBtn = btn('btn btn-primary', i('button.save'));
