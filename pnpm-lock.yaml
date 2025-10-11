@@ -14,6 +14,9 @@ importers:
       minimal-event-bus:
         specifier: ^1.0.0
         version: 1.0.0
+      pseudo-json:
+        specifier: ^0.0.1
+        version: 0.0.1
     devDependencies:
       '@rollup/plugin-replace':
         specifier: ^6.0.2
@@ -878,6 +881,9 @@ packages:
     resolution: {integrity: sha512-I7AIg5boAr5R0FFtJ6rCfD+LFsWHp81dolrFD8S79U9tb8Az2nGrJncnMSnys+bpQJfRUzqs9hnA81OAA3hCuQ==}
     engines: {node: '>=14'}
     hasBin: true
+
+  pseudo-json@0.0.1:
+    resolution: {integrity: sha512-oexsp6IbbgF7buuhiH3i89kPefuvZxo3o2SpVQf8oRyNgk246NLOXM2T12B2bcOOHJwIfieJs+7QigYKcJaNtg==}
 
   resolve@1.22.10:
     resolution: {integrity: sha512-NPRy+/ncIMeDlTAsuqwKIiferiawhefFJtkNSW0qZJEqMEb+qBt/77B/jGeeek+F0uOeN05CDa6HXbbIgtVX4w==}
@@ -1754,6 +1760,8 @@ snapshots:
       source-map-js: 1.2.1
 
   prettier@3.6.2: {}
+
+  pseudo-json@0.0.1: {}
 
   resolve@1.22.10:
     dependencies:
