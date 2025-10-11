@@ -133,10 +133,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   forgotPasswordBtn.addEventListener('click', () => {
     if (current && current.passpeek) {
-      info(
-        i('dialog.password-hint.message', { peek: current.passpeek }),
-        i('dialog.password-hint.title')
-      );
+      info(i('dialog.password-hint.message', current.passpeek), i('dialog.password-hint.title'));
     } else {
       info(i('dialog.password-hint.no-hint'), i('dialog.password-hint.title'));
     }
@@ -231,7 +228,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
       return;
     }
 
-    const yes = await confirmation(i('message.confirm.delete-workspace', { name: current.name }));
+    const yes = await confirmation(i('message.confirm.delete-workspace', current.name));
     if (!yes) {
       return;
     }

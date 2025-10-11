@@ -234,8 +234,8 @@ export class WorkspaceManager {
     const added = newWorkspaces.length;
     const skipped = workspaces.length - newWorkspaces.length;
 
-    const summary = i('message.import.summary', { added });
-    const skippedMessage = skipped === 0 ? '' : i('message.import.summary-skipped', { skipped });
+    const summary = i('message.import.summary', added);
+    const skippedMessage = skipped === 0 ? '' : i('message.import.summary-skipped', skipped);
 
     return {
       succ: true,

@@ -60,15 +60,11 @@ export async function $windowWorkspace(
 true satisfies IsSameType<I18NEnKey, I18NZhKey>;
 export const i: (messageName: I18NKey, substitutions?: any) => string = (
   key: I18NKey,
-  substitutions?: any
+  ...substitutions: any[]
 ) => {
-  const msg = browser.i18n.getMessage(key);
-  // todo 这里变更替换逻辑，将会把所有占位符，改为 $0 $1 格式，substitutions则改成剩余数组
-  if (typeof substitutions === 'object' && substitutions !== null) {
-    return Object.entries(substitutions).reduce(
-      (str, [k, v]) => str.replace(`{${k}}`, v as string),
-      msg
-    );
+  let msg = browser.i18n.getMessage(key);
+  for (let i = 0; i < substitutions.length; i++) {
+    msg = msg.replaceAll(`$${i}`, substitutions[i]);
   }
   return msg;
 };

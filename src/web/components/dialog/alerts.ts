@@ -91,7 +91,7 @@ export const passwordPrompt = (workspace: Workspace, message?: string) => {
       e.preventDefault();
       if (workspace.passpeek) {
         info(
-          i('dialog.password-hint.message', { peek: workspace.passpeek }),
+          i('dialog.password-hint.message', workspace.passpeek),
           i('dialog.password-hint.title')
         );
       } else {

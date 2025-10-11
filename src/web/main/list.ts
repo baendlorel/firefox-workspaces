@@ -119,7 +119,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
           const lockTime = popupService.getRemainingLockTime(workspace);
           if (lockTime > 0) {
             info(
-              i('dialog.workspace-locked.message', { seconds: lockTime }),
+              i('dialog.workspace-locked.message', lockTime),
               i('dialog.workspace-locked.title')
             );
             return;
@@ -136,7 +136,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
           if (result === 'locked') {
             const lockTime = popupService.getRemainingLockTime(workspace);
             info(
-              i('dialog.workspace-locked.message', { seconds: lockTime }),
+              i('dialog.workspace-locked.message', lockTime),
               i('dialog.workspace-locked.title')
             );
             return;
@@ -144,7 +144,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
             const remainingAttempts = 3 - (workspace.failedAttempts || 0);
             if (remainingAttempts > 0) {
               info(
-                i('dialog.incorrect-password.message', { attempts: remainingAttempts }),
+                i('dialog.incorrect-password.message', remainingAttempts),
                 i('dialog.incorrect-password.title')
               );
             } else {
