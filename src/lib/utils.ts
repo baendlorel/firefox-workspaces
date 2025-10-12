@@ -55,43 +55,6 @@ export const $tdtDashed = (dt: Date = new Date()) => {
 
 // # misc
 /**
- * Hash a plain object, order-insensitive
- */
-export function $objectHash(obj: any): string {
-  const sortObject = (o: any): any => {
-    if (Array.isArray(o)) {
-      return o.map(sortObject);
-    }
-    if (!o || typeof o !== 'object') {
-      return o;
-    }
-
-    const keys = Object.keys(o).sort();
-    const sorted = {} as any;
-    for (let i = 0; i < keys.length; i++) {
-      const k = keys[i];
-      sorted[k] = sortObject(o[k]);
-    }
-
-    return sorted;
-  };
-
-  // & FNV1 composed with FNV-1a
-  const sorted = sortObject(obj);
-  const str = JSON.stringify(sorted);
-  let h1 = 0x811c9dc5; // FNV1-32 offset basis
-  let h2 = 0xcbf29ce4; // FNV1a-32 offset basis
-  for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    h1 = (h1 * 0x01000193) ^ char;
-    h1 = h1 >>> 0;
-    h2 = (h2 ^ char) * 0x01000193;
-    h2 = h2 >>> 0;
-  }
-  return h1.toString(16).padStart(8, '0') + h2.toString(16).padStart(8, '0');
-}
-
-/**
  * Calculate SHA-256 hash of a string
  */
 export async function $sha256(text: string): Promise<string> {

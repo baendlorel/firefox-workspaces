@@ -179,7 +179,6 @@ class Exporter {
       };
 
       // Create and download JSON file
-      // $ Note that NaN -> null in JSON.stringify
       const text = JSON.stringify(exportData, null, 2);
       const blob = new Blob([text], { type: 'application/json' });
       const url = URL.createObjectURL(blob);

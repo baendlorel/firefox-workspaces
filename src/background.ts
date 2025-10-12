@@ -181,7 +181,8 @@ class WorkspaceBackground {
         return { succ: true };
 
       case Action.ReturnFileData: {
-        const result = await this.manager.importData(message.data as ExportData);
+        const data = JSON.parse(message.data as string) as ExportData;
+        const result = await this.manager.importData(data);
         $notify(result.message);
         return result;
       }

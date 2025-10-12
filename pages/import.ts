@@ -12,9 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     try {
       const text = await file.text();
-      // todo 导入导出改用pseudojson制作，避免NaN变成null的问题
-      const data = JSON.parse(text);
-      await $send({ action: Action.ReturnFileData, data });
+      logger.info('Importing data:', text);
+      await $send({ action: Action.ReturnFileData, data: text });
       const cur = await browser.tabs.getCurrent();
       if (cur?.id !== undefined) {
         browser.tabs.remove(cur.id);

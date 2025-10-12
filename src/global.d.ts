@@ -42,13 +42,13 @@ declare global {
 
     /**
      * Number of consecutive failed login attempts
-     * - `NaN` = none
+     * - `0` = none
      */
     failedAttempts: number;
 
     /**
      * Timestamp when the workspace can be unlocked again
-     * - `NaN` = not locked
+     * - `0` = not locked
      */
     lockUntil: number;
   }

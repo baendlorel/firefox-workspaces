@@ -3,7 +3,6 @@ import { i, $aboutBlank, $setBadge } from './lib/polyfilled-api.js';
 import { Color } from './lib/color.js';
 import { store } from './lib/storage.js';
 import { isValidSettings } from './lib/settings.js';
-import { $objectHash } from './lib/utils.js';
 import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {

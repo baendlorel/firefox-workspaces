@@ -1,5 +1,5 @@
 import { $windowWorkspace, $send } from '@/lib/polyfilled-api.js';
-import { $objectHash, $tdtDashed, $sha256 } from '@/lib/utils.js';
+import { $sha256 } from '@/lib/utils.js';
 import { store } from '@/lib/storage.js';
 import { createWorkspace } from '@/lib/workspace.js';
 
