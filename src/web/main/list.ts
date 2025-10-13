@@ -154,8 +154,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
         popupService.open(workspace);
       };
       li.addEventListener('click', open);
-      // todo 回车也能判定打开
       // todo 修改固定的意思，固定的意思是指这个tab不会因为关闭的时候没它就被从workspace里删除
+      // todo 打开的工作区里，顶部栏是不是加点颜色？
+      // todo 有时候点一下打不开新窗口，是不是自动重试?
+      // todo pin until：对于fixed的页面，会自动被pin，且关闭后依然存在
       li.addEventListener('keypress', (e) => {
         if (e.key === 'Enter') {
           open();
