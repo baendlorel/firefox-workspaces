@@ -78,8 +78,6 @@ export default (bus: EventBus<WorkspaceEditorEventMap>): HTMLDialogElement => {
 
   // # Editor dialog
   const { dialog, closeBtn, setTitle } = createDialog(i('workspace.title'), body, [footer]);
-  dialog.backdropClosable = true;
-  dialog.escClosable = true;
 
   // # define handlers
   const close = () => {

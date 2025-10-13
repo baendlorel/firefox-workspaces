@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      lz-string:
-        specifier: ^1.5.0
-        version: 1.5.0
       minimal-event-bus:
         specifier: ^1.0.0
         version: 1.0.0
@@ -790,10 +787,6 @@ packages:
   lru-cache@11.2.1:
     resolution: {integrity: sha512-r8LA6i4LP4EeWOhqBaZZjDWwehd1xUJPCJd9Sv300H0ZmcUER4+JPh7bqqZeqs1o5pgtgvXm+d9UGrB5zZGDiQ==}
     engines: {node: 20 || >=22}
-
-  lz-string@1.5.0:
-    resolution: {integrity: sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ==}
-    hasBin: true
 
   magic-string@0.30.19:
     resolution: {integrity: sha512-2N21sPY9Ws53PZvsEpVtNuSW+ScYbQdp4b9qUaL+9QkHUrGFKo56Lg9Emg5s9V/qrtNBmiR01sYhUOwu3H+VOw==}
@@ -1679,8 +1672,6 @@ snapshots:
   lru-cache@10.4.3: {}
 
   lru-cache@11.2.1: {}
-
-  lz-string@1.5.0: {}
 
   magic-string@0.30.19:
     dependencies:

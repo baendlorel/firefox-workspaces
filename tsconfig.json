@@ -4,7 +4,7 @@
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "types": ["vite/client", "firefox-webext-browser"],
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "declaration": false,
     "esModuleInterop": true,
     "strict": true,
