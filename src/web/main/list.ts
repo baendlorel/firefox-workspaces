@@ -112,7 +112,7 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
       li.dataset.id = workspace.id;
 
       // # register events
-      li.addEventListener('click', async () => {
+      const open = async () => {
         // Check if workspace has password (empty string = no password)
         if (workspace.password !== '') {
           // Check if locked
@@ -152,6 +152,14 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
         }
 
         popupService.open(workspace);
+      };
+      li.addEventListener('click', open);
+      // todo 回车也能判定打开
+      // todo 修改固定的意思，固定的意思是指这个tab不会因为关闭的时候没它就被从workspace里删除
+      li.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          open();
+        }
       });
 
       editBtn.addEventListener('click', (e) => {
