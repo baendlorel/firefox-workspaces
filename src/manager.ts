@@ -208,13 +208,6 @@ export class WorkspaceManager {
       };
     }
 
-    // * 2.1 Justify null -> NaN
-    for (let i = 0; i < workspaces.length; i++) {
-      const w = workspaces[i];
-      w.failedAttempts ??= NaN;
-      w.lockUntil ??= NaN;
-    }
-
     // 3. Validate settings
     if (!isValidSettings(settings)) {
       return {

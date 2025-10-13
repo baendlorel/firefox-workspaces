@@ -11,8 +11,8 @@ export const createWorkspace = (formData: WorkspaceFormData): Workspace => ({
   lastOpened: 0,
   password: formData.password,
   passpeek: formData.passpeek,
-  failedAttempts: NaN,
-  lockUntil: NaN,
+  failedAttempts: 0,
+  lockUntil: 0,
 });
 
 export function isValidWorkspace(o: Workspace) {
@@ -43,11 +43,16 @@ export function isValidWorkspace(o: Workspace) {
     return false;
   }
   // Allow NaN for numeric fields (indicates no attempts/lock)
-  if (typeof o.failedAttempts !== 'number' || o.failedAttempts === null) {
-    logger.error('passpeek field invalid', o);
+
+  // * transform first
+  o.failedAttempts = o.failedAttempts === null ? NaN : o.failedAttempts;
+  o.lockUntil = o.lockUntil === null ? NaN : o.lockUntil;
+
+  if (typeof o.failedAttempts !== 'number') {
+    logger.error('failedAttempts field invalid', o);
     return false;
   }
-  if (typeof o.lockUntil !== 'number' || o.failedAttempts === null) {
+  if (typeof o.lockUntil !== 'number') {
     logger.error('lockUntil field invalid', o);
     return false;
   }
