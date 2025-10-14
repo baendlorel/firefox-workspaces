@@ -116,6 +116,10 @@ export default (bus: EventBus<WorkspaceEditorEventMap>) => {
     const darken = color.adjustBrightness(-0.36);
     const gradient = `linear-gradient(160deg, ${color.toHex()} 0%, ${darken.toHex()} 100%)`;
     header.style.setProperty('--header-darken-gradient', gradient);
+
+    // Add gradient to header
+    const headerGradient = `linear-gradient(to bottom, ${color.toHex()}42 0%,${color.toHex()}18 50%, transparent 100%)`;
+    header.style.background = headerGradient;
   });
 
   addBtn.addEventListener('click', () => creatorMenu.showBeside(addBtn));
