@@ -7,6 +7,7 @@ type Until = (result: any) => boolean;
  * @param fn The function to try
  * @param until The condition to meet, passed the result of fn
  * @param interval in seconds
+ * @param count How many times to try, default 10
  * @returns The result of the function when the condition is met
  */
 export async function tryUntil(fn: AnyFn, until: Until, interval = 1, count = 10): Promise<any> {

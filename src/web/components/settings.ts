@@ -36,8 +36,9 @@ export default () => {
 
   const resetBtn = btn('btn btn-secondary', i('button.reset'));
   const saveBtn = btn('btn btn-primary', i('button.save'));
+  const footer = div('gap-flex', [resetBtn, saveBtn]);
 
-  const { dialog } = createDialog(i('menu.settings'), [themeRadio, syncRadio], [resetBtn, saveBtn]);
+  const { dialog } = createDialog(i('menu.settings'), [themeRadio, syncRadio], [footer]);
   dialog.setAttribute('aria-label', i('dialog.settings.title'));
 
   // # register events

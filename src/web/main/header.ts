@@ -64,13 +64,6 @@ function createMoreActionMenu(_bus: EventBus<WorkspaceEditorEventMap>) {
       },
     },
     Menu.Divider,
-    // {
-    //   label: btnWithIcon(bugSvg, i('menu.debug-info')),
-    //   action: async () => {
-    //     const { workspaces } = await store.localGet('workspaces');
-    //     logger.debug('workspaces', stringify(workspaces));
-    //   },
-    // },
     {
       label: btnWithIcon(gearSvg, i('menu.settings')),
       action: function (this) {
