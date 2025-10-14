@@ -58,7 +58,7 @@ declare global {
     index: number; // OnCreated
     title: string; // OnCreated
     url: string; // OnUpdated, changeInfo.url
-    pinned: boolean; // * no longer use this. OnCreated
+    pinned: boolean; // OnCreated, OnUpdated
   }
 
   interface WorkspaceFormData {
