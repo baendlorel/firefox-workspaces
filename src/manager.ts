@@ -2,6 +2,7 @@ import { i, $aboutBlank, $setBadge } from './lib/polyfilled-api.js';
 
 import { Color } from './lib/color.js';
 import { store } from './lib/storage.js';
+import { tryUntil } from './lib/try-until.js';
 import { isValidSettings } from './lib/settings.js';
 import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';
 
@@ -126,7 +127,19 @@ export class WorkspaceManager {
       logger.warn('Window is not ready in time, some tabs may be missing');
     }
 
-    // Open remaining URLs as tabs
+    // Collect tab IDs that need to be pinned
+    const tabIdsToPIn: number[] = [];
+
+    // Get the first tab's ID and check if it should be pinned
+    const firstTab = (await browser.tabs.query({ windowId: window.id }))[0];
+    if (firstTab?.id !== undefined) {
+      tabs[0].id = firstTab.id; // update id
+      if (tabs[0].pinned) {
+        tabIdsToPIn.push(firstTab.id);
+      }
+    }
+
+    // Open remaining URLs as tabs and collect IDs for pinning
     for (let i = 1; i < tabs.length; i++) {
       const tab = await browser.tabs
         .create({
@@ -140,9 +153,24 @@ export class WorkspaceManager {
         logger.error('Tab creation failed, skipping to next', tab);
         continue;
       }
+
+      tabs[i].id = tab.id; // update id
+
+      // If this tab should be pinned, record its ID
+      if (tabs[i].pinned) {
+        tabIdsToPIn.push(tab.id);
+      }
     }
 
-    return await this.openIniter(workspace, window, _workspaceWindows);
+    // tabs.id are updated
+    // After all tabs are created, start pin tasks for tabs that need to be pinned
+    const result = await this.openIniter(workspace, window, _workspaceWindows);
+
+    for (const tabId of tabIdsToPIn) {
+      this.tryPinTab(tabId);
+    }
+
+    return result;
   }
 
   private waitForWindowReady(window: WindowWithId, timeout: number = 6000) {
@@ -184,6 +212,29 @@ export class WorkspaceManager {
 
     const color = Color.from(backgroundColor).brightness < 128 ? '#F8F9FA' : '#212729';
     $setBadge({ text, color, backgroundColor, windowId });
+  }
+
+  /**
+   * Try to pin a tab using tryUntil helper
+   * Retry until the tab is successfully pinned
+   */
+  private async tryPinTab(tabId: number) {
+    // Use tryUntil to verify the tab is pinned
+    const result = await tryUntil(
+      () => {
+        logger.verbose('trying to pin tab', tabId);
+        return browser.tabs.update(tabId, { pinned: true });
+      },
+      (tab) => tab?.pinned === true,
+      0.2, // Check every 0.2 seconds
+      6 // Try 6 times (1.2 seconds total)
+    );
+
+    if (result?.pinned) {
+      logger.info('Tab successfully pinned:', tabId);
+    } else {
+      logger.warn('Failed to pin tab after retries:', tabId);
+    }
   }
 
   async importData(data: ExportData): Promise<ImportResponse> {

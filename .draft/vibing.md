@@ -289,3 +289,12 @@ syncIndicator导出是完全没必要的，我已经该回去了,header(bus)依�
 2. 我保留了WindowsTab这个类型定义的pinned字段，请你再次在其他地方添加对pin的处理。比如创建tab的时候要带pinned字段，在onupdated事件和oncreated事件中要实时侦听一个tab是否pin的变化，如果不pin了，那么要及时更新到storage里面。
 3. 如果一个标签是被pin的，那么在打开工作区时，要尽可能把它pin好。你可以用tryUntil来反复尝试pin，直到成功为止。(可以在pin一个标签后的下一个间隔检测它是否状态是pin过的，pin过就停止)
 4. 如果一个标签页是被pin的，那么只要没有侦听到它手动被解除了pin，那么storage里它就得一直留着，一直保持存在，即便它被关闭了也没关系。也就是说，pin的标签页只要不手动解pin，那么就一直存在于storage里。
+
+---
+
+我前面说得不太清楚，实现效果也不佳，我重新做要求：
+
+1. 辅助函数tryUntil，依然要用。
+2. 打开workspace的时候，open函数不变，但是open函数要给每个tab开启一个task，这个task用tryUntil完成，做到把该pin的标签页pin好。
+3. 如果一个标签页是被pin的，只要没有手动解除pin，它在persist里的pinned就应该一直为true
+4. 不需要改动事件侦听了

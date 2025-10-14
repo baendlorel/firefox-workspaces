@@ -138,6 +138,12 @@ class WorkspaceBackground {
     browser.tabs.onMoved.addListener((_tabId, info) => this.refreshTab(info));
     browser.tabs.onRemoved.addListener((_tabId, info) => this.refreshTab(info));
     browser.tabs.onUpdated.addListener(async (_tabId, info, tab) => {
+      if (Object.keys(info).length === 1 && info.pinned !== undefined) {
+        logger.info('pinchanged', info.pinned, tab);
+        // todo  find and save the tab
+        return;
+      }
+
       if ((info.status === 'complete' || info.status === 'loading') && tab) {
         await this.refreshTab({ windowId: tab.windowId });
       }
@@ -145,6 +151,8 @@ class WorkspaceBackground {
   }
 
   // # helpers
+  private async togglePin(windowId: number, tab: browser.tabs.Tab) {}
+
   private async refreshTab(info: Partial<ChangeInfo>) {
     const windowId = info.windowId ?? info.newWindowId ?? info.oldWindowId ?? NotProvided;
     if (windowId === NotProvided) {
