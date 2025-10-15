@@ -140,7 +140,10 @@ class WorkspaceBackground {
     browser.tabs.onUpdated.addListener(async (_tabId, info, tab) => {
       if (Object.keys(info).length === 1 && info.pinned !== undefined) {
         logger.info('pinchanged', info.pinned, tab);
-        // todo  find and save the tab
+        // Find and save the tab's pinned state
+        if (tab && tab.windowId !== undefined) {
+          await this.updateTabPinned(tab.windowId, tab.id!, info.pinned);
+        }
         return;
       }
 
@@ -151,6 +154,24 @@ class WorkspaceBackground {
   }
 
   // # helpers
+  private async updateTabPinned(windowId: number, tabId: number, pinned: boolean) {
+    // Check if this window belongs to a workspace
+    const workspace = await $windowWorkspace(windowId);
+    if (!workspace) {
+      return;
+    }
+
+    // Find the tab in workspace by tabId and update its pinned state
+    const tab = workspace.tabs.find((t) => t.id === tabId);
+    if (tab) {
+      tab.pinned = pinned;
+      await this.manager.save(workspace);
+      logger.info('Updated tab pinned state:', tabId, 'pinned:', pinned);
+    } else {
+      logger.warn('Tab not found in workspace:', tabId);
+    }
+  }
+
   private async togglePin(windowId: number, tab: browser.tabs.Tab) {}
 
   private async refreshTab(info: Partial<ChangeInfo>) {

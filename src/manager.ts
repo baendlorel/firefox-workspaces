@@ -162,7 +162,10 @@ export class WorkspaceManager {
       }
     }
 
-    // tabs.id are updated
+    // tabs.id are updated, save them back to workspace
+    workspace.tabs = tabs;
+    await this.save(workspace);
+
     // After all tabs are created, start pin tasks for tabs that need to be pinned
     const result = await this.openIniter(workspace, window, _workspaceWindows);
 
