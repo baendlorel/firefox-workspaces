@@ -3,28 +3,15 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 import typescript from '@rollup/plugin-typescript';
-import replace from '@rollup/plugin-replace';
 import funcMacro from 'rollup-plugin-func-macro';
-import constEnum from 'rollup-plugin-const-enum';
 
-import { replaceOpts, replaceLiteralOpts } from './.scripts/replace.mjs';
+import { replace } from './scripts/replace.js';
 
 const tsconfig = './tsconfig.build.json';
 
 export default defineConfig({
   base: './',
-  plugins: [
-    typescript({ tsconfig }),
-    constEnum(),
-    replace({
-      preventAssignment: false,
-      delimiters: ['', ''],
-      // & replace loggers
-      values: { ...replaceLiteralOpts },
-    }),
-    replace(replaceOpts),
-    funcMacro(),
-  ],
+  plugins: [typescript({ tsconfig }), replace(), funcMacro()],
   server: {
     open: 'pages/index.html',
   },

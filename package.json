@@ -49,6 +49,7 @@
     "@rollup/plugin-typescript": "^12.1.4",
     "@types/chrome": "^0.1.22",
     "@types/firefox-webext-browser": "^120.0.4",
+    "@types/node": "^26.0.1",
     "@vitest/coverage-v8": "^3.2.4",
     "glob": "^11.0.3",
     "oxlint": "^1.16.0",

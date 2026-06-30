@@ -3,18 +3,18 @@
     "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "types": ["vite/client", "firefox-webext-browser"],
+    "types": ["node", "vite/client", "firefox-webext-browser"],
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "declaration": false,
     "esModuleInterop": true,
     "strict": true,
     "outDir": "dist",
-    "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
-      "@/*": ["src/*"],
-      "@web/*": ["src/web/*"],
-      "@assets/*": ["src/web/assets/*"],
-      "@comp/*": ["src/web/components/*"]
+      "@/*": ["./src/*"],
+      "@web/*": ["./src/web/*"],
+      "@assets/*": ["./src/web/assets/*"],
+      "@comp/*": ["./src/web/components/*"]
     }
   },
   "include": ["src/**/*.ts", "tests/**/*.ts", "pages/**/*.ts"]

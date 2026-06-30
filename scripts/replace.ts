@@ -1,0 +1,65 @@
+import replacePlugin from '@rollup/plugin-replace';
+import pkg from '../package.json';
+
+function formatDateTimeFull(dt = new Date()) {
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, '0');
+  const d = String(dt.getDate()).padStart(2, '0');
+  const hh = String(dt.getHours()).padStart(2, '0');
+  const mm = String(dt.getMinutes()).padStart(2, '0');
+  const ss = String(dt.getSeconds()).padStart(2, '0');
+  const ms = String(dt.getMilliseconds()).padStart(3, '0');
+  return `${y}.${m}.${d} ${hh}:${mm}:${ss}.${ms}`;
+}
+function formatDateFull(dt = new Date()) {
+  const y = dt.getFullYear();
+  const m = String(dt.getMonth() + 1).padStart(2, '0');
+  const d = String(dt.getDate()).padStart(2, '0');
+  return `${y}.${m}.${d}`;
+}
+
+const __DATE_TIME__ = formatDateTimeFull();
+const __DATE__ = formatDateFull();
+const __KEBAB_NAME__ = pkg.name.replace('rollup-plugin-', '');
+const __NAME__ = __KEBAB_NAME__.replace(/(^|-)(\w)/g, (_, __, c) => c.toUpperCase());
+
+const __PKG_INFO__ = `## About
+ * @package ${__NAME__}
+ * @author ${pkg.author.name} <${pkg.author.email}>
+ * @version ${pkg.version} (Last Update: ${__DATE_TIME__})
+ * @license ${pkg.license}
+ * @link ${pkg.repository.url}
+ * @link https://baendlorel.github.io/ Welcome to my site!
+ * @description ${pkg.description.replace(/\n/g, '\n * \n * ')}
+ * @copyright Copyright (c) ${new Date().getFullYear()} ${pkg.author.name}. All rights reserved.`;
+
+export const replace = () =>
+  replacePlugin({
+    preventAssignment: true,
+    delimiters: ['', ''],
+    values: {
+      __IS_DEV__: process.env.NODE_ENV === 'development' ? 'true' : 'false',
+      __NAME__,
+      __KEBAB_NAME__,
+      __AUTHOR__: `${pkg.author.name} <${pkg.author.email}>`,
+      __AUTHOR_NAME__: pkg.author.name,
+      __AUTHOR_EMAIL__: pkg.author.email,
+      __PKG_INFO__,
+      __VERSION__: pkg.version,
+      v__VERSION__: 'v' + pkg.version,
+      __DATE_TIME__,
+      __DATE__,
+
+      'declare const __IS_PROD__: boolean;\n': '',
+      'const __IS_PROD__: boolean;\n': '',
+      'logger.info(': "console.log(`%cinfo - __func__:`, 'color:#007ACC',",
+      'logger.warn(': "console.log(`%cwarn - __func__:`, 'color:#ff9900',",
+      'logger.error(': "console.log(`%cerror - __func__:`, 'color:#fb2c36',",
+      'logger.debug(': "console.log(`%cdebug - __func__:`, 'color:#8617a5',",
+      'logger.succ(': "console.log(`%cdebug - __func__:`, 'color:#1c9318',",
+      'logger.verbose(': "console.log(`%cverbose - __func__:`, 'color:#009b98',",
+      'logger.WorkspaceNotFound(': "console.log(`%cerror - __func__:`, 'color:#fb2c36','Workspace not found, id:',",
+      'logger.TabNotFoundInWorkspace(':
+        "console.log(`%cerror - __func__:`, 'color:#fb2c36','Tab not found in workspace. tabid,workspaceid:',",
+    },
+  });
