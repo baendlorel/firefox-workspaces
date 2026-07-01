@@ -13,7 +13,7 @@ type ChangeInfo = browser.tabs._OnUpdatedChangeInfo &
   browser.tabs._OnMovedMoveInfo &
   browser.tabs._OnRemovedRemoveInfo &
   browser.tabs._OnDetachedDetachInfo;
-
+// EPIC 要全面重置，改为手动保存工作区，并可以看到、编辑列表
 class WorkspaceBackground {
   private readonly manager: WorkspaceManager;
   private syncer: ReturnType<typeof setTimeout> | null = null;
@@ -111,7 +111,7 @@ class WorkspaceBackground {
       this.handlePopupMessage(message).catch((e) => {
         logger.error('onMessage Error', e);
         return { succ: false, error: 'Error handling message.' };
-      })
+      }),
     );
   }
 
