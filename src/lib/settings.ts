@@ -13,14 +13,5 @@ export const isValidSettings = (settings: Settings): settings is Settings => {
       return false;
   }
 
-  switch (settings.sync) {
-    case Switch.On:
-    case Switch.Off:
-      break;
-    default:
-      settings.sync satisfies never;
-      return false;
-  }
-
   return true;
 };

@@ -15,19 +15,6 @@ class Storage {
     data.timestamp = Date.now();
     return browser.storage.local.set(data);
   }
-
-  localStateSet(state: Partial<State>) {
-    return browser.storage.local.set(state);
-  }
-
-  syncGet(): Promise<Persist> {
-    return browser.storage.sync.get() as any;
-  }
-
-  syncSet(persist: Persist) {
-    persist.timestamp = Date.now();
-    return browser.storage.sync.set(persist);
-  }
 }
 
 export const store = new Storage();

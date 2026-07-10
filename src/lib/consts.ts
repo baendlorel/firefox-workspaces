@@ -5,11 +5,6 @@ declare global {
     PolyfillFlag = 'kasukabe_tsumugi:browser-polyfill',
 
     DefaultColor = '#2da191',
-
-    /**
-     * Synchronize in 05,10,15... each hour
-     */
-    SyncInterval = 5,
   }
 
   const enum PopupPage {
@@ -26,16 +21,6 @@ declare global {
     Open,
 
     /**
-     * Toggle data synchronize
-     */
-    ToggleSync,
-
-    /**
-     * Need this because tabs info can only be accessed in background script
-     */
-    Export,
-
-    /**
      * The import file page sends data to background
      */
     ReturnFileData,
@@ -44,6 +29,16 @@ declare global {
      * Used to open about and donate page
      */
     OpenPage,
+
+    /**
+     * Capture current window tabs
+     */
+    CaptureTabs,
+
+    /**
+     * Update workspace tabs
+     */
+    UpdateTabs,
   }
 
   const enum Switch {
@@ -55,12 +50,6 @@ declare global {
     Auto = 'auto',
     Light = 'light',
     Dark = 'dark',
-  }
-
-  const enum SyncState {
-    Syncing = 'syncing',
-    Success = 'success',
-    Error = 'error',
   }
 
   const enum PasswordCheckResult {

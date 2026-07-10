@@ -5,14 +5,7 @@ interface Persist {
   settings: Settings;
 }
 
-interface State {
-  // workspaceId -> windowId
-  _workspaceWindows: Record<string, number>;
-  // windowId -> browser.tabs.Tab[]
-  _windowTabs: Record<number, browser.tabs.Tab[]>;
-}
-
-type Local = Persist & State;
+type Local = Persist;
 
 type LocalKey = keyof Local;
 

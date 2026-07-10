@@ -7,15 +7,6 @@ declare global {
     workspace: Workspace;
   }
 
-  interface ToggleSyncRequest {
-    action: Action.ToggleSync;
-    sync: Switch;
-  }
-
-  interface ExportRequest {
-    action: Action.Export;
-  }
-
   interface ReturnFileDataRequest {
     action: Action.ReturnFileData;
     data: unknown;
@@ -26,13 +17,23 @@ declare global {
     page: PopupPage;
   }
 
+  interface CaptureTabsRequest {
+    action: Action.CaptureTabs;
+  }
+
+  interface UpdateTabsRequest {
+    action: Action.UpdateTabs;
+    workspaceId: string;
+    tabs: WorkspaceTab[];
+  }
+
   // Union type for all possible requests
   type MessageRequest =
     | OpenRequest
-    | ToggleSyncRequest
-    | ExportRequest
     | ReturnFileDataRequest
-    | OpenPageRequest;
+    | OpenPageRequest
+    | CaptureTabsRequest
+    | UpdateTabsRequest;
 
   // # responses
   interface ErrorResponse {
@@ -49,13 +50,17 @@ declare global {
     addedCount: number;
   }
 
-  type MessageResponse = CommonResponse | ErrorResponse | ImportResponse;
+  interface CaptureTabsResponse extends CommonResponse {
+    tabs: WorkspaceTab[];
+  }
+
+  type MessageResponse = CommonResponse | ErrorResponse | ImportResponse | CaptureTabsResponse;
 
   type MessageResponseMap = {
     [Action.Open]: CommonResponse;
-    [Action.ToggleSync]: CommonResponse;
-    [Action.Export]: CommonResponse;
     [Action.ReturnFileData]: ImportResponse;
     [Action.OpenPage]: CommonResponse;
+    [Action.CaptureTabs]: CaptureTabsResponse;
+    [Action.UpdateTabs]: CommonResponse;
   };
 }

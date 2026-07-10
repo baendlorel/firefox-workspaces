@@ -80,8 +80,6 @@ declare global {
 
   interface Settings {
     theme: Theme;
-    // Whether to sync data via browser.storage.sync
-    sync: Switch;
   }
 
   type WindowWithId = browser.windows.Window & { id: number };

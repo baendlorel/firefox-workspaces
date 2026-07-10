@@ -1,6 +1,5 @@
-import { i, $aboutBlank, $setBadge } from './lib/polyfilled-api.js';
+import { i } from './lib/polyfilled-api.js';
 
-import { Color } from './lib/color.js';
 import { store } from './lib/storage.js';
 import { tryUntil } from './lib/try-until.js';
 import { isValidSettings } from './lib/settings.js';
@@ -8,83 +7,28 @@ import { createWorkspaceTab, isValidWorkspace } from './lib/workspace.js';
 
 export class WorkspaceManager {
   /**
-   * Get the cached tabs of a window and transform to `WorkspaceTab[]`
+   * Capture tabs from the current window
    */
-  async getWindowTabs(windowId: number): Promise<WorkspaceTab[]> {
-    const { _windowTabs } = await store.localGet('_windowTabs');
-    const browserTabs = _windowTabs[windowId];
-    if (!browserTabs) {
-      logger.error('No tabs found for windowId', windowId);
-      return [];
-    }
-    return browserTabs // & ensure that tab.id is valid, or createWorkspaceTab will throw
+  async captureCurrentTabs(): Promise<WorkspaceTab[]> {
+    const currentWindow = await browser.windows.getCurrent();
+    const browserTabs = await browser.tabs.query({ windowId: currentWindow.id });
+    return browserTabs
       .filter((tab) => Number.isSafeInteger(tab.id) && tab.id !== browser.tabs.TAB_ID_NONE)
       .map(createWorkspaceTab);
   }
 
-  async addTabToWindow(browserTab: browser.tabs.Tab) {
-    const { _workspaceWindows, _windowTabs } = await store.localGet(
-      '_workspaceWindows',
-      '_windowTabs'
-    );
-    const windowId = browserTab.windowId;
-    if (windowId === undefined) {
-      return;
-    }
-
-    const entry = Object.entries(_workspaceWindows).find(([, wid]) => wid === windowId);
-    if (!entry) {
-      return;
-    }
-
-    const rawTabs = _windowTabs[windowId];
-    if (rawTabs) {
-      rawTabs.push(browserTab);
-    } else {
-      _windowTabs[windowId] = [browserTab];
-    }
-    await store.localStateSet({ _windowTabs });
-  }
-
-  async refreshWindowTab(windowId: number | undefined) {
-    const { _workspaceWindows, _windowTabs } = await store.localGet(
-      '_workspaceWindows',
-      '_windowTabs'
-    );
-    const entry = Object.entries(_workspaceWindows).find(([, wid]) => wid === windowId);
-    if (!entry) {
-      return;
-    }
-
-    const tabs = await browser.tabs.query({ windowId });
-    _windowTabs[windowId as number] = tabs;
-    await store.localStateSet({ _windowTabs });
-  }
-
-  async saveAllTab() {
-    const { workspaces, _workspaceWindows, _windowTabs } = await store.localGet(
-      'workspaces',
-      '_workspaceWindows',
-      '_windowTabs'
-    );
-    for (let i = 0; i < workspaces.length; i++) {
-      const w = workspaces[i];
-      const tabs = _windowTabs[_workspaceWindows[w.id]];
-      if (tabs) {
-        w.tabs = tabs.map(createWorkspaceTab);
-      }
-    }
-
-    await store.localPersistSet({ workspaces });
-  }
-
   /**
-   * Remove the pair of `workspaceToWindow` in store
+   * Update tabs for a specific workspace
    */
-  async deactivate(id: string) {
-    const { _workspaceWindows } = await store.localGet('_workspaceWindows');
-    delete _workspaceWindows[id];
-    await store.localStateSet({ _workspaceWindows });
+  async updateWorkspaceTabs(id: string, tabs: WorkspaceTab[]) {
+    const { workspaces } = await store.localGet('workspaces');
+    const index = workspaces.findIndex((w) => w.id === id);
+    if (index === -1) {
+      logger.error('Workspace not found:', id);
+      return;
+    }
+    workspaces[index].tabs = tabs;
+    await store.localPersistSet({ workspaces });
   }
 
   async save(workspace: Workspace) {
@@ -96,31 +40,16 @@ export class WorkspaceManager {
 
   // Open workspace in new window
   async open(workspace: Workspace): Promise<{ id: number }> {
-    // If group already has an active window, focus it
-    const { _workspaceWindows } = await store.localGet('_workspaceWindows');
-
-    // & closed window will be deleted by `this.deactivate`, so windowId found here must be valid
-    const windowId = _workspaceWindows[workspace.id];
-    if (windowId) {
-      // Check if window still exists
-      const result = await browser.windows.update(windowId, { focused: true }).catch(() => null);
-      if (result === null) {
-        logger.error('__func__: Window update failed');
-        return { id: browser.windows.WINDOW_ID_NONE };
-      }
-      return { id: windowId };
-    }
-
     const tabs = [...workspace.tabs].sort((a, b) => a.index - b.index);
     if (tabs.length === 0) {
-      const window = await $aboutBlank();
-      return await this.openIniter(workspace, window, _workspaceWindows);
+      const window = await browser.windows.create({ url: 'about:blank', type: 'normal' }) as WindowWithId;
+      return { id: window.id };
     }
 
     // Create new window with first URL
     const window = (await browser.windows
       .create({ url: tabs[0].url, type: 'normal' })
-      .catch((e) => (logger.error(e), $aboutBlank()))) as WindowWithId;
+      .catch((e) => (logger.error(e), browser.windows.create({ url: 'about:blank', type: 'normal' }) as Promise<WindowWithId>))) as WindowWithId;
 
     const waitToMuchTime = await this.waitForWindowReady(window);
     if (waitToMuchTime) {
@@ -162,18 +91,12 @@ export class WorkspaceManager {
       }
     }
 
-    // tabs.id are updated, save them back to workspace
-    workspace.tabs = tabs;
-    await this.save(workspace);
-
     // After all tabs are created, start pin tasks for tabs that need to be pinned
-    const result = await this.openIniter(workspace, window, _workspaceWindows);
-
     for (const tabId of tabIdsToPIn) {
       this.tryPinTab(tabId);
     }
 
-    return result;
+    return { id: window.id };
   }
 
   private waitForWindowReady(window: WindowWithId, timeout: number = 6000) {
@@ -191,30 +114,6 @@ export class WorkspaceManager {
       browser.tabs.onUpdated.addListener(checker);
       setTimeout(() => resolve(true), timeout);
     });
-  }
-
-  /**
-   * init function used only in `this.open`
-   */
-  private async openIniter(
-    workspace: Workspace,
-    window: WindowWithId,
-    _workspaceWindows: State['_workspaceWindows']
-  ) {
-    this.setBadge(workspace, window.id);
-    _workspaceWindows[workspace.id] = window.id;
-    await store.localStateSet({ _workspaceWindows });
-    return { id: window.id };
-  }
-
-  private setBadge(workspace: Workspace, windowId: number) {
-    const name = workspace.name;
-    const backgroundColor = workspace.color;
-    const spaceIndex = name.indexOf(' ');
-    const text = spaceIndex === -1 ? name.slice(0, 2) : name[0] + name[spaceIndex + 1];
-
-    const color = Color.from(backgroundColor).brightness < 128 ? '#F8F9FA' : '#212729';
-    $setBadge({ text, color, backgroundColor, windowId });
   }
 
   /**
